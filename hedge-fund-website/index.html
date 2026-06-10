@@ -6705,6 +6705,7 @@
                     const tradesData = await tradesRes.json();
                     
                     if (tradesData.trades && Array.isArray(tradesData.trades)) {
+                        console.log('Loading', tradesData.trades.length, 'real trades from Alpaca');
                         const realTrades = tradesData.trades.map(trade => ({
                             type: 'trade',
                             subtype: trade.action?.toLowerCase() || 'buy',
@@ -6725,6 +6726,7 @@
                         }));
                         
                         activities.push(...realTrades);
+                        console.log('Added', realTrades.length, 'trades to activities');
                     }
                 } catch (e) {
                     console.log('Could not load trades_log.json:', e);
@@ -6840,6 +6842,9 @@
 
                 // Sort by timestamp (newest first)
                 activities.sort((a, b) => b.timestamp - a.timestamp);
+                
+                console.log('Activity log loaded:', activities.length, 'activities');
+                console.log('First activity date:', activities[0]?.timestamp?.toDateString());
 
                 activityDataCache = activities;
 
