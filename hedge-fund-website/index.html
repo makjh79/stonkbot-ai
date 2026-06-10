@@ -3552,21 +3552,21 @@
             
             <!-- Filter Tabs -->
             <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); display: flex; gap: 0.5rem; overflow-x: auto;">
-                <div class="trade-log-filter active" onclick="filterTradeLog('all')" data-filter="all">
+                <div class="trade-log-filter active trade-log-filter-btn" onclick="setTradeLogFilter('all')" data-filter="all">
                     <span>📋</span>
-                    <span>All</span>
+                    <span>All Activity</span>
                 </div>
-                <div class="trade-log-filter" onclick="filterTradeLog('buy')" data-filter="buy">
-                    <span>🟢</span>
-                    <span>Buys</span>
+                <div class="trade-log-filter trade-log-filter-btn" onclick="setTradeLogFilter('trades')" data-filter="trades">
+                    <span>💹</span>
+                    <span>Trades</span>
                 </div>
-                <div class="trade-log-filter" onclick="filterTradeLog('sell')" data-filter="sell">
-                    <span>🔴</span>
-                    <span>Sells</span>
+                <div class="trade-log-filter trade-log-filter-btn" onclick="setTradeLogFilter('alerts')" data-filter="alerts">
+                    <span>📉</span>
+                    <span>Alerts</span>
                 </div>
-                <div class="trade-log-filter" onclick="filterTradeLog('trim')" data-filter="trim">
-                    <span>🟡</span>
-                    <span>Trims</span>
+                <div class="trade-log-filter trade-log-filter-btn" onclick="setTradeLogFilter('bot')" data-filter="bot">
+                    <span>🤖</span>
+                    <span>Bot</span>
                 </div>
             </div>
             
@@ -4607,16 +4607,86 @@
 
         async function loadTradeLogData() {
             try {
+                // Load trades
                 const response = await fetch('./trades_log.json?t=' + Date.now());
                 if (!response.ok) throw new Error('Failed to fetch');
                 
                 const data = await response.json();
-                tradeLogData = data.trades || [];
+                const trades = (data.trades || []).map(t => ({...t, type: 'trade', subtype: t.action?.toLowerCase() || 'buy'}));
+                
+                // Load portfolio history for alerts
+                let alerts = [];
+                try {
+                    const historyRes = await fetch('portfolio_history.json?t=' + Date.now());
+                    const historyData = await historyRes.json();
+                    const checks = historyData.checks || [];
+                    
+                    // Group by day and find significant changes
+                    const dailyChanges = {};
+                    checks.forEach(check => {
+                        const date = new Date(check.timestamp);
+                        const dayOfWeek = date.getDay();
+                        if (dayOfWeek === 0 || dayOfWeek === 6) return;
+                        
+                        const dateKey = date.toDateString();
+                        if (!dailyChanges[dateKey]) {
+                            dailyChanges[dateKey] = {
+                                date: date,
+                                firstValue: check.portfolio_value,
+                                lastValue: check.portfolio_value,
+                                minPL: check.total_pl_pct,
+                                maxPL: check.total_pl_pct,
+                                timestamp: date
+                            };
+                        }
+                        dailyChanges[dateKey].lastValue = check.portfolio_value;
+                        dailyChanges[dateKey].minPL = Math.min(dailyChanges[dateKey].minPL, check.total_pl_pct);
+                        dailyChanges[dateKey].maxPL = Math.max(dailyChanges[dateKey].maxPL, check.total_pl_pct);
+                    });
+                    
+                    // Add significant movements as alerts
+                    Object.entries(dailyChanges).forEach(([dateKey, day]) => {
+                        if (Math.abs(day.maxPL) > 2) {
+                            alerts.push({
+                                type: 'alert',
+                                subtype: day.maxPL < -3 ? 'critical' : 'warning',
+                                timestamp: day.timestamp,
+                                icon: day.maxPL < 0 ? '📉' : '📈',
+                                title: day.maxPL < -3 ? 'Portfolio Alert' : 'Daily Movement',
+                                description: `Portfolio ${day.maxPL >= 0 ? 'up' : 'down'} ${Math.abs(day.maxPL).toFixed(2)}%`,
+                                badge: day.maxPL < -3 ? 'Alert' : 'Movement',
+                                badgeClass: day.maxPL < -3 ? 'alert' : 'warning',
+                                rationale: `Portfolio movement of ${Math.abs(day.maxPL).toFixed(2)}% detected.`,
+                                value: day.maxPL
+                            });
+                        }
+                    });
+                } catch (e) {
+                    console.log('Could not load portfolio history:', e);
+                }
+                
+                // Add bot actions based on trades
+                const botActions = [
+                    {
+                        type: 'bot',
+                        subtype: 'deploy',
+                        timestamp: new Date('2026-06-04T09:00:00'),
+                        icon: '🚀',
+                        title: 'Bot Deployed',
+                        description: 'Autonomous trading system active',
+                        badge: 'System',
+                        badgeClass: 'bot',
+                        rationale: 'AI trading bot started with $100K initial capital. Strategy: RSI auto-entry, -15% stop loss, +25% trim, +50% exit.'
+                    }
+                ];
+                
+                // Merge all activities
+                tradeLogData = [...trades, ...alerts, ...botActions];
                 
                 // Update stats
-                updateTradeLogStats(data);
+                updateTradeLogStats({trades: trades});
                 
-                // Render trades
+                // Render
                 renderTradeLog();
                 
             } catch (error) {
@@ -4648,40 +4718,45 @@
             const container = document.getElementById('tradeLogList');
             if (!container) return;
             
-            let filteredTrades = tradeLogData;
+            // Update filter button states
+            document.querySelectorAll('.trade-log-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === currentTradeFilter);
+            });
+            
+            let filteredData = tradeLogData;
             if (currentTradeFilter !== 'all') {
-                filteredTrades = tradeLogData.filter(t => {
-                    if (currentTradeFilter === 'buy') return t.action === 'BUY';
-                    if (currentTradeFilter === 'sell') return t.action === 'SELL';
-                    if (currentTradeFilter === 'trim') return t.action === 'TRIM';
+                filteredData = tradeLogData.filter(t => {
+                    if (currentTradeFilter === 'trades') return t.type === 'trade';
+                    if (currentTradeFilter === 'alerts') return t.type === 'alert';
+                    if (currentTradeFilter === 'bot') return t.type === 'bot';
                     return true;
                 });
             }
             
-            if (filteredTrades.length === 0) {
+            if (filteredData.length === 0) {
                 showTradeLogPlaceholder();
                 return;
             }
             
             // Sort by timestamp (newest first)
-            const sortedTrades = [...filteredTrades].reverse();
+            const sortedData = [...filteredData].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             
             // Group by date
             let currentDate = null;
             let html = '';
             
-            sortedTrades.forEach((trade, index) => {
-                const tradeDate = new Date(trade.timestamp).toDateString();
+            sortedData.forEach((item, index) => {
+                const itemDate = new Date(item.timestamp).toDateString();
                 
                 // Add date header if this is a new date
-                if (tradeDate !== currentDate) {
-                    currentDate = tradeDate;
-                    const dateLabel = new Date(trade.timestamp).toLocaleDateString('en-US', {
+                if (itemDate !== currentDate) {
+                    currentDate = itemDate;
+                    const dateLabel = new Date(item.timestamp).toLocaleDateString('en-US', {
                         weekday: 'short',
                         month: 'short',
                         day: 'numeric'
                     });
-                    const yearLabel = new Date(trade.timestamp).getFullYear();
+                    const yearLabel = new Date(item.timestamp).getFullYear();
                     html += `
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0 0.5rem 0; padding: 0.5rem; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 8px;">
                             <div style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">${dateLabel}</div>
@@ -4692,13 +4767,65 @@
                     `;
                 }
                 
-                html += createTradeLogItem(trade, index === 0);
+                html += createTradeLogItem(item, index === 0);
             });
             
             container.innerHTML = html;
         }
+        
+        function setTradeLogFilter(filter) {
+            currentTradeFilter = filter;
+            renderTradeLog();
+        }
 
-        function createTradeLogItem(trade, isNewest = false) {
+        function createTradeLogItem(item, isNewest = false) {
+            const time = new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Handle different activity types
+            if (item.type === 'alert') {
+                const alertColor = item.subtype === 'critical' ? 'var(--accent-red)' : 'var(--accent-gold)';
+                return `
+                    <div class="trade-log-item ${isNewest ? 'new' : ''}">
+                        <div class="trade-log-icon" style="background: ${alertColor}20; border-color: ${alertColor}40;">
+                            <span>${item.icon || '📉'}</span>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                                <span style="font-size: 0.9rem; font-weight: 700; color: ${alertColor};">${item.title}</span>
+                                <span class="trade-log-badge" style="background: ${alertColor}20; color: ${alertColor}; border-color: ${alertColor}40;">${item.badge}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">${item.description}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;">${item.rationale}</div>
+                        </div>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <div style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${time}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (item.type === 'bot') {
+                return `
+                    <div class="trade-log-item ${isNewest ? 'new' : ''}">
+                        <div class="trade-log-icon auto">
+                            <span>${item.icon || '🤖'}</span>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                                <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent-blue);">${item.title}</span>
+                                <span class="trade-log-badge auto">${item.badge}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">${item.description}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;">${item.rationale}</div>
+                        </div>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <div style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${time}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Default: trade
             const emojiMap = {
                 'BUY': '🟢',
                 'SELL': '🔴',
@@ -4717,13 +4844,11 @@
                 'AUTO_ENTRY': 'auto'
             };
             
-            const badgeClass = classMap[trade.action] || 'auto';
-            const emoji = emojiMap[trade.action] || '⚪';
+            const badgeClass = classMap[item.action] || 'auto';
+            const emoji = emojiMap[item.action] || '⚪';
             
-            const time = new Date(trade.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-            
-            const pnlDisplay = trade.pnl_impact ? 
-                `<span style="color: ${trade.pnl_impact >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight: 600;">${trade.pnl_impact >= 0 ? '+' : ''}$${Math.abs(trade.pnl_impact).toFixed(2)}</span>` : '';
+            const pnlDisplay = item.pnl_impact ? 
+                `<span style="color: ${item.pnl_impact >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight: 600;">${item.pnl_impact >= 0 ? '+' : ''}$${Math.abs(item.pnl_impact).toFixed(2)}</span>` : '';
             
             return `
                 <div class="trade-log-item ${isNewest ? 'new' : ''}">
@@ -4732,15 +4857,15 @@
                     </div>
                     <div style="flex: 1; min-width: 0;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${trade.symbol}</span>
-                            <span class="trade-log-badge ${badgeClass}">${trade.action}</span>
+                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${item.symbol}</span>
+                            <span class="trade-log-badge ${badgeClass}">${item.action}</span>
                             ${pnlDisplay}
                         </div>
                         <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
-                            ${trade.qty} shares @ $${trade.price.toFixed(2)} • $${(trade.qty * trade.price).toFixed(0)}
+                            ${item.qty} shares @ $${parseFloat(item.price).toFixed(2)} • $${(item.qty * parseFloat(item.price)).toFixed(0)}
                         </div>
                         <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;">
-                            <span style="color: var(--accent-blue);">${trade.strategy}</span> • ${trade.rationale}
+                            <span style="color: var(--accent-blue);">${item.strategy}</span> • ${item.rationale}
                         </div>
                     </div>
                     <div style="text-align: right; flex-shrink: 0;">
@@ -4770,15 +4895,7 @@
         }
 
         function filterTradeLog(filter) {
-            currentTradeFilter = filter;
-            
-            // Update UI
-            document.querySelectorAll('.trade-log-filter').forEach(el => {
-                el.classList.remove('active');
-                if (el.dataset.filter === filter) el.classList.add('active');
-            });
-            
-            renderTradeLog();
+            setTradeLogFilter(filter);
         }
 
         function refreshTradeLog() {
