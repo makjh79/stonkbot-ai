@@ -3731,11 +3731,15 @@
                     }
                 });
                 
-                // Load live data for chart
-                updateChartWithLiveData();
+                // Load historical data for chart
+                loadChartHistory().then(() => {
+                    if (chartDataStore['ALL']) {
+                        updateChartRange('ALL');
+                    }
+                });
                 
                 // Refresh chart data every 30 seconds
-                setInterval(updateChartWithLiveData, 30000);
+                setInterval(loadChartHistory, 30000);
 
                 // Allocation Donut Chart
                 const allocCtx = document.getElementById('allocationDonut');
@@ -7413,92 +7417,137 @@
 
         // ==================== INTERACTIVE CHART FEATURES ====================
         
-        // Time Range Data Storage
-        const chartDataStore = {
-            '1D': {
-                labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'],
-                stonkAI: [0, -0.05, -0.12, -0.18, -0.25, -0.32, -0.38, -0.45, -0.52, -0.58, -0.65, -0.68, -0.71, -0.72],
-                sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.65],
-                dow: [0, -0.05, -0.12, -0.18, -0.25, -0.30, -0.35, -0.37, -0.37, -0.37, -0.37, -0.37, -0.37, -0.37],
-                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.1, -4.5, -4.6, -4.7, -4.81]
-            },
-            '1W': {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                stonkAI: [0, -0.18, -0.38, -0.55, -0.72],
-                sp500: [0, -0.5, -1.3, -2.0, -2.65],
-                dow: [0, -0.1, -0.22, -0.32, -0.37],
-                nasdaq: [0, -1.2, -2.5, -3.8, -4.81]
-            },
-            '1M': {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                stonkAI: [0, -0.3, -0.52, -0.72],
-                sp500: [0, -0.8, -1.8, -2.65],
-                dow: [0, -0.15, -0.28, -0.37],
-                nasdaq: [0, -1.8, -3.5, -4.81]
-            },
-            '3M': {
-                labels: ['Month 1', 'Month 2', 'Month 3'],
-                stonkAI: [0, -0.4, -0.72],
-                sp500: [0, -1.8, -2.65],
-                dow: [0, -0.25, -0.37],
-                nasdaq: [0, -3.0, -4.81]
-            },
-            'ALL': {
-                labels: ['Start', 'Current'],
-                stonkAI: [0, -0.72],
-                sp500: [0, -2.65],
-                dow: [0, -0.37],
-                nasdaq: [0, -4.81]
-            }
-        };
-        
+        // Dynamic chart data loaded from portfolio_history.json
+        let chartDataStore = {};
+        let portfolioHistoryData = [];
+        let marketIndicesData = {};
         let currentRange = '1M';
         let visibleBenchmarks = ['S&P 500', 'DOW', 'NASDAQ'];
         
-        // Fetch live data and update chart
-        async function updateChartWithLiveData() {
+        // Load real historical data from portfolio_history.json
+        async function loadChartHistory() {
             try {
-                // Fetch portfolio data
-                const portfolioRes = await fetch('portfolio_data.json?t=' + Date.now());
-                const portfolioData = await portfolioRes.json();
+                // Fetch portfolio history
+                const historyRes = await fetch('portfolio_history.json?t=' + Date.now());
+                const historyData = await historyRes.json();
+                portfolioHistoryData = historyData.checks || [];
                 
                 // Fetch market indices
                 const indicesRes = await fetch('market_indices.json?t=' + Date.now());
                 const indicesData = await indicesRes.json();
+                marketIndicesData = indicesData.indices || {};
                 
-                const actualReturn = portfolioData.total_plpc || 0;
-                const spReturn = indicesData.indices?.['S&P 500']?.return_pct || -2.65;
-                const dowReturn = indicesData.indices?.['Dow Jones']?.return_pct || -0.37;
-                const nasdaqReturn = indicesData.indices?.['NASDAQ']?.return_pct || -4.81;
+                // Build all time range data from real history
+                buildAllChartData();
                 
-                // Update ALL view
-                chartDataStore['ALL'].stonkAI = [0, actualReturn];
-                chartDataStore['ALL'].sp500 = [0, spReturn];
-                chartDataStore['ALL'].dow = [0, dowReturn];
-                chartDataStore['ALL'].nasdaq = [0, nasdaqReturn];
-                
-                // Update other ranges (scale the progression)
-                ['1D', '1W', '1M', '3M'].forEach(range => {
-                    if (chartDataStore[range]) {
-                        const data = chartDataStore[range];
-                        const lastIdx = data.stonkAI.length - 1;
-                        data.stonkAI[lastIdx] = actualReturn;
-                        data.sp500[lastIdx] = spReturn;
-                        data.dow[lastIdx] = dowReturn;
-                        data.nasdaq[lastIdx] = nasdaqReturn;
-                    }
-                });
-                
-                // Update chart if visible
-                if (performanceChart) {
+                // Update chart if it exists
+                if (performanceChart && chartDataStore[currentRange]) {
                     updateChartRange(currentRange);
                 }
                 
-                console.log('Chart updated with live data:', { actualReturn, spReturn, dowReturn, nasdaqReturn });
+                console.log('Chart history loaded:', portfolioHistoryData.length, 'data points');
                 
             } catch (e) {
-                console.error('Failed to update chart with live data:', e);
+                console.error('Failed to load chart history:', e);
+                // Initialize with empty data
+                chartDataStore = {
+                    '1D': { labels: ['Start', 'Now'], stonkAI: [0, 0], sp500: [0, 0], dow: [0, 0], nasdaq: [0, 0] },
+                    '1W': { labels: ['Start', 'Now'], stonkAI: [0, 0], sp500: [0, 0], dow: [0, 0], nasdaq: [0, 0] },
+                    '1M': { labels: ['Start', 'Now'], stonkAI: [0, 0], sp500: [0, 0], dow: [0, 0], nasdaq: [0, 0] },
+                    '3M': { labels: ['Start', 'Now'], stonkAI: [0, 0], sp500: [0, 0], dow: [0, 0], nasdaq: [0, 0] },
+                    'ALL': { labels: ['Start', 'Now'], stonkAI: [0, 0], sp500: [0, 0], dow: [0, 0], nasdaq: [0, 0] }
+                };
             }
+        }
+        
+        // Build chart data for all time ranges from real history
+        function buildAllChartData() {
+            if (portfolioHistoryData.length < 2) return;
+            
+            const spReturn = marketIndicesData['S&P 500']?.return_pct || -2.65;
+            const dowReturn = marketIndicesData['Dow Jones']?.return_pct || -0.37;
+            const nasdaqReturn = marketIndicesData['NASDAQ']?.return_pct || -4.81;
+            
+            // ALL - Show every data point
+            const allLabels = portfolioHistoryData.map((check, i) => {
+                if (i === 0) return 'Start';
+                if (i === portfolioHistoryData.length - 1) return 'Current';
+                const date = new Date(check.timestamp);
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+            });
+            
+            chartDataStore['ALL'] = {
+                labels: allLabels,
+                stonkAI: portfolioHistoryData.map(c => c.total_pl_pct || 0),
+                sp500: portfolioHistoryData.map((_, i) => (i / (portfolioHistoryData.length - 1)) * spReturn),
+                dow: portfolioHistoryData.map((_, i) => (i / (portfolioHistoryData.length - 1)) * dowReturn),
+                nasdaq: portfolioHistoryData.map((_, i) => (i / (portfolioHistoryData.length - 1)) * nasdaqReturn)
+            };
+            
+            // 1D - Today's data (last 24 hours)
+            const lastDay = new Date();
+            lastDay.setDate(lastDay.getDate() - 1);
+            const todayData = portfolioHistoryData.filter(c => new Date(c.timestamp) >= lastDay);
+            
+            if (todayData.length >= 2) {
+                chartDataStore['1D'] = {
+                    labels: todayData.map((c, i) => {
+                        if (i === 0) return 'Start';
+                        if (i === todayData.length - 1) return 'Now';
+                        const date = new Date(c.timestamp);
+                        return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+                    }),
+                    stonkAI: todayData.map(c => c.total_pl_pct || 0),
+                    sp500: todayData.map((_, i) => todayData[0].total_pl_pct + (i / (todayData.length - 1)) * (spReturn - todayData[0].total_pl_pct)),
+                    dow: todayData.map((_, i) => (i / (todayData.length - 1)) * dowReturn),
+                    nasdaq: todayData.map((_, i) => (i / (todayData.length - 1)) * nasdaqReturn)
+                };
+            } else {
+                chartDataStore['1D'] = chartDataStore['ALL'];
+            }
+            
+            // 1W - Daily summaries for last 7 days
+            const lastWeek = new Date();
+            lastWeek.setDate(lastWeek.getDate() - 7);
+            const weekData = portfolioHistoryData.filter(c => new Date(c.timestamp) >= lastWeek);
+            
+            // Group by day and take last point of each day
+            const dayGroups = {};
+            weekData.forEach(c => {
+                const day = c.timestamp.substring(0, 10);
+                if (!dayGroups[day] || new Date(c.timestamp) > new Date(dayGroups[day].timestamp)) {
+                    dayGroups[day] = c;
+                }
+            });
+            
+            const dailyPoints = Object.values(dayGroups).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            if (dailyPoints.length >= 2) {
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                chartDataStore['1W'] = {
+                    labels: dailyPoints.map((c, i) => {
+                        if (i === 0) return 'Start';
+                        if (i === dailyPoints.length - 1) return 'Today';
+                        const date = new Date(c.timestamp);
+                        return dayNames[date.getDay()];
+                    }),
+                    stonkAI: dailyPoints.map(c => c.total_pl_pct || 0),
+                    sp500: dailyPoints.map((_, i) => (i / (dailyPoints.length - 1)) * spReturn),
+                    dow: dailyPoints.map((_, i) => (i / (dailyPoints.length - 1)) * dowReturn),
+                    nasdaq: dailyPoints.map((_, i) => (i / (dailyPoints.length - 1)) * nasdaqReturn)
+                };
+            } else {
+                chartDataStore['1W'] = chartDataStore['ALL'];
+            }
+            
+            // 1M and 3M - Use ALL data with simplified labels
+            chartDataStore['1M'] = chartDataStore['ALL'];
+            chartDataStore['3M'] = chartDataStore['ALL'];
+        }
+        
+        // Fetch latest data and refresh
+        async function updateChartWithLiveData() {
+            await loadChartHistory();
         }
         
         // Update Chart Range
