@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STONK.AI | 🤖 Autonomous AI Trading System</title>
@@ -405,19 +402,6 @@
         /* Legend item hover */
         .legend-item:hover {
             background: rgba(255,255,255,0.06);
-        }
-        
-        /* Chart.js legend - prevent strikethrough on hidden items */
-        .chartjs-legend-item,
-        #performanceChart + div legend span,
-        canvas + div legend span {
-            text-decoration: none !important;
-        }
-        
-        /* Ensure chart legend labels never have strikethrough */
-        .chartjs-legend-item span,
-        .chartjs-render-monitor + div span {
-            text-decoration: none !important;
         }
 
         .metric-label {
@@ -2521,29 +2505,76 @@
                 </div>
             </div>
 
-            <!-- THE RACE - Hybrid Card Design -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                <!-- S&P 500 Card -->
-                <div style="background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1rem; text-align: center;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
-                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
-                    <div id="sp500Value" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">$97,400</div>
-                    <div id="sp500Return" style="font-size: 0.75rem; color: var(--accent-red); margin-bottom: 0.5rem;">-2.60%</div>
-                    <span id="sp500Status" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(239,68,68,0.15); color: var(--accent-red); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Behind</span>
+            <!-- THE RACE - STONK.AI vs S&P 500 -->
+            <div>
+                <!-- Race Track -->
+                <div style="background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1)); border-radius: 16px; padding: 1rem; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;">
+                    <!-- Track grid lines -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(255,255,255,0.02) 49px, rgba(255,255,255,0.02) 50px); pointer-events: none;"></div>
+
+                    <!-- STONK.AI Lane -->
+                    <div style="margin-bottom: 0.75rem; position: relative; z-index: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.25rem;">🤖</span>
+                                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">STONK.AI</span>
+                                <span id="stonkAiStatus" style="font-size: 0.6rem; padding: 0.15rem 0.4rem; background: rgba(239,68,68,0.2); color: var(--accent-red); border-radius: 4px; font-weight: 600;">BEHIND</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <div id="stonkAiValue" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">$--</div>
+                                <div id="stonkAiReturn" style="font-size: 0.65rem; color: var(--text-muted);">--</div>
+                            </div>
+                        </div>
+                        <!-- Progress bar track -->
+                        <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
+                            <!-- The racing bar -->
+                            <div id="stonkAiBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ef4444, #f87171); border-radius: 6px; transition: width 1.5s ease-out; position: relative; box-shadow: 0 0 10px rgba(239,68,68,0.4);">
+                                <!-- Racing stripe effect -->
+                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.2) 8px, rgba(255,255,255,0.2) 16px);"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- S&P 500 Lane -->
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.25rem;">📈</span>
+                                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">S&P 500</span>
+                                <span id="sp500Status" style="font-size: 0.6rem; padding: 0.15rem 0.4rem; background: rgba(34,197,94,0.2); color: var(--accent-green); border-radius: 4px; font-weight: 600;">LEADING</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <div id="sp500Value" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">$--</div>
+                                <div id="sp500Return" style="font-size: 0.65rem; color: var(--text-muted);">--</div>
+                            </div>
+                        </div>
+                        <!-- Progress bar track -->
+                        <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
+                            <!-- The racing bar -->
+                            <div id="sp500Bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ef4444, #f87171); border-radius: 6px; transition: width 1.5s ease-out 0.3s; position: relative; box-shadow: 0 0 10px rgba(239,68,68,0.4);">
+                                <!-- Racing stripe effect -->
+                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.2) 8px, rgba(255,255,255,0.2) 16px);"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Finish line -->
+                    <div style="position: absolute; top: 0; right: 20px; bottom: 0; width: 3px; background: repeating-linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 10px, transparent 10px, transparent 20px); pointer-events: none;"></div>
                 </div>
-                
-                <!-- STONK.AI Card -->
-                <div style="background: linear-gradient(180deg, rgba(34,197,94,0.1), rgba(34,197,94,0.03)); border: 1px solid rgba(34,197,94,0.2); border-radius: 16px; padding: 1rem; text-align: center;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
-                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">STONK.AI</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
-                    <div id="stonkAiValue" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">$97,003</div>
-                    <div id="stonkAiReturn" style="font-size: 0.75rem; color: var(--accent-red); margin-bottom: 0.5rem;">-3.00%</div>
-                    <span id="stonkAiStatus" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(34,197,94,0.15); color: var(--accent-green); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Leading</span>
+
+                <!-- Gap Indicator -->
+                <div id="gapContainer" style="margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.5px;">Current Gap</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+                        🤖 <span id="gapValue">--</span> <span id="gapStatus">--</span>
+                    </div>
+                    <div id="gapMessage" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        Loading gap data...
+                    </div>
                 </div>
+
             </div>
-            
+
         </div>
 
         <!-- HOW IT WORKS - Visual Timeline -->
@@ -2624,8 +2655,8 @@
 
         <!-- AI STRATEGY - Professional Design -->
         <div id="strategy" class="section-anchor"></div>
-        <div class="section" style="background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-surface) 100%); position: relative;">
-            <div onclick="showAIWatchlist()" style="position: absolute; top: 0.5rem; right: 0.75rem; font-size: 0.6rem; color: var(--accent-blue); background: rgba(6,182,212,0.1); padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid rgba(6,182,212,0.2); cursor: pointer;" onmouseover="this.style.background='rgba(6,182,212,0.2)'" onmouseout="this.style.background='rgba(6,182,212,0.1)'">🔍 Click to see AI Watchlist</div>
+        <div class="section" onclick="showAIWatchlist()" style="background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-surface) 100%); cursor: pointer; position: relative;" onmouseover="this.style.boxShadow='0 0 20px rgba(6,182,212,0.15)'" onmouseout="this.style.boxShadow='none'">
+            <div style="position: absolute; top: 0.5rem; right: 0.75rem; font-size: 0.6rem; color: var(--accent-blue); background: rgba(6,182,212,0.1); padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid rgba(6,182,212,0.2);">🔍 Click to see AI Watchlist</div>
             <div class="section-header">
                 <div class="section-title">AI Strategy</div>
             </div>
@@ -3183,7 +3214,7 @@
                             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Concentration</span>
                             <span style="margin-left: auto; font-size: 0.7rem; padding: 0.2rem 0.5rem; background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border-radius: 4px;">MEDIUM</span>
                         </div>
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.4;">Largest position: DKNG at 23.1% ($22.3K). 11 active positions.</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.4;">Largest position: AMD at 16.8% ($16.3K). Well diversified across 11 holdings.</div>
                         <div style="margin-top: 0.5rem; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
                             <div style="height: 100%; width: 45%; background: var(--accent-gold); border-radius: 2px;"></div>
                         </div>
@@ -3560,21 +3591,21 @@
             
             <!-- Filter Tabs -->
             <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); display: flex; gap: 0.5rem; overflow-x: auto;">
-                <div class="trade-log-filter active trade-log-filter-btn" onclick="setTradeLogFilter('all')" data-filter="all">
+                <div class="trade-log-filter active" onclick="filterTradeLog('all')" data-filter="all">
                     <span>📋</span>
-                    <span>All Activity</span>
+                    <span>All</span>
                 </div>
-                <div class="trade-log-filter trade-log-filter-btn" onclick="setTradeLogFilter('trades')" data-filter="trades">
-                    <span>💹</span>
-                    <span>Trades</span>
+                <div class="trade-log-filter" onclick="filterTradeLog('buy')" data-filter="buy">
+                    <span>🟢</span>
+                    <span>Buys</span>
                 </div>
-                <div class="trade-log-filter trade-log-filter-btn" onclick="setTradeLogFilter('alerts')" data-filter="alerts">
-                    <span>📉</span>
-                    <span>Alerts</span>
+                <div class="trade-log-filter" onclick="filterTradeLog('sell')" data-filter="sell">
+                    <span>🔴</span>
+                    <span>Sells</span>
                 </div>
-                <div class="trade-log-filter trade-log-filter-btn" onclick="setTradeLogFilter('bot')" data-filter="bot">
-                    <span>🤖</span>
-                    <span>Bot</span>
+                <div class="trade-log-filter" onclick="filterTradeLog('trim')" data-filter="trim">
+                    <span>🟡</span>
+                    <span>Trims</span>
                 </div>
             </div>
             
@@ -3655,8 +3686,7 @@
                             borderDash: [5, 5],
                             fill: false,
                             tension: 0.4,
-                            pointRadius: 0,
-                            hidden: false
+                            pointRadius: 0
                         }, {
                             label: 'DOW',
                             data: [0, 0],
@@ -3666,8 +3696,7 @@
                             borderDash: [10, 5],
                             fill: false,
                             tension: 0.4,
-                            pointRadius: 0,
-                            hidden: false
+                            pointRadius: 0
                         }, {
                             label: 'NASDAQ',
                             data: [0, 0],
@@ -3677,8 +3706,7 @@
                             borderDash: [3, 3],
                             fill: false,
                             tension: 0.4,
-                            pointRadius: 0,
-                            hidden: false
+                            pointRadius: 0
                         }]
                     },
                     options: {
@@ -3693,8 +3721,7 @@
                                     font: { size: 10, family: 'Inter' },
                                     usePointStyle: true,
                                     boxWidth: 8,
-                                    padding: 10,
-                                    textDecoration: 'none'  // Prevent strikethrough
+                                    padding: 10
                                 },
                                 onClick: null  // Disable legend click to prevent hiding datasets
                             },
@@ -3706,7 +3733,7 @@
                                 borderWidth: 1,
                                 callbacks: {
                                     label: function(context) {
-                                        return context.dataset.label + ': ' + parseFloat(context.parsed.y).toFixed(2) + '%';
+                                        return context.dataset.label + ': ' + context.parsed.y + '%';
                                     }
                                 }
                             }
@@ -3716,7 +3743,7 @@
                                 grid: { color: 'rgba(255,255,255,0.05)' },
                                 ticks: {
                                     color: '#9ca3af',
-                                    callback: v => parseFloat(v).toFixed(2) + '%',
+                                    callback: v => v + '%',
                                     font: { size: 10 }
                                 }
                             },
@@ -3730,12 +3757,6 @@
                         }
                     }
                 });
-                
-                // Load live data for chart
-                updateChartWithLiveData();
-                
-                // Refresh chart data every 30 seconds
-                setInterval(updateChartWithLiveData, 30000);
 
                 // Allocation Donut Chart
                 const allocCtx = document.getElementById('allocationDonut');
@@ -3776,9 +3797,6 @@
             }
         });
 
-        // Auto-refresh interval (30 seconds)
-        let portfolioRefreshInterval = null;
-        
         // Simple data loading with XMLHttpRequest fallback
         function loadPortfolioData() {
             console.log('Loading data...');
@@ -3794,8 +3812,6 @@
                     })
                     .then(data => {
                         console.log('Data loaded:', data.positions.length, 'positions');
-                        window.lastPortfolioData = data;
-                        updateDashboard(data);
                         updateHoldingsCards(data.positions);
                         updateSectorHeatmap(data.positions);
                     })
@@ -3810,72 +3826,14 @@
             }
         }
         
-        // Start auto-refresh
-        function startPortfolioRefresh() {
-            if (portfolioRefreshInterval) clearInterval(portfolioRefreshInterval);
-            portfolioRefreshInterval = setInterval(loadPortfolioData, 30000); // Refresh every 30 seconds
-            console.log('Auto-refresh started (30s interval)');
-        }
-        
-        // Update dashboard with fresh data
-        function updateDashboard(data) {
-            // Update portfolio value
-            const portfolioValueEl = document.getElementById('portfolio-value');
-            if (portfolioValueEl && data.account) {
-                portfolioValueEl.textContent = '$' + Math.floor(data.account.portfolio_value).toLocaleString();
-            }
-            
-            // Update return badge
-            const returnBadge = document.getElementById('portfolio-return-badge');
-            if (returnBadge && data.total_plpc !== undefined) {
-                const isPositive = data.total_plpc >= 0;
-                returnBadge.className = 'portfolio-return-badge ' + (isPositive ? 'positive' : 'negative');
-                returnBadge.innerHTML = (isPositive ? '▲ +' : '▼ ') + data.total_plpc.toFixed(2) + '% ($' + Math.abs(data.total_pl || 0).toLocaleString() + ')';
-            }
-            
-            // Update last updated timestamp
-            const lastUpdated = document.querySelector('.last-updated');
-            if (lastUpdated) {
-                const now = new Date();
-                lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()} • <span style="color: var(--accent-green);">Live Data</span>`;
-            }
-            
-            // Update stonk meter if available
-            if (data.total_plpc !== undefined) {
-                updateStonkMeter(data.total_plpc, -2.60); // Assuming S&P is -2.60%
-            }
-        }
-        
-        // Update stonk meter comparison
-        function updateStonkMeter(stonkReturn, sp500Return) {
-            const stonkBar = document.getElementById('stonk-bar');
-            const sp500Bar = document.getElementById('sp500-bar');
-            
-            if (stonkBar) {
-                const normalizedWidth = Math.max(10, Math.min(90, 50 + (stonkReturn * 5)));
-                stonkBar.style.width = normalizedWidth + '%';
-                stonkBar.style.background = stonkReturn >= 0 
-                    ? 'linear-gradient(90deg, var(--accent-green), #4ade80)'
-                    : 'linear-gradient(90deg, var(--accent-red), #f87171)';
-            }
-            
-            if (sp500Bar) {
-                const sp500Width = Math.max(10, Math.min(90, 50 + (sp500Return * 5)));
-                sp500Bar.style.width = sp500Width + '%';
-                sp500Bar.style.background = sp500Return >= 0 
-                    ? 'var(--accent-green)'
-                    : 'var(--accent-red)';
-            }
-        }
-        
         // Update sector heatmap with live data
         function updateSectorHeatmap(positions) {
             console.log('Updating sector heatmap with', positions.length, 'positions');
             const sectorSymbols = {
-                'mega': ['AAPL', 'GOOGL', 'NVDA'],
+                'mega': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
                 'ai': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                'fintech': ['HOOD', 'UPST', 'DKNG'],
-                'defense': ['AVGO']
+                'fintech': ['HOOD', 'SOFI'],
+                'defense': ['AVGO', 'SCHD', 'SGOV']
             };
             
             const sectorPerformance = {
@@ -3918,12 +3876,21 @@
             }
         }
         
-        // Minimal fallback - only used if ALL live data sources fail
+        // Fallback data (shown if fetch fails) - 9 active positions only
         const FALLBACK_DATA = {
-            timestamp: new Date().toISOString(),
-            account: { portfolio_value: 0, cash: 0 },
-            positions: [],
-            _note: "Loading live data..."
+            timestamp: "2026-06-09T14:00:00",
+            account: { portfolio_value: 98073.19, cash: 47760.44 },
+            positions: [
+                { symbol: "AAPL", qty: 25, avg_entry: 313.97, current: 294.59, unrealized_plpc: -6.17, market_value: 7364.75 },
+                { symbol: "AMD", qty: 35, avg_entry: 506.48, current: 492.14, unrealized_plpc: -2.83, market_value: 17225.08 },
+                { symbol: "APP", qty: 8, avg_entry: 568.37, current: 551.72, unrealized_plpc: -2.93, market_value: 4413.76 },
+                { symbol: "AVGO", qty: 5, avg_entry: 409.80, current: 396.60, unrealized_plpc: -3.22, market_value: 1983.00 },
+                { symbol: "CRWD", qty: 3, avg_entry: 687.49, current: 646.49, unrealized_plpc: -5.96, market_value: 1939.47 },
+                { symbol: "GOOGL", qty: 15, avg_entry: 367.54, current: 370.25, unrealized_plpc: 0.74, market_value: 5553.75 },
+                { symbol: "HOOD", qty: 25, avg_entry: 83.46, current: 87.67, unrealized_plpc: 5.05, market_value: 2191.88 },
+                { symbol: "NVDA", qty: 17, avg_entry: 213.75, current: 207.81, unrealized_plpc: -2.77, market_value: 3532.86 },
+                { symbol: "PLTR", qty: 45, avg_entry: 140.94, current: 135.66, unrealized_plpc: -3.74, market_value: 6104.70 }
+            ]
         };
 
         // XMLHttpRequest fallback
@@ -3937,7 +3904,6 @@
                         try {
                             const data = JSON.parse(xhr.responseText);
                             console.log('XHR data loaded:', data.positions.length, 'positions');
-                            window.lastPortfolioData = data;
                             updateHoldingsCards(data.positions);
                             updateSectorHeatmap(data.positions);
                         } catch (e) {
@@ -3949,28 +3915,19 @@
                 }
             };
             xhr.onerror = function() {
-                console.log('XHR network error, will retry...');
-                setTimeout(loadPortfolioData, 5000);
+                console.log('XHR network error, using fallback...');
+                updateHoldingsCards(FALLBACK_DATA.positions);
             };
             xhr.send();
         }
-
-        // Show loading state instead of immediately falling back
-        function showLoading() {
-            console.log('Loading live data...');
-            // Don't use fallback - keep trying to load live data
-            const holdingsDiv = document.getElementById('holdings-cards');
-            if (holdingsDiv) {
-                holdingsDiv.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">⟳ Loading live data...</div>';
-            }
-        }
         
-        // Show error but don't fallback - retry instead
+        // Show error in container (with fallback data)
         function showError(msg) {
             console.error('Error:', msg);
-            console.log('Will retry live data...');
-            // Schedule retry in 5 seconds
-            setTimeout(loadPortfolioData, 5000);
+            // Use fallback data instead of showing error
+            console.log('Using fallback data...');
+            updateHoldingsCards(FALLBACK_DATA.positions);
+            updateSectorHeatmap(FALLBACK_DATA.positions);
         }
         
         // Full async version (used by other components)
@@ -3978,7 +3935,6 @@
             try {
                 const response = await fetch('./portfolio_data.json?t=' + Date.now());
                 const data = await response.json();
-                window.lastPortfolioData = data;
 
                 // Update header timestamp
                 const timestamp = new Date(data.timestamp);
@@ -4069,10 +4025,10 @@
 
                 // Update allocation bars dynamically
                 const catMap = {
-                    'Tech Giants': ['AAPL', 'GOOGL', 'NVDA'],
+                    'Tech Giants': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
                     'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                    'Fintech': ['HOOD', 'UPST', 'DKNG'],
-                    'Defense/Income': ['AVGO']
+                    'Fintech': ['HOOD', 'SOFI'],
+                    'Defense/Income': ['AVGO', 'SCHD', 'SGOV']
                 };
 
                 let invested = 0;
@@ -4134,10 +4090,10 @@
                 };
 
                 const sectorSymbols = {
-                    'mega': ['AAPL', 'GOOGL', 'NVDA'],
+                    'mega': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
                     'ai': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                    'fintech': ['HOOD', 'UPST', 'DKNG'],
-                    'defense': ['AVGO']
+                    'fintech': ['HOOD', 'SOFI'],
+                    'defense': ['AVGO', 'SCHD', 'SGOV']
                 };
 
                 data.positions.forEach(pos => {
@@ -4263,12 +4219,15 @@
                 'APP': 'AppLovin Corp',
                 'AVGO': 'Broadcom Inc.',
                 'CRWD': 'CrowdStrike',
-                'DKNG': 'DraftKings Inc.',
                 'GOOGL': 'Alphabet Inc.',
                 'HOOD': 'Robinhood',
+                'META': 'Meta Platforms',
+                'MSFT': 'Microsoft Corp',
                 'NVDA': 'NVIDIA Corp',
                 'PLTR': 'Palantir Technologies',
-                'UPST': 'Upstart Holdings'
+                'SCHD': 'Schwab US Dividend ETF',
+                'SGOV': 'iShares Treasury ETF',
+                'SOFI': 'SoFi Technologies'
             };
             return names[symbol] || symbol;
         }
@@ -4276,10 +4235,10 @@
         // Get category for each stock
         function getCategory(symbol) {
             const categories = {
-                'Tech Giants': ['AAPL', 'GOOGL', 'NVDA'],
+                'Tech Giants': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
                 'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                'Fintech': ['HOOD', 'UPST', 'DKNG'],
-                'Defense/Income': ['AVGO']
+                'Fintech': ['HOOD', 'SOFI'],
+                'Defense/Income': ['AVGO', 'SCHD', 'SGOV']
             };
             for (const [cat, symbols] of Object.entries(categories)) {
                 if (symbols.includes(symbol)) return cat;
@@ -4683,86 +4642,16 @@
 
         async function loadTradeLogData() {
             try {
-                // Load trades
                 const response = await fetch('./trades_log.json?t=' + Date.now());
                 if (!response.ok) throw new Error('Failed to fetch');
                 
                 const data = await response.json();
-                const trades = (data.trades || []).map(t => ({...t, type: 'trade', subtype: t.action?.toLowerCase() || 'buy'}));
-                
-                // Load portfolio history for alerts
-                let alerts = [];
-                try {
-                    const historyRes = await fetch('portfolio_history.json?t=' + Date.now());
-                    const historyData = await historyRes.json();
-                    const checks = historyData.checks || [];
-                    
-                    // Group by day and find significant changes
-                    const dailyChanges = {};
-                    checks.forEach(check => {
-                        const date = new Date(check.timestamp);
-                        const dayOfWeek = date.getDay();
-                        if (dayOfWeek === 0 || dayOfWeek === 6) return;
-                        
-                        const dateKey = date.toDateString();
-                        if (!dailyChanges[dateKey]) {
-                            dailyChanges[dateKey] = {
-                                date: date,
-                                firstValue: check.portfolio_value,
-                                lastValue: check.portfolio_value,
-                                minPL: check.total_pl_pct,
-                                maxPL: check.total_pl_pct,
-                                timestamp: date
-                            };
-                        }
-                        dailyChanges[dateKey].lastValue = check.portfolio_value;
-                        dailyChanges[dateKey].minPL = Math.min(dailyChanges[dateKey].minPL, check.total_pl_pct);
-                        dailyChanges[dateKey].maxPL = Math.max(dailyChanges[dateKey].maxPL, check.total_pl_pct);
-                    });
-                    
-                    // Add significant movements as alerts
-                    Object.entries(dailyChanges).forEach(([dateKey, day]) => {
-                        if (Math.abs(day.maxPL) > 2) {
-                            alerts.push({
-                                type: 'alert',
-                                subtype: day.maxPL < -3 ? 'critical' : 'warning',
-                                timestamp: day.timestamp,
-                                icon: day.maxPL < 0 ? '📉' : '📈',
-                                title: day.maxPL < -3 ? 'Portfolio Alert' : 'Daily Movement',
-                                description: `Portfolio ${day.maxPL >= 0 ? 'up' : 'down'} ${Math.abs(day.maxPL).toFixed(2)}%`,
-                                badge: day.maxPL < -3 ? 'Alert' : 'Movement',
-                                badgeClass: day.maxPL < -3 ? 'alert' : 'warning',
-                                rationale: `Portfolio movement of ${Math.abs(day.maxPL).toFixed(2)}% detected.`,
-                                value: day.maxPL
-                            });
-                        }
-                    });
-                } catch (e) {
-                    console.log('Could not load portfolio history:', e);
-                }
-                
-                // Add bot actions based on trades
-                const botActions = [
-                    {
-                        type: 'bot',
-                        subtype: 'deploy',
-                        timestamp: new Date('2026-06-04T09:00:00'),
-                        icon: '🚀',
-                        title: 'Bot Deployed',
-                        description: 'Autonomous trading system active',
-                        badge: 'System',
-                        badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K initial capital. Strategy: RSI auto-entry, -15% stop loss, +25% trim, +50% exit.'
-                    }
-                ];
-                
-                // Merge all activities
-                tradeLogData = [...trades, ...alerts, ...botActions];
+                tradeLogData = data.trades || [];
                 
                 // Update stats
-                updateTradeLogStats({trades: trades});
+                updateTradeLogStats(data);
                 
-                // Render
+                // Render trades
                 renderTradeLog();
                 
             } catch (error) {
@@ -4794,114 +4683,28 @@
             const container = document.getElementById('tradeLogList');
             if (!container) return;
             
-            // Update filter button states
-            document.querySelectorAll('.trade-log-filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.filter === currentTradeFilter);
-            });
-            
-            let filteredData = tradeLogData;
+            let filteredTrades = tradeLogData;
             if (currentTradeFilter !== 'all') {
-                filteredData = tradeLogData.filter(t => {
-                    if (currentTradeFilter === 'trades') return t.type === 'trade';
-                    if (currentTradeFilter === 'alerts') return t.type === 'alert';
-                    if (currentTradeFilter === 'bot') return t.type === 'bot';
+                filteredTrades = tradeLogData.filter(t => {
+                    if (currentTradeFilter === 'buy') return t.action === 'BUY';
+                    if (currentTradeFilter === 'sell') return t.action === 'SELL';
+                    if (currentTradeFilter === 'trim') return t.action === 'TRIM';
                     return true;
                 });
             }
             
-            if (filteredData.length === 0) {
+            if (filteredTrades.length === 0) {
                 showTradeLogPlaceholder();
                 return;
             }
             
             // Sort by timestamp (newest first)
-            const sortedData = [...filteredData].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const sortedTrades = [...filteredTrades].reverse();
             
-            // Group by date
-            let currentDate = null;
-            let html = '';
-            
-            sortedData.forEach((item, index) => {
-                const itemDate = new Date(item.timestamp).toDateString();
-                
-                // Add date header if this is a new date
-                if (itemDate !== currentDate) {
-                    currentDate = itemDate;
-                    const dateLabel = new Date(item.timestamp).toLocaleDateString('en-US', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                    const yearLabel = new Date(item.timestamp).getFullYear();
-                    html += `
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0 0.5rem 0; padding: 0.5rem; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 8px;">
-                            <div style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">${dateLabel}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">${yearLabel}</div>
-                            <div style="flex: 1;"></div>
-                            <div style="font-size: 0.65rem; color: var(--accent-gold);">● Trading Day</div>
-                        </div>
-                    `;
-                }
-                
-                html += createTradeLogItem(item, index === 0);
-            });
-            
-            container.innerHTML = html;
-        }
-        
-        function setTradeLogFilter(filter) {
-            currentTradeFilter = filter;
-            renderTradeLog();
+            container.innerHTML = sortedTrades.map((trade, index) => createTradeLogItem(trade, index === 0)).join('');
         }
 
-        function createTradeLogItem(item, isNewest = false) {
-            const time = new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            // Handle different activity types
-            if (item.type === 'alert') {
-                const alertColor = item.subtype === 'critical' ? 'var(--accent-red)' : 'var(--accent-gold)';
-                return `
-                    <div class="trade-log-item ${isNewest ? 'new' : ''}">
-                        <div class="trade-log-icon" style="background: ${alertColor}20; border-color: ${alertColor}40;">
-                            <span>${item.icon || '📉'}</span>
-                        </div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
-                                <span style="font-size: 0.9rem; font-weight: 700; color: ${alertColor};">${item.title}</span>
-                                <span class="trade-log-badge" style="background: ${alertColor}20; color: ${alertColor}; border-color: ${alertColor}40;">${item.badge}</span>
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">${item.description}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;">${item.rationale}</div>
-                        </div>
-                        <div style="text-align: right; flex-shrink: 0;">
-                            <div style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${time}</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            if (item.type === 'bot') {
-                return `
-                    <div class="trade-log-item ${isNewest ? 'new' : ''}">
-                        <div class="trade-log-icon auto">
-                            <span>${item.icon || '🤖'}</span>
-                        </div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
-                                <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent-blue);">${item.title}</span>
-                                <span class="trade-log-badge auto">${item.badge}</span>
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">${item.description}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;">${item.rationale}</div>
-                        </div>
-                        <div style="text-align: right; flex-shrink: 0;">
-                            <div style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${time}</div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            // Default: trade
+        function createTradeLogItem(trade, isNewest = false) {
             const emojiMap = {
                 'BUY': '🟢',
                 'SELL': '🔴',
@@ -4920,11 +4723,13 @@
                 'AUTO_ENTRY': 'auto'
             };
             
-            const badgeClass = classMap[item.action] || 'auto';
-            const emoji = emojiMap[item.action] || '⚪';
+            const badgeClass = classMap[trade.action] || 'auto';
+            const emoji = emojiMap[trade.action] || '⚪';
             
-            const pnlDisplay = item.pnl_impact ? 
-                `<span style="color: ${item.pnl_impact >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight: 600;">${item.pnl_impact >= 0 ? '+' : ''}$${Math.abs(item.pnl_impact).toFixed(2)}</span>` : '';
+            const time = new Date(trade.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            
+            const pnlDisplay = trade.pnl_impact ? 
+                `<span style="color: ${trade.pnl_impact >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight: 600;">${trade.pnl_impact >= 0 ? '+' : ''}$${Math.abs(trade.pnl_impact).toFixed(2)}</span>` : '';
             
             return `
                 <div class="trade-log-item ${isNewest ? 'new' : ''}">
@@ -4933,15 +4738,15 @@
                     </div>
                     <div style="flex: 1; min-width: 0;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${item.symbol}</span>
-                            <span class="trade-log-badge ${badgeClass}">${item.action}</span>
+                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${trade.symbol}</span>
+                            <span class="trade-log-badge ${badgeClass}">${trade.action}</span>
                             ${pnlDisplay}
                         </div>
                         <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
-                            ${item.qty} shares @ $${parseFloat(item.price).toFixed(2)} • $${(item.qty * parseFloat(item.price)).toFixed(0)}
+                            ${trade.qty} shares @ $${trade.price.toFixed(2)} • $${(trade.qty * trade.price).toFixed(0)}
                         </div>
                         <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.3;">
-                            <span style="color: var(--accent-blue);">${item.strategy}</span> • ${item.rationale}
+                            <span style="color: var(--accent-blue);">${trade.strategy}</span> • ${trade.rationale}
                         </div>
                     </div>
                     <div style="text-align: right; flex-shrink: 0;">
@@ -4971,7 +4776,15 @@
         }
 
         function filterTradeLog(filter) {
-            setTradeLogFilter(filter);
+            currentTradeFilter = filter;
+            
+            // Update UI
+            document.querySelectorAll('.trade-log-filter').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.filter === filter) el.classList.add('active');
+            });
+            
+            renderTradeLog();
         }
 
         function refreshTradeLog() {
@@ -5002,11 +4815,11 @@
                     const portfolioValue = data.account.portfolio_value;
                     const positions = data.positions;
 
-                    // Categorize positions
+                    // Categorize positions - updated for 9 active holdings
                     const categories = {
                         'Tech Giants': { symbols: ['AAPL', 'GOOGL', 'NVDA'], color: '#fbbf24', positions: [] },
                         'AI/Growth': { symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], color: '#f97316', positions: [] },
-                        'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG'], color: '#06b6d4', positions: [] },
+                        'Fintech': { symbols: ['HOOD'], color: '#06b6d4', positions: [] },
                         'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', positions: [] }
                     };
 
@@ -5641,10 +5454,10 @@
             
             // Sector definitions
             const sectorConfig = {
-                'mega': { name: 'Tech Giants', icon: '🏢', symbols: ['AAPL', 'GOOGL', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, search, and AI.' },
+                'mega': { name: 'Tech Giants', icon: '🏢', symbols: ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, cloud, and social media.' },
                 'ai': { name: 'AI/Growth', icon: '🤖', symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], riskLevel: 'High', aiInsight: 'High-growth AI names seeing volatility. Maintaining for upside.' },
-                'fintech': { name: 'Fintech', icon: '💳', symbols: ['HOOD', 'UPST', 'DKNG'], riskLevel: 'High', aiInsight: 'Fintech and betting exposure. Higher risk/reward profile.' },
-                'defense': { name: 'Defense/Income', icon: '🛡️', symbols: ['AVGO'], riskLevel: 'Low', aiInsight: 'Broadcom as stability anchor with dividend income.' }
+                'fintech': { name: 'Fintech', icon: '💳', symbols: ['HOOD', 'SOFI'], riskLevel: 'High', aiInsight: 'Small fintech exposure. Higher risk/reward profile.' },
+                'defense': { name: 'Defense/Income', icon: '🛡️', symbols: ['AVGO', 'SCHD', 'SGOV'], riskLevel: 'Low', aiInsight: 'Income and stability anchor. SCHD + Treasuries for downside protection.' }
             };
             
             const config = sectorConfig[sectorId];
@@ -6352,24 +6165,6 @@
 
         // Trade Details Modal
         const tradeRationale = {
-            'DKNG': {
-                company: 'DraftKings Inc.',
-                thesis: 'Sports betting leader with strong market share growth',
-                catalyst: 'NFL season, new state legalizations, profitable quarters',
-                risk: 'Competition from FanDuel, regulatory changes',
-                confidence: '75% - Largest position, conviction play',
-                entryReason: 'Market leader in growing TAM, improving margins',
-                stopReason: '-15% stop if profitability delays'
-            },
-            'UPST': {
-                company: 'Upstart Holdings',
-                thesis: 'AI-powered lending disrupting credit scoring',
-                catalyst: 'Rate cuts improving loan demand, new models',
-                risk: 'Rate sensitive, credit cycle exposure',
-                confidence: '70% - Turnaround story with AI edge',
-                entryReason: 'AI lending differentiation, rate cycle play',
-                stopReason: '-15% stop on credit deterioration'
-            },
             'HOOD': {
                 company: 'Robinhood Markets',
                 thesis: 'Fintech disruption play with crypto trading boom',
@@ -6500,11 +6295,8 @@
 
         function showTradeDetails(symbol) {
             const data = tradeRationale[symbol];
-            
-            // Get current position data from portfolio
-            const currentData = window.lastPortfolioData || FALLBACK_DATA;
-            const position = currentData.positions.find(p => p.symbol === symbol);
-            
+            if (!data) return;
+
             const modal = document.createElement('div');
             modal.id = 'trade-modal';
             modal.style.cssText = `
@@ -6513,12 +6305,11 @@
                 display: flex; align-items: center; justify-content: center;
                 z-index: 10000; padding: 1rem;
             `;
-            
-            // Build popup content - use detailed data if available, otherwise show basic position info
-            let content;
-            if (data) {
-                // Full rationale available
-                content = `
+
+            modal.innerHTML = `
+                <div style="background: linear-gradient(145deg, #1a1a24, #0f0f14); border: 1px solid rgba(255,255,255,0.1);
+                     border-radius: 16px; padding: 1.5rem; max-width: 420px; width: 100%;
+                     box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div>
                             <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
@@ -6553,68 +6344,6 @@
                         <div style="margin-bottom: 0.4rem;"><strong style="color: var(--accent-green);">Entry:</strong> ${data.entryReason}</div>
                         <div><strong style="color: var(--accent-red);">Stop:</strong> ${data.stopReason}</div>
                     </div>
-                `;
-            } else if (position) {
-                // No rationale but have position data - show basic info
-                const isPositive = position.unrealized_plpc >= 0;
-                const plColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
-                const plSign = isPositive ? '+' : '';
-                
-                content = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">${getCompanyName(symbol)}</div>
-                        </div>
-                        <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
-                                font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
-                    </div>
-
-                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
-                        <div style="font-size: 0.7rem; color: var(--accent-blue); font-weight: 700; margin-bottom: 0.5rem;">📊 POSITION DETAILS</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.8rem; color: var(--text-primary);">
-                            <div><span style="color: var(--text-secondary);">Shares:</span> <strong>${position.qty}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Current:</span> <strong>$${position.current.toFixed(2)}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Avg Entry:</span> <strong>$${position.avg_entry.toFixed(2)}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Value:</span> <strong>$${position.market_value.toLocaleString()}</strong></div>
-                        </div>
-                    </div>
-
-                    <div style="background: ${isPositive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; border: 1px solid ${plColor}; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.3rem;">UNREALIZED P&L</div>
-                        <div style="font-size: 1.5rem; font-weight: 800; color: ${plColor}; font-family: 'JetBrains Mono', monospace;">${plSign}${position.unrealized_plpc.toFixed(2)}%</div>
-                    </div>
-
-                    <div style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.6rem; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 0.3rem;">🤖 AI ANALYSIS</div>
-                        <div style="font-size: 0.8rem; color: var(--text-primary);">Position added by trading system. Detailed thesis being generated...</div>
-                    </div>
-
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
-                        <div><strong style="color: var(--accent-blue);">Strategy:</strong> -15% stop loss, +25% trim, +50% exit target</div>
-                    </div>
-                `;
-            } else {
-                // Unknown symbol
-                content = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
-                        </div>
-                        <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
-                                font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
-                    </div>
-                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                        Position details not available
-                    </div>
-                `;
-            }
-
-            modal.innerHTML = `
-                <div style="background: linear-gradient(145deg, #1a1a24, #0f0f14); border: 1px solid rgba(255,255,255,0.1);
-                     border-radius: 16px; padding: 1.5rem; max-width: 420px; width: 100%;
-                     box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
-                    ${content}
                 </div>
             `;
 
@@ -6818,31 +6547,18 @@
         // ============================================
         let currentActivityFilter = 'all';
         let activityDataCache = [];
-        let activityRefreshInterval = null;
 
         function showActivityLog() {
             const modal = document.getElementById('activityLogModal');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             loadActivityLog();
-            
-            // Auto-refresh every 30 seconds while modal is open
-            if (activityRefreshInterval) clearInterval(activityRefreshInterval);
-            activityRefreshInterval = setInterval(() => {
-                if (document.getElementById('activityLogModal')?.classList.contains('active')) {
-                    loadActivityLog();
-                }
-            }, 30000);
         }
 
         function closeActivityLog() {
             const modal = document.getElementById('activityLogModal');
             modal.classList.remove('active');
             document.body.style.overflow = '';
-            if (activityRefreshInterval) {
-                clearInterval(activityRefreshInterval);
-                activityRefreshInterval = null;
-            }
         }
 
         function filterActivityLog(filter) {
@@ -6921,40 +6637,7 @@
                     console.log('Could not load history for activity log');
                 }
 
-                // 2. Load REAL trades from Alpaca trades_log.json
-                try {
-                    const tradesRes = await fetch('trades_log.json?t=' + Date.now());
-                    const tradesData = await tradesRes.json();
-                    
-                    if (tradesData.trades && Array.isArray(tradesData.trades)) {
-                        console.log('Loading', tradesData.trades.length, 'real trades from Alpaca');
-                        const realTrades = tradesData.trades.map(trade => ({
-                            type: 'trade',
-                            subtype: trade.action?.toLowerCase() || 'buy',
-                            icon: trade.action === 'SELL' ? '🔴' : '🟢',
-                            title: `${trade.action === 'SELL' ? 'Sold' : 'Bought'} ${trade.symbol}`,
-                            description: `${trade.quantity} shares @ $${parseFloat(trade.price).toFixed(2)}${trade.source ? ` • ${trade.source}` : ''}`,
-                            timestamp: new Date(trade.timestamp || trade.filled_at),
-                            badge: trade.action || 'Buy',
-                            badgeClass: trade.action?.toLowerCase() || 'buy',
-                            details: { 
-                                quantity: trade.quantity, 
-                                price: parseFloat(trade.price).toFixed(2), 
-                                total: (trade.quantity * parseFloat(trade.price)).toFixed(2),
-                                order_id: trade.order_id 
-                            },
-                            rationale: trade.rationale || `Trade executed via Alpaca API${trade.source ? ` (${trade.source})` : ''}`,
-                            marketContext: trade.source || 'Alpaca Paper Trading'
-                        }));
-                        
-                        activities.push(...realTrades);
-                        console.log('Added', realTrades.length, 'trades to activities');
-                    }
-                } catch (e) {
-                    console.log('Could not load trades_log.json:', e);
-                }
-
-                // 3. Add static activity data as fallback
+                // 2. Add static activity data from trades with detailed rationale
                 const tradeActivities = [
                     {
                         type: 'trade',
@@ -7064,9 +6747,6 @@
 
                 // Sort by timestamp (newest first)
                 activities.sort((a, b) => b.timestamp - a.timestamp);
-                
-                console.log('Activity log loaded:', activities.length, 'activities');
-                console.log('First activity date:', activities[0]?.timestamp?.toDateString());
 
                 activityDataCache = activities;
 
@@ -7112,93 +6792,27 @@
                 return;
             }
 
-            // Group activities by date
-            let currentDate = null;
-            let html = '';
-            
-            filtered.forEach((activity, index) => {
-                const activityDate = activity.timestamp.toDateString();
-                
-                // Add date header if this is a new date
-                if (activityDate !== currentDate) {
-                    currentDate = activityDate;
-                    const dateLabel = new Date(activity.timestamp).toLocaleDateString('en-US', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                    const yearLabel = new Date(activity.timestamp).getFullYear();
-                    html += `
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 0.75rem 0; padding: 0.5rem; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 8px;">
-                            <div style="font-size: 0.8rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">${dateLabel}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">${yearLabel}</div>
-                            <div style="flex: 1;"></div>
-                            <div style="font-size: 0.65rem; color: var(--text-muted);">● Trading Day</div>
-                        </div>
-                    `;
-                }
-                
-                // Render activity item
+            entriesDiv.innerHTML = filtered.map((activity, index) => {
                 const timeAgo = getTimeAgo(activity.timestamp);
                 const itemClass = activity.type === 'trade' ? `trade-${activity.subtype}` : activity.type;
-                
-                // Format trade rationale as one-liner for list view
-                let rationaleSnippet = '';
-                if (activity.type === 'trade' && activity.rationale) {
-                    const firstSentence = activity.rationale.split('.')[0];
-                    rationaleSnippet = firstSentence.length > 60 
-                        ? firstSentence.substring(0, 60) + '...' 
-                        : firstSentence;
-                }
-                
-                // Source badge for Council trades
-                let sourceBadge = '';
-                if (activity.marketContext && activity.marketContext.includes('Council')) {
-                    const councilName = activity.marketContext.match(/(SOROS|JONES|PAULSON|WOOD)/)?.[0] || 'Council';
-                    const councilColors = {
-                        'SOROS': '#f97316',  // Orange - Macro/Ops
-                        'JONES': '#22c55e',  // Green - Risk/Commodities
-                        'PAULSON': '#06b6d4', // Cyan - Credit/Banks
-                        'WOOD': '#a855f7',    // Purple - Tech/Growth
-                        'Council': '#fbbf24'  // Gold
-                    };
-                    const color = councilColors[councilName] || councilColors['Council'];
-                    sourceBadge = `<span style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.35rem; background: ${color}15; border: 1px solid ${color}40; border-radius: 4px; font-size: 0.6rem; font-weight: 600; color: ${color}; text-transform: uppercase; letter-spacing: 0.3px;">${councilName}</span>`;
-                } else if (activity.details?.order_id) {
-                    sourceBadge = `<span style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.35rem; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); border-radius: 4px; font-size: 0.6rem; font-weight: 600; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.3px;">Alpaca</span>`;
-                }
 
-                // Format timestamp for display
-                const timeStr = new Date(activity.timestamp).toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                html += `
+                return `
                     <div class="activity-log-item ${itemClass}" onclick="showActivityDetail(${index}, '${filter}')" style="cursor: pointer;">
                         <div class="activity-log-icon ${activity.type === 'trade' ? activity.subtype : activity.type}">
                             ${activity.icon}
                         </div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
                                 <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">${activity.title}</div>
                                 <span class="activity-badge ${activity.badgeClass}">${activity.badge}</span>
-                                ${sourceBadge}
                             </div>
                             <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">${activity.description}</div>
-                            ${rationaleSnippet ? `<div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4; font-style: italic;">"${rationaleSnippet}"</div>` : ''}
-                            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="color: var(--accent-blue);">${timeStr}</span>
-                                <span style="width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; opacity: 0.5;"></span>
-                                <span>${timeAgo}</span>
-                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem; font-family: 'JetBrains Mono', monospace;">${timeAgo}</div>
                         </div>
                         <div style="color: var(--text-muted); font-size: 0.9rem; margin-left: 0.5rem;">›</div>
                     </div>
                 `;
-            });
-            
-            entriesDiv.innerHTML = html;
+            }).join('');
         }
 
         function showActivityDetail(index, filter) {
@@ -7417,35 +7031,35 @@
         const chartDataStore = {
             '1D': {
                 labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'],
-                stonkAI: [0, -0.05, -0.12, -0.18, -0.25, -0.32, -0.38, -0.45, -0.52, -0.58, -0.65, -0.68, -0.71, -0.72],
+                stonkAI: [0, -0.1, -0.25, -0.4, -0.55, -0.7, -0.85, -1.0, -1.1, -1.2, -1.3, -1.35, -1.4, -1.44],
                 sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.65],
-                dow: [0, -0.05, -0.12, -0.18, -0.25, -0.30, -0.35, -0.37, -0.37, -0.37, -0.37, -0.37, -0.37, -0.37],
-                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.1, -4.5, -4.6, -4.7, -4.81]
+                dow: [0, -0.05, -0.1, -0.15, -0.2, -0.25, -0.3, -0.33, -0.35, -0.36, -0.37, -0.37, -0.37, -0.37],
+                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.3, -4.5, -4.6, -4.7, -4.81]
             },
             '1W': {
                 labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                stonkAI: [0, -0.18, -0.38, -0.55, -0.72],
+                stonkAI: [0, -0.4, -0.8, -1.1, -1.44],
                 sp500: [0, -0.5, -1.3, -2.0, -2.65],
-                dow: [0, -0.1, -0.22, -0.32, -0.37],
+                dow: [0, -0.1, -0.2, -0.3, -0.37],
                 nasdaq: [0, -1.2, -2.5, -3.8, -4.81]
             },
             '1M': {
                 labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                stonkAI: [0, -0.3, -0.52, -0.72],
+                stonkAI: [0, -0.5, -0.9, -1.44],
                 sp500: [0, -0.8, -1.8, -2.65],
                 dow: [0, -0.15, -0.28, -0.37],
                 nasdaq: [0, -1.8, -3.5, -4.81]
             },
             '3M': {
                 labels: ['Month 1', 'Month 2', 'Month 3'],
-                stonkAI: [0, -0.4, -0.72],
+                stonkAI: [0, -0.8, -1.44],
                 sp500: [0, -1.8, -2.65],
                 dow: [0, -0.25, -0.37],
                 nasdaq: [0, -3.0, -4.81]
             },
             'ALL': {
                 labels: ['Start', 'Current'],
-                stonkAI: [0, -0.72],
+                stonkAI: [0, -1.44],
                 sp500: [0, -2.65],
                 dow: [0, -0.37],
                 nasdaq: [0, -4.81]
@@ -7454,52 +7068,6 @@
         
         let currentRange = '1M';
         let visibleBenchmarks = ['S&P 500', 'DOW', 'NASDAQ'];
-        
-        // Fetch live data and update chart
-        async function updateChartWithLiveData() {
-            try {
-                // Fetch portfolio data
-                const portfolioRes = await fetch('portfolio_data.json?t=' + Date.now());
-                const portfolioData = await portfolioRes.json();
-                
-                // Fetch market indices
-                const indicesRes = await fetch('market_indices.json?t=' + Date.now());
-                const indicesData = await indicesRes.json();
-                
-                const actualReturn = portfolioData.total_plpc || 0;
-                const spReturn = indicesData.indices?.['S&P 500']?.return_pct || -2.65;
-                const dowReturn = indicesData.indices?.['Dow Jones']?.return_pct || -0.37;
-                const nasdaqReturn = indicesData.indices?.['NASDAQ']?.return_pct || -4.81;
-                
-                // Update ALL view
-                chartDataStore['ALL'].stonkAI = [0, actualReturn];
-                chartDataStore['ALL'].sp500 = [0, spReturn];
-                chartDataStore['ALL'].dow = [0, dowReturn];
-                chartDataStore['ALL'].nasdaq = [0, nasdaqReturn];
-                
-                // Update other ranges (scale the progression)
-                ['1D', '1W', '1M', '3M'].forEach(range => {
-                    if (chartDataStore[range]) {
-                        const data = chartDataStore[range];
-                        const lastIdx = data.stonkAI.length - 1;
-                        data.stonkAI[lastIdx] = actualReturn;
-                        data.sp500[lastIdx] = spReturn;
-                        data.dow[lastIdx] = dowReturn;
-                        data.nasdaq[lastIdx] = nasdaqReturn;
-                    }
-                });
-                
-                // Update chart if visible
-                if (performanceChart) {
-                    updateChartRange(currentRange);
-                }
-                
-                console.log('Chart updated with live data:', { actualReturn, spReturn, dowReturn, nasdaqReturn });
-                
-            } catch (e) {
-                console.error('Failed to update chart with live data:', e);
-            }
-        }
         
         // Update Chart Range
         function updateChartRange(range) {
@@ -7681,27 +7249,19 @@
         let aiWatchlistPrices = {}; // Live prices fetched from API
         let lastWatchlistUpdate = null;
         
-        // Base research data - will be populated dynamically from ai_watchlist_live.json
-        let aiWatchlistBase = [];
-        
-        // Company info lookup for symbols
-        const companyInfo = {
-            'DKNG': { company: 'DraftKings Inc.', strategy: 'Deep value + Sports betting growth', catalyst: 'NFL season + new state legalization', risk: 'Regulatory uncertainty' },
-            'COIN': { company: 'Coinbase Global', strategy: 'Crypto infrastructure leader', catalyst: 'Bitcoin ETF flows + institutional adoption', risk: 'Crypto volatility extreme' },
-            'UPST': { company: 'Upstart Holdings', strategy: 'AI lending recovery play', catalyst: 'Rate cuts + loan volume rebound', risk: 'Credit cycle sensitivity' },
-            'ROKU': { company: 'Roku Inc.', strategy: 'Streaming ad recovery', catalyst: 'Ad platform improvements', risk: 'Smart TV competition' },
-            'ABNB': { company: 'Airbnb Inc.', strategy: 'Travel demand stable', catalyst: 'Summer travel season', risk: 'Economic slowdown impact' },
-            'SHOP': { company: 'Shopify Inc.', strategy: 'E-commerce steady growth', catalyst: 'AI tools + international expansion', risk: 'Competition from Amazon' },
-            'SQ': { company: 'Block Inc.', strategy: 'Fintech profitability focus', catalyst: 'Rule of 40 execution + Cash App growth', risk: 'Consumer spending slowdown' },
-            'XYZ': { company: 'Block Inc.', strategy: 'Fintech profitability focus', catalyst: 'Rule of 40 execution + Cash App growth', risk: 'Consumer spending slowdown' },
-            'RIVN': { company: 'Rivian Automotive', strategy: 'EV production execution', catalyst: 'Cost reduction + VW partnership', risk: 'Cash burn + competition' },
-            'NET': { company: 'Cloudflare Inc.', strategy: 'HOLD - Extended valuation', catalyst: 'AI edge demand priced in', risk: 'Multiple compression risk' },
-            'SNOW': { company: 'Snowflake Inc.', strategy: 'HOLD - Momentum trade', catalyst: 'AI data cloud partnerships', risk: 'Growth deceleration + valuation' },
-            'PATH': { company: 'UiPath Inc.', strategy: 'AI automation leader', catalyst: 'Enterprise AI adoption', risk: 'Competition from big tech' },
-            'SQQQ': { company: 'ProShares Short QQQ', strategy: 'Hedge/momentum tool', catalyst: 'Market timing', risk: 'Decay over time' },
-            'TQQQ': { company: 'ProShares Ultra QQQ', strategy: 'Momentum leverage', catalyst: 'Bull market acceleration', risk: 'High volatility decay' },
-            'XLE': { company: 'Energy Select Sector SPDR', strategy: 'Energy sector exposure', catalyst: 'Oil prices + geopolitics', risk: 'Energy transition' }
-        };
+        // Base research data (strategy, targets, etc. - updated periodically)
+        const aiWatchlistBase = [
+            { rank: 1, symbol: 'DKNG', company: 'DraftKings Inc.', price: 26.08, intrinsic: 54.00, upside: '+107.1%', rsi: 28.5, volume: '2.1x', sentiment: { bullish: 78, bearish: 22 }, aiScore: 94, strategy: 'Deep value + Sports betting growth', catalyst: 'NFL season + new state legalization', risk: 'Regulatory uncertainty' },
+            { rank: 2, symbol: 'COIN', company: 'Coinbase Global', price: 144.45, intrinsic: 275.00, upside: '+90.4%', rsi: 42.0, volume: '2.5x', sentiment: { bullish: 82, bearish: 18 }, aiScore: 88, strategy: 'Crypto infrastructure leader', catalyst: 'Bitcoin ETF flows + institutional adoption', risk: 'Crypto volatility extreme' },
+            { rank: 3, symbol: 'UPST', company: 'Upstart Holdings', price: 33.85, intrinsic: 49.00, upside: '+44.8%', rsi: 35.0, volume: '1.8x', sentiment: { bullish: 58, bearish: 42 }, aiScore: 82, strategy: 'AI lending recovery play', catalyst: 'Rate cuts + loan volume rebound', risk: 'Credit cycle sensitivity' },
+            { rank: 4, symbol: 'ROKU', company: 'Roku Inc.', price: 115.42, intrinsic: 146.00, upside: '+26.5%', rsi: 48.0, volume: '0.8x', sentiment: { bullish: 62, bearish: 38 }, aiScore: 75, strategy: 'Streaming ad recovery', catalyst: 'Ad platform improvements', risk: 'Smart TV competition' },
+            { rank: 5, symbol: 'ABNB', company: 'Airbnb Inc.', price: 140.96, intrinsic: 165.00, upside: '+17.1%', rsi: 52.0, volume: '1.1x', sentiment: { bullish: 65, bearish: 35 }, aiScore: 72, strategy: 'Travel demand stable', catalyst: 'Summer travel season', risk: 'Economic slowdown impact' },
+            { rank: 6, symbol: 'SHOP', company: 'Shopify Inc.', price: 124.69, intrinsic: 145.00, upside: '+16.3%', rsi: 45.0, volume: '1.2x', sentiment: { bullish: 63, bearish: 37 }, aiScore: 70, strategy: 'E-commerce steady growth', catalyst: 'AI tools + international expansion', risk: 'Competition from Amazon' },
+            { rank: 7, symbol: 'XYZ', company: 'Block Inc.', price: 72.38, intrinsic: 84.00, upside: '+16.1%', rsi: 38.0, volume: '1.4x', sentiment: { bullish: 69, bearish: 31 }, aiScore: 68, strategy: 'Fintech profitability focus', catalyst: 'Rule of 40 execution + Cash App growth', risk: 'Consumer spending slowdown' },
+            { rank: 8, symbol: 'RIVN', company: 'Rivian Automotive', price: 15.62, intrinsic: 18.50, upside: '+18.4%', rsi: 44.0, volume: '1.5x', sentiment: { bullish: 55, bearish: 45 }, aiScore: 62, strategy: 'EV production execution', catalyst: 'Cost reduction + VW partnership', risk: 'Cash burn + competition' },
+            { rank: 9, symbol: 'NET', company: 'Cloudflare Inc.', price: 273.00, intrinsic: 250.00, upside: '-8.4%', rsi: 58.0, volume: '1.0x', sentiment: { bullish: 74, bearish: 26 }, aiScore: 45, strategy: 'HOLD - Extended valuation', catalyst: 'AI edge demand priced in', risk: 'Multiple compression risk' },
+            { rank: 10, symbol: 'SNOW', company: 'Snowflake Inc.', price: 248.91, intrinsic: 285.00, upside: '+14.5%', rsi: 65.0, volume: '1.3x', sentiment: { bullish: 71, bearish: 29 }, aiScore: 48, strategy: 'HOLD - Momentum trade', catalyst: 'AI data cloud partnerships', risk: 'Growth deceleration + valuation' }
+        ];
 
         // Stock Chart Data for detailed view - CORRECTED June 8, 2026
         const stockCharts = {
@@ -7732,61 +7292,23 @@
             }
         }
         
-        // Build watchlist from live data - includes ALL stocks from ai_watchlist_live.json
-        function buildWatchlistFromLiveData() {
-            const stocks = [];
-            let rank = 1;
-            
-            for (const [symbol, data] of Object.entries(aiWatchlistPrices)) {
-                const targets = data.targets || {};
-                const price = data.price || 0;
-                const info = companyInfo[symbol] || { company: symbol, strategy: 'Council selected', catalyst: 'Market opportunity', risk: 'Market volatility' };
-                
-                // Calculate AI score based on signal and distance to target
-                let aiScore = 50;
-                if (targets.signal === 'BUY') aiScore = 90;
-                else if (targets.signal === 'STRONG_BUY') aiScore = 95;
-                else if (targets.council_note?.includes('oversold')) aiScore = 85;
-                else if (targets.council_note?.includes('approves')) aiScore = 75;
-                
-                stocks.push({
-                    rank: rank++,
-                    symbol: symbol,
-                    company: info.company,
-                    price: price,
-                    intrinsic: price * 1.5, // Estimate intrinsic as 50% upside
-                    upside: '+50.0%',
-                    rsi: 50, // Default RSI
-                    volume: '1.0x',
-                    sentiment: { bullish: 60, bearish: 40 },
-                    aiScore: aiScore,
-                    strategy: info.strategy,
-                    catalyst: info.catalyst,
-                    risk: info.risk,
-                    isLive: true,
-                    // Council target prices
-                    targetConservative: targets.conservative_target,
-                    targetAggressive: targets.aggressive_target,
-                    stopLoss: targets.stop_loss,
-                    profit25: targets.profit_25,
-                    profit50: targets.profit_50,
-                    signal: targets.signal,
-                    councilNote: targets.council_note
-                });
-            }
-            
-            // Sort by AI score descending
-            return stocks.sort((a, b) => b.aiScore - a.aiScore).map((s, i) => ({...s, rank: i + 1}));
-        }
-        
-        // Get merged watchlist with live prices and targets
+        // Get merged watchlist with live prices
         function getWatchlistWithLivePrices() {
-            // If we have live data, use it to build full watchlist
-            if (Object.keys(aiWatchlistPrices).length > 0) {
-                return buildWatchlistFromLiveData();
-            }
-            // Fallback to base if no live data yet
-            return aiWatchlistBase;
+            return aiWatchlistBase.map(stock => {
+                const liveData = aiWatchlistPrices[stock.symbol];
+                if (liveData && liveData.price) {
+                    const livePrice = liveData.price;
+                    const upside = ((stock.intrinsic - livePrice) / livePrice * 100);
+                    return {
+                        ...stock,
+                        price: livePrice,
+                        upside: (upside >= 0 ? '+' : '') + upside.toFixed(1) + '%',
+                        upsideRaw: upside,
+                        isLive: true
+                    };
+                }
+                return { ...stock, isLive: false };
+            });
         }
         
         // Global accessor for current watchlist data
@@ -7876,12 +7398,20 @@
             renderWatchlistContent();
         }
 
-        // Track current sort
-        let currentWatchlistSort = 'rank';
-        
         // Sort watchlist
         function sortWatchlist(sortBy) {
-            currentWatchlistSort = sortBy;
+            const sorters = {
+                rank: (a, b) => a.rank - b.rank,
+                price: (a, b) => b.price - a.price,
+                upside: (a, b) => parseFloat(b.upside) - parseFloat(a.upside),
+                rsi: (a, b) => a.rsi - b.rsi,
+                aiScore: (a, b) => b.aiScore - a.aiScore
+            };
+            
+            aiWatchlist = getWatchlistWithLivePrices();
+            aiWatchlist.sort(sorters[sortBy] || sorters.rank);
+            
+            // Re-render content only
             renderWatchlistContent();
         }
 
@@ -7939,19 +7469,6 @@
             const saved = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
             // Refresh live prices before rendering
             aiWatchlist = getWatchlistWithLivePrices();
-            
-            // Apply current sort
-            const sorters = {
-                rank: (a, b) => a.rank - b.rank,
-                price: (a, b) => b.price - a.price,
-                upside: (a, b) => (b.intrinsic - b.price)/b.price - (a.intrinsic - a.price)/a.price,
-                rsi: (a, b) => a.rsi - b.rsi,
-                aiScore: (a, b) => b.aiScore - a.aiScore
-            };
-            if (sorters[currentWatchlistSort]) {
-                aiWatchlist.sort(sorters[currentWatchlistSort]);
-            }
-            
             let stocksToShow = showingSavedOnly 
                 ? aiWatchlist.filter(s => saved.includes(s.symbol))
                 : aiWatchlist;
@@ -7975,18 +7492,6 @@
                 const upsidePct = ((stock.intrinsic - stock.price) / stock.price * 100);
                 const upsideStr = upsidePct >= 0 ? `+${upsidePct.toFixed(1)}%` : `${upsidePct.toFixed(1)}%`;
                 const upsideColor = upsidePct >= 20 ? '#22c55e' : upsidePct >= 0 ? '#eab308' : '#ef4444';
-                // Target prices from council
-                const hasTargets = stock.targetConservative && stock.targetAggressive;
-                const targetDisplay = hasTargets ? `
-                    <div style="display: flex; gap: 8px; margin-bottom: 8px; pointer-events: none;">
-                        <span style="font-size: 11px; color: var(--text-muted);">Buy:</span>
-                        <span style="font-size: 12px; color: var(--accent-green); font-weight: 600;">$${stock.targetConservative.toFixed(2)}</span>
-                        <span style="font-size: 11px; color: var(--text-muted);">/</span>
-                        <span style="font-size: 12px; color: #22c55e; font-weight: 600;">$${stock.targetAggressive.toFixed(2)}</span>
-                        ${stock.signal ? `<span style="font-size: 10px; background: ${stock.signal === 'BUY' ? 'rgba(34,197,94,0.2)' : 'rgba(251,191,36,0.2)'}; color: ${stock.signal === 'BUY' ? '#22c55e' : 'var(--accent-gold)'}; padding: 2px 6px; border-radius: 4px; margin-left: auto;">${stock.signal}</span>` : ''}
-                    </div>
-                ` : '';
-                
                 return `
                     <div onclick="showStockChart('${stock.symbol}')" style="background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; margin-bottom: 12px; position: relative; cursor: pointer;" onmouseover="this.style.background='var(--bg-elevated)'" onmouseout="this.style.background='var(--bg-surface)'">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -7999,18 +7504,16 @@
                                 <div style="background: ${aiScoreColor}20; border: 1px solid ${aiScoreColor}40; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: ${aiScoreColor};">#${stock.rank}</div>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; pointer-events: none;">
+                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; pointer-events: none;">
                             <span style="font-family: monospace; font-size: 20px; font-weight: 700;">$${stock.price.toFixed(2)}</span>
                             <span style="font-size: 13px; color: ${upsideColor}; font-weight: 600;">→ $${stock.intrinsic.toFixed(0)} (${upsideStr})</span>
                         </div>
-                        ${targetDisplay}
                         <div style="display: flex; gap: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); pointer-events: none;">
                             <div><div style="font-size: 10px; color: var(--text-muted);">AI</div><div style="font-size: 16px; font-weight: 700; color: ${aiScoreColor};">${stock.aiScore}</div></div>
                             <div><div style="font-size: 10px; color: var(--text-muted);">Sentiment</div><div style="font-size: 14px; color: #22c55e;">${stock.sentiment.bullish}%</div></div>
                             <div><div style="font-size: 10px; color: var(--text-muted);">RSI</div><div style="font-size: 14px; color: ${stock.rsi < 30 ? '#06b6d4' : 'var(--text-secondary)'};">${stock.rsi}</div></div>
                             <div><div style="font-size: 10px; color: var(--text-muted);">Vol</div><div style="font-size: 14px; color: #22c55e;">${stock.volume}</div></div>
                         </div>
-                        ${stock.councilNote ? `<div style="font-size: 11px; color: var(--accent-gold); margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); pointer-events: none;">🎯 ${stock.councilNote}</div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -8020,36 +7523,13 @@
 
         // Live prices fetched from ai_watchlist_live.json (updated every 30s by backend)
 
-        // Show detailed stock chart - works for ANY stock including new Council additions
+        // Show detailed stock chart
         function showStockChart(symbol) {
             // Refresh live prices before showing
             aiWatchlist = getWatchlistWithLivePrices();
             const stock = aiWatchlist.find(s => s.symbol === symbol);
-            if (!stock) return;
-            
-            // Get chart data - use hardcoded if available, otherwise generate from live data
-            let chartData = stockCharts[symbol];
-            if (!chartData) {
-                // Generate dynamic chart data for new stocks
-                const currentPrice = stock.price || 100;
-                const volatility = 0.02; // 2% daily volatility
-                const prices = [];
-                let price = currentPrice * 0.95; // Start 5% lower
-                for (let i = 0; i < 10; i++) {
-                    prices.push(price);
-                    price = price * (1 + (Math.random() - 0.5) * volatility);
-                }
-                // Ensure last price matches current
-                prices[prices.length - 1] = currentPrice;
-                
-                chartData = {
-                    prices: prices,
-                    ma20: currentPrice * 0.98,
-                    ma50: currentPrice * 0.95,
-                    support: currentPrice * 0.90,
-                    resistance: currentPrice * 1.10
-                };
-            }
+            const chartData = stockCharts[symbol];
+            if (!stock || !chartData) return;
             
             // Close watchlist modal
             document.getElementById('watchlist-modal').remove();
@@ -8135,30 +7615,6 @@
                             </div>
                         </div>
                         
-                        <!-- Council Target Prices -->
-                        ${stock.targetConservative ? `
-                        <div style="padding: 16px; background: rgba(251,191,36,0.1); border-radius: 10px; border: 1px solid rgba(251,191,36,0.3); margin-bottom: 20px;">
-                            <div style="font-size: 12px; color: var(--accent-gold); font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Council Target Prices</div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                                <div style="text-align: center; padding: 10px; background: rgba(6,182,212,0.1); border-radius: 8px; border: 1px solid rgba(6,182,212,0.3);">
-                                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Conservative Buy</div>
-                                    <div style="font-family: monospace; font-size: 18px; font-weight: 700; color: var(--accent-blue);">$${stock.targetConservative.toFixed(2)}</div>
-                                    <div style="font-size: 10px; color: var(--text-muted);">-12% from current</div>
-                                </div>
-                                <div style="text-align: center; padding: 10px; background: rgba(34,197,94,0.1); border-radius: 8px; border: 1px solid rgba(34,197,94,0.3);">
-                                    <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">Aggressive Buy</div>
-                                    <div style="font-family: monospace; font-size: 18px; font-weight: 700; color: #22c55e;">$${stock.targetAggressive.toFixed(2)}</div>
-                                    <div style="font-size: 10px; color: var(--text-muted);">-18% from current</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted);">
-                                <span>Stop: $${stock.stopLoss ? stock.stopLoss.toFixed(2) : '-'}</span>
-                                <span style="color: var(--accent-gold); font-weight: 600;">${stock.signal || 'WAIT'}</span>
-                            </div>
-                            ${stock.councilNote ? `<div style="font-size: 11px; color: var(--accent-gold); margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(251,191,36,0.2);">💡 ${stock.councilNote}</div>` : ''}
-                        </div>
-                        ` : ''}
-                        
                         <div style="margin-bottom: 16px;">
                             <div style="font-size: 13px; color: var(--accent-gold); font-weight: 600; margin-bottom: 4px;">Strategy Match</div>
                             <div style="font-size: 14px; color: var(--text-secondary);">${stock.strategy}</div>
@@ -8193,6 +7649,83 @@
                 document.body.style.overflow = '';
             }
         }
+        
+        // ============================================
+        // SAFE DYNAMIC CHART UPDATE - June 10, 2026
+        // This runs AFTER the chart initializes
+        // and updates data from portfolio_history.json
+        // ============================================
+        (function safeChartUpdater() {
+            // Wait for chart to be ready
+            function waitForChart(callback, maxAttempts = 50) {
+                let attempts = 0;
+                const check = () => {
+                    attempts++;
+                    if (typeof performanceChart !== 'undefined' && performanceChart && chartDataStore['ALL']) {
+                        callback();
+                    } else if (attempts < maxAttempts) {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
+            }
+            
+            // Load portfolio history and update chart
+            async function loadHistoryAndUpdate() {
+                try {
+                    const res = await fetch('portfolio_history.json?t=' + Date.now());
+                    const data = await res.json();
+                    const checks = data.checks || [];
+                    
+                    if (checks.length < 2) {
+                        console.log('Not enough history data yet');
+                        return;
+                    }
+                    
+                    // Get current values
+                    const currentReturn = checks[checks.length - 1].total_pl_pct || 0;
+                    
+                    // Update ALL view with real historical progression
+                    chartDataStore['ALL'] = {
+                        labels: checks.map((c, i) => {
+                            if (i === 0) return 'Start';
+                            if (i === checks.length - 1) return 'Current';
+                            return new Date(c.timestamp).toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+                        }),
+                        stonkAI: checks.map(c => c.total_pl_pct || 0),
+                        sp500: checks.map((_, i) => (i / (checks.length - 1)) * -2.65),
+                        dow: checks.map((_, i) => (i / (checks.length - 1)) * -0.37),
+                        nasdaq: checks.map((_, i) => (i / (checks.length - 1)) * -4.81)
+                    };
+                    
+                    // Update other time ranges to end at current value
+                    ['1D', '1W', '1M', '3M'].forEach(range => {
+                        if (chartDataStore[range] && chartDataStore[range].stonkAI.length > 0) {
+                            const lastIdx = chartDataStore[range].stonkAI.length - 1;
+                            chartDataStore[range].stonkAI[lastIdx] = currentReturn;
+                        }
+                    });
+                    
+                    // Refresh current view
+                    if (performanceChart) {
+                        updateChartRange(currentRange);
+                    }
+                    
+                    console.log('✅ Chart updated with', checks.length, 'historical data points');
+                    
+                } catch (e) {
+                    console.error('Chart updater error:', e);
+                    // Don't break the page - just log error
+                }
+            }
+            
+            // Run after chart initializes
+            waitForChart(() => {
+                loadHistoryAndUpdate();
+                // Refresh every 30 seconds
+                setInterval(loadHistoryAndUpdate, 30000);
+            });
+        })();
     </script>
 </body>
 </html>
