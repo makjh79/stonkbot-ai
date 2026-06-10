@@ -4666,7 +4666,36 @@
             // Sort by timestamp (newest first)
             const sortedTrades = [...filteredTrades].reverse();
             
-            container.innerHTML = sortedTrades.map((trade, index) => createTradeLogItem(trade, index === 0)).join('');
+            // Group by date
+            let currentDate = null;
+            let html = '';
+            
+            sortedTrades.forEach((trade, index) => {
+                const tradeDate = new Date(trade.timestamp).toDateString();
+                
+                // Add date header if this is a new date
+                if (tradeDate !== currentDate) {
+                    currentDate = tradeDate;
+                    const dateLabel = new Date(trade.timestamp).toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    const yearLabel = new Date(trade.timestamp).getFullYear();
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0 0.5rem 0; padding: 0.5rem; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 8px;">
+                            <div style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">${dateLabel}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">${yearLabel}</div>
+                            <div style="flex: 1;"></div>
+                            <div style="font-size: 0.65rem; color: var(--accent-gold);">● Trading Day</div>
+                        </div>
+                    `;
+                }
+                
+                html += createTradeLogItem(trade, index === 0);
+            });
+            
+            container.innerHTML = html;
         }
 
         function createTradeLogItem(trade, isNewest = false) {
