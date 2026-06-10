@@ -3792,6 +3792,7 @@
                         updateDashboard(data);
                         updateHoldingsCards(data.positions);
                         updateSectorHeatmap(data.positions);
+                        updateChartFromLiveData(data); // Update chart with actual returns
                     })
                     .catch(err => {
                         console.error('Fetch failed:', err);
@@ -7439,12 +7440,34 @@
             },
             'ALL': {
                 labels: ['Start', 'Current'],
-                stonkAI: [0, -3.00],
-                sp500: [0, -2.60],
-                dow: [0, -1.35],
-                nasdaq: [0, -4.18]
+                stonkAI: [0, -0.72],  // Updated from live data
+                sp500: [0, -2.65],    // S&P 500 actual
+                dow: [0, -0.37],      // DOW actual
+                nasdaq: [0, -4.81]    // NASDAQ actual
             }
         };
+        
+        // Update chart data from live portfolio data
+        function updateChartFromLiveData(portfolioData) {
+            if (!portfolioData || !portfolioData.total_plpc !== undefined) return;
+            
+            const actualReturn = portfolioData.total_plpc || 0;
+            
+            // Update ALL view with actual return
+            chartDataStore['ALL'].stonkAI = [0, actualReturn];
+            
+            // Update other ranges to end at actual return
+            ['1D', '1W', '1M', '3M'].forEach(range => {
+                if (chartDataStore[range] && chartDataStore[range].stonkAI.length > 0) {
+                    chartDataStore[range].stonkAI[chartDataStore[range].stonkAI.length - 1] = actualReturn;
+                }
+            });
+            
+            // Update chart if visible
+            if (performanceChart && currentRange) {
+                updateChartRange(currentRange);
+            }
+        }
         
         let currentRange = '1M';
         let visibleBenchmarks = ['S&P 500', 'DOW', 'NASDAQ'];
