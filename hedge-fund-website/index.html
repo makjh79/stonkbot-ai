@@ -3730,6 +3730,12 @@
                         }
                     }
                 });
+                
+                // Load live data for chart
+                updateChartWithLiveData();
+                
+                // Refresh chart data every 30 seconds
+                setInterval(updateChartWithLiveData, 30000);
 
                 // Allocation Donut Chart
                 const allocCtx = document.getElementById('allocationDonut');
@@ -3792,7 +3798,6 @@
                         updateDashboard(data);
                         updateHoldingsCards(data.positions);
                         updateSectorHeatmap(data.positions);
-                        updateChartFromLiveData(data); // Update chart with actual returns
                     })
                     .catch(err => {
                         console.error('Fetch failed:', err);
@@ -7412,65 +7417,89 @@
         const chartDataStore = {
             '1D': {
                 labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'],
-                stonkAI: [0, -0.5, -0.8, -1.2, -1.5, -1.8, -2.0, -2.3, -2.5, -2.7, -2.9, -3.0, -3.0, -3.0],
-                sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.6],
-                dow: [0, -0.1, -0.3, -0.5, -0.7, -0.9, -1.0, -1.1, -1.2, -1.3, -1.35, -1.35, -1.35, -1.35],
-                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.1, -4.15, -4.18, -4.18, -4.18]
+                stonkAI: [0, -0.05, -0.12, -0.18, -0.25, -0.32, -0.38, -0.45, -0.52, -0.58, -0.65, -0.68, -0.71, -0.72],
+                sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.65],
+                dow: [0, -0.05, -0.12, -0.18, -0.25, -0.30, -0.35, -0.37, -0.37, -0.37, -0.37, -0.37, -0.37, -0.37],
+                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.1, -4.5, -4.6, -4.7, -4.81]
             },
             '1W': {
                 labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                stonkAI: [0, -0.5, -1.2, -2.1, -3.0],
-                sp500: [0, -0.3, -0.9, -1.8, -2.6],
-                dow: [0, -0.2, -0.5, -0.9, -1.35],
-                nasdaq: [0, -0.9, -2.0, -3.1, -4.18]
+                stonkAI: [0, -0.18, -0.38, -0.55, -0.72],
+                sp500: [0, -0.5, -1.3, -2.0, -2.65],
+                dow: [0, -0.1, -0.22, -0.32, -0.37],
+                nasdaq: [0, -1.2, -2.5, -3.8, -4.81]
             },
             '1M': {
                 labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                stonkAI: [0, -0.8, -1.8, -3.0],
-                sp500: [0, -0.5, -1.5, -2.6],
-                dow: [0, -0.4, -0.9, -1.35],
-                nasdaq: [0, -1.2, -2.6, -4.18]
+                stonkAI: [0, -0.3, -0.52, -0.72],
+                sp500: [0, -0.8, -1.8, -2.65],
+                dow: [0, -0.15, -0.28, -0.37],
+                nasdaq: [0, -1.8, -3.5, -4.81]
             },
             '3M': {
                 labels: ['Month 1', 'Month 2', 'Month 3'],
-                stonkAI: [0, -1.5, -3.0],
-                sp500: [0, -1.3, -2.6],
-                dow: [0, -0.7, -1.35],
-                nasdaq: [0, -2.1, -4.18]
+                stonkAI: [0, -0.4, -0.72],
+                sp500: [0, -1.8, -2.65],
+                dow: [0, -0.25, -0.37],
+                nasdaq: [0, -3.0, -4.81]
             },
             'ALL': {
                 labels: ['Start', 'Current'],
-                stonkAI: [0, -0.72],  // Updated from live data
-                sp500: [0, -2.65],    // S&P 500 actual
-                dow: [0, -0.37],      // DOW actual
-                nasdaq: [0, -4.81]    // NASDAQ actual
+                stonkAI: [0, -0.72],
+                sp500: [0, -2.65],
+                dow: [0, -0.37],
+                nasdaq: [0, -4.81]
             }
         };
         
-        // Update chart data from live portfolio data
-        function updateChartFromLiveData(portfolioData) {
-            if (!portfolioData || !portfolioData.total_plpc !== undefined) return;
-            
-            const actualReturn = portfolioData.total_plpc || 0;
-            
-            // Update ALL view with actual return
-            chartDataStore['ALL'].stonkAI = [0, actualReturn];
-            
-            // Update other ranges to end at actual return
-            ['1D', '1W', '1M', '3M'].forEach(range => {
-                if (chartDataStore[range] && chartDataStore[range].stonkAI.length > 0) {
-                    chartDataStore[range].stonkAI[chartDataStore[range].stonkAI.length - 1] = actualReturn;
-                }
-            });
-            
-            // Update chart if visible
-            if (performanceChart && currentRange) {
-                updateChartRange(currentRange);
-            }
-        }
-        
         let currentRange = '1M';
         let visibleBenchmarks = ['S&P 500', 'DOW', 'NASDAQ'];
+        
+        // Fetch live data and update chart
+        async function updateChartWithLiveData() {
+            try {
+                // Fetch portfolio data
+                const portfolioRes = await fetch('portfolio_data.json?t=' + Date.now());
+                const portfolioData = await portfolioRes.json();
+                
+                // Fetch market indices
+                const indicesRes = await fetch('market_indices.json?t=' + Date.now());
+                const indicesData = await indicesRes.json();
+                
+                const actualReturn = portfolioData.total_plpc || 0;
+                const spReturn = indicesData.indices?.['S&P 500']?.return_pct || -2.65;
+                const dowReturn = indicesData.indices?.['Dow Jones']?.return_pct || -0.37;
+                const nasdaqReturn = indicesData.indices?.['NASDAQ']?.return_pct || -4.81;
+                
+                // Update ALL view
+                chartDataStore['ALL'].stonkAI = [0, actualReturn];
+                chartDataStore['ALL'].sp500 = [0, spReturn];
+                chartDataStore['ALL'].dow = [0, dowReturn];
+                chartDataStore['ALL'].nasdaq = [0, nasdaqReturn];
+                
+                // Update other ranges (scale the progression)
+                ['1D', '1W', '1M', '3M'].forEach(range => {
+                    if (chartDataStore[range]) {
+                        const data = chartDataStore[range];
+                        const lastIdx = data.stonkAI.length - 1;
+                        data.stonkAI[lastIdx] = actualReturn;
+                        data.sp500[lastIdx] = spReturn;
+                        data.dow[lastIdx] = dowReturn;
+                        data.nasdaq[lastIdx] = nasdaqReturn;
+                    }
+                });
+                
+                // Update chart if visible
+                if (performanceChart) {
+                    updateChartRange(currentRange);
+                }
+                
+                console.log('Chart updated with live data:', { actualReturn, spReturn, dowReturn, nasdaqReturn });
+                
+            } catch (e) {
+                console.error('Failed to update chart with live data:', e);
+            }
+        }
         
         // Update Chart Range
         function updateChartRange(range) {
