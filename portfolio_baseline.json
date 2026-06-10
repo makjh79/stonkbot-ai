@@ -1,0 +1,19 @@
+{
+  "created_at": "2026-06-04T11:55:00Z",
+  "starting_equity": 100000.00,
+  "starting_cash": 100000.00,
+  "target_portfolio": [
+    {"symbol": "NVDA", "qty": 12, "target_price": 228.39},
+    {"symbol": "PLTR", "qty": 25, "target_price": 148.71},
+    {"symbol": "CRWD", "qty": 3, "target_price": 790.11},
+    {"symbol": "APP", "qty": 8, "target_price": 541.13},
+    {"symbol": "SOFI", "qty": 100, "target_price": 16.69},
+    {"symbol": "AVGO", "qty": 5, "target_price": 500.20},
+    {"symbol": "META", "qty": 3, "target_price": 623.13},
+    {"symbol": "HOOD", "qty": 25, "target_price": 87.46},
+    {"symbol": "SCHD", "qty": 30, "target_price": 32.46},
+    {"symbol": "SGOV", "qty": 15, "target_price": 100.42}
+  ],
+  "total_target_value": 24863.19,
+  "notes": "Baseline for Mak Capital hedge fund portfolio. Orders placed pre-market June 4, 2026."
+}

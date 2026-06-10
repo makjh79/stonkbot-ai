@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-06-08T15:35:25.979915",
+  "checks": {
+    "Portfolio Calculations": true,
+    "HTML Structure": true,
+    "Why-Badges (Dynamic)": true,
+    "Data File Sync": true,
+    "Bot Processes": true
+  },
+  "all_passed": true,
+  "holdings_count": 14,
+  "portfolio_value": 98380.85,
+  "total_pl": -1619.13,
+  "total_pl_pct": -2.487
+}

@@ -1,0 +1,16 @@
+FRED API Key Setup
+==================
+
+The FRED API now requires an API key for all requests.
+
+To get a free API key:
+1. Go to: https://fred.stlouisfed.org/docs/api/api_key.html
+2. Register for a free account
+3. Request an API key
+4. Set it as an environment variable:
+
+   export FRED_API_KEY="your_key_here"
+
+Or add it to your shell profile (~/.bashrc or ~/.zshrc).
+
+Without the API key, FRED macro data checks will be skipped.

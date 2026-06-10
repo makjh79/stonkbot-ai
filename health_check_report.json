@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-06-10T15:01:25.627381",
+  "issues": [
+    {
+      "severity": "INFO",
+      "message": "Portfolio has 11 positions, expected 14"
+    }
+  ],
+  "fixes": [
+    "Updated portfolio_data.json with corrected calculations"
+  ],
+  "status": "issues_found"
+}

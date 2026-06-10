@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-06-05T19:15:00Z",
+  "total_pl_pct": -4.382823699571008,
+  "total_pl": -2853.503988,
+  "portfolio_value": 97149.95,
+  "equity": 97149.95,
+  "cash": 34893.47,
+  "alert_sent": true,
+  "alert_reason": "Portfolio below -1% threshold (-4.38%)"
+}
