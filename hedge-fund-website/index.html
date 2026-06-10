@@ -7616,19 +7616,27 @@
         let aiWatchlistPrices = {}; // Live prices fetched from API
         let lastWatchlistUpdate = null;
         
-        // Base research data (strategy, targets, etc. - updated periodically)
-        const aiWatchlistBase = [
-            { rank: 1, symbol: 'DKNG', company: 'DraftKings Inc.', price: 26.08, intrinsic: 54.00, upside: '+107.1%', rsi: 28.5, volume: '2.1x', sentiment: { bullish: 78, bearish: 22 }, aiScore: 94, strategy: 'Deep value + Sports betting growth', catalyst: 'NFL season + new state legalization', risk: 'Regulatory uncertainty' },
-            { rank: 2, symbol: 'COIN', company: 'Coinbase Global', price: 144.45, intrinsic: 275.00, upside: '+90.4%', rsi: 42.0, volume: '2.5x', sentiment: { bullish: 82, bearish: 18 }, aiScore: 88, strategy: 'Crypto infrastructure leader', catalyst: 'Bitcoin ETF flows + institutional adoption', risk: 'Crypto volatility extreme' },
-            { rank: 3, symbol: 'UPST', company: 'Upstart Holdings', price: 33.85, intrinsic: 49.00, upside: '+44.8%', rsi: 35.0, volume: '1.8x', sentiment: { bullish: 58, bearish: 42 }, aiScore: 82, strategy: 'AI lending recovery play', catalyst: 'Rate cuts + loan volume rebound', risk: 'Credit cycle sensitivity' },
-            { rank: 4, symbol: 'ROKU', company: 'Roku Inc.', price: 115.42, intrinsic: 146.00, upside: '+26.5%', rsi: 48.0, volume: '0.8x', sentiment: { bullish: 62, bearish: 38 }, aiScore: 75, strategy: 'Streaming ad recovery', catalyst: 'Ad platform improvements', risk: 'Smart TV competition' },
-            { rank: 5, symbol: 'ABNB', company: 'Airbnb Inc.', price: 140.96, intrinsic: 165.00, upside: '+17.1%', rsi: 52.0, volume: '1.1x', sentiment: { bullish: 65, bearish: 35 }, aiScore: 72, strategy: 'Travel demand stable', catalyst: 'Summer travel season', risk: 'Economic slowdown impact' },
-            { rank: 6, symbol: 'SHOP', company: 'Shopify Inc.', price: 124.69, intrinsic: 145.00, upside: '+16.3%', rsi: 45.0, volume: '1.2x', sentiment: { bullish: 63, bearish: 37 }, aiScore: 70, strategy: 'E-commerce steady growth', catalyst: 'AI tools + international expansion', risk: 'Competition from Amazon' },
-            { rank: 7, symbol: 'XYZ', company: 'Block Inc.', price: 72.38, intrinsic: 84.00, upside: '+16.1%', rsi: 38.0, volume: '1.4x', sentiment: { bullish: 69, bearish: 31 }, aiScore: 68, strategy: 'Fintech profitability focus', catalyst: 'Rule of 40 execution + Cash App growth', risk: 'Consumer spending slowdown' },
-            { rank: 8, symbol: 'RIVN', company: 'Rivian Automotive', price: 15.62, intrinsic: 18.50, upside: '+18.4%', rsi: 44.0, volume: '1.5x', sentiment: { bullish: 55, bearish: 45 }, aiScore: 62, strategy: 'EV production execution', catalyst: 'Cost reduction + VW partnership', risk: 'Cash burn + competition' },
-            { rank: 9, symbol: 'NET', company: 'Cloudflare Inc.', price: 273.00, intrinsic: 250.00, upside: '-8.4%', rsi: 58.0, volume: '1.0x', sentiment: { bullish: 74, bearish: 26 }, aiScore: 45, strategy: 'HOLD - Extended valuation', catalyst: 'AI edge demand priced in', risk: 'Multiple compression risk' },
-            { rank: 10, symbol: 'SNOW', company: 'Snowflake Inc.', price: 248.91, intrinsic: 285.00, upside: '+14.5%', rsi: 65.0, volume: '1.3x', sentiment: { bullish: 71, bearish: 29 }, aiScore: 48, strategy: 'HOLD - Momentum trade', catalyst: 'AI data cloud partnerships', risk: 'Growth deceleration + valuation' }
-        ];
+        // Base research data - will be populated dynamically from ai_watchlist_live.json
+        let aiWatchlistBase = [];
+        
+        // Company info lookup for symbols
+        const companyInfo = {
+            'DKNG': { company: 'DraftKings Inc.', strategy: 'Deep value + Sports betting growth', catalyst: 'NFL season + new state legalization', risk: 'Regulatory uncertainty' },
+            'COIN': { company: 'Coinbase Global', strategy: 'Crypto infrastructure leader', catalyst: 'Bitcoin ETF flows + institutional adoption', risk: 'Crypto volatility extreme' },
+            'UPST': { company: 'Upstart Holdings', strategy: 'AI lending recovery play', catalyst: 'Rate cuts + loan volume rebound', risk: 'Credit cycle sensitivity' },
+            'ROKU': { company: 'Roku Inc.', strategy: 'Streaming ad recovery', catalyst: 'Ad platform improvements', risk: 'Smart TV competition' },
+            'ABNB': { company: 'Airbnb Inc.', strategy: 'Travel demand stable', catalyst: 'Summer travel season', risk: 'Economic slowdown impact' },
+            'SHOP': { company: 'Shopify Inc.', strategy: 'E-commerce steady growth', catalyst: 'AI tools + international expansion', risk: 'Competition from Amazon' },
+            'SQ': { company: 'Block Inc.', strategy: 'Fintech profitability focus', catalyst: 'Rule of 40 execution + Cash App growth', risk: 'Consumer spending slowdown' },
+            'XYZ': { company: 'Block Inc.', strategy: 'Fintech profitability focus', catalyst: 'Rule of 40 execution + Cash App growth', risk: 'Consumer spending slowdown' },
+            'RIVN': { company: 'Rivian Automotive', strategy: 'EV production execution', catalyst: 'Cost reduction + VW partnership', risk: 'Cash burn + competition' },
+            'NET': { company: 'Cloudflare Inc.', strategy: 'HOLD - Extended valuation', catalyst: 'AI edge demand priced in', risk: 'Multiple compression risk' },
+            'SNOW': { company: 'Snowflake Inc.', strategy: 'HOLD - Momentum trade', catalyst: 'AI data cloud partnerships', risk: 'Growth deceleration + valuation' },
+            'PATH': { company: 'UiPath Inc.', strategy: 'AI automation leader', catalyst: 'Enterprise AI adoption', risk: 'Competition from big tech' },
+            'SQQQ': { company: 'ProShares Short QQQ', strategy: 'Hedge/momentum tool', catalyst: 'Market timing', risk: 'Decay over time' },
+            'TQQQ': { company: 'ProShares Ultra QQQ', strategy: 'Momentum leverage', catalyst: 'Bull market acceleration', risk: 'High volatility decay' },
+            'XLE': { company: 'Energy Select Sector SPDR', strategy: 'Energy sector exposure', catalyst: 'Oil prices + geopolitics', risk: 'Energy transition' }
+        };
 
         // Stock Chart Data for detailed view - CORRECTED June 8, 2026
         const stockCharts = {
@@ -7659,33 +7667,61 @@
             }
         }
         
+        // Build watchlist from live data - includes ALL stocks from ai_watchlist_live.json
+        function buildWatchlistFromLiveData() {
+            const stocks = [];
+            let rank = 1;
+            
+            for (const [symbol, data] of Object.entries(aiWatchlistPrices)) {
+                const targets = data.targets || {};
+                const price = data.price || 0;
+                const info = companyInfo[symbol] || { company: symbol, strategy: 'Council selected', catalyst: 'Market opportunity', risk: 'Market volatility' };
+                
+                // Calculate AI score based on signal and distance to target
+                let aiScore = 50;
+                if (targets.signal === 'BUY') aiScore = 90;
+                else if (targets.signal === 'STRONG_BUY') aiScore = 95;
+                else if (targets.council_note?.includes('oversold')) aiScore = 85;
+                else if (targets.council_note?.includes('approves')) aiScore = 75;
+                
+                stocks.push({
+                    rank: rank++,
+                    symbol: symbol,
+                    company: info.company,
+                    price: price,
+                    intrinsic: price * 1.5, // Estimate intrinsic as 50% upside
+                    upside: '+50.0%',
+                    rsi: 50, // Default RSI
+                    volume: '1.0x',
+                    sentiment: { bullish: 60, bearish: 40 },
+                    aiScore: aiScore,
+                    strategy: info.strategy,
+                    catalyst: info.catalyst,
+                    risk: info.risk,
+                    isLive: true,
+                    // Council target prices
+                    targetConservative: targets.conservative_target,
+                    targetAggressive: targets.aggressive_target,
+                    stopLoss: targets.stop_loss,
+                    profit25: targets.profit_25,
+                    profit50: targets.profit_50,
+                    signal: targets.signal,
+                    councilNote: targets.council_note
+                });
+            }
+            
+            // Sort by AI score descending
+            return stocks.sort((a, b) => b.aiScore - a.aiScore).map((s, i) => ({...s, rank: i + 1}));
+        }
+        
         // Get merged watchlist with live prices and targets
         function getWatchlistWithLivePrices() {
-            return aiWatchlistBase.map(stock => {
-                const liveData = aiWatchlistPrices[stock.symbol];
-                if (liveData && liveData.price) {
-                    const livePrice = liveData.price;
-                    const upside = ((stock.intrinsic - livePrice) / livePrice * 100);
-                    // Extract target prices from live data
-                    const targets = liveData.targets || {};
-                    return {
-                        ...stock,
-                        price: livePrice,
-                        upside: (upside >= 0 ? '+' : '') + upside.toFixed(1) + '%',
-                        upsideRaw: upside,
-                        isLive: true,
-                        // Add council target prices
-                        targetConservative: targets.conservative_target,
-                        targetAggressive: targets.aggressive_target,
-                        stopLoss: targets.stop_loss,
-                        profit25: targets.profit_25,
-                        profit50: targets.profit_50,
-                        signal: targets.signal,
-                        councilNote: targets.council_note
-                    };
-                }
-                return { ...stock, isLive: false };
-            });
+            // If we have live data, use it to build full watchlist
+            if (Object.keys(aiWatchlistPrices).length > 0) {
+                return buildWatchlistFromLiveData();
+            }
+            // Fallback to base if no live data yet
+            return aiWatchlistBase;
         }
         
         // Global accessor for current watchlist data
