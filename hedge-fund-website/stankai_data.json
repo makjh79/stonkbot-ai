@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-06-09T20:03:13.227817",
+  "portfolio_value": 97118.29,
+  "pnl": -2454.5248829999996,
+  "pnl_pct": -2.1463533965523096,
+  "vs_sp500": 0.0,
+  "cash": -14787.64,
+  "positions_count": 11,
+  "positions": [
+    {
+      "symbol": "AAPL",
+      "shares": 25,
+      "entry": 313.9676,
+      "current": 290.75,
+      "pl": -580.44,
+      "pl_pct": -7.3950000000000005,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "AMD",
+      "shares": 35,
+      "entry": 506.480286,
+      "current": 475.91,
+      "pl": -1069.96001,
+      "pl_pct": -6.036,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "APP",
+      "shares": 8,
+      "entry": 568.36875,
+      "current": 520.84,
+      "pl": -380.23,
+      "pl_pct": -8.362,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "AVGO",
+      "shares": 5,
+      "entry": 409.798,
+      "current": 392.88,
+      "pl": -84.59,
+      "pl_pct": -4.128,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "CRWD",
+      "shares": 3,
+      "entry": 687.49,
+      "current": 644.93,
+      "pl": -127.68,
+      "pl_pct": -6.191,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "DKNG",
+      "shares": 800,
+      "entry": 26.989425,
+      "current": 27.57,
+      "pl": 464.46,
+      "pl_pct": 2.1510000000000002,
+      "status": "\ud83d\udcc8 UP"
+    },
+    {
+      "symbol": "GOOGL",
+      "shares": 15,
+      "entry": 367.538,
+      "current": 364.26,
+      "pl": -49.17,
+      "pl_pct": -0.8920000000000001,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "HOOD",
+      "shares": 225,
+      "entry": 84.119332,
+      "current": 83.6382,
+      "pl": -108.2547,
+      "pl_pct": -0.5720000000000001,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "NVDA",
+      "shares": 17,
+      "entry": 213.747059,
+      "current": 207.59,
+      "pl": -104.670003,
+      "pl_pct": -2.881,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "PLTR",
+      "shares": 145,
+      "entry": 135.302346,
+      "current": 132.23,
+      "pl": -445.49017,
+      "pl_pct": -2.271,
+      "status": "\ud83d\udcc9 DOWN"
+    },
+    {
+      "symbol": "UPST",
+      "shares": 350,
+      "entry": 30.97,
+      "current": 31.06,
+      "pl": 31.5,
+      "pl_pct": 0.291,
+      "status": "\ud83d\udcc8 UP"
+    }
+  ],
+  "log": "Health check sync - Portfolio -2.15% | 11 positions | All systems operational"
+}
