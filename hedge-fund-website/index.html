@@ -406,6 +406,19 @@
         .legend-item:hover {
             background: rgba(255,255,255,0.06);
         }
+        
+        /* Chart.js legend - prevent strikethrough on hidden items */
+        .chartjs-legend-item,
+        #performanceChart + div legend span,
+        canvas + div legend span {
+            text-decoration: none !important;
+        }
+        
+        /* Ensure chart legend labels never have strikethrough */
+        .chartjs-legend-item span,
+        .chartjs-render-monitor + div span {
+            text-decoration: none !important;
+        }
 
         .metric-label {
             color: var(--text-secondary);
@@ -3642,7 +3655,8 @@
                             borderDash: [5, 5],
                             fill: false,
                             tension: 0.4,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            hidden: false
                         }, {
                             label: 'DOW',
                             data: [0, 0],
@@ -3652,7 +3666,8 @@
                             borderDash: [10, 5],
                             fill: false,
                             tension: 0.4,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            hidden: false
                         }, {
                             label: 'NASDAQ',
                             data: [0, 0],
@@ -3662,7 +3677,8 @@
                             borderDash: [3, 3],
                             fill: false,
                             tension: 0.4,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            hidden: false
                         }]
                     },
                     options: {
@@ -3677,7 +3693,8 @@
                                     font: { size: 10, family: 'Inter' },
                                     usePointStyle: true,
                                     boxWidth: 8,
-                                    padding: 10
+                                    padding: 10,
+                                    textDecoration: 'none'  // Prevent strikethrough
                                 },
                                 onClick: null  // Disable legend click to prevent hiding datasets
                             },
@@ -3689,7 +3706,7 @@
                                 borderWidth: 1,
                                 callbacks: {
                                     label: function(context) {
-                                        return context.dataset.label + ': ' + context.parsed.y + '%';
+                                        return context.dataset.label + ': ' + parseFloat(context.parsed.y).toFixed(2) + '%';
                                     }
                                 }
                             }
@@ -3699,7 +3716,7 @@
                                 grid: { color: 'rgba(255,255,255,0.05)' },
                                 ticks: {
                                     color: '#9ca3af',
-                                    callback: v => v + '%',
+                                    callback: v => parseFloat(v).toFixed(2) + '%',
                                     font: { size: 10 }
                                 }
                             },
