@@ -2562,16 +2562,7 @@
                     <div style="position: absolute; top: 0; right: 20px; bottom: 0; width: 3px; background: repeating-linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 10px, transparent 10px, transparent 20px); pointer-events: none;"></div>
                 </div>
 
-                <!-- Gap Indicator -->
-                <div id="gapContainer" style="margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.5px;">Current Gap</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
-                        🤖 <span id="gapValue">--</span> <span id="gapStatus">--</span>
-                    </div>
-                    <div id="gapMessage" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                        Loading gap data...
-                    </div>
-                </div>
+
 
             </div>
 
@@ -3879,7 +3870,7 @@
         // Fallback data (shown if fetch fails) - 9 active positions only
         const FALLBACK_DATA = {
             timestamp: "2026-06-09T14:00:00",
-            account: { portfolio_value: 98073.19, cash: 47760.44 },
+            account: { portfolio_value: 98128.04, cash: -14787.70 },
             positions: [
                 { symbol: "AAPL", qty: 25, avg_entry: 313.97, current: 294.59, unrealized_plpc: -6.17, market_value: 7364.75 },
                 { symbol: "AMD", qty: 35, avg_entry: 506.48, current: 492.14, unrealized_plpc: -2.83, market_value: 17225.08 },
