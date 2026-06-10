@@ -7824,20 +7824,12 @@
             renderWatchlistContent();
         }
 
+        // Track current sort
+        let currentWatchlistSort = 'rank';
+        
         // Sort watchlist
         function sortWatchlist(sortBy) {
-            const sorters = {
-                rank: (a, b) => a.rank - b.rank,
-                price: (a, b) => b.price - a.price,
-                upside: (a, b) => parseFloat(b.upside) - parseFloat(a.upside),
-                rsi: (a, b) => a.rsi - b.rsi,
-                aiScore: (a, b) => b.aiScore - a.aiScore
-            };
-            
-            aiWatchlist = getWatchlistWithLivePrices();
-            aiWatchlist.sort(sorters[sortBy] || sorters.rank);
-            
-            // Re-render content only
+            currentWatchlistSort = sortBy;
             renderWatchlistContent();
         }
 
@@ -7895,6 +7887,19 @@
             const saved = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
             // Refresh live prices before rendering
             aiWatchlist = getWatchlistWithLivePrices();
+            
+            // Apply current sort
+            const sorters = {
+                rank: (a, b) => a.rank - b.rank,
+                price: (a, b) => b.price - a.price,
+                upside: (a, b) => (b.intrinsic - b.price)/b.price - (a.intrinsic - a.price)/a.price,
+                rsi: (a, b) => a.rsi - b.rsi,
+                aiScore: (a, b) => b.aiScore - a.aiScore
+            };
+            if (sorters[currentWatchlistSort]) {
+                aiWatchlist.sort(sorters[currentWatchlistSort]);
+            }
+            
             let stocksToShow = showingSavedOnly 
                 ? aiWatchlist.filter(s => saved.includes(s.symbol))
                 : aiWatchlist;
