@@ -3758,6 +3758,9 @@
             }
         });
 
+        // Auto-refresh interval (30 seconds)
+        let portfolioRefreshInterval = null;
+        
         // Simple data loading with XMLHttpRequest fallback
         function loadPortfolioData() {
             console.log('Loading data...');
@@ -3774,6 +3777,7 @@
                     .then(data => {
                         console.log('Data loaded:', data.positions.length, 'positions');
                         window.lastPortfolioData = data;
+                        updateDashboard(data);
                         updateHoldingsCards(data.positions);
                         updateSectorHeatmap(data.positions);
                     })
@@ -3785,6 +3789,64 @@
             } else {
                 // Use XMLHttpRequest for older browsers
                 loadWithXHR(url);
+            }
+        }
+        
+        // Start auto-refresh
+        function startPortfolioRefresh() {
+            if (portfolioRefreshInterval) clearInterval(portfolioRefreshInterval);
+            portfolioRefreshInterval = setInterval(loadPortfolioData, 30000); // Refresh every 30 seconds
+            console.log('Auto-refresh started (30s interval)');
+        }
+        
+        // Update dashboard with fresh data
+        function updateDashboard(data) {
+            // Update portfolio value
+            const portfolioValueEl = document.getElementById('portfolio-value');
+            if (portfolioValueEl && data.account) {
+                portfolioValueEl.textContent = '$' + Math.floor(data.account.portfolio_value).toLocaleString();
+            }
+            
+            // Update return badge
+            const returnBadge = document.getElementById('portfolio-return-badge');
+            if (returnBadge && data.total_plpc !== undefined) {
+                const isPositive = data.total_plpc >= 0;
+                returnBadge.className = 'portfolio-return-badge ' + (isPositive ? 'positive' : 'negative');
+                returnBadge.innerHTML = (isPositive ? '▲ +' : '▼ ') + data.total_plpc.toFixed(2) + '% ($' + Math.abs(data.total_pl || 0).toLocaleString() + ')';
+            }
+            
+            // Update last updated timestamp
+            const lastUpdated = document.querySelector('.last-updated');
+            if (lastUpdated) {
+                const now = new Date();
+                lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()} • <span style="color: var(--accent-green);">Live Data</span>`;
+            }
+            
+            // Update stonk meter if available
+            if (data.total_plpc !== undefined) {
+                updateStonkMeter(data.total_plpc, -2.60); // Assuming S&P is -2.60%
+            }
+        }
+        
+        // Update stonk meter comparison
+        function updateStonkMeter(stonkReturn, sp500Return) {
+            const stonkBar = document.getElementById('stonk-bar');
+            const sp500Bar = document.getElementById('sp500-bar');
+            
+            if (stonkBar) {
+                const normalizedWidth = Math.max(10, Math.min(90, 50 + (stonkReturn * 5)));
+                stonkBar.style.width = normalizedWidth + '%';
+                stonkBar.style.background = stonkReturn >= 0 
+                    ? 'linear-gradient(90deg, var(--accent-green), #4ade80)'
+                    : 'linear-gradient(90deg, var(--accent-red), #f87171)';
+            }
+            
+            if (sp500Bar) {
+                const sp500Width = Math.max(10, Math.min(90, 50 + (sp500Return * 5)));
+                sp500Bar.style.width = sp500Width + '%';
+                sp500Bar.style.background = sp500Return >= 0 
+                    ? 'var(--accent-green)'
+                    : 'var(--accent-red)';
             }
         }
         
