@@ -3628,50 +3628,60 @@
         let performanceChart = null;
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Load real chart data first
+            loadChartData().then(() => {
+                initPerformanceChart();
+            });
+        });
+        
+        function initPerformanceChart() {
             const ctx = document.getElementById('performanceChart');
-            if (ctx) {
-                performanceChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Start', 'Current'],
-                        datasets: [{
-                            label: 'STONK.AI 🤖',
-                            data: [0, 0],
-                            borderColor: '#06b6d4',
-                            backgroundColor: 'rgba(6, 182, 212, 0.2)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4,
-                            pointBackgroundColor: '#06b6d4',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        }, {
-                            label: 'S&P 500',
-                            data: [0, 0],
-                            borderColor: '#9ca3af',
-                            backgroundColor: 'rgba(156, 163, 175, 0.05)',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            fill: false,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            hidden: false
-                        }, {
-                            label: 'DOW',
-                            data: [0, 0],
-                            borderColor: '#64748b',
-                            backgroundColor: 'rgba(100, 116, 139, 0.05)',
-                            borderWidth: 2,
-                            borderDash: [10, 5],
-                            fill: false,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            hidden: false
-                        }, {
-                            label: 'NASDAQ',
-                            data: [0, 0],
-                            borderColor: '#a855f7',
+            if (!ctx) return;
+            
+            // Get data for initial view (ALL)
+            const data = chartDataStore['ALL'] || { labels: ['Start', 'Current'], stonkAI: [0, 0], sp500: [0, 0], dow: [0, 0], nasdaq: [0, 0] };
+            
+            performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'STONK.AI 🤖',
+                        data: data.stonkAI,
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#06b6d4',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: data.labels.length > 20 ? 0 : 4
+                    }, {
+                        label: 'S&P 500',
+                        data: data.sp500,
+                        borderColor: '#9ca3af',
+                        backgroundColor: 'rgba(156, 163, 175, 0.05)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        hidden: false
+                    }, {
+                        label: 'DOW',
+                        data: data.dow,
+                        borderColor: '#64748b',
+                        backgroundColor: 'rgba(100, 116, 139, 0.05)',
+                        borderWidth: 2,
+                        borderDash: [10, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        hidden: false
+                    }, {
+                        label: 'NASDAQ',
+                        data: data.nasdaq,
                             backgroundColor: 'rgba(168, 85, 247, 0.05)',
                             borderWidth: 2,
                             borderDash: [3, 3],
@@ -3807,7 +3817,10 @@
         // Start auto-refresh
         function startPortfolioRefresh() {
             if (portfolioRefreshInterval) clearInterval(portfolioRefreshInterval);
-            portfolioRefreshInterval = setInterval(loadPortfolioData, 30000); // Refresh every 30 seconds
+            portfolioRefreshInterval = setInterval(() => {
+                loadPortfolioData();
+                loadChartData(); // Also refresh chart data
+            }, 30000); // Refresh every 30 seconds
             console.log('Auto-refresh started (30s interval)');
         }
         
@@ -7407,44 +7420,128 @@
 
         // ==================== INTERACTIVE CHART FEATURES ====================
         
-        // Time Range Data Storage
-        const chartDataStore = {
-            '1D': {
-                labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'],
-                stonkAI: [0, -0.5, -0.8, -1.2, -1.5, -1.8, -2.0, -2.3, -2.5, -2.7, -2.9, -3.0, -3.0, -3.0],
-                sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.6],
-                dow: [0, -0.1, -0.3, -0.5, -0.7, -0.9, -1.0, -1.1, -1.2, -1.3, -1.35, -1.35, -1.35, -1.35],
-                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.1, -4.15, -4.18, -4.18, -4.18]
-            },
-            '1W': {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                stonkAI: [0, -0.5, -1.2, -2.1, -3.0],
-                sp500: [0, -0.3, -0.9, -1.8, -2.6],
-                dow: [0, -0.2, -0.5, -0.9, -1.35],
-                nasdaq: [0, -0.9, -2.0, -3.1, -4.18]
-            },
-            '1M': {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                stonkAI: [0, -0.8, -1.8, -3.0],
-                sp500: [0, -0.5, -1.5, -2.6],
-                dow: [0, -0.4, -0.9, -1.35],
-                nasdaq: [0, -1.2, -2.6, -4.18]
-            },
-            '3M': {
-                labels: ['Month 1', 'Month 2', 'Month 3'],
-                stonkAI: [0, -1.5, -3.0],
-                sp500: [0, -1.3, -2.6],
-                dow: [0, -0.7, -1.35],
-                nasdaq: [0, -2.1, -4.18]
-            },
-            'ALL': {
-                labels: ['Start', 'Current'],
-                stonkAI: [0, -3.00],
-                sp500: [0, -2.60],
-                dow: [0, -1.35],
-                nasdaq: [0, -4.18]
+        // Dynamic chart data loaded from portfolio_history.json
+        let chartDataStore = {};
+        let portfolioHistoryData = [];
+        let marketIndicesData = {};
+        
+        // Load real data from JSON files
+        async function loadChartData() {
+            try {
+                // Load portfolio history
+                const historyRes = await fetch('portfolio_history.json?t=' + Date.now());
+                const historyData = await historyRes.json();
+                portfolioHistoryData = historyData.checks || [];
+                
+                // Load market indices
+                const indicesRes = await fetch('market_indices.json?t=' + Date.now());
+                const indicesData = await indicesRes.json();
+                marketIndicesData = indicesData.indices || {};
+                
+                // Build chart data from real history
+                buildChartDataFromHistory();
+                
+                // Update chart if it exists
+                if (performanceChart) {
+                    updateChartRange(currentRange);
+                }
+                
+            } catch (e) {
+                console.error('Failed to load chart data:', e);
+                // Fall back to empty data - will show loading state
             }
-        };
+        }
+        
+        // Build chart data from portfolio history
+        function buildChartDataFromHistory() {
+            if (portfolioHistoryData.length < 2) {
+                chartDataStore = {
+                    'ALL': {
+                        labels: ['Start', 'Current'],
+                        stonkAI: [0, 0],
+                        sp500: [0, 0],
+                        dow: [0, 0],
+                        nasdaq: [0, 0]
+                    }
+                };
+                return;
+            }
+            
+            // Get actual S&P, DOW, NASDAQ returns from market indices
+            const spReturn = marketIndicesData['S&P 500']?.return_pct || -2.65;
+            const dowReturn = marketIndicesData['Dow Jones']?.return_pct || -0.37;
+            const nasdaqReturn = marketIndicesData['NASDAQ']?.return_pct || -4.81;
+            
+            // ALL - Show full history with proper labels
+            const allLabels = portfolioHistoryData.map((check, i) => {
+                if (i === 0) return 'Start';
+                if (i === portfolioHistoryData.length - 1) return 'Current';
+                const date = new Date(check.timestamp);
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+            });
+            
+            const allStonkAI = portfolioHistoryData.map(check => check.total_pl_pct || 0);
+            
+            // Interpolate benchmarks (assume linear progression)
+            const allSP500 = allLabels.map((_, i) => {
+                const progress = i / (allLabels.length - 1);
+                return progress * spReturn;
+            });
+            const allDOW = allLabels.map((_, i) => {
+                const progress = i / (allLabels.length - 1);
+                return progress * dowReturn;
+            });
+            const allNASDAQ = allLabels.map((_, i) => {
+                const progress = i / (allLabels.length - 1);
+                return progress * nasdaqReturn;
+            });
+            
+            chartDataStore = {
+                'ALL': {
+                    labels: allLabels,
+                    stonkAI: allStonkAI,
+                    sp500: allSP500,
+                    dow: allDOW,
+                    nasdaq: allNASDAQ
+                }
+            };
+            
+            // Build 1D data (last day's data points)
+            const lastDay = new Date(portfolioHistoryData[portfolioHistoryData.length - 1].timestamp);
+            const todayData = portfolioHistoryData.filter(check => {
+                const checkDate = new Date(check.timestamp);
+                return checkDate.toDateString() === lastDay.toDateString();
+            });
+            
+            if (todayData.length >= 2) {
+                chartDataStore['1D'] = {
+                    labels: todayData.map((check, i) => {
+                        const date = new Date(check.timestamp);
+                        return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+                    }),
+                    stonkAI: todayData.map(check => check.total_pl_pct || 0),
+                    sp500: todayData.map((_, i) => {
+                        const progress = i / (todayData.length - 1);
+                        return progress * spReturn;
+                    }),
+                    dow: todayData.map((_, i) => {
+                        const progress = i / (todayData.length - 1);
+                        return progress * dowReturn;
+                    }),
+                    nasdaq: todayData.map((_, i) => {
+                        const progress = i / (todayData.length - 1);
+                        return progress * nasdaqReturn;
+                    })
+                };
+            } else {
+                chartDataStore['1D'] = chartDataStore['ALL'];
+            }
+            
+            // 1W, 1M, 3M - use ALL data for now (will refine as more data accumulates)
+            chartDataStore['1W'] = chartDataStore['ALL'];
+            chartDataStore['1M'] = chartDataStore['ALL'];
+            chartDataStore['3M'] = chartDataStore['ALL'];
+        }
         
         let currentRange = '1M';
         let visibleBenchmarks = ['S&P 500', 'DOW', 'NASDAQ'];
