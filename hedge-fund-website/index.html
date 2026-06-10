@@ -7664,19 +7664,29 @@
             }
         }
         
-        // Get merged watchlist with live prices
+        // Get merged watchlist with live prices and targets
         function getWatchlistWithLivePrices() {
             return aiWatchlistBase.map(stock => {
                 const liveData = aiWatchlistPrices[stock.symbol];
                 if (liveData && liveData.price) {
                     const livePrice = liveData.price;
                     const upside = ((stock.intrinsic - livePrice) / livePrice * 100);
+                    // Extract target prices from live data
+                    const targets = liveData.targets || {};
                     return {
                         ...stock,
                         price: livePrice,
                         upside: (upside >= 0 ? '+' : '') + upside.toFixed(1) + '%',
                         upsideRaw: upside,
-                        isLive: true
+                        isLive: true,
+                        // Add council target prices
+                        targetConservative: targets.conservative_target,
+                        targetAggressive: targets.aggressive_target,
+                        stopLoss: targets.stop_loss,
+                        profit25: targets.profit_25,
+                        profit50: targets.profit_50,
+                        signal: targets.signal,
+                        councilNote: targets.council_note
                     };
                 }
                 return { ...stock, isLive: false };
@@ -7864,6 +7874,18 @@
                 const upsidePct = ((stock.intrinsic - stock.price) / stock.price * 100);
                 const upsideStr = upsidePct >= 0 ? `+${upsidePct.toFixed(1)}%` : `${upsidePct.toFixed(1)}%`;
                 const upsideColor = upsidePct >= 20 ? '#22c55e' : upsidePct >= 0 ? '#eab308' : '#ef4444';
+                // Target prices from council
+                const hasTargets = stock.targetConservative && stock.targetAggressive;
+                const targetDisplay = hasTargets ? `
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px; pointer-events: none;">
+                        <span style="font-size: 11px; color: var(--text-muted);">Buy:</span>
+                        <span style="font-size: 12px; color: var(--accent-green); font-weight: 600;">$${stock.targetConservative.toFixed(2)}</span>
+                        <span style="font-size: 11px; color: var(--text-muted);">/</span>
+                        <span style="font-size: 12px; color: #22c55e; font-weight: 600;">$${stock.targetAggressive.toFixed(2)}</span>
+                        ${stock.signal ? `<span style="font-size: 10px; background: ${stock.signal === 'BUY' ? 'rgba(34,197,94,0.2)' : 'rgba(251,191,36,0.2)'}; color: ${stock.signal === 'BUY' ? '#22c55e' : 'var(--accent-gold)'}; padding: 2px 6px; border-radius: 4px; margin-left: auto;">${stock.signal}</span>` : ''}
+                    </div>
+                ` : '';
+                
                 return `
                     <div onclick="showStockChart('${stock.symbol}')" style="background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; margin-bottom: 12px; position: relative; cursor: pointer;" onmouseover="this.style.background='var(--bg-elevated)'" onmouseout="this.style.background='var(--bg-surface)'">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -7876,16 +7898,18 @@
                                 <div style="background: ${aiScoreColor}20; border: 1px solid ${aiScoreColor}40; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: ${aiScoreColor};">#${stock.rank}</div>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; pointer-events: none;">
+                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; pointer-events: none;">
                             <span style="font-family: monospace; font-size: 20px; font-weight: 700;">$${stock.price.toFixed(2)}</span>
                             <span style="font-size: 13px; color: ${upsideColor}; font-weight: 600;">→ $${stock.intrinsic.toFixed(0)} (${upsideStr})</span>
                         </div>
+                        ${targetDisplay}
                         <div style="display: flex; gap: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); pointer-events: none;">
                             <div><div style="font-size: 10px; color: var(--text-muted);">AI</div><div style="font-size: 16px; font-weight: 700; color: ${aiScoreColor};">${stock.aiScore}</div></div>
                             <div><div style="font-size: 10px; color: var(--text-muted);">Sentiment</div><div style="font-size: 14px; color: #22c55e;">${stock.sentiment.bullish}%</div></div>
                             <div><div style="font-size: 10px; color: var(--text-muted);">RSI</div><div style="font-size: 14px; color: ${stock.rsi < 30 ? '#06b6d4' : 'var(--text-secondary)'};">${stock.rsi}</div></div>
                             <div><div style="font-size: 10px; color: var(--text-muted);">Vol</div><div style="font-size: 14px; color: #22c55e;">${stock.volume}</div></div>
                         </div>
+                        ${stock.councilNote ? `<div style="font-size: 11px; color: var(--accent-gold); margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); pointer-events: none;">🎯 ${stock.councilNote}</div>` : ''}
                     </div>
                 `;
             }).join('');
