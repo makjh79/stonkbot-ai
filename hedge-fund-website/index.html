@@ -2505,65 +2505,32 @@
                 </div>
             </div>
 
-            <!-- THE RACE - STONK.AI vs S&P 500 -->
-            <div>
-                <!-- Race Track -->
-                <div style="background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1)); border-radius: 16px; padding: 1rem; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;">
-                    <!-- Track grid lines -->
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(255,255,255,0.02) 49px, rgba(255,255,255,0.02) 50px); pointer-events: none;"></div>
-
-                    <!-- STONK.AI Lane -->
-                    <div style="margin-bottom: 0.75rem; position: relative; z-index: 1;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 1.25rem;">🤖</span>
-                                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">STONK.AI</span>
-                                <span id="stonkAiStatus" style="font-size: 0.6rem; padding: 0.15rem 0.4rem; background: rgba(239,68,68,0.2); color: var(--accent-red); border-radius: 4px; font-weight: 600;">BEHIND</span>
-                            </div>
-                            <div style="text-align: right;">
-                                <div id="stonkAiValue" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">$--</div>
-                                <div id="stonkAiReturn" style="font-size: 0.65rem; color: var(--text-muted);">--</div>
-                            </div>
-                        </div>
-                        <!-- Progress bar track -->
-                        <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
-                            <!-- The racing bar -->
-                            <div id="stonkAiBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ef4444, #f87171); border-radius: 6px; transition: width 1.5s ease-out; position: relative; box-shadow: 0 0 10px rgba(239,68,68,0.4);">
-                                <!-- Racing stripe effect -->
-                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.2) 8px, rgba(255,255,255,0.2) 16px);"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- S&P 500 Lane -->
-                    <div style="position: relative; z-index: 1;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 1.25rem;">📈</span>
-                                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">S&P 500</span>
-                                <span id="sp500Status" style="font-size: 0.6rem; padding: 0.15rem 0.4rem; background: rgba(34,197,94,0.2); color: var(--accent-green); border-radius: 4px; font-weight: 600;">LEADING</span>
-                            </div>
-                            <div style="text-align: right;">
-                                <div id="sp500Value" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">$--</div>
-                                <div id="sp500Return" style="font-size: 0.65rem; color: var(--text-muted);">--</div>
-                            </div>
-                        </div>
-                        <!-- Progress bar track -->
-                        <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
-                            <!-- The racing bar -->
-                            <div id="sp500Bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ef4444, #f87171); border-radius: 6px; transition: width 1.5s ease-out 0.3s; position: relative; box-shadow: 0 0 10px rgba(239,68,68,0.4);">
-                                <!-- Racing stripe effect -->
-                                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.2) 8px, rgba(255,255,255,0.2) 16px);"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Finish line -->
-                    <div style="position: absolute; top: 0; right: 20px; bottom: 0; width: 3px; background: repeating-linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 10px, transparent 10px, transparent 20px); pointer-events: none;"></div>
+            <!-- THE RACE - Hybrid Card Design -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                <!-- S&P 500 Card -->
+                <div style="background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
+                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
+                    <div id="sp500Value" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">$97,400</div>
+                    <div id="sp500Return" style="font-size: 0.75rem; color: var(--accent-red); margin-bottom: 0.5rem;">-2.60%</div>
+                    <span id="sp500Status" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(239,68,68,0.15); color: var(--accent-red); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Behind</span>
                 </div>
-
-
-
+                
+                <!-- STONK.AI Card -->
+                <div style="background: linear-gradient(180deg, rgba(34,197,94,0.1), rgba(34,197,94,0.03)); border: 1px solid rgba(34,197,94,0.2); border-radius: 16px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
+                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">STONK.AI</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
+                    <div id="stonkAiValue" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">$97,003</div>
+                    <div id="stonkAiReturn" style="font-size: 0.75rem; color: var(--accent-red); margin-bottom: 0.5rem;">-3.00%</div>
+                    <span id="stonkAiStatus" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(34,197,94,0.15); color: var(--accent-green); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Leading</span>
+                </div>
+            </div>
+            
+            <!-- Performance Gap Label -->
+            <div style="text-align: center; padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Performance Gap</div>
             </div>
 
         </div>
@@ -3205,7 +3172,7 @@
                             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Concentration</span>
                             <span style="margin-left: auto; font-size: 0.7rem; padding: 0.2rem 0.5rem; background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border-radius: 4px;">MEDIUM</span>
                         </div>
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.4;">Largest position: AMD at 16.8% ($16.3K). Well diversified across 11 holdings.</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.4;">Largest position: DKNG at 23.1% ($22.3K). 11 active positions.</div>
                         <div style="margin-top: 0.5rem; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;">
                             <div style="height: 100%; width: 45%; background: var(--accent-gold); border-radius: 2px;"></div>
                         </div>
@@ -3803,6 +3770,7 @@
                     })
                     .then(data => {
                         console.log('Data loaded:', data.positions.length, 'positions');
+                        window.lastPortfolioData = data;
                         updateHoldingsCards(data.positions);
                         updateSectorHeatmap(data.positions);
                     })
@@ -3821,10 +3789,10 @@
         function updateSectorHeatmap(positions) {
             console.log('Updating sector heatmap with', positions.length, 'positions');
             const sectorSymbols = {
-                'mega': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
+                'mega': ['AAPL', 'GOOGL', 'NVDA'],
                 'ai': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                'fintech': ['HOOD', 'SOFI'],
-                'defense': ['AVGO', 'SCHD', 'SGOV']
+                'fintech': ['HOOD', 'UPST', 'DKNG'],
+                'defense': ['AVGO']
             };
             
             const sectorPerformance = {
@@ -3867,20 +3835,22 @@
             }
         }
         
-        // Fallback data (shown if fetch fails) - 9 active positions only
+        // Fallback data (shown if fetch fails)
         const FALLBACK_DATA = {
-            timestamp: "2026-06-09T14:00:00",
-            account: { portfolio_value: 98128.04, cash: -14787.70 },
+            timestamp: "2026-06-08T11:58:45",
+            account: { portfolio_value: 96446.86, cash: -14787.64 },
             positions: [
-                { symbol: "AAPL", qty: 25, avg_entry: 313.97, current: 294.59, unrealized_plpc: -6.17, market_value: 7364.75 },
-                { symbol: "AMD", qty: 35, avg_entry: 506.48, current: 492.14, unrealized_plpc: -2.83, market_value: 17225.08 },
-                { symbol: "APP", qty: 8, avg_entry: 568.37, current: 551.72, unrealized_plpc: -2.93, market_value: 4413.76 },
-                { symbol: "AVGO", qty: 5, avg_entry: 409.80, current: 396.60, unrealized_plpc: -3.22, market_value: 1983.00 },
-                { symbol: "CRWD", qty: 3, avg_entry: 687.49, current: 646.49, unrealized_plpc: -5.96, market_value: 1939.47 },
-                { symbol: "GOOGL", qty: 15, avg_entry: 367.54, current: 370.25, unrealized_plpc: 0.74, market_value: 5553.75 },
-                { symbol: "HOOD", qty: 25, avg_entry: 83.46, current: 87.67, unrealized_plpc: 5.05, market_value: 2191.88 },
-                { symbol: "NVDA", qty: 17, avg_entry: 213.75, current: 207.81, unrealized_plpc: -2.77, market_value: 3532.86 },
-                { symbol: "PLTR", qty: 45, avg_entry: 140.94, current: 135.66, unrealized_plpc: -3.74, market_value: 6104.70 }
+                { symbol: "DKNG", qty: 800, avg_entry: 26.99, current: 27.89, unrealized_plpc: 3.34, market_value: 22312.00 },
+                { symbol: "PLTR", qty: 145, avg_entry: 135.30, current: 131.35, unrealized_plpc: -2.92, market_value: 19045.75 },
+                { symbol: "HOOD", qty: 225, avg_entry: 84.12, current: 82.56, unrealized_plpc: -1.85, market_value: 18576.00 },
+                { symbol: "AMD", qty: 35, avg_entry: 506.48, current: 464.86, unrealized_plpc: -8.22, market_value: 16270.10 },
+                { symbol: "UPST", qty: 350, avg_entry: 30.97, current: 30.90, unrealized_plpc: -0.23, market_value: 10815.00 },
+                { symbol: "AAPL", qty: 25, avg_entry: 313.97, current: 291.87, unrealized_plpc: -7.04, market_value: 7296.75 },
+                { symbol: "GOOGL", qty: 15, avg_entry: 367.54, current: 361.07, unrealized_plpc: -1.76, market_value: 5416.05 },
+                { symbol: "APP", qty: 8, avg_entry: 568.37, current: 520.00, unrealized_plpc: -8.51, market_value: 4160.00 },
+                { symbol: "NVDA", qty: 17, avg_entry: 213.75, current: 205.83, unrealized_plpc: -3.70, market_value: 3499.11 },
+                { symbol: "CRWD", qty: 3, avg_entry: 687.49, current: 642.08, unrealized_plpc: -6.60, market_value: 1926.24 },
+                { symbol: "AVGO", qty: 5, avg_entry: 409.80, current: 383.50, unrealized_plpc: -6.42, market_value: 1917.50 }
             ]
         };
 
@@ -3895,6 +3865,7 @@
                         try {
                             const data = JSON.parse(xhr.responseText);
                             console.log('XHR data loaded:', data.positions.length, 'positions');
+                            window.lastPortfolioData = data;
                             updateHoldingsCards(data.positions);
                             updateSectorHeatmap(data.positions);
                         } catch (e) {
@@ -3907,16 +3878,18 @@
             };
             xhr.onerror = function() {
                 console.log('XHR network error, using fallback...');
+                window.lastPortfolioData = FALLBACK_DATA;
                 updateHoldingsCards(FALLBACK_DATA.positions);
             };
             xhr.send();
         }
-        
+
         // Show error in container (with fallback data)
         function showError(msg) {
             console.error('Error:', msg);
             // Use fallback data instead of showing error
             console.log('Using fallback data...');
+            window.lastPortfolioData = FALLBACK_DATA;
             updateHoldingsCards(FALLBACK_DATA.positions);
             updateSectorHeatmap(FALLBACK_DATA.positions);
         }
@@ -3926,6 +3899,7 @@
             try {
                 const response = await fetch('./portfolio_data.json?t=' + Date.now());
                 const data = await response.json();
+                window.lastPortfolioData = data;
 
                 // Update header timestamp
                 const timestamp = new Date(data.timestamp);
@@ -4016,10 +3990,10 @@
 
                 // Update allocation bars dynamically
                 const catMap = {
-                    'Tech Giants': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
+                    'Tech Giants': ['AAPL', 'GOOGL', 'NVDA'],
                     'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                    'Fintech': ['HOOD', 'SOFI'],
-                    'Defense/Income': ['AVGO', 'SCHD', 'SGOV']
+                    'Fintech': ['HOOD', 'UPST', 'DKNG'],
+                    'Defense/Income': ['AVGO']
                 };
 
                 let invested = 0;
@@ -4081,10 +4055,10 @@
                 };
 
                 const sectorSymbols = {
-                    'mega': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
+                    'mega': ['AAPL', 'GOOGL', 'NVDA'],
                     'ai': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                    'fintech': ['HOOD', 'SOFI'],
-                    'defense': ['AVGO', 'SCHD', 'SGOV']
+                    'fintech': ['HOOD', 'UPST', 'DKNG'],
+                    'defense': ['AVGO']
                 };
 
                 data.positions.forEach(pos => {
@@ -4210,15 +4184,12 @@
                 'APP': 'AppLovin Corp',
                 'AVGO': 'Broadcom Inc.',
                 'CRWD': 'CrowdStrike',
+                'DKNG': 'DraftKings Inc.',
                 'GOOGL': 'Alphabet Inc.',
                 'HOOD': 'Robinhood',
-                'META': 'Meta Platforms',
-                'MSFT': 'Microsoft Corp',
                 'NVDA': 'NVIDIA Corp',
                 'PLTR': 'Palantir Technologies',
-                'SCHD': 'Schwab US Dividend ETF',
-                'SGOV': 'iShares Treasury ETF',
-                'SOFI': 'SoFi Technologies'
+                'UPST': 'Upstart Holdings'
             };
             return names[symbol] || symbol;
         }
@@ -4226,10 +4197,10 @@
         // Get category for each stock
         function getCategory(symbol) {
             const categories = {
-                'Tech Giants': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
+                'Tech Giants': ['AAPL', 'GOOGL', 'NVDA'],
                 'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                'Fintech': ['HOOD', 'SOFI'],
-                'Defense/Income': ['AVGO', 'SCHD', 'SGOV']
+                'Fintech': ['HOOD', 'UPST', 'DKNG'],
+                'Defense/Income': ['AVGO']
             };
             for (const [cat, symbols] of Object.entries(categories)) {
                 if (symbols.includes(symbol)) return cat;
@@ -4806,11 +4777,11 @@
                     const portfolioValue = data.account.portfolio_value;
                     const positions = data.positions;
 
-                    // Categorize positions - updated for 9 active holdings
+                    // Categorize positions
                     const categories = {
                         'Tech Giants': { symbols: ['AAPL', 'GOOGL', 'NVDA'], color: '#fbbf24', positions: [] },
                         'AI/Growth': { symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], color: '#f97316', positions: [] },
-                        'Fintech': { symbols: ['HOOD'], color: '#06b6d4', positions: [] },
+                        'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG'], color: '#06b6d4', positions: [] },
                         'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', positions: [] }
                     };
 
@@ -5445,10 +5416,10 @@
             
             // Sector definitions
             const sectorConfig = {
-                'mega': { name: 'Tech Giants', icon: '🏢', symbols: ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, cloud, and social media.' },
+                'mega': { name: 'Tech Giants', icon: '🏢', symbols: ['AAPL', 'GOOGL', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, search, and AI.' },
                 'ai': { name: 'AI/Growth', icon: '🤖', symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], riskLevel: 'High', aiInsight: 'High-growth AI names seeing volatility. Maintaining for upside.' },
-                'fintech': { name: 'Fintech', icon: '💳', symbols: ['HOOD', 'SOFI'], riskLevel: 'High', aiInsight: 'Small fintech exposure. Higher risk/reward profile.' },
-                'defense': { name: 'Defense/Income', icon: '🛡️', symbols: ['AVGO', 'SCHD', 'SGOV'], riskLevel: 'Low', aiInsight: 'Income and stability anchor. SCHD + Treasuries for downside protection.' }
+                'fintech': { name: 'Fintech', icon: '💳', symbols: ['HOOD', 'UPST', 'DKNG'], riskLevel: 'High', aiInsight: 'Fintech and betting exposure. Higher risk/reward profile.' },
+                'defense': { name: 'Defense/Income', icon: '🛡️', symbols: ['AVGO'], riskLevel: 'Low', aiInsight: 'Broadcom as stability anchor with dividend income.' }
             };
             
             const config = sectorConfig[sectorId];
@@ -6156,6 +6127,24 @@
 
         // Trade Details Modal
         const tradeRationale = {
+            'DKNG': {
+                company: 'DraftKings Inc.',
+                thesis: 'Sports betting leader with strong market share growth',
+                catalyst: 'NFL season, new state legalizations, profitable quarters',
+                risk: 'Competition from FanDuel, regulatory changes',
+                confidence: '75% - Largest position, conviction play',
+                entryReason: 'Market leader in growing TAM, improving margins',
+                stopReason: '-15% stop if profitability delays'
+            },
+            'UPST': {
+                company: 'Upstart Holdings',
+                thesis: 'AI-powered lending disrupting credit scoring',
+                catalyst: 'Rate cuts improving loan demand, new models',
+                risk: 'Rate sensitive, credit cycle exposure',
+                confidence: '70% - Turnaround story with AI edge',
+                entryReason: 'AI lending differentiation, rate cycle play',
+                stopReason: '-15% stop on credit deterioration'
+            },
             'HOOD': {
                 company: 'Robinhood Markets',
                 thesis: 'Fintech disruption play with crypto trading boom',
@@ -6286,8 +6275,11 @@
 
         function showTradeDetails(symbol) {
             const data = tradeRationale[symbol];
-            if (!data) return;
-
+            
+            // Get current position data from portfolio
+            const currentData = window.lastPortfolioData || FALLBACK_DATA;
+            const position = currentData.positions.find(p => p.symbol === symbol);
+            
             const modal = document.createElement('div');
             modal.id = 'trade-modal';
             modal.style.cssText = `
@@ -6296,11 +6288,12 @@
                 display: flex; align-items: center; justify-content: center;
                 z-index: 10000; padding: 1rem;
             `;
-
-            modal.innerHTML = `
-                <div style="background: linear-gradient(145deg, #1a1a24, #0f0f14); border: 1px solid rgba(255,255,255,0.1);
-                     border-radius: 16px; padding: 1.5rem; max-width: 420px; width: 100%;
-                     box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+            
+            // Build popup content - use detailed data if available, otherwise show basic position info
+            let content;
+            if (data) {
+                // Full rationale available
+                content = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div>
                             <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
@@ -6335,6 +6328,68 @@
                         <div style="margin-bottom: 0.4rem;"><strong style="color: var(--accent-green);">Entry:</strong> ${data.entryReason}</div>
                         <div><strong style="color: var(--accent-red);">Stop:</strong> ${data.stopReason}</div>
                     </div>
+                `;
+            } else if (position) {
+                // No rationale but have position data - show basic info
+                const isPositive = position.unrealized_plpc >= 0;
+                const plColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
+                const plSign = isPositive ? '+' : '';
+                
+                content = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">${getCompanyName(symbol)}</div>
+                        </div>
+                        <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
+                                font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                        <div style="font-size: 0.7rem; color: var(--accent-blue); font-weight: 700; margin-bottom: 0.5rem;">📊 POSITION DETAILS</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.8rem; color: var(--text-primary);">
+                            <div><span style="color: var(--text-secondary);">Shares:</span> <strong>${position.qty}</strong></div>
+                            <div><span style="color: var(--text-secondary);">Current:</span> <strong>$${position.current.toFixed(2)}</strong></div>
+                            <div><span style="color: var(--text-secondary);">Avg Entry:</span> <strong>$${position.avg_entry.toFixed(2)}</strong></div>
+                            <div><span style="color: var(--text-secondary);">Value:</span> <strong>$${position.market_value.toLocaleString()}</strong></div>
+                        </div>
+                    </div>
+
+                    <div style="background: ${isPositive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; border: 1px solid ${plColor}; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.3rem;">UNREALIZED P&L</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: ${plColor}; font-family: 'JetBrains Mono', monospace;">${plSign}${position.unrealized_plpc.toFixed(2)}%</div>
+                    </div>
+
+                    <div style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.6rem; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 0.3rem;">🤖 AI ANALYSIS</div>
+                        <div style="font-size: 0.8rem; color: var(--text-primary);">Position added by trading system. Detailed thesis being generated...</div>
+                    </div>
+
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
+                        <div><strong style="color: var(--accent-blue);">Strategy:</strong> -15% stop loss, +25% trim, +50% exit target</div>
+                    </div>
+                `;
+            } else {
+                // Unknown symbol
+                content = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
+                        </div>
+                        <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
+                                font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
+                    </div>
+                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Position details not available
+                    </div>
+                `;
+            }
+
+            modal.innerHTML = `
+                <div style="background: linear-gradient(145deg, #1a1a24, #0f0f14); border: 1px solid rgba(255,255,255,0.1);
+                     border-radius: 16px; padding: 1.5rem; max-width: 420px; width: 100%;
+                     box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                    ${content}
                 </div>
             `;
 
@@ -6538,18 +6593,31 @@
         // ============================================
         let currentActivityFilter = 'all';
         let activityDataCache = [];
+        let activityRefreshInterval = null;
 
         function showActivityLog() {
             const modal = document.getElementById('activityLogModal');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             loadActivityLog();
+            
+            // Auto-refresh every 30 seconds while modal is open
+            if (activityRefreshInterval) clearInterval(activityRefreshInterval);
+            activityRefreshInterval = setInterval(() => {
+                if (document.getElementById('activityLogModal')?.classList.contains('active')) {
+                    loadActivityLog();
+                }
+            }, 30000);
         }
 
         function closeActivityLog() {
             const modal = document.getElementById('activityLogModal');
             modal.classList.remove('active');
             document.body.style.overflow = '';
+            if (activityRefreshInterval) {
+                clearInterval(activityRefreshInterval);
+                activityRefreshInterval = null;
+            }
         }
 
         function filterActivityLog(filter) {
@@ -6628,7 +6696,38 @@
                     console.log('Could not load history for activity log');
                 }
 
-                // 2. Add static activity data from trades with detailed rationale
+                // 2. Load REAL trades from Alpaca trades_log.json
+                try {
+                    const tradesRes = await fetch('trades_log.json?t=' + Date.now());
+                    const tradesData = await tradesRes.json();
+                    
+                    if (tradesData.trades && Array.isArray(tradesData.trades)) {
+                        const realTrades = tradesData.trades.map(trade => ({
+                            type: 'trade',
+                            subtype: trade.action?.toLowerCase() || 'buy',
+                            icon: trade.action === 'SELL' ? '🔴' : '🟢',
+                            title: `${trade.action === 'SELL' ? 'Sold' : 'Bought'} ${trade.symbol}`,
+                            description: `${trade.quantity} shares @ $${parseFloat(trade.price).toFixed(2)}${trade.source ? ` • ${trade.source}` : ''}`,
+                            timestamp: new Date(trade.timestamp || trade.filled_at),
+                            badge: trade.action || 'Buy',
+                            badgeClass: trade.action?.toLowerCase() || 'buy',
+                            details: { 
+                                quantity: trade.quantity, 
+                                price: parseFloat(trade.price).toFixed(2), 
+                                total: (trade.quantity * parseFloat(trade.price)).toFixed(2),
+                                order_id: trade.order_id 
+                            },
+                            rationale: trade.rationale || `Trade executed via Alpaca API${trade.source ? ` (${trade.source})` : ''}`,
+                            marketContext: trade.source || 'Alpaca Paper Trading'
+                        }));
+                        
+                        activities.push(...realTrades);
+                    }
+                } catch (e) {
+                    console.log('Could not load trades_log.json:', e);
+                }
+
+                // 3. Add static activity data as fallback
                 const tradeActivities = [
                     {
                         type: 'trade',
@@ -6783,27 +6882,92 @@
                 return;
             }
 
-            entriesDiv.innerHTML = filtered.map((activity, index) => {
+            // Group activities by date
+            let currentDate = null;
+            let html = '';
+            
+            filtered.forEach((activity, index) => {
+                const activityDate = activity.timestamp.toDateString();
+                
+                // Add date header if this is a new date
+                if (activityDate !== currentDate) {
+                    currentDate = activityDate;
+                    const dateLabel = new Date(activity.timestamp).toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin: 1rem 0 0.5rem 0; padding: 0 0.5rem;">
+                            <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">${dateLabel}</div>
+                            <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                        </div>
+                    `;
+                }
+                
+                // Render activity item
                 const timeAgo = getTimeAgo(activity.timestamp);
                 const itemClass = activity.type === 'trade' ? `trade-${activity.subtype}` : activity.type;
+                
+                // Format trade rationale as one-liner for list view
+                let rationaleSnippet = '';
+                if (activity.type === 'trade' && activity.rationale) {
+                    const firstSentence = activity.rationale.split('.')[0];
+                    rationaleSnippet = firstSentence.length > 60 
+                        ? firstSentence.substring(0, 60) + '...' 
+                        : firstSentence;
+                }
+                
+                // Source badge for Council trades
+                let sourceBadge = '';
+                if (activity.marketContext && activity.marketContext.includes('Council')) {
+                    const councilName = activity.marketContext.match(/(SOROS|JONES|PAULSON|WOOD)/)?.[0] || 'Council';
+                    const councilColors = {
+                        'SOROS': '#f97316',  // Orange - Macro/Ops
+                        'JONES': '#22c55e',  // Green - Risk/Commodities
+                        'PAULSON': '#06b6d4', // Cyan - Credit/Banks
+                        'WOOD': '#a855f7',    // Purple - Tech/Growth
+                        'Council': '#fbbf24'  // Gold
+                    };
+                    const color = councilColors[councilName] || councilColors['Council'];
+                    sourceBadge = `<span style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.35rem; background: ${color}15; border: 1px solid ${color}40; border-radius: 4px; font-size: 0.6rem; font-weight: 600; color: ${color}; text-transform: uppercase; letter-spacing: 0.3px;">${councilName}</span>`;
+                } else if (activity.details?.order_id) {
+                    sourceBadge = `<span style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.35rem; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); border-radius: 4px; font-size: 0.6rem; font-weight: 600; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.3px;">Alpaca</span>`;
+                }
 
-                return `
+                // Format timestamp for display
+                const timeStr = new Date(activity.timestamp).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                html += `
                     <div class="activity-log-item ${itemClass}" onclick="showActivityDetail(${index}, '${filter}')" style="cursor: pointer;">
                         <div class="activity-log-icon ${activity.type === 'trade' ? activity.subtype : activity.type}">
                             ${activity.icon}
                         </div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; flex-wrap: wrap;">
                                 <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">${activity.title}</div>
                                 <span class="activity-badge ${activity.badgeClass}">${activity.badge}</span>
+                                ${sourceBadge}
                             </div>
                             <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">${activity.description}</div>
-                            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem; font-family: 'JetBrains Mono', monospace;">${timeAgo}</div>
+                            ${rationaleSnippet ? `<div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4; font-style: italic;">"${rationaleSnippet}"</div>` : ''}
+                            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem; font-family: 'JetBrains Mono', monospace; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="color: var(--accent-blue);">${timeStr}</span>
+                                <span style="width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; opacity: 0.5;"></span>
+                                <span>${timeAgo}</span>
+                            </div>
                         </div>
                         <div style="color: var(--text-muted); font-size: 0.9rem; margin-left: 0.5rem;">›</div>
                     </div>
                 `;
-            }).join('');
+            });
+            
+            entriesDiv.innerHTML = html;
         }
 
         function showActivityDetail(index, filter) {
@@ -7022,38 +7186,38 @@
         const chartDataStore = {
             '1D': {
                 labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'],
-                stonkAI: [0, -0.1, -0.25, -0.4, -0.55, -0.7, -0.85, -1.0, -1.1, -1.2, -1.3, -1.35, -1.4, -1.44],
-                sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.65],
-                dow: [0, -0.05, -0.1, -0.15, -0.2, -0.25, -0.3, -0.33, -0.35, -0.36, -0.37, -0.37, -0.37, -0.37],
-                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.3, -4.5, -4.6, -4.7, -4.81]
+                stonkAI: [0, -0.5, -0.8, -1.2, -1.5, -1.8, -2.0, -2.3, -2.5, -2.7, -2.9, -3.0, -3.0, -3.0],
+                sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.6],
+                dow: [0, -0.1, -0.3, -0.5, -0.7, -0.9, -1.0, -1.1, -1.2, -1.3, -1.35, -1.35, -1.35, -1.35],
+                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.1, -4.15, -4.18, -4.18, -4.18]
             },
             '1W': {
                 labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                stonkAI: [0, -0.4, -0.8, -1.1, -1.44],
-                sp500: [0, -0.5, -1.3, -2.0, -2.65],
-                dow: [0, -0.1, -0.2, -0.3, -0.37],
-                nasdaq: [0, -1.2, -2.5, -3.8, -4.81]
+                stonkAI: [0, -0.5, -1.2, -2.1, -3.0],
+                sp500: [0, -0.3, -0.9, -1.8, -2.6],
+                dow: [0, -0.2, -0.5, -0.9, -1.35],
+                nasdaq: [0, -0.9, -2.0, -3.1, -4.18]
             },
             '1M': {
                 labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                stonkAI: [0, -0.5, -0.9, -1.44],
-                sp500: [0, -0.8, -1.8, -2.65],
-                dow: [0, -0.15, -0.28, -0.37],
-                nasdaq: [0, -1.8, -3.5, -4.81]
+                stonkAI: [0, -0.8, -1.8, -3.0],
+                sp500: [0, -0.5, -1.5, -2.6],
+                dow: [0, -0.4, -0.9, -1.35],
+                nasdaq: [0, -1.2, -2.6, -4.18]
             },
             '3M': {
                 labels: ['Month 1', 'Month 2', 'Month 3'],
-                stonkAI: [0, -0.8, -1.44],
-                sp500: [0, -1.8, -2.65],
-                dow: [0, -0.25, -0.37],
-                nasdaq: [0, -3.0, -4.81]
+                stonkAI: [0, -1.5, -3.0],
+                sp500: [0, -1.3, -2.6],
+                dow: [0, -0.7, -1.35],
+                nasdaq: [0, -2.1, -4.18]
             },
             'ALL': {
                 labels: ['Start', 'Current'],
-                stonkAI: [0, -1.44],
-                sp500: [0, -2.65],
-                dow: [0, -0.37],
-                nasdaq: [0, -4.81]
+                stonkAI: [0, -3.00],
+                sp500: [0, -2.60],
+                dow: [0, -1.35],
+                nasdaq: [0, -4.18]
             }
         };
         
@@ -7640,83 +7804,6 @@
                 document.body.style.overflow = '';
             }
         }
-        
-        // ============================================
-        // SAFE DYNAMIC CHART UPDATE - June 10, 2026
-        // This runs AFTER the chart initializes
-        // and updates data from portfolio_history.json
-        // ============================================
-        (function safeChartUpdater() {
-            // Wait for chart to be ready
-            function waitForChart(callback, maxAttempts = 50) {
-                let attempts = 0;
-                const check = () => {
-                    attempts++;
-                    if (typeof performanceChart !== 'undefined' && performanceChart && chartDataStore['ALL']) {
-                        callback();
-                    } else if (attempts < maxAttempts) {
-                        setTimeout(check, 100);
-                    }
-                };
-                check();
-            }
-            
-            // Load portfolio history and update chart
-            async function loadHistoryAndUpdate() {
-                try {
-                    const res = await fetch('portfolio_history.json?t=' + Date.now());
-                    const data = await res.json();
-                    const checks = data.checks || [];
-                    
-                    if (checks.length < 2) {
-                        console.log('Not enough history data yet');
-                        return;
-                    }
-                    
-                    // Get current values
-                    const currentReturn = checks[checks.length - 1].total_pl_pct || 0;
-                    
-                    // Update ALL view with real historical progression
-                    chartDataStore['ALL'] = {
-                        labels: checks.map((c, i) => {
-                            if (i === 0) return 'Start';
-                            if (i === checks.length - 1) return 'Current';
-                            return new Date(c.timestamp).toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
-                        }),
-                        stonkAI: checks.map(c => c.total_pl_pct || 0),
-                        sp500: checks.map((_, i) => (i / (checks.length - 1)) * -2.65),
-                        dow: checks.map((_, i) => (i / (checks.length - 1)) * -0.37),
-                        nasdaq: checks.map((_, i) => (i / (checks.length - 1)) * -4.81)
-                    };
-                    
-                    // Update other time ranges to end at current value
-                    ['1D', '1W', '1M', '3M'].forEach(range => {
-                        if (chartDataStore[range] && chartDataStore[range].stonkAI.length > 0) {
-                            const lastIdx = chartDataStore[range].stonkAI.length - 1;
-                            chartDataStore[range].stonkAI[lastIdx] = currentReturn;
-                        }
-                    });
-                    
-                    // Refresh current view
-                    if (performanceChart) {
-                        updateChartRange(currentRange);
-                    }
-                    
-                    console.log('✅ Chart updated with', checks.length, 'historical data points');
-                    
-                } catch (e) {
-                    console.error('Chart updater error:', e);
-                    // Don't break the page - just log error
-                }
-            }
-            
-            // Run after chart initializes
-            waitForChart(() => {
-                loadHistoryAndUpdate();
-                // Refresh every 30 seconds
-                setInterval(loadHistoryAndUpdate, 30000);
-            });
-        })();
     </script>
 </body>
 </html>
