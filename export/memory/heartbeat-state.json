@@ -1,0 +1,15 @@
+{
+  "lastChecks": {
+    "stonk_ai_health": "2026-06-08T04:02:00Z"
+  },
+  "stonk_ai_status": {
+    "last_check": "2026-06-08T04:02:00Z",
+    "trading_bot_pid": 87595,
+    "data_fetcher_pid": 97162,
+    "data_freshness": "stale_expected",
+    "market_status": "closed_pre_market",
+    "errors_found": 0,
+    "auto_fixes_applied": 0,
+    "next_market_open": "2026-06-08T13:30:00Z"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-06-13T11:26:24.692950",
+  "status": "live",
+  "account": {
+    "portfolio_value": 91800.8,
+    "cash": 8640.02,
+    "buying_power": 291602.32,
+    "equity": 100440.82
+  },
+  "positions": [
+    {
+      "symbol": "AMD",
+      "qty": 35,
+      "avg_entry": 506.480286,
+      "current": 511.57,
+      "market_value": 17904.95,
+      "cost_basis": 17726.81001,
+      "unrealized_pl": 178.13999,
+      "unrealized_plpc": 1.005
+    },
+    {
+      "symbol": "CRWD",
+      "qty": 3,
+      "avg_entry": 687.49,
+      "current": 682.8,
+      "market_value": 2048.4,
+      "cost_basis": 2062.47,
+      "unrealized_pl": -14.07,
+      "unrealized_plpc": -0.6819999999999999
+    },
+    {
+      "symbol": "DKNG",
+      "qty": 800,
+      "avg_entry": 26.989425,
+      "current": 29.0,
+      "market_value": 23200.0,
+      "cost_basis": 21591.54,
+      "unrealized_pl": 1608.46,
+      "unrealized_plpc": 7.449
+    },
+    {
+      "symbol": "GOOGL",
+      "qty": 15,
+      "avg_entry": 367.538,
+      "current": 359.68,
+      "market_value": 5395.2,
+      "cost_basis": 5513.07,
+      "unrealized_pl": -117.87,
+      "unrealized_plpc": -2.138
+    },
+    {
+      "symbol": "HOOD",
+      "qty": 113,
+      "avg_entry": 84.2015,
+      "current": 93.19,
+      "market_value": 10530.47,
+      "cost_basis": 9514.7695,
+      "unrealized_pl": 1015.7005,
+      "unrealized_plpc": 10.674999999999999
+    },
+    {
+      "symbol": "NVDA",
+      "qty": 17,
+      "avg_entry": 213.747059,
+      "current": 205.19,
+      "market_value": 3488.23,
+      "cost_basis": 3633.700003,
+      "unrealized_pl": -145.470003,
+      "unrealized_plpc": -4.003
+    },
+    {
+      "symbol": "PLTR",
+      "qty": 145,
+      "avg_entry": 135.302345,
+      "current": 127.99,
+      "market_value": 18558.55,
+      "cost_basis": 19618.840025,
+      "unrealized_pl": -1060.290025,
+      "unrealized_plpc": -5.404
+    },
+    {
+      "symbol": "UPST",
+      "qty": 350,
+      "avg_entry": 30.97,
+      "current": 30.5,
+      "market_value": 10675.0,
+      "cost_basis": 10839.5,
+      "unrealized_pl": -164.5,
+      "unrealized_plpc": -1.518
+    }
+  ],
+  "total_pl": 1300.100462,
+  "total_pl_pct": 1.4365639919215274
+}

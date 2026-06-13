@@ -1,0 +1,126 @@
+{
+  "timestamp": "2026-06-13T15:03:22.404375",
+  "version": "1.0",
+  "stocks": {
+    "COIN": {
+      "company": "Coinbase Global",
+      "strategy": "Crypto infrastructure",
+      "catalyst": "Bitcoin ETF + institutional adoption",
+      "risk": "Crypto volatility"
+    },
+    "DKNG": {
+      "company": "DraftKings Inc.",
+      "strategy": "Sports betting platform",
+      "catalyst": "NFL season + state legalization",
+      "risk": "Regulatory uncertainty"
+    },
+    "NET": {
+      "company": "Cloudflare Inc.",
+      "strategy": "Edge computing + security",
+      "catalyst": "AI edge demand + zero trust",
+      "risk": "Extended valuation"
+    },
+    "PATH": {
+      "company": "UiPath Inc.",
+      "strategy": "RPA + AI automation",
+      "catalyst": "Enterprise AI adoption",
+      "risk": "Big tech competition"
+    },
+    "SHOP": {
+      "company": "Shopify Inc.",
+      "strategy": "E-commerce platform",
+      "catalyst": "AI tools + logistics network",
+      "risk": "Amazon competition"
+    },
+    "SQ": {
+      "company": "Block Inc.",
+      "strategy": "Fintech ecosystem",
+      "catalyst": "Cash App + Square integration",
+      "risk": "Consumer spending"
+    },
+    "SQQQ": {
+      "company": "ProShares Short QQQ",
+      "strategy": "Nasdaq hedge",
+      "catalyst": "Market timing tool",
+      "risk": "Decay over time"
+    },
+    "TQQQ": {
+      "company": "ProShares Ultra QQQ",
+      "strategy": "Nasdaq leverage",
+      "catalyst": "Bull market acceleration",
+      "risk": "High volatility decay"
+    },
+    "UPST": {
+      "company": "Upstart Holdings",
+      "strategy": "AI lending platform",
+      "catalyst": "Rate cuts + loan volume",
+      "risk": "Credit cycle sensitivity"
+    },
+    "XLE": {
+      "company": "Energy Select SPDR",
+      "strategy": "Energy sector ETF",
+      "catalyst": "Oil prices + geopolitics",
+      "risk": "Energy transition"
+    },
+    "AMZN": {
+      "company": "AMZN",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "NFLX": {
+      "company": "NFLX",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "SNOW": {
+      "company": "SNOW",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "SOFI": {
+      "company": "SOFI",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "CDNS": {
+      "company": "CDNS",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "LCID": {
+      "company": "LCID",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "NIO": {
+      "company": "NIO",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "XPEV": {
+      "company": "XPEV",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "GM": {
+      "company": "GM",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "ABNB": {
+      "company": "ABNB",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    }
+  }
+}

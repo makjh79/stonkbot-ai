@@ -1,0 +1,150 @@
+{
+  "last_updated": "2026-06-12T19:59:49.958415",
+  "trade_count": 13,
+  "mode": "REAL_ALPACA",
+  "trades": [
+    {
+      "timestamp": "2026-06-12T18:32:43.314373+00:00",
+      "symbol": "HOOD",
+      "action": "SELL",
+      "qty": 112,
+      "price": 93.185715,
+      "total_value": 10436.80008,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell HOOD",
+      "order_id": "1789d50f-01ad-4f58-b59f-51d6e17ace6e"
+    },
+    {
+      "timestamp": "2026-06-12T18:32:41.914745+00:00",
+      "symbol": "AAPL",
+      "action": "SELL",
+      "qty": 25,
+      "price": 290.57,
+      "total_value": 7264.25,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell AAPL",
+      "order_id": "cecab110-0181-42a6-ba24-15da21d667b8"
+    },
+    {
+      "timestamp": "2026-06-12T18:32:41.851224+00:00",
+      "symbol": "AVGO",
+      "action": "SELL",
+      "qty": 5,
+      "price": 381.05,
+      "total_value": 1905.25,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell AVGO",
+      "order_id": "e352815f-7032-40e7-92f1-71df163a6150"
+    },
+    {
+      "timestamp": "2026-06-11T13:37:35.487321+00:00",
+      "symbol": "APP",
+      "action": "SELL",
+      "qty": 8,
+      "price": 477.685,
+      "total_value": 3821.48,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell APP",
+      "order_id": "a68ead4c-b079-4b58-bb86-286b5b0cacc3"
+    },
+    {
+      "timestamp": "2026-06-09T15:02:49.234841+00:00",
+      "symbol": "PLTR",
+      "action": "BUY",
+      "qty": 100,
+      "price": 132.7674,
+      "total_value": 13276.740000000002,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: buy PLTR",
+      "order_id": "61bd3da0-abe5-49d7-b17c-85eb57e1e502"
+    },
+    {
+      "timestamp": "2026-06-09T15:02:49.198624+00:00",
+      "symbol": "HOOD",
+      "action": "BUY",
+      "qty": 200,
+      "price": 84.2015,
+      "total_value": 16840.3,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: buy HOOD",
+      "order_id": "544ced0b-cbc0-45e9-983a-4d06017a7814"
+    },
+    {
+      "timestamp": "2026-06-09T15:02:48.413296+00:00",
+      "symbol": "DKNG",
+      "action": "BUY",
+      "qty": 800,
+      "price": 26.989425,
+      "total_value": 21591.54,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: buy DKNG",
+      "order_id": "98842816-2a6c-40be-8df9-a6835085526b"
+    },
+    {
+      "timestamp": "2026-06-09T15:02:47.973079+00:00",
+      "symbol": "UPST",
+      "action": "BUY",
+      "qty": 350,
+      "price": 30.97,
+      "total_value": 10839.5,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: buy UPST",
+      "order_id": "183e30c9-22ed-4bdb-9e1b-2acc7631fe1b"
+    },
+    {
+      "timestamp": "2026-06-09T13:34:45.394825+00:00",
+      "symbol": "SOFI",
+      "action": "SELL",
+      "qty": 200,
+      "price": 16.681,
+      "total_value": 3336.2000000000003,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell SOFI",
+      "order_id": "52d71d8d-e5c8-49d0-9aef-5da59895d834"
+    },
+    {
+      "timestamp": "2026-06-09T13:34:20.021459+00:00",
+      "symbol": "SGOV",
+      "action": "SELL",
+      "qty": 15,
+      "price": 100.46,
+      "total_value": 1506.8999999999999,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell SGOV",
+      "order_id": "f9b3c14d-db36-4970-8a4a-1cc1ce0216d9"
+    },
+    {
+      "timestamp": "2026-06-09T13:32:15.492815+00:00",
+      "symbol": "SCHD",
+      "action": "SELL",
+      "qty": 30,
+      "price": 32.34,
+      "total_value": 970.2,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell SCHD",
+      "order_id": "f76f5fb5-a0d5-41e1-800a-e6a522db2abf"
+    },
+    {
+      "timestamp": "2026-06-08T17:50:22.573787+00:00",
+      "symbol": "MSFT",
+      "action": "SELL",
+      "qty": 10,
+      "price": 411.24,
+      "total_value": 4112.4,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell MSFT",
+      "order_id": "3de373b1-6b72-4ca0-8cf1-4c503bb8b3ff"
+    },
+    {
+      "timestamp": "2026-06-08T15:45:41.851164+00:00",
+      "symbol": "META",
+      "action": "SELL",
+      "qty": 5,
+      "price": 588.26,
+      "total_value": 2941.3,
+      "strategy": "Alpaca Order",
+      "rationale": "Real Alpaca trade: sell META",
+      "order_id": "474255eb-7540-4119-bf45-9d33b17789ad"
+    }
+  ]
+}

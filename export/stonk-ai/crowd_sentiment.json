@@ -1,0 +1,330 @@
+{
+  "timestamp": "2026-06-13T16:55:16.754941",
+  "data": {
+    "COIN": {
+      "composite": {
+        "bullish": 42,
+        "bearish": 58,
+        "volume": 500,
+        "source": "fallback-neutral",
+        "timestamp": "2026-06-13T16:55:03.020351"
+      },
+      "fallback": {
+        "bullish": 42,
+        "bearish": 58,
+        "volume": 500,
+        "source": "fallback-neutral",
+        "timestamp": "2026-06-13T16:55:03.020351"
+      }
+    },
+    "DKNG": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:03.756233"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:03.756233"
+      }
+    },
+    "NET": {
+      "composite": {
+        "bullish": 62,
+        "bearish": 38,
+        "volume": 751,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:04.484381"
+      },
+      "fallback": {
+        "bullish": 62,
+        "bearish": 38,
+        "volume": 751,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:04.484381"
+      }
+    },
+    "PATH": {
+      "composite": {
+        "bullish": 51,
+        "bearish": 49,
+        "volume": 393,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:05.209186"
+      },
+      "fallback": {
+        "bullish": 51,
+        "bearish": 49,
+        "volume": 393,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:05.209186"
+      }
+    },
+    "SHOP": {
+      "composite": {
+        "bullish": 54,
+        "bearish": 46,
+        "volume": 477,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:05.938739"
+      },
+      "fallback": {
+        "bullish": 54,
+        "bearish": 46,
+        "volume": 477,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:05.938739"
+      }
+    },
+    "SQ": {
+      "composite": {
+        "bullish": 68,
+        "bearish": 32,
+        "volume": 702,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:06.604539"
+      },
+      "fallback": {
+        "bullish": 68,
+        "bearish": 32,
+        "volume": 702,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:06.604539"
+      }
+    },
+    "SQQQ": {
+      "composite": {
+        "bullish": 28,
+        "bearish": 72,
+        "volume": 1200,
+        "source": "fallback-bearish",
+        "timestamp": "2026-06-13T16:55:07.428697"
+      },
+      "fallback": {
+        "bullish": 28,
+        "bearish": 72,
+        "volume": 1200,
+        "source": "fallback-bearish",
+        "timestamp": "2026-06-13T16:55:07.428697"
+      }
+    },
+    "TQQQ": {
+      "composite": {
+        "bullish": 72,
+        "bearish": 28,
+        "volume": 1400,
+        "source": "fallback-bullish",
+        "timestamp": "2026-06-13T16:55:08.193174"
+      },
+      "fallback": {
+        "bullish": 72,
+        "bearish": 28,
+        "volume": 1400,
+        "source": "fallback-bullish",
+        "timestamp": "2026-06-13T16:55:08.193174"
+      }
+    },
+    "UPST": {
+      "composite": {
+        "bullish": 43,
+        "bearish": 57,
+        "volume": 742,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:08.937095"
+      },
+      "fallback": {
+        "bullish": 43,
+        "bearish": 57,
+        "volume": 742,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:08.937095"
+      }
+    },
+    "XLE": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:09.673696"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:09.673696"
+      }
+    },
+    "AMZN": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:10.332336"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:10.332336"
+      }
+    },
+    "NFLX": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:11.074285"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:11.074285"
+      }
+    },
+    "SNOW": {
+      "composite": {
+        "bullish": 63,
+        "bearish": 37,
+        "volume": 316,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:11.788942"
+      },
+      "fallback": {
+        "bullish": 63,
+        "bearish": 37,
+        "volume": 316,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:11.788942"
+      }
+    },
+    "SOFI": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:12.505037"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:12.505037"
+      }
+    },
+    "CDNS": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:13.206017"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:13.206017"
+      }
+    },
+    "LCID": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:13.922369"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:13.922369"
+      }
+    },
+    "NIO": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:14.620681"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:14.620681"
+      }
+    },
+    "XPEV": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:15.327779"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:15.327779"
+      }
+    },
+    "GM": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:16.050254"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:16.050254"
+      }
+    },
+    "ABNB": {
+      "composite": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:16.754046"
+      },
+      "fallback": {
+        "bullish": 55,
+        "bearish": 45,
+        "volume": 400,
+        "source": "fallback",
+        "timestamp": "2026-06-13T16:55:16.754046"
+      }
+    }
+  },
+  "symbol_count": 20,
+  "sources": [
+    "stocktwits",
+    "fallback"
+  ]
+}
