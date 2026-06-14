@@ -11,17 +11,20 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Deploy to Server via HTTPS
+    - name: Install sshpass
+      run: sudo apt-get update -qq && sudo apt-get install -y sshpass -qq
+    
+    - name: Deploy to Server
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
       run: |
-        # Install sshpass for password-based SSH
-        sudo apt-get update -qq && sudo apt-get install -y sshpass -qq
-        
         # Add host to known hosts
         mkdir -p ~/.ssh
         ssh-keyscan -H 23.80.82.47 >> ~/.ssh/known_hosts 2>/dev/null || true
         
-        # Deploy using password from secret
-        sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@23.80.82.47 \
-          "cd /root/.openclaw/workspace && git pull https://makjh79:${GH_TOKEN}@github.com/makjh79/stonkbot-ai.git master && cp website/index.html /var/www/hedge-fund-website/index.html && echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"
+        # Deploy using password
+        sshpass -e ssh -o StrictHostKeyChecking=no root@23.80.82.47 \
+          "cd /root/.openclaw/workspace && \
+           git pull https://makjh79:ghp_Ls…0xN3@github.com/makjh79/stonkbot-ai.git master && \
+           cp website/index.html /var/www/hedge-fund-website/index.html && \
+           echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"
