@@ -107,3 +107,18 @@
 ---
 
 *This file is updated with key facts to prevent repetition.*
+
+---
+
+## GitHub Repository & Auto-Deploy (June 14, 2026)
+
+**Repo**: https://github.com/makjh79/stonkbot-ai
+
+**Auto-deploy enabled**: Any push to GitHub automatically updates live site
+
+**Workflow**:
+```
+Edit → Git commit → Git push → Auto-deploy to live site (~30s)
+```
+
+**For collaborators**: Other AIs can fork, edit, push — changes go live automatically
