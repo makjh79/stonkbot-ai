@@ -11,14 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Deploy to Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_KEY }}
-        script: |
-          cd /root/.openclaw/workspace
-          git pull origin master
-          cp website/index.html /var/www/hedge-fund-website/index.html
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 23.80.82.47 >> ~/.ssh/known_hosts 2>/dev/null || true
+    
+    - name: Deploy
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@23.80.82.47 '
+          cd /root/.openclaw/workspace && \
+          git pull origin master && \
+          cp website/index.html /var/www/hedge-fund-website/index.html && \
           echo "Deployed at $(date)" >> /var/www/hedge-fund-website/deploy.log
+        '
