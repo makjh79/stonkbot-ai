@@ -1,0 +1,24 @@
+name: Deploy to Live Server
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_KEY }}
+        script: |
+          cd /root/.openclaw/workspace
+          git pull origin master
+          cp website/index.html /var/www/hedge-fund-website/index.html
+          echo "Deployed at $(date)" >> /var/www/hedge-fund-website/deploy.log
