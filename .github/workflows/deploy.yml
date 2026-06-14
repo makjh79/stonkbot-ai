@@ -13,23 +13,18 @@ jobs:
     
     - name: Setup SSH and Deploy
       env:
-        SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        SSH_KEY_B64: ${{ secrets.SERVER_SSH_KEY }}
       run: |
-        # Setup SSH
-        mkdir -p ~/.ssh
-        # Write key with proper newlines
-        printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+        # Decode base64 key
+        echo "$SSH_KEY_B64" | base64 -d > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
         
-        # Debug: Check key format
-        echo "Key file size: $(wc -c < ~/.ssh/deploy_key)"
-        head -1 ~/.ssh/deploy_key
-        
         # Add host to known hosts
+        mkdir -p ~/.ssh
         ssh-keyscan -H 23.80.82.47 >> ~/.ssh/known_hosts 2>/dev/null || true
         
         # Test SSH connection
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected successfully'"
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected'"
         
         # Deploy
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
