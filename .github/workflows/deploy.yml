@@ -17,12 +17,19 @@ jobs:
       run: |
         # Setup SSH
         mkdir -p ~/.ssh
-        echo "$SSH_KEY" > ~/.ssh/deploy_key
+        # Write key with proper newlines
+        printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
+        
+        # Debug: Check key format
+        echo "Key file size: $(wc -c < ~/.ssh/deploy_key)"
+        head -1 ~/.ssh/deploy_key
+        
+        # Add host to known hosts
         ssh-keyscan -H 23.80.82.47 >> ~/.ssh/known_hosts 2>/dev/null || true
         
         # Test SSH connection
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected'"
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected successfully'"
         
         # Deploy
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
