@@ -21,6 +21,14 @@
 - Strategy: -15% stop loss, +25% trim, +50% exit, RSI<30 auto-entry
 - Website: hedge-fund-website/index.html displays live data
 
+**Website Improvements (June 14, 2026)**:
+- Complete navigation redesign — simplified to 4-item thumb-friendly mobile nav
+- Signal Accuracy moved to subtle pill badge next to AI Watchlist heading
+- Dynamic descriptions — Strategy/Catalyst/Risk auto-generate from live market data
+- Dynamic charts — 10-day price bars, support/resistance, intrinsic values all update live
+- Removed redundant menu items ("The Race", "Overview", "Strategy")
+- Mobile menu scrolling fixed
+
 **Website Fixes Applied (June 7, 2026)**:
 - Fixed sector data weights (was inflated, now accurate: Tech 24.5%, AI 29.6%, Fintech 5.4%, Defense 4.5%)
 - Fixed Risk modal layout (added scrolling, max-height)
@@ -59,7 +67,30 @@
 - Will graduate to real money only if bot beats S&P 500 in paper mode
 - Bot is ready for Monday market open (June 8, 2026)
 - Website bugs fixed and consistent now
-- All market data corrected (June 4-5 was a bloodbath, not gains)
+- All market data corrected (June 4-5 was
+---
+
+## Website Navigation Architecture (Current as of June 14, 2026)
+
+**Desktop Nav (4 items):**
+- 🏠 Home → Overview/Hero section
+- 📊 Portfolio → Current holdings with P&L
+- 🔍 Watchlist → AI research list with live prices
+- ☰ More → Opens modal with:
+  - 📜 Recent Activity
+  - 🥧 Allocation
+  - 📈 Performance
+  - ❓ FAQ
+
+**Mobile Bottom Nav:**
+- Same 4 items as desktop, optimized for thumb zones
+- "More" opens side panel
+
+**Design Principles:**
+- Max 4 primary nav items (thumb-friendly)
+- Intent-based labeling ("Portfolio" not "Holdings")
+- Secondary features in "More" overflow
+- Action-oriented, not feature-oriented
 
 ---
 
@@ -67,9 +98,10 @@
 
 **Going Forward**: All conversations with H Mak are automatically stored to long-term memory to prevent repetition and maintain continuity.
 
-**Storage**: 
+**Storage**:
 - `memory/STONK_AI_SETUP.md` - Complete technical details
 - `memory/CONVERSATION_POLICY.md` - Storage policy
+- `memory/YYYY-MM-DD.md` - Daily session logs
 - `MEMORY.md` - Quick reference (this file)
 
 ---

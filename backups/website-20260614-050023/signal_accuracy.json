@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "total_signals": 0,
+    "win_rate": 0,
+    "avg_return": 0,
+    "avg_days_to_target": 0,
+    "pending_signals": 0
+  },
+  "recent_pending": [],
+  "last_updated": "2026-06-14T05:00:20.505314"
+}
