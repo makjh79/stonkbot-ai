@@ -11,20 +11,22 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Install sshpass
-      run: sudo apt-get update -qq && sudo apt-get install -y sshpass -qq
-    
-    - name: Deploy to Server
+    - name: Setup SSH and Deploy
       env:
-        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
       run: |
-        # Add host to known hosts
+        # Setup SSH
         mkdir -p ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
         ssh-keyscan -H 23.80.82.47 >> ~/.ssh/known_hosts 2>/dev/null || true
         
-        # Deploy using password
-        sshpass -e ssh -o StrictHostKeyChecking=no root@23.80.82.47 \
+        # Test SSH connection
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected'"
+        
+        # Deploy
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
           "cd /root/.openclaw/workspace && \
-           git pull https://makjh79:ghp_Ls…0xN3@github.com/makjh79/stonkbot-ai.git master && \
+           git pull origin master && \
            cp website/index.html /var/www/hedge-fund-website/index.html && \
            echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"
