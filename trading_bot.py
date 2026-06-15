@@ -920,10 +920,17 @@ class STONKAIBot:
                             if not volume_ok:
                                 logger.debug(f"{symbol}: Volume {vol_ratio:.1f}x below {StrategyConfig.VOLUME_MULTIPLIER}x threshold")
                     
+                    else:
+                        logger.info(f"❌ {symbol}: Volume check failed, skipping entry")
+                    
                     if volume_ok:
+                        logger.info(f"✅ {symbol}: Volume OK, calculating position size")
                         # Calculate position size based on AVAILABLE CASH (NO MARGIN)
                         position_value = min(available_cash * 0.5, portfolio_value * StrategyConfig.RSI_ENTRY_POSITION_SIZE)
                         price = self.get_current_price(symbol)
+                        if price is None or price <= 0:
+                            logger.warning(f"{symbol}: Could not get valid price")
+                            continue
                         qty = max(1, int(position_value / price))
                         
                         # Double check we have enough cash (NO MARGIN)
