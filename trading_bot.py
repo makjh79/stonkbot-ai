@@ -480,6 +480,22 @@ class STONKAIBot:
         # Convert to percentages
         return {sector: (value / total_value) * 100 for sector, value in sector_values.items()}
     
+    def get_symbols_for_sector(self, sector: str) -> List[str]:
+        """Get watchlist symbols for a given sector"""
+        sector_map = {
+            'AI': ['PLTR', 'CRWD', 'NET', 'PATH', 'SQ'],
+            'Tech': ['AMD', 'NVDA', 'AAPL', 'AMZN', 'ORCL', 'IBM', 'CDNS'],
+            'Crypto': ['COIN', 'HOOD', 'SQ'],
+            'Fintech': ['UPST', 'SOFI', 'SQ', 'HOOD'],
+            'EV': ['LCID', 'NIO', 'XPEV', 'GM'],
+            'Defense': [],
+            'Energy': ['XLE'],
+            'Housing': [],
+            'Bonds': [],
+            'Cash': []
+        }
+        return sector_map.get(sector, [])
+    
     def check_stop_losses(self, portfolio_data: Dict) -> List[Dict]:
         """Check for positions hitting stop loss (-15%)"""
         stops = []
@@ -548,20 +564,56 @@ class STONKAIBot:
         trades = []
         
         cash_pct = portfolio_data['account']['cash'] / portfolio_data['account']['portfolio_value']
-        if cash_pct < 0.30:  # Need 30% cash for rebalancing
+        if cash_pct < 0.05:  # Only need 5% cash for rebalancing (was 30%)
             logger.info(f"Cash buffer low ({cash_pct:.1%}), skipping rebalancing")
             return trades
         
         current_allocation = self.calculate_sector_allocation(portfolio_data)
+        cash = portfolio_data['account']['cash']
+        portfolio_value = portfolio_data['account']['portfolio_value']
         
+        # Find sectors that need rebalancing
         for sector, current_pct in current_allocation.items():
             target_pct = StrategyConfig.ALLOCATION_TARGETS.get(sector, 0)
             deviation = current_pct - target_pct
             
             if abs(deviation) > StrategyConfig.MAX_SECTOR_DEVIATION:
                 logger.info(f"{sector}: {current_pct:.1f}% vs target {target_pct:.1f}% (deviation: {deviation:+.1f}%)")
-                # Note: Actually implementing rebalancing trades requires more logic
-                # This is a simplified version - full implementation would calculate buy/sell amounts
+                
+                # Sell overweight sectors
+                if deviation > 0:
+                    for pos in portfolio_data.get('positions', []):
+                        if pos.get('sector') == sector:
+                            # Sell 25% of position to reduce exposure
+                            sell_qty = int(pos['qty'] * 0.25)
+                            if sell_qty > 0:
+                                trades.append({
+                                    'symbol': pos['symbol'],
+                                    'qty': sell_qty,
+                                    'action': 'SELL',
+                                    'reason': f'Rebalance: {sector} overweight ({current_pct:.1f}% vs {target_pct:.1f}%)'
+                                })
+                                logger.info(f"REBALANCE SELL: {pos['symbol']} {sell_qty} shares ({sector} rebalancing)")
+                
+                # Buy underweight sectors (if we have cash)
+                elif deviation < 0 and cash > 1000:
+                    # Find a stock in this sector to buy
+                    sector_symbols = self.get_symbols_for_sector(sector)
+                    for symbol in sector_symbols:
+                        if symbol not in {p['symbol'] for p in portfolio_data.get('positions', [])}:
+                            price = self.get_current_price(symbol)
+                            if price and price > 0:
+                                buy_amount = min(cash * 0.1, 2000)  # 10% of cash or $2000
+                                qty = int(buy_amount / price)
+                                if qty > 0:
+                                    trades.append({
+                                        'symbol': symbol,
+                                        'qty': qty,
+                                        'action': 'BUY',
+                                        'reason': f'Rebalance: {sector} underweight ({current_pct:.1f}% vs {target_pct:.1f}%)'
+                                    })
+                                    logger.info(f"REBALANCE BUY: {symbol} {qty} shares ({sector} rebalancing)")
+                                    break
         
         return trades
     
