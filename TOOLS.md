@@ -1,21 +1,53 @@
 # TOOLS.md - Local Notes
 
-## ⚠️ CRITICAL: Website File Locations
+## ⚠️ CRITICAL: Website File Locations (GitHub Auto-Deploy)
 
-**ALWAYS edit files in `/var/www/hedge-fund-website/`**
-**NEVER edit files in `/root/.openclaw/workspace/hedge-fund-website/` (old/stale copy)**
+**⚠️ WARNING: GitHub auto-deploy is ENABLED**
+Any push to GitHub will overwrite `/var/www/hedge-fund-website/index.html`
 
-The web server runs from `/var/www/hedge-fund-website/` on port 8080.
-Changes to `/root/.openclaw/workspace/hedge-fund-website/` are NOT served.
+### Correct Workflow:
 
-**Key Files:**
-- `/var/www/hedge-fund-website/index.html` - Main website (THIS IS THE ONE TO EDIT)
-- `/var/www/hedge-fund-website/portfolio_data.json` - Live portfolio data
-- `/var/www/hedge-fund-website/ai_watchlist_live.json` - Watchlist data
-
-**Check before editing:**
+**Option 1: Edit source file (RECOMMENDED)**
 ```bash
-ls -la /var/www/hedge-fund-website/index.html  # Should show recent timestamp
+# Edit the source file
+nano /root/.openclaw/workspace/website/index.html
+
+# Commit and push (triggers auto-deploy)
+cd /root/.openclaw/workspace
+git add website/index.html
+git commit -m "Your changes"
+git push origin master
+
+# Wait 30 seconds for auto-deploy
+```
+
+**Option 2: Edit live file (QUICK TEST)**
+```bash
+# Edit live file
+nano /var/www/hedge-fund-website/index.html
+
+# Sync back to source (CRITICAL - or changes will be lost!)
+cp /var/www/hedge-fund-website/index.html /root/.openclaw/workspace/website/index.html
+cd /root/.openclaw/workspace
+git add website/index.html
+git commit -m "Sync live changes"
+git push origin master
+```
+
+**Option 3: Helper script**
+```bash
+# After editing live file, run this to sync and commit:
+/root/.openclaw/workspace/sync-website-changes.sh "Your commit message"
+```
+
+### Key Files:
+- **Source:** `/root/.openclaw/workspace/website/index.html` → GitHub → Auto-deploy
+- **Live:** `/var/www/hedge-fund-website/index.html` (OVERWRITTEN on deploy!)
+- **Data:** `/var/www/hedge-fund-website/portfolio_data.json` (bot-generated, safe)
+
+### Check Deploy Status:
+```bash
+tail /var/www/hedge-fund-website/deploy.log
 ```
 
 ---

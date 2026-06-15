@@ -11,6 +11,30 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: Check for uncommitted changes on server
+      env:
+        SSH_KEY_B64: ${{ secrets.SERVER_SSH_KEY }}
+      run: |
+        # Setup SSH
+        mkdir -p ~/.ssh
+        echo "$SSH_KEY_B64" | base64 -d > ~/.ssh/deploy_key 2>/dev/null || true
+        chmod 600 ~/.ssh/deploy_key
+        ssh-keyscan -H 23.80.82.47 >> ~/.ssh/known_hosts 2>/dev/null || true
+        
+        # Check if live file differs from git
+        echo "Checking if live site has uncommitted changes..."
+        DIFF_OUTPUT=$(ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 \
+          "diff /var/www/hedge-fund-website/index.html /root/.openclaw/workspace/website/index.html 2>&1 || echo 'DIFFERENT'")
+        
+        if echo "$DIFF_OUTPUT" | grep -q "DIFFERENT"; then
+          echo "⚠️ WARNING: Live site has uncommitted changes!"
+          echo "Run this on the server to sync changes back to git:"
+          echo "  cp /var/www/hedge-fund-website/index.html /root/.openclaw/workspace/website/index.html"
+          echo "  cd /root/.openclaw/workspace && git add website/index.html && git commit -m 'Sync live changes' && git push"
+        else
+          echo "✅ Live site matches git - safe to deploy"
+        fi
+    
     - name: Setup SSH and Deploy
       env:
         SSH_KEY_B64: ${{ secrets.SERVER_SSH_KEY }}
