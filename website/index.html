@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1005-FLICKER-FIX-v10-NO-DUPLICATE-UPDATES -->
+    <!-- CACHE BUST: v=20260615-1040-FLICKER-FIX-v11-CONSISTENT-ROUNDING -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -3454,7 +3454,7 @@
             // Update portfolio value (only if changed to prevent flicker)
             const portfolioValueEl = document.getElementById('portfolio-value');
             if (portfolioValueEl && data.account) {
-                const newValue = '$' + Math.floor(data.account.portfolio_value).toLocaleString();
+                const newValue = '$' + Math.round(data.account.portfolio_value).toLocaleString();
                 const currentValue = portfolioValueEl.textContent?.trim() || '';
                 // Only update if value actually changed (prevents flicker from cache → live)
                 if (currentValue !== newValue) {
