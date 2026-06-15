@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1330-FIX-DAY-CHANGE -->
+    <!-- CACHE BUST: v=20260615-1345-FIX-HERO-FLICKER -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2460,12 +2460,12 @@
         <div id="overview" class="section-anchor"></div>
         <div onclick="showTradeLogModal()" style="background: var(--bg-surface); border-radius: 24px; padding: 2rem 1.5rem; text-align: center; border: 1px solid var(--border); margin-bottom: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
             <!-- Portfolio Value - BIG -->
-            <div id="portfolio-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5);"><script>document.write(window.__RACE_CACHE__?.stonkValue || '<span style="opacity:0.5">Loading...</span>')</script></div>
+            <div id="portfolio-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5);"><span style="opacity:0.5">Loading...</span></div>
 
             <!-- Return Badge - Clean -->
             <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,82,82,0.15); border: 1px solid rgba(255,82,82,0.3); border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">
-                <span id="portfolio-return"><script>document.write(window.__RACE_CACHE__?.stonkReturnText || '<span style="opacity:0.5">--</span>')</script></span>
-                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl"><script>document.write(window.__RACE_CACHE__?.stonkPnlText || '<span style="opacity:0.5">--</span>')</script></span>)</span>
+                <span id="portfolio-return"><span style="opacity:0.5">--</span></span>
+                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl"><span style="opacity:0.5">--</span></span>)</span>
             </div>
 
             <!-- Quick Stats Row -->
