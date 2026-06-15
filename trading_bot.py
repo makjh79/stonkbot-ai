@@ -886,6 +886,7 @@ class STONKAIBot:
             logger.debug(f"Insufficient cash: ${cash:.2f} (keeping ${MIN_CASH_BUFFER} buffer)")
             return entries
         
+        logger.info(f"📊 Analyzing {len(watchlist_symbols)} symbols for RSI entries...")
         for symbol in watchlist_symbols:
             # Skip if already holding
             if symbol in current_positions:
@@ -897,9 +898,10 @@ class STONKAIBot:
                 volume_data = self.fetch_volume_for_symbol(symbol)
                 
                 if rsi:
-                    logger.debug(f"{symbol}: RSI = {rsi:.1f} (threshold: {StrategyConfig.RSI_ENTRY_THRESHOLD})")
+                    logger.info(f"{symbol}: RSI = {rsi:.1f} (threshold: {StrategyConfig.RSI_ENTRY_THRESHOLD})")
                 
                 if rsi and rsi <= StrategyConfig.RSI_ENTRY_THRESHOLD:
+                    logger.info(f"🎯 {symbol}: RSI {rsi:.1f} <= {StrategyConfig.RSI_ENTRY_THRESHOLD} - SIGNAL FOUND!")
                     # Check volume confirmation (1.5x average)
                     volume_ok = True
                     if volume_data:
@@ -936,6 +938,7 @@ class STONKAIBot:
             except Exception as e:
                 logger.debug(f"Could not check RSI for {symbol}: {e}")
         
+        logger.info(f"✅ RSI check complete: {len(entries)} entry signals found")
         return entries
     
     def fetch_rsi_for_symbol(self, symbol: str) -> Optional[float]:
