@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0905-FLICKER-FIX-v9-HERO -->
+    <!-- CACHE BUST: v=20260615-1005-FLICKER-FIX-v10-NO-DUPLICATE-UPDATES -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -3451,10 +3451,15 @@
             // Store for fallback use in modals
             window.currentPortfolioData = data;
             
-            // Update portfolio value
+            // Update portfolio value (only if changed to prevent flicker)
             const portfolioValueEl = document.getElementById('portfolio-value');
             if (portfolioValueEl && data.account) {
-                portfolioValueEl.textContent = '$' + Math.floor(data.account.portfolio_value).toLocaleString();
+                const newValue = '$' + Math.floor(data.account.portfolio_value).toLocaleString();
+                const currentValue = portfolioValueEl.textContent?.trim() || '';
+                // Only update if value actually changed (prevents flicker from cache → live)
+                if (currentValue !== newValue) {
+                    portfolioValueEl.textContent = newValue;
+                }
             }
             
             // Update return badge (Simple return from $100K baseline)
@@ -3472,10 +3477,16 @@
                     returnBadge.style.background = isPositive ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
                 }
                 if (returnEl) {
-                    returnEl.textContent = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+                    const newReturn = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+                    if (returnEl.textContent?.trim() !== newReturn) {
+                        returnEl.textContent = newReturn;
+                    }
                 }
                 if (pnlEl) {
-                    pnlEl.textContent = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
+                    const newPnl = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
+                    if (pnlEl.textContent?.trim() !== newPnl) {
+                        pnlEl.textContent = newPnl;
+                    }
                     pnlEl.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
                 }
             }
