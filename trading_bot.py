@@ -867,6 +867,7 @@ class STONKAIBot:
         
         # Get watchlist stocks from dynamic rotation
         watchlist_symbols = self.state.load_dynamic_watchlist()
+        logger.info(f"🔍 Checking {len(watchlist_symbols)} watchlist symbols for RSI entries")
         
         # Get current positions
         current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
@@ -880,6 +881,7 @@ class STONKAIBot:
         
         # Only enter if we have enough cash (NO MARGIN)
         available_cash = cash - MIN_CASH_BUFFER
+        logger.info(f"💰 Cash: ${cash:.2f}, Available (after ${MIN_CASH_BUFFER} buffer): ${available_cash:.2f}")
         if available_cash < 100:  # Need at least $100 for a trade
             logger.debug(f"Insufficient cash: ${cash:.2f} (keeping ${MIN_CASH_BUFFER} buffer)")
             return entries
@@ -893,6 +895,9 @@ class STONKAIBot:
             try:
                 rsi = self.fetch_rsi_for_symbol(symbol)
                 volume_data = self.fetch_volume_for_symbol(symbol)
+                
+                if rsi:
+                    logger.debug(f"{symbol}: RSI = {rsi:.1f} (threshold: {StrategyConfig.RSI_ENTRY_THRESHOLD})")
                 
                 if rsi and rsi <= StrategyConfig.RSI_ENTRY_THRESHOLD:
                     # Check volume confirmation (1.5x average)
