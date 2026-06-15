@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1130-REMOVE-FEAR-GREED -->
+    <!-- CACHE BUST: v=20260615-1140-FIX-SENTIMENT-EXPLAINER -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -8872,38 +8872,42 @@
             const crowdContent = `
                 <div style="margin-bottom: 20px;">
                     <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                        Crowd Sentiment aggregates real-time social media and retail investor chatter to gauge what "the masses" are feeling.
+                        Social Sentiment is a <strong>simulated model</strong> based on typical retail investor behavior patterns for each asset type.
                     </div>
                     
-                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">📡 DATA SOURCES</div>
+                    <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.02)); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #fbbf24; margin-bottom: 8px;">⚠️ SIMULATED DATA</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>Reddit (r/wallstreetbets, r/stocks)</span>
-                                <span style="color: var(--text-primary);">Real-time</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>Twitter/X Stock Chatter</span>
-                                <span style="color: var(--text-primary);">Real-time</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>StockTwits Messages</span>
-                                <span style="color: var(--text-primary);">Real-time</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0;">
-                                <span>Retail Brokerage Flow</span>
-                                <span style="color: var(--text-primary);">Aggregated</span>
+                            Real-time social sentiment APIs (Reddit, Twitter/X, StockTwits) require expensive paid subscriptions or have blocked automated access. 
+                            <br><br>
+                            This score is <strong style="color: var(--text-primary);">directionally accurate</strong> based on:
+                            <div style="margin-top: 8px;">
+                                <div style="margin-bottom: 6px;">• Asset category (crypto, tech, ETFs)</div>
+                                <div style="margin-bottom: 6px;">• Typical retail bias patterns</div>
+                                <div>• Price momentum correlation</div>
                             </div>
                         </div>
                     </div>
                     
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">🔍 SENTIMENT ANALYSIS</div>
+                        <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">📊 MODEL METHODOLOGY</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">Natural Language Processing:</strong> AI reads and classifies posts as bullish, bearish, or neutral</div>
-                            <div style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">Volume Weighting:</strong> More mentions = higher confidence in the score</div>
-                            <div style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">Engagement Scoring:</strong> Likes, retweets, and comments factor into sentiment strength</div>
-                            <div><strong style="color: var(--text-primary);">24-Hour Rolling Window:</strong> Score reflects recent chatter, not old news</div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span>TQQQ (3x Bull)</span>
+                                <span style="color: #22c55e;">72% Bullish</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span>SQQQ (3x Bear)</span>
+                                <span style="color: #ef4444;">28% Bullish</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span>Crypto (COIN)</span>
+                                <span style="color: var(--text-primary);">42% Bullish</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                                <span>Tech Growth</span>
+                                <span style="color: var(--text-primary);">50-70% Bullish</span>
+                            </div>
                         </div>
                     </div>
                     
