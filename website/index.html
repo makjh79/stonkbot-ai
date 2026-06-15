@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0230-FIX-LOAD-TIMING -->
+    <!-- CACHE BUST: v=20260615-0240-FIX-RETURN-BADGE-UPDATE -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -3436,14 +3436,25 @@
             
             // Update return badge (Simple return from $100K baseline)
             const returnBadge = document.getElementById('portfolio-return-badge');
-            if (returnBadge && data.account) {
+            const returnEl = document.getElementById('portfolio-return');
+            const pnlEl = document.getElementById('portfolio-pnl');
+            if (data.account) {
                 const STARTING_VALUE = 100000;
                 const portfolioValue = data.account.portfolio_value || 0;
                 const totalPl = portfolioValue - STARTING_VALUE;
                 const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
                 const isPositive = totalReturn >= 0;
-                returnBadge.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
-                returnBadge.innerHTML = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '% <span style="color: var(--text-muted);">($' + Math.abs(totalPl).toLocaleString() + ')</span>';
+                if (returnBadge) {
+                    returnBadge.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
+                    returnBadge.style.background = isPositive ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
+                }
+                if (returnEl) {
+                    returnEl.textContent = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+                }
+                if (pnlEl) {
+                    pnlEl.textContent = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
+                    pnlEl.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
             }
             
             // Update new stats
