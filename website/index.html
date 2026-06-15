@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1055-LIVE-AI-SCORE -->
+    <!-- CACHE BUST: v=20260615-1115-FEAR-GREED -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2466,6 +2466,13 @@
             <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,82,82,0.15); border: 1px solid rgba(255,82,82,0.3); border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">
                 <span id="portfolio-return"><script>document.write(window.__RACE_CACHE__?.stonkReturnText || '<span style="opacity:0.5">--</span>')</script></span>
                 <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl"><script>document.write(window.__RACE_CACHE__?.stonkPnlText || '<span style="opacity:0.5">--</span>')</script></span>)</span>
+            </div>
+            
+            <!-- Fear & Greed Index -->
+            <div id="fear-greed-badge" style="display: inline-flex; align-items: center; gap: 0.4rem; margin-left: 0.5rem; padding: 0.35rem 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer;" onclick="showFearGreedExplainer()" title="Click for market sentiment details">
+                <span id="fear-greed-emoji">😰</span>
+                <span id="fear-greed-text">Fear</span>
+                <span id="fear-greed-value" style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">--</span>
             </div>
 
             <!-- Quick Stats Row -->
@@ -7758,6 +7765,83 @@
             }
         }
         
+        // Fetch Fear & Greed Index from Alternative.me (free API)
+        async function fetchFearGreedIndex() {
+            try {
+                const response = await fetch('https://api.alternative.me/fng/?limit=1');
+                if (!response.ok) throw new Error('Failed to fetch');
+                const data = await response.json();
+                if (data.data && data.data[0]) {
+                    const item = data.data[0];
+                    return {
+                        value: parseInt(item.value),
+                        classification: item.value_classification,
+                        timestamp: item.timestamp
+                    };
+                }
+            } catch (e) {
+                console.log('Fear & Greed not available:', e);
+            }
+            return null;
+        }
+        
+        // Update Fear & Greed display
+        async function updateFearGreedDisplay() {
+            const data = await fetchFearGreedIndex();
+            if (!data) return;
+            
+            const badge = document.getElementById('fear-greed-badge');
+            const emoji = document.getElementById('fear-greed-emoji');
+            const text = document.getElementById('fear-greed-text');
+            const value = document.getElementById('fear-greed-value');
+            
+            if (!badge || !emoji || !text || !value) return;
+            
+            // Map value (0-100) to emoji and color
+            let emojiChar, label, color;
+            if (data.value <= 20) { emojiChar = '😱'; label = 'Extreme Fear'; color = '#ef4444'; }
+            else if (data.value <= 40) { emojiChar = '😰'; label = 'Fear'; color = '#f97316'; }
+            else if (data.value <= 60) { emojiChar = '😐'; label = 'Neutral'; color = '#eab308'; }
+            else if (data.value <= 80) { emojiChar = '🙂'; label = 'Greed'; color = '#22c55e'; }
+            else { emojiChar = '🚀'; label = 'Extreme Greed'; color = '#10b981'; }
+            
+            emoji.textContent = emojiChar;
+            text.textContent = label;
+            value.textContent = data.value;
+            badge.style.borderColor = color + '40';
+            badge.style.background = color + '15';
+        }
+        
+        // Show Fear & Greed explainer modal
+        function showFearGreedExplainer() {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;';
+            modal.innerHTML = `
+                <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 20px; padding: 24px; max-width: 400px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div style="font-size: 18px; font-weight: 700;">📊 Fear & Greed Index</div>
+                        <button onclick="this.closest('[style*=\\'z-index: 9999\\']').remove()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-size: 20px; cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">×</button>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                        The Crypto Fear & Greed Index measures market sentiment from <strong>0 (Extreme Fear)</strong> to <strong>100 (Extreme Greed)</strong>.
+                        <br><br>
+                        <strong>How to use it:</strong>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li><span style="color: #ef4444;">Extreme Fear (0-20)</span> → Potential buying opportunity</li>
+                            <li><span style="color: #f97316;">Fear (21-40)</span> → Caution, watch for reversals</li>
+                            <li><span style="color: #eab308;">Neutral (41-60)</span> → Wait for direction</li>
+                            <li><span style="color: #22c55e;">Greed (61-80)</span> → Consider taking profits</li>
+                            <li><span style="color: #10b981;">Extreme Greed (81-100)</span> → Market may be overheated</li>
+                        </ul>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+                            Source: <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" style="color: var(--accent-blue);">alternative.me</a> (free API)
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
         // Global crowd sentiment cache
         let crowdSentimentData = {};
 
@@ -7981,6 +8065,8 @@
         // Init immediately
         initCrowdSentiment();
         fetchEarningsData();
+        updateFearGreedDisplay(); // Load Fear & Greed index
+        setInterval(updateFearGreedDisplay, 300000); // Refresh every 5 minutes
         fetchSignalAccuracy(); // Load signal accuracy data
         
         // Generate dynamic strategy description based on current conditions
@@ -8483,7 +8569,7 @@
                                 <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">SENTIMENT BATTLE</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('crowd');" title="Click to learn how Crowd Sentiment is calculated">📱 Crowd <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
+                                <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('crowd');" title="Click to learn how Crowd Sentiment is calculated">📱 Social <span style="opacity: 0.4; font-size: 9px; font-weight: 500;">(sim)</span> <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
                                 <span style="font-size: 11px; font-weight: 700; color: ${socialBullish > 50 ? '#22c55e' : '#ef4444'};">${socialBullish.toFixed(0)}% Bullish</span>
                             </div>
                             <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 12px; overflow: hidden;">
