@@ -887,10 +887,15 @@ class STONKAIBot:
             return entries
         
         logger.info(f"📊 Analyzing {len(watchlist_symbols)} symbols for RSI entries...")
+        checked_count = 0
         for symbol in watchlist_symbols:
             # Skip if already holding
             if symbol in current_positions:
+                logger.debug(f"{symbol}: Already holding, skipping")
                 continue
+            
+            checked_count += 1
+            logger.info(f"Checking {symbol}...")
             
             # Get RSI and volume data
             try:
@@ -936,9 +941,9 @@ class STONKAIBot:
                         })
                         logger.info(f"RSI ENTRY SIGNAL: {symbol} at RSI {rsi:.1f} (qty: {qty}, cash: ${available_cash:.2f})")
             except Exception as e:
-                logger.debug(f"Could not check RSI for {symbol}: {e}")
+                logger.warning(f"Could not check RSI for {symbol}: {e}")
         
-        logger.info(f"✅ RSI check complete: {len(entries)} entry signals found")
+        logger.info(f"✅ RSI check complete: {checked_count} symbols checked, {len(entries)} entry signals found")
         return entries
     
     def fetch_rsi_for_symbol(self, symbol: str) -> Optional[float]:
