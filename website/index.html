@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0300-FIX-DOUBLE-PARENTHESES -->
+    <!-- CACHE BUST: v=20260615-0530-FLICKER-FIX-v6-LOCALSTORAGE -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -408,6 +408,12 @@
             font-family: 'JetBrains Mono', monospace;
             color: var(--text-primary);
             letter-spacing: -1px;
+        }
+
+        /* Prevent flicker during updates */
+        #sp500Value, #stonkAiValue, #sp500Return, #stonkAiReturn {
+            min-height: 1.5rem;
+            transition: opacity 0.15s ease;
         }
 
         .experiment-metric-label {
@@ -2483,8 +2489,8 @@
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
-                    <div id="sp500Value" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">$--</div>
-                    <div id="sp500Return" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">--</div>
+                    <div id="sp500Value" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">&nbsp;</div>
+                    <div id="sp500Return" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">&nbsp;</div>
                     <span id="sp500Status" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">--</span>
                 </div>
                 
@@ -2493,8 +2499,8 @@
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">StonkBOT.AI</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
-                    <div id="stonkAiValue" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">$--</div>
-                    <div id="stonkAiReturn" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">--</div>
+                    <div id="stonkAiValue" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;">&nbsp;</div>
+                    <div id="stonkAiReturn" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">&nbsp;</div>
                     <span id="stonkAiStatus" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">--</span>
                 </div>
             </div>
@@ -3401,6 +3407,7 @@
                         updateDashboard(data);
                         updateHoldingsCards(data.positions);
                         updateSectorHeatmap(data.positions);
+                        updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                     })
                     .catch(err => {
                         console.error('Fetch failed:', err);
@@ -3689,6 +3696,7 @@
                             window.lastPortfolioData = data;
                             updateHoldingsCards(data.positions);
                             updateSectorHeatmap(data.positions);
+                            updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                         } catch (e) {
                             showError('Parse error: ' + e.message);
                         }
@@ -3869,6 +3877,9 @@
 
                 // Update holdings cards
                 updateHoldingsCards(data.positions);
+                
+                // Update experiment section
+                updateRaceValues().catch(e => console.error('updateRaceValues failed:', e));
 
                 // Force refresh display
                 console.log('Portfolio data updated at:', timestamp);
@@ -5194,9 +5205,67 @@
             };
         }
 
-        // Update race values from real data
-        async function updateRaceValues() {
+        // Cache for race values to prevent flicker - uses localStorage to persist across reloads
+        function getRaceCache() {
             try {
+                const cached = localStorage.getItem('raceValuesCache');
+                return cached ? JSON.parse(cached) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+        
+        function setRaceCache(cache) {
+            try {
+                localStorage.setItem('raceValuesCache', JSON.stringify(cache));
+            } catch (e) {
+                console.log('Could not cache race values');
+            }
+        }
+        
+        // Update race values from real data
+        let isUpdatingRaceValues = false;
+        let pendingRaceValuesUpdate = false;
+        
+        async function updateRaceValues() {
+            // Prevent concurrent updates
+            if (isUpdatingRaceValues) {
+                pendingRaceValuesUpdate = true;
+                console.log('updateRaceValues: Already running, queuing...');
+                return;
+            }
+            
+            isUpdatingRaceValues = true;
+            pendingRaceValuesUpdate = false;
+            
+            try {
+                // Check if elements exist first
+                const spValueEl = document.getElementById('sp500Value');
+                const stonkValueEl = document.getElementById('stonkAiValue');
+                if (!spValueEl || !stonkValueEl) {
+                    console.log('updateRaceValues: Elements not found, skipping');
+                    return;
+                }
+                
+                // If we have cached values, show them immediately to prevent flicker
+                const raceCache = getRaceCache();
+                if (raceCache) {
+                    console.log('updateRaceValues: Showing cached values immediately');
+                    if (spValueEl && raceCache.spValue) spValueEl.textContent = raceCache.spValue;
+                    if (stonkValueEl && raceCache.stonkValue) stonkValueEl.textContent = raceCache.stonkValue;
+                    const spReturnEl = document.getElementById('sp500Return');
+                    const stonkReturnEl = document.getElementById('stonkAiReturn');
+                    if (spReturnEl && raceCache.spReturnText) {
+                        spReturnEl.textContent = raceCache.spReturnText;
+                        spReturnEl.style.color = raceCache.spReturnColor || 'var(--text-muted)';
+                    }
+                    if (stonkReturnEl && raceCache.stonkReturnText) {
+                        stonkReturnEl.textContent = raceCache.stonkReturnText;
+                        stonkReturnEl.style.color = raceCache.stonkReturnColor || 'var(--text-muted)';
+                    }
+                }
+                
+                console.log('updateRaceValues: Starting fetch...');
                 // Fetch both data sources
                 const [portfolioRes, spData] = await Promise.all([
                     fetch('portfolio_data.json?t=' + Date.now()),
@@ -5207,12 +5276,13 @@
                 const currentValue = portfolioData.account?.portfolio_value || FALLBACK_DATA.account.portfolio_value;
                 const spReturn = spData.return;
                 const spValue = spData.currentValue;
+                
+                console.log('updateRaceValues: Got data', { currentValue, spReturn, spValue });
 
                 // Calculate StonkBOT.AI return
                 const stonkReturn = ((currentValue - 100000) / 100000 * 100);
 
                 // Update S&P 500 display
-                const spValueEl = document.getElementById('sp500Value');
                 const spReturnEl = document.getElementById('sp500Return');
                 const spBar = document.getElementById('sp500Bar');
                 const spStatus = document.getElementById('sp500Status');
@@ -5242,7 +5312,6 @@
                 }
 
                 // Update StonkBOT.AI display (The Race section)
-                const stonkValueEl = document.getElementById('stonkAiValue');
                 const stonkReturnEl = document.getElementById('stonkAiReturn');
                 const stonkBar = document.getElementById('stonkAiBar');
                 const stonkStatus = document.getElementById('stonkAiStatus');
@@ -5268,61 +5337,30 @@
                         : 'var(--accent-red)';
                 }
                 
-                // Also update hero section to keep them in sync
-                const heroValueEl = document.getElementById('portfolio-value');
-                const heroReturnEl = document.getElementById('portfolio-return');
-                const heroBadge = document.getElementById('portfolio-return-badge');
-                const heroPnlEl = document.getElementById('portfolio-pnl');
+                console.log('updateRaceValues: Updated display successfully');
                 
-                if (heroValueEl) heroValueEl.textContent = '$' + currentValue.toLocaleString('en-US', {maximumFractionDigits: 0});
-                if (heroReturnEl) heroReturnEl.textContent = (stonkReturn >= 0 ? '▲ +' : '▼ ') + stonkReturn.toFixed(2) + '%';
-                if (heroBadge) {
-                    heroBadge.style.background = stonkReturn >= 0 ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
-                    heroBadge.style.borderColor = stonkReturn >= 0 ? 'rgba(0, 230, 118, 0.3)' : 'rgba(255, 82, 82, 0.3)';
-                    heroBadge.style.color = stonkReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                }
-                if (heroPnlEl) {
-                    const pnlAbs = Math.abs(currentValue - 100000).toLocaleString('en-US', {maximumFractionDigits: 0});
-                    heroPnlEl.textContent = (stonkReturn >= 0 ? '+$' : '-$') + pnlAbs;
-                    heroPnlEl.style.color = stonkReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                }
-
-                // Update Gap
-                const gapValue = currentValue - spValue;
-                const gapEl = document.getElementById('gapValue');
-                const gapStatusEl = document.getElementById('gapStatus');
-                const gapPercentEl = document.getElementById('gapPercent');
-                const gapMessageEl = document.getElementById('gapMessage');
-                const gapContainer = document.getElementById('gapContainer');
-
-                if (gapEl) {
-                    gapEl.textContent = (gapValue >= 0 ? '+$' : '-$') + Math.abs(Math.round(gapValue)).toLocaleString();
-                    gapEl.style.color = gapValue >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                }
-                if (gapStatusEl) {
-                    gapStatusEl.textContent = gapValue >= 0 ? 'ahead' : 'behind';
-                    gapStatusEl.style.color = gapValue >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                }
-                if (gapContainer) {
-                    gapContainer.style.background = gapValue >= 0 
-                        ? 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.05))'
-                        : 'linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05))';
-                    gapContainer.style.borderColor = gapValue >= 0 
-                        ? 'rgba(34,197,94,0.2)' 
-                        : 'rgba(239,68,68,0.2)';
-                }
-                if (gapPercentEl && gapMessageEl) {
-                    const catchUpNeeded = Math.abs(stonkReturn - spReturn);
-                    gapPercentEl.textContent = catchUpNeeded.toFixed(2) + '%';
-                    if (gapValue >= 0) {
-                        gapMessageEl.innerHTML = 'Leading S&P 500 by <span id="gapPercent">' + catchUpNeeded.toFixed(2) + '%</span>';
-                    } else {
-                        gapMessageEl.innerHTML = 'StonkBOT.AI needs <span id="gapPercent">' + catchUpNeeded.toFixed(2) + '%</span> to catch up';
-                    }
-                }
-
+                // Cache the values for next time to prevent flicker
+                setRaceCache({
+                    spValue: '$' + Math.round(spValue).toLocaleString(),
+                    stonkValue: '$' + Math.round(currentValue).toLocaleString(),
+                    spReturnText: (spReturn >= 0 ? '+' : '') + spReturn.toFixed(2) + '%',
+                    spReturnColor: spReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)',
+                    stonkReturnText: (stonkReturn >= 0 ? '+' : '') + stonkReturn.toFixed(2) + '%',
+                    stonkReturnColor: stonkReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'
+                });
+                console.log('updateRaceValues: Cached values to localStorage');
+                
             } catch (error) {
                 console.error('Failed to update race:', error);
+                // Don't reset to placeholder on error - keep previous values
+                console.log('updateRaceValues: Error occurred, keeping existing values');
+            } finally {
+                isUpdatingRaceValues = false;
+                // If another update was requested while we were running, do it now
+                if (pendingRaceValuesUpdate) {
+                    console.log('updateRaceValues: Running pending update...');
+                    setTimeout(() => updateRaceValues(), 100);
+                }
             }
         }
 
