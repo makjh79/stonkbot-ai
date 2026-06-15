@@ -82,6 +82,10 @@ class StrategyConfig:
     # Removed: ALLOWED_RSI_SYMBOLS whitelist
     # Now uses full dynamic watchlist from watchlist_changes.json
     
+    # Keep these for rebalancing decisions
+    CORE_POSITIONS = ['PLTR', 'AMD', 'CRWD', 'HOOD', 'AAPL', 'NVDA']
+    SELL_LIST = ['MSFT', 'SOFI', 'SCHD', 'SGOV']
+    
     # AGGRESSIVE target allocations - Higher conviction weights
     TARGET_ALLOCATIONS = {
         'AMD': 0.25,   # 25% - Highest conviction (max position)
@@ -862,7 +866,7 @@ class STONKAIBot:
         entries = []
         
         # Get watchlist stocks from dynamic rotation
-        watchlist_symbols = self.load_dynamic_watchlist()
+        watchlist_symbols = self.state.load_dynamic_watchlist()
         
         # Get current positions
         current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
