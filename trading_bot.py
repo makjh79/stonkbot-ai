@@ -920,10 +920,9 @@ class STONKAIBot:
                             vol_ratio = current_vol / avg_vol
                             volume_ok = vol_ratio >= StrategyConfig.VOLUME_MULTIPLIER
                             if not volume_ok:
-                                logger.debug(f"{symbol}: Volume {vol_ratio:.1f}x below {StrategyConfig.VOLUME_MULTIPLIER}x threshold")
-                    
+                                logger.info(f"❌ {symbol}: Volume {vol_ratio:.1f}x below {StrategyConfig.VOLUME_MULTIPLIER}x threshold")
                     else:
-                        logger.info(f"❌ {symbol}: Volume check failed, skipping entry")
+                        logger.info(f"⚠️ {symbol}: No volume data, proceeding without volume check")
                     
                     if volume_ok:
                         logger.info(f"✅ {symbol}: Volume OK, calculating position size")
