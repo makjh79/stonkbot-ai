@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1300-SIGNAL-MODAL-CLEANUP -->
+    <!-- CACHE BUST: v=20260615-1330-FIX-DAY-CHANGE -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -4325,7 +4325,7 @@
             const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
             
             // Calculate day change from history (using previous day's last check as baseline)
-            let dayChange = 0;
+            let dayChange = null;  // null means no previous data available
             const checks = historyData.checks || [];
             if (checks.length > 0) {
                 // Sort by timestamp descending to get most recent first
@@ -4395,9 +4395,14 @@
                     totalReturnEl.style.color = accentColor;
                 }
                 if (dayChangeEl) {
-                    const dayChangeColor = dayChange < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
-                    dayChangeEl.textContent = (dayChange >= 0 ? '+' : '') + dayChange.toFixed(2) + '%';
-                    dayChangeEl.style.color = dayChangeColor;
+                    if (dayChange === null) {
+                        dayChangeEl.textContent = 'N/A';
+                        dayChangeEl.style.color = 'var(--text-muted)';
+                    } else {
+                        const dayChangeColor = dayChange < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                        dayChangeEl.textContent = (dayChange >= 0 ? '+' : '') + dayChange.toFixed(2) + '%';
+                        dayChangeEl.style.color = dayChangeColor;
+                    }
                 }
                 if (daysActiveEl) {
                     daysActiveEl.textContent = daysActive;
