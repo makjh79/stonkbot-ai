@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1150-SIMPLIFY-AI-SCORE -->
+    <!-- CACHE BUST: v=20260615-1200-AI-SCORE-FINAL -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -8074,7 +8074,7 @@
                 else if (rsi >= 60) buyUrgency = 0;
                 else buyUrgency = Math.round(((60 - rsi) / 25) * 100);
                 
-                // Enhanced AI Score: 50% base + 50% buy urgency
+                // AI Score: 50% base + 50% buy urgency
                 const enhancedScore = Math.round((baseScore * 0.5) + (buyUrgency * 0.5));
                 
                 // Simple readiness indicator - aligned with RSI signal
@@ -8411,7 +8411,7 @@
                     sources = crowdData.composite.sources || [];
                 }
                 
-                // AI Council sentiment
+                // AI sentiment score
                 const aiBullish = stock.sentiment.bullish;
                 const aiBearish = 100 - aiBullish;
                 
@@ -8450,7 +8450,7 @@
                             <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
                                 <button id="star-${stock.symbol}" onclick="toggleWatchStock('${stock.symbol}')" style="background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px; color: ${isSaved ? '#fbbf24' : 'var(--text-muted)'};">${isSaved ? '★' : '☆'}</button>
                                 <div style="display: flex; align-items: center; gap: 4px;" onclick="event.stopPropagation()">
-                                    <div style="background: ${aiScoreColor}20; border: 1px solid ${aiScoreColor}40; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: ${aiScoreColor}; cursor: pointer;" onclick="showSentimentExplainer('enhanced')" title="Click to learn how Enhanced AI Score works">AI ${stock.aiScore} <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></div>
+                                    <div style="background: ${aiScoreColor}20; border: 1px solid ${aiScoreColor}40; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: ${aiScoreColor}; cursor: pointer;" onclick="showSentimentExplainer('ai')" title="Click to learn how AI Score works">AI ${stock.aiScore} <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></div>
                                     ${stock.readinessTag ? `<div style="background: ${stock.readinessTag === 'READY' ? 'rgba(34,197,94,0.2)' : 'rgba(251,191,36,0.2)'}; border: 1px solid ${stock.readinessTag === 'READY' ? 'rgba(34,197,94,0.5)' : 'rgba(251,191,36,0.5)'}; border-radius: 20px; padding: 4px 8px; font-size: 10px; font-weight: 700; color: ${stock.readinessTag === 'READY' ? '#22c55e' : '#fbbf24'};">${stock.readinessTag}</div>` : ''}
                                 </div>
                             </div>
