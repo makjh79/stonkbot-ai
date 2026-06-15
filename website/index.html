@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1140-FIX-SENTIMENT-EXPLAINER -->
+    <!-- CACHE BUST: v=20260615-1150-SIMPLIFY-AI-SCORE -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -8491,11 +8491,11 @@
                             </div>
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="font-size: 11px; font-weight: 700; color: ${aiScoreColor}; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('ai');" title="Click to learn how AI Council Score is calculated">🤖 AI <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
-                                <span style="font-size: 11px; font-weight: 700; color: ${aiBullish > 50 ? '#22c55e' : '#ef4444'};">${aiBullish.toFixed(0)}% Bullish</span>
+                                <span style="font-size: 11px; font-weight: 700; color: ${aiScoreColor}; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('enhanced');" title="Click to learn how AI Score is calculated">🤖 AI Score <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
+                                <span style="font-size: 11px; font-weight: 700; color: ${aiScoreColor};">${stock.aiScore}</span>
                             </div>
                             <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
-                                <div style="width: ${aiBullish}%; height: 100%; background: linear-gradient(90deg, #ef4444, ${aiScoreColor}); border-radius: 3px; transition: width 0.5s;"></div>
+                                <div style="width: ${stock.aiScore}%; height: 100%; background: linear-gradient(90deg, #ef4444, ${aiScoreColor}); border-radius: 3px; transition: width 0.5s;"></div>
                             </div>
                             
                             ${isDivergence ? `
@@ -8800,48 +8800,47 @@
             modal.id = 'sentiment-explainer-modal';
             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 10002; padding: 16px;';
             
-            const isAI = type === 'ai';
-            const isEnhanced = type === 'enhanced';
-            const title = isEnhanced ? '⚡ Enhanced AI Score' : (isAI ? '🤖 AI Council Score' : '📱 Crowd Sentiment');
-            const accentColor = isEnhanced ? '#22c55e' : (isAI ? '#a855f7' : '#06b6d4');
-            const bgGradient = isEnhanced ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(6, 182, 212, 0.05))' : (isAI ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.05))' : 'linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(34, 197, 94, 0.05))');
+            const isAI = type === 'ai' || type === 'enhanced';
+            const title = isAI ? '🤖 AI Score' : '📱 Social Sentiment';
+            const accentColor = isAI ? '#22c55e' : '#06b6d4';
+            const bgGradient = isAI ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(6, 182, 212, 0.05))' : 'linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(34, 197, 94, 0.05))';
             
             const aiContent = `
                 <div style="margin-bottom: 20px;">
                     <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                        Our AI Council analyzes multiple technical indicators to generate a bullish/bearish score. Here's how:
+                        Our AI Score combines technical analysis with buy urgency to surface the best entry opportunities.
                     </div>
                     
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">📊 CORE INDICATORS</div>
+                        <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">📊 CALCULATION</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
                             <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>RSI (Relative Strength Index)</span>
-                                <span style="color: var(--text-primary);">30% weight</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>MACD Momentum</span>
-                                <span style="color: var(--text-primary);">25% weight</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>Moving Average Trend</span>
-                                <span style="color: var(--text-primary);">25% weight</span>
+                                <span>Base Technical Score</span>
+                                <span style="color: var(--text-primary);">50%</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 6px 0;">
-                                <span>Volume & Price Action</span>
-                                <span style="color: var(--text-primary);">20% weight</span>
+                                <span>Buy Urgency (RSI-based)</span>
+                                <span style="color: var(--text-primary);">50%</span>
                             </div>
                         </div>
                     </div>
                     
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">🎯 SCORING LOGIC</div>
+                        <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">🎯 BUY URGENCY</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">RSI &lt; 35:</strong> Oversold = Bullish signal (+15 to +25 points)</div>
-                            <div style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">RSI &gt; 70:</strong> Overbought = Bearish signal (-15 to -25 points)</div>
-                            <div style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">MACD Crossover:</strong> Bullish crossover = +10 to +20 points</div>
-                            <div style="margin-bottom: 8px;"><strong style="color: var(--text-primary);">Price vs 20-day MA:</strong> Above = +5 to +15 points, Below = -5 to -15 points</div>
-                            <div><strong style="color: var(--text-primary);">Volume Spike:</strong> Confirms trend direction (+5 to +10 points)</div>
+                            <div style="margin-bottom: 8px;">Buy urgency increases as RSI approaches the <strong style="color: var(--text-primary);">35 buy zone</strong>:</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 700;">RSI ≤ 35</span>
+                                <span>Maximum urgency (100)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 700;">RSI 35-60</span>
+                                <span>Scaling urgency (0-100)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-weight: 700;">RSI ≥ 60</span>
+                                <span>No urgency (0)</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -8849,20 +8848,20 @@
                         <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">💡 HOW TO READ THE SCORE</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 700;">70-100%</span>
-                                <span>Strong Bullish — AI sees opportunity</span>
+                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 700;">85-100</span>
+                                <span>Excellent — Near auto-entry zone</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 700;">50-69%</span>
-                                <span>Moderately Bullish — Cautious optimism</span>
+                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 700;">70-84</span>
+                                <span>Strong — Good opportunity</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span style="background: #f9731620; color: #f97316; padding: 2px 8px; border-radius: 4px; font-weight: 700;">30-49%</span>
-                                <span>Neutral/Mixed — Wait for clarity</span>
+                                <span style="background: #f9731620; color: #f97316; padding: 2px 8px; border-radius: 4px; font-weight: 700;">50-69</span>
+                                <span>Moderate — Watch for setup</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-weight: 700;">0-29%</span>
-                                <span>Bearish — AI recommends caution</span>
+                                <span style="background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-weight: 700;">&lt; 50</span>
+                                <span>Weak — Not ready yet</span>
                             </div>
                         </div>
                     </div>
@@ -8923,50 +8922,7 @@
                 </div>
             `;
             
-            const enhancedContent = `
-                <div style="margin-bottom: 20px;">
-                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                        The <strong style="color: #22c55e;">Enhanced AI Score</strong> combines traditional quality metrics with real-time <strong style="color: var(--text-primary);">buy urgency</strong> to surface stocks closest to triggering an auto-entry.
-                    </div>
-                    
-                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">⚡ THE ENHANCED FORMULA</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>Base AI Quality Score</span>
-                                <span style="color: var(--text-primary); font-weight: 700;">50% weight</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>Buy Urgency (RSI proximity)</span>
-                                <span style="color: var(--text-primary); font-weight: 700;">50% weight</span>
-                            </div>
-                        </div>
-                        <div style="margin-top: 10px; padding: 10px; background: rgba(34,197,94,0.1); border-radius: 8px; font-size: 11px; color: #22c55e; text-align: center;">
-                            Enhanced Score = (Base Score × 0.50) + (Buy Urgency × 0.50)
-                        </div>
-                    </div>
-                    
-                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">📊 BUY URGENCY CALCULATION</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: rgba(34,197,94,0.1); border-radius: 8px;">
-                                <span style="background: #22c55e; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">RSI ≤ 35</span>
-                                <span>Buy Urgency = <strong style="color: #22c55e;">100</strong> (At trigger zone)</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: rgba(251,191,36,0.1); border-radius: 8px;">
-                                <span style="background: #fbbf24; color: black; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">RSI 35-60</span>
-                                <span>Buy Urgency = <strong>0-99</strong> (Approaching)</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(107,114,128,0.1); border-radius: 8px;">
-                                <span style="background: #6b7280; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">RSI ≥ 60</span>
-                                <span>Buy Urgency = <strong style="color: #6b7280;">0</strong> (Far from entry)</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">🏷️ READINESS TAGS</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                                 <span style="background: rgba(34,197,94,0.2); color: #22c55e; border: 1px solid rgba(34,197,94,0.5); padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;">READY</span>
                                 <span>RSI ≤ 35 — At auto-entry trigger (bot will buy)</span>
@@ -9001,7 +8957,7 @@
                     </div>
                     
                     <div style="padding: 20px;">
-                        ${isEnhanced ? enhancedContent : (isAI ? aiContent : crowdContent)}
+                        ${isAI ? aiContent : crowdContent}
                         
                         <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; margin-top: 16px;">
                             <div style="font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.5;">
