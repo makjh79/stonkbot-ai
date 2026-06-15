@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0200-FIX-PNL-DISPLAY -->
+    <!-- CACHE BUST: v=20260615-0210-FIX-LOADING-LAG -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2443,7 +2443,7 @@
             <!-- Return Badge - Clean -->
             <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;">
                 <span id="portfolio-return">--</span>
-                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl">--</span>)</span>
+                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl">loading...</span>)</span>
             </div>
 
             <!-- Quick Stats Row -->
@@ -4081,7 +4081,10 @@
             }
         }
 
-        // Load data on page load
+        // Load data immediately (don't wait for DOMContentLoaded)
+        loadPortfolioData();
+        
+        // Also load on DOMContentLoaded as backup
         document.addEventListener('DOMContentLoaded', loadPortfolioData);
 
         // Refresh every 30 seconds
