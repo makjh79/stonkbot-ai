@@ -949,12 +949,24 @@ class STONKAIBot:
         return entries
     
     def fetch_rsi_for_symbol(self, symbol: str) -> Optional[float]:
-        """Fetch RSI for a symbol - uses Yahoo Finance (free) as primary source"""
+        """Fetch RSI for a symbol - uses watchlist data first, then Yahoo Finance as fallback"""
         try:
+            # First try to get RSI from watchlist data (already calculated)
+            try:
+                with open('/var/www/hedge-fund-website/ai_watchlist_live.json', 'r') as f:
+                    watchlist_data = json.load(f)
+                    symbol_data = watchlist_data.get('prices', {}).get(symbol, {})
+                    rsi = symbol_data.get('rsi')
+                    if rsi is not None:
+                        logger.debug(f"{symbol}: Using watchlist RSI = {rsi:.1f}")
+                        return float(rsi)
+            except Exception as e:
+                logger.debug(f"{symbol}: Could not read watchlist RSI: {e}")
+            
+            # Fallback to Yahoo Finance
             import requests
             import time
             
-            # Use Yahoo Finance for free historical data
             end = int(time.time())
             start = end - (30 * 24 * 60 * 60)  # 30 days
             
