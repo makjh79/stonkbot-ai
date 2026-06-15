@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1040-FLICKER-FIX-v11-CONSISTENT-ROUNDING -->
+    <!-- CACHE BUST: v=20260615-1055-LIVE-AI-SCORE -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -7701,11 +7701,48 @@
                 const data = await response.json();
                 aiWatchlistPrices = data.prices || {};
                 lastWatchlistUpdate = data.timestamp;
+                // Recalculate AI scores with fresh prices
+                recalculateAIScoresWithLivePrices();
                 return true;
             } catch (e) {
                 console.log('Watchlist prices not available yet:', e);
                 return false;
             }
+        }
+        
+        // Recalculate AI scores with live prices (called every 30s)
+        function recalculateAIScoresWithLivePrices() {
+            if (!aiWatchlist || aiWatchlist.length === 0) return;
+            
+            aiWatchlist.forEach(stock => {
+                const liveData = aiWatchlistPrices[stock.symbol];
+                if (liveData && liveData.price) {
+                    // Update price to live value
+                    const oldPrice = stock.price;
+                    stock.price = liveData.price;
+                    
+                    // Recalculate change percentage
+                    if (liveData.change_pct !== undefined) {
+                        stock.changePct = liveData.change_pct;
+                    }
+                    
+                    // Recalculate AI score with new price
+                    // Buy urgency increases as price drops (better entry)
+                    const priceDrop = oldPrice > 0 ? (oldPrice - liveData.price) / oldPrice : 0;
+                    const buyUrgency = Math.min(100, Math.max(0, 50 + (priceDrop * 500))); // 10% drop = 100 urgency
+                    
+                    // Blend original AI score with buy urgency based on price movement
+                    const baseScore = stock.aiScore || 50;
+                    stock.aiScore = Math.round((baseScore * 0.7) + (buyUrgency * 0.3));
+                    
+                    // Update readiness tag based on new score + RSI
+                    if (stock.rsi <= 35 && stock.aiScore >= 75) stock.readinessTag = 'READY';
+                    else if (stock.rsi <= 45 && stock.aiScore >= 65) stock.readinessTag = 'CLOSE';
+                    else stock.readinessTag = '';
+                }
+            });
+            
+            console.log('[Live AI] Recalculated scores with fresh prices');
         }
         
         // Fetch real crowd sentiment data
@@ -8098,6 +8135,16 @@
         // Refresh watchlist prices periodically
         setInterval(fetchWatchlistPrices, 30000);
         fetchWatchlistPrices(); // Initial load
+        
+        // Recalculate AI scores with live prices every 30s and re-render
+        setInterval(() => {
+            recalculateAIScoresWithLivePrices();
+            // Only re-render if watchlist modal is open
+            const modal = document.getElementById('ai-watchlist-modal');
+            if (modal && modal.style.display === 'flex') {
+                renderWatchlistContent();
+            }
+        }, 30000);
         
         // Track watchlist changes for notifications
         let watchlistChanges = null;
