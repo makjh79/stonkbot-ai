@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0620-FLICKER-FIX-v7-IMMEDIATE -->
+    <!-- CACHE BUST: v=20260615-0640-FLICKER-FIX-v8-DEBUG -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2347,8 +2347,13 @@
                 const cached = localStorage.getItem('raceValuesCache');
                 if (cached) {
                     window.__RACE_CACHE__ = JSON.parse(cached);
+                    console.log('[CACHE] Restored from localStorage:', window.__RACE_CACHE__);
+                } else {
+                    console.log('[CACHE] No cache found in localStorage');
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error('[CACHE] Error reading cache:', e);
+            }
         })();
     </script>
     <!-- Scroll Progress Indicator -->
@@ -2500,7 +2505,7 @@
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
-                    <div id="sp500Value" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;"><script>document.write(window.__RACE_CACHE__?.spValue || '&nbsp;')</script></div>
+                    <div id="sp500Value" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;"><script>document.write(window.__RACE_CACHE__?.spValue || '<span style="opacity:0.5">Loading...</span>')</script></div>
                     <div id="sp500Return" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;"><script>document.write(window.__RACE_CACHE__?.spReturnText || '&nbsp;')</script></div>
                     <span id="sp500Status" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">--</span>
                 </div>
@@ -2510,7 +2515,7 @@
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">StonkBOT.AI</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
-                    <div id="stonkAiValue" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;"><script>document.write(window.__RACE_CACHE__?.stonkValue || '&nbsp;')</script></div>
+                    <div id="stonkAiValue" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;"><script>document.write(window.__RACE_CACHE__?.stonkValue || '<span style="opacity:0.5">Loading...</span>')</script></div>
                     <div id="stonkAiReturn" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;"><script>document.write(window.__RACE_CACHE__?.stonkReturnText || '&nbsp;')</script></div>
                     <span id="stonkAiStatus" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">--</span>
                 </div>
