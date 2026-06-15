@@ -124,7 +124,7 @@ class StrategyConfig:
         return ['PLTR', 'AMD', 'CRWD', 'HOOD', 'NVDA', 'GOOGL', 'TQQQ', 'SQQQ']
     
     ALLOWED_RSI_SYMBOLS = None  # Deprecated - use get_allowed_symbols() instead
-    VOLUME_MULTIPLIER = 1.5  # 1.5x average volume for entry confirmation
+    VOLUME_MULTIPLIER = 0.5  # 0.5x average volume required (relaxed for more entries)
     
     # ENABLE momentum trading for alpha generation
     DIP_BUY_ENABLED = True
