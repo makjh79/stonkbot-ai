@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0240-FIX-RETURN-BADGE-UPDATE -->
+    <!-- CACHE BUST: v=20260615-0250-INLINE-INITIAL-DATA -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2438,27 +2438,27 @@
         <div id="overview" class="section-anchor"></div>
         <div onclick="showTradeLogModal()" style="background: var(--bg-surface); border-radius: 24px; padding: 2rem 1.5rem; text-align: center; border: 1px solid var(--border); margin-bottom: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
             <!-- Portfolio Value - BIG -->
-            <div id="portfolio-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5);">$--</div>
+            <div id="portfolio-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5);">$94,233</div>
 
             <!-- Return Badge - Clean -->
-            <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;">
-                <span id="portfolio-return">--</span>
-                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl">loading...</span>)</span>
+            <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,82,82,0.15); border: 1px solid rgba(255,82,82,0.3); border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">
+                <span id="portfolio-return">▼ -5.00%</span>
+                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl">-$5,767</span>)</span>
             </div>
 
             <!-- Quick Stats Row -->
             <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Day</div>
-                    <div id="day-counter" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">Day --</div>
+                    <div id="day-counter" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">Day 12</div>
                 </div>
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Positions</div>
-                    <div id="position-count" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">--</div>
+                    <div id="position-count" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">8</div>
                 </div>
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Cash</div>
-                    <div id="cash-available" style="font-size: 1rem; font-weight: 700; color: var(--accent-green);">$--</div>
+                    <div id="cash-available" style="font-size: 1rem; font-weight: 700; color: var(--accent-green);">$8,640</div>
                 </div>
             </div>
             
