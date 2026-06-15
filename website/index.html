@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0210-FIX-LOADING-LAG -->
+    <!-- CACHE BUST: v=20260615-0220-FIX-DAY-CHANGE-CALC -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -4242,20 +4242,37 @@
             const STARTING_VALUE = 100000;
             const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
             
-            // Calculate day change from history (using previous close as baseline)
+            // Calculate day change from history (using previous day's last check as baseline)
             let dayChange = 0;
             const checks = historyData.checks || [];
             if (checks.length > 0) {
-                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-                const todayChecks = checks.filter(c => c.timestamp && c.timestamp.startsWith(today));
-                if (todayChecks.length > 0) {
-                    // Use first check of today as baseline
-                    const firstCheckToday = todayChecks[0];
-                    const firstValue = firstCheckToday.portfolio_value || firstCheckToday.value || portfolioValue;
-                    dayChange = ((portfolioValue - firstValue) / firstValue) * 100;
-                } else {
-                    // No data today yet, day change is 0
-                    dayChange = 0;
+                // Sort by timestamp descending to get most recent first
+                const sortedChecks = checks.filter(c => c.timestamp).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                // Get today's date and yesterday's date in UTC
+                const now = new Date();
+                const today = now.toISOString().split('T')[0];
+                const yesterday = new Date(now - 86400000).toISOString().split('T')[0];
+                
+                // Find last check from yesterday
+                const yesterdayChecks = sortedChecks.filter(c => c.timestamp.startsWith(yesterday));
+                if (yesterdayChecks.length > 0) {
+                    const lastCheckYesterday = yesterdayChecks[0];
+                    const lastValue = lastCheckYesterday.portfolio_value || lastCheckYesterday.value;
+                    if (lastValue && lastValue > 0) {
+                        dayChange = ((portfolioValue - lastValue) / lastValue) * 100;
+                    }
+                }
+                // If no yesterday data, try to find most recent check before today
+                else {
+                    const previousChecks = sortedChecks.filter(c => !c.timestamp.startsWith(today));
+                    if (previousChecks.length > 0) {
+                        const lastCheck = previousChecks[0];
+                        const lastValue = lastCheck.portfolio_value || lastCheck.value;
+                        if (lastValue && lastValue > 0) {
+                            dayChange = ((portfolioValue - lastValue) / lastValue) * 100;
+                        }
+                    }
                 }
             }
             
