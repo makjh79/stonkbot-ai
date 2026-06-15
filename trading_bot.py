@@ -76,7 +76,7 @@ class StrategyConfig:
     TAKE_PROFIT_TRIM = 15.0  # Trim at +15% (take gains quicker, compound faster)
     TAKE_PROFIT_FULL = 30.0  # Full exit at +30% (lock in profits)
     MAX_SECTOR_DEVIATION = 20.0  # Allow more concentration in winners
-    MIN_CASH_BUFFER = 500  # Keep $500 cash minimum (NO MARGIN), deploy rest
+    MIN_CASH_ABSOLUTE = 500  # Keep $500 cash minimum (NO MARGIN), deploy rest
     
     # NO WHITELIST - Bot buys ANY watchlist signal
     # Removed: ALLOWED_RSI_SYMBOLS whitelist
@@ -544,7 +544,7 @@ class STONKAIBot:
         trades = []
         
         cash_pct = portfolio_data['account']['cash'] / portfolio_data['account']['portfolio_value']
-        if cash_pct < StrategyConfig.MIN_CASH_BUFFER:
+        if cash_pct < 0.30:  # Need 30% cash for rebalancing
             logger.info(f"Cash buffer low ({cash_pct:.1%}), skipping rebalancing")
             return trades
         
@@ -653,10 +653,9 @@ class STONKAIBot:
                 # Info only - not an emergency
                 logger.info(f"Margin usage: ${abs(cash):,.2f} (buying power: {buying_power_pct:.1%})")
         else:
-            # Cash account - traditional check
-            cash_pct = cash / total_value
-            if cash_pct < 0.25:
-                alerts.append(f"WARNING: Cash buffer low at {cash_pct:.1%}")
+            # Cash account - check absolute minimum (NO MARGIN)
+            if cash < StrategyConfig.MIN_CASH_ABSOLUTE:
+                alerts.append(f"WARNING: Cash buffer low at ${cash:,.2f} (need ${StrategyConfig.MIN_CASH_ABSOLUTE} minimum)")
         
         return alerts
     
@@ -1070,7 +1069,10 @@ class STONKAIBot:
         cash = portfolio_data['account']['cash']
         portfolio_value = portfolio_data['account']['portfolio_value']
         
-        if cash < portfolio_value * StrategyConfig.MIN_CASH_BUFFER:
+        # Check cash available (NO MARGIN)
+        available_cash = cash - StrategyConfig.MIN_CASH_ABSOLUTE
+        if available_cash < 100:
+            logger.debug(f"Insufficient cash for dip entries: ${cash:.2f} (keeping ${StrategyConfig.MIN_CASH_ABSOLUTE} buffer)")
             return entries
         
         for symbol in watchlist:
@@ -1156,7 +1158,10 @@ class STONKAIBot:
         cash = portfolio_data['account']['cash']
         portfolio_value = portfolio_data['account']['portfolio_value']
         
-        if cash < portfolio_value * StrategyConfig.MIN_CASH_BUFFER:
+        # Check cash available (NO MARGIN)
+        available_cash = cash - StrategyConfig.MIN_CASH_ABSOLUTE
+        if available_cash < 100:
+            logger.debug(f"Insufficient cash for momentum entries: ${cash:.2f} (keeping ${StrategyConfig.MIN_CASH_ABSOLUTE} buffer)")
             return entries
         
         for symbol in watchlist:
@@ -1217,7 +1222,10 @@ class STONKAIBot:
         cash = portfolio_data['account']['cash']
         portfolio_value = portfolio_data['account']['portfolio_value']
         
-        if cash < portfolio_value * StrategyConfig.MIN_CASH_BUFFER:
+        # Check cash available (NO MARGIN)
+        available_cash = cash - StrategyConfig.MIN_CASH_ABSOLUTE
+        if available_cash < 100:
+            logger.debug(f"Insufficient cash for speculative entries: ${cash:.2f} (keeping ${StrategyConfig.MIN_CASH_ABSOLUTE} buffer)")
             return entries
         
         for symbol in StrategyConfig.SPECULATIVE_STOCKS:
