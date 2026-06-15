@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0250-INLINE-INITIAL-DATA -->
+    <!-- CACHE BUST: v=20260615-0300-FIX-DOUBLE-PARENTHESES -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -5275,17 +5275,15 @@
                 const heroPnlEl = document.getElementById('portfolio-pnl');
                 
                 if (heroValueEl) heroValueEl.textContent = '$' + currentValue.toLocaleString('en-US', {maximumFractionDigits: 0});
-                if (heroReturnEl) heroReturnEl.textContent = (stonkReturn >= 0 ? '+' : '') + stonkReturn.toFixed(2) + '%';
+                if (heroReturnEl) heroReturnEl.textContent = (stonkReturn >= 0 ? '▲ +' : '▼ ') + stonkReturn.toFixed(2) + '%';
                 if (heroBadge) {
                     heroBadge.style.background = stonkReturn >= 0 ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
                     heroBadge.style.borderColor = stonkReturn >= 0 ? 'rgba(0, 230, 118, 0.3)' : 'rgba(255, 82, 82, 0.3)';
                     heroBadge.style.color = stonkReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                    const arrowSpan = heroBadge.querySelector('span:first-child');
-                    if (arrowSpan) arrowSpan.textContent = stonkReturn >= 0 ? '▲' : '▼';
                 }
                 if (heroPnlEl) {
                     const pnlAbs = Math.abs(currentValue - 100000).toLocaleString('en-US', {maximumFractionDigits: 0});
-                    heroPnlEl.textContent = '(' + (stonkReturn >= 0 ? '+' : '-') + '$' + pnlAbs + ')';
+                    heroPnlEl.textContent = (stonkReturn >= 0 ? '+$' : '-$') + pnlAbs;
                     heroPnlEl.style.color = stonkReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
                 }
 
