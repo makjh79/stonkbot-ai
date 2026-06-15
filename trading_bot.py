@@ -904,6 +904,8 @@ class STONKAIBot:
                 
                 if rsi:
                     logger.info(f"{symbol}: RSI = {rsi:.1f} (threshold: {StrategyConfig.RSI_ENTRY_THRESHOLD})")
+                    logger.info(f"DEBUG: rsi type={type(rsi)}, value={rsi}, threshold={StrategyConfig.RSI_ENTRY_THRESHOLD}")
+                    logger.info(f"DEBUG: rsi <= threshold = {rsi <= StrategyConfig.RSI_ENTRY_THRESHOLD}")
                 else:
                     logger.warning(f"{symbol}: Could not fetch RSI")
                 
