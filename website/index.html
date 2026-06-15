@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-1345-FIX-HERO-FLICKER -->
+    <!-- CACHE BUST: v=20260615-1430-DAY-CHANGE-ALPACA -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -4312,10 +4312,9 @@
 
         async function updatePerformanceDetailData() {
             // Fetch fresh data including history for day change
-            const [data, marketIndices, historyData] = await Promise.all([
+            const [data, marketIndices] = await Promise.all([
                 fetchPortfolioData(),
-                fetchMarketIndices(),
-                fetch('./portfolio_history.json?t=' + Date.now()).then(r => r.json()).catch(() => ({checks: []}))
+                fetchMarketIndices()
             ]);
             
             const portfolioValue = data.account?.portfolio_value || 0;
@@ -4324,39 +4323,8 @@
             const STARTING_VALUE = 100000;
             const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
             
-            // Calculate day change from history (using previous day's last check as baseline)
-            let dayChange = null;  // null means no previous data available
-            const checks = historyData.checks || [];
-            if (checks.length > 0) {
-                // Sort by timestamp descending to get most recent first
-                const sortedChecks = checks.filter(c => c.timestamp).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                
-                // Get today's date and yesterday's date in UTC
-                const now = new Date();
-                const today = now.toISOString().split('T')[0];
-                const yesterday = new Date(now - 86400000).toISOString().split('T')[0];
-                
-                // Find last check from yesterday
-                const yesterdayChecks = sortedChecks.filter(c => c.timestamp.startsWith(yesterday));
-                if (yesterdayChecks.length > 0) {
-                    const lastCheckYesterday = yesterdayChecks[0];
-                    const lastValue = lastCheckYesterday.portfolio_value || lastCheckYesterday.value;
-                    if (lastValue && lastValue > 0) {
-                        dayChange = ((portfolioValue - lastValue) / lastValue) * 100;
-                    }
-                }
-                // If no yesterday data, try to find most recent check before today
-                else {
-                    const previousChecks = sortedChecks.filter(c => !c.timestamp.startsWith(today));
-                    if (previousChecks.length > 0) {
-                        const lastCheck = previousChecks[0];
-                        const lastValue = lastCheck.portfolio_value || lastCheck.value;
-                        if (lastValue && lastValue > 0) {
-                            dayChange = ((portfolioValue - lastValue) / lastValue) * 100;
-                        }
-                    }
-                }
-            }
+            // Get day change from Alpaca (calculated from last_equity vs current equity)
+            let dayChange = data.day_change !== undefined ? data.day_change : null;
             
             // Calculate days active from timestamp
             const startDate = new Date('2026-06-04');
