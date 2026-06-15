@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
-    <!-- CACHE BUST: v=20260615-0220-FIX-DAY-CHANGE-CALC -->
+    <!-- CACHE BUST: v=20260615-0230-FIX-LOAD-TIMING -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -4081,11 +4081,13 @@
             }
         }
 
-        // Load data immediately (don't wait for DOMContentLoaded)
-        loadPortfolioData();
-        
-        // Also load on DOMContentLoaded as backup
-        document.addEventListener('DOMContentLoaded', loadPortfolioData);
+        // Load data on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadPortfolioData);
+        } else {
+            // DOM already loaded, run immediately
+            loadPortfolioData();
+        }
 
         // Refresh every 30 seconds
         setInterval(() => {
