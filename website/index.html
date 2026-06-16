@@ -8115,9 +8115,9 @@
                     intrinsic: price * 1.5,
                     upside: '+50.0%',
                     rsi: rsi,
-                    volume: (data.volume && data.avg_volume && data.avg_volume > 0) 
+                    volume: (data.volume && data.avg_volume && data.avg_volume > 0 && Math.abs(data.volume - data.avg_volume) > 0.01 * data.avg_volume) 
                         ? (data.volume / data.avg_volume).toFixed(1) + 'x'
-                        : (1 + Math.abs(changePct) / 10).toFixed(1) + 'x',
+                        : '-',
                     sentiment: { bullish: sentiment, bearish: 100 - sentiment },
                     aiScore: enhancedScore,
                     readinessTag: readinessTag,
