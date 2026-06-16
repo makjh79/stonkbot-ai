@@ -2337,6 +2337,79 @@
                 gap: 0.15rem;
             }
         }
+        
+        /* ============================================
+           INFO TOOLTIPS - Subtle Explainers
+           ============================================ */
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 4px;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .info-icon:hover {
+            background: rgba(255,255,255,0.2);
+            color: var(--text-primary);
+        }
+        
+        .info-tooltip {
+            position: absolute;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-width: 280px;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+        }
+        
+        .info-tooltip.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .info-tooltip strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .info-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--bg-elevated);
+            border-right: 1px solid var(--border-strong);
+            border-bottom: 1px solid var(--border-strong);
+            transform: rotate(45deg);
+        }
+        
+        .metric-with-info {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -2471,7 +2544,7 @@
             <!-- Quick Stats Row -->
             <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <div style="text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Day</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Day <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Days Active:</strong> Calendar days since bot started trading (June 4, 2026).<br><br>Updates daily at market open.<br><br>Not trading days—includes weekends.')">ⓘ</span></div>
                     <div id="day-counter" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">13</div>
                 </div>
                 <div style="text-align: center;">
@@ -2731,15 +2804,15 @@
                 <!-- Key Metrics Grid -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Total Return</div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Total Return <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Total Return:</strong> Unrealized profit/loss since bot started vs $100K initial.<br><br>Includes open positions—only realized when sold.<br><br>Updated every 2 minutes during market hours.')">ⓘ</span></div>
                         <div id="detail-total-return" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
                     </div>
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Day Change</div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Day Change <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Day Change:</strong> Daily profit/loss vs previous day close.<br><br>Includes unrealized gains/losses on open positions.<br><br>Resets at market close, not cumulative.')">ⓘ</span></div>
                         <div id="detail-day-change" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
                     </div>
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Days Active</div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Days Active <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Days Active:</strong> Calendar days since bot started trading (June 4, 2026).<br><br>Includes weekends. Updates daily at market open.<br><br>Not trading days—total elapsed time.')">ⓘ</span></div>
                         <div id="detail-days-active" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
                     </div>
                 </div>
@@ -5734,6 +5807,55 @@
         `;
         document.head.appendChild(toastStyles);
 
+        // Info Tooltip System
+        let activeTooltip = null;
+        
+        function showInfoTooltip(event, text) {
+            // Remove any existing tooltip
+            if (activeTooltip) {
+                activeTooltip.remove();
+                activeTooltip = null;
+            }
+            
+            const tooltip = document.createElement('div');
+            tooltip.className = 'info-tooltip';
+            tooltip.innerHTML = text;
+            document.body.appendChild(tooltip);
+            activeTooltip = tooltip;
+            
+            // Position below the clicked element
+            const rect = event.target.getBoundingClientRect();
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.bottom + 8) + 'px';
+            
+            // Show with animation
+            requestAnimationFrame(() => {
+                tooltip.classList.add('visible');
+            });
+            
+            // Close on click outside or after 4 seconds
+            const closeTooltip = (e) => {
+                if (!tooltip.contains(e.target) && e.target !== event.target) {
+                    tooltip.classList.remove('visible');
+                    setTimeout(() => tooltip.remove(), 200);
+                    activeTooltip = null;
+                    document.removeEventListener('click', closeTooltip);
+                }
+            };
+            
+            setTimeout(() => {
+                if (activeTooltip === tooltip) {
+                    tooltip.classList.remove('visible');
+                    setTimeout(() => {
+                        if (tooltip.parentNode) tooltip.remove();
+                        if (activeTooltip === tooltip) activeTooltip = null;
+                    }, 200);
+                }
+            }, 4000);
+            
+            document.addEventListener('click', closeTooltip);
+        }
+
         // Update scroll listener to include hash updates
         let hashTicking = false;
         window.addEventListener('scroll', function() {
@@ -8272,6 +8394,7 @@
                                     <a onclick="showSignalAccuracyModal(); event.stopPropagation();" style="color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.3); transition: all 0.2s ease;" onmouseover="this.style.color='#22c55e'; this.style.borderColor='#22c55e'" onmouseout="this.style.color='var(--text-muted)'; this.style.borderColor='rgba(255,255,255,0.3)'" title="View detailed signal performance">
                                         <span id="watchlistWinRate">${winRateText}</span> signal accuracy
                                     </a>
+                                    <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Signal Accuracy:</strong> % of completed signals that hit profit targets (+25% or +50%).<br><br>0% = no signals have closed yet (still active).<br><br>Tracks from RSI entry signal to exit.')">ⓘ</span>
                                 </div>
                                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
                                     ${liveIndicator}
