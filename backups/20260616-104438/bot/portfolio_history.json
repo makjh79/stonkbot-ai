@@ -1,0 +1,4007 @@
+{
+  "checks": [
+    {
+      "timestamp": "2026-06-16T06:36:47.217371",
+      "portfolio_value": 103872.84,
+      "cash": -1193.18,
+      "total_pl": 4732.120461999999,
+      "total_pl_pct": 4.716372515958853,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:37:17.521851",
+      "portfolio_value": 103880.09,
+      "cash": -1193.18,
+      "total_pl": 4739.370461999999,
+      "total_pl_pct": 4.723598388802811,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:37:47.824903",
+      "portfolio_value": 103890.26,
+      "cash": -1193.18,
+      "total_pl": 4749.540461999999,
+      "total_pl_pct": 4.73373454422668,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:38:18.138226",
+      "portfolio_value": 103935.21,
+      "cash": -1193.18,
+      "total_pl": 4794.490461999999,
+      "total_pl_pct": 4.778534955859216,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:38:48.448719",
+      "portfolio_value": 103934.53,
+      "cash": -1193.18,
+      "total_pl": 4793.810461999999,
+      "total_pl_pct": 4.777857218820058,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:39:18.774690",
+      "portfolio_value": 103932.66,
+      "cash": -1193.18,
+      "total_pl": 4791.940461999999,
+      "total_pl_pct": 4.775993441962377,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:39:49.083354",
+      "portfolio_value": 103924.06,
+      "cash": -1193.18,
+      "total_pl": 4783.340461999999,
+      "total_pl_pct": 4.767422061761269,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:40:19.404170",
+      "portfolio_value": 103924.23,
+      "cash": -1193.18,
+      "total_pl": 4783.510461999999,
+      "total_pl_pct": 4.7675914960210575,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:40:49.856329",
+      "portfolio_value": 103925.59,
+      "cash": -1193.18,
+      "total_pl": 4784.870462,
+      "total_pl_pct": 4.768946970099373,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:41:20.152952",
+      "portfolio_value": 103924.91,
+      "cash": -1193.18,
+      "total_pl": 4784.190462,
+      "total_pl_pct": 4.768269233060216,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:41:50.476067",
+      "portfolio_value": 103924.91,
+      "cash": -1193.18,
+      "total_pl": 4784.190462,
+      "total_pl_pct": 4.768269233060216,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:42:20.793808",
+      "portfolio_value": 103929.26,
+      "cash": -1193.18,
+      "total_pl": 4788.540462,
+      "total_pl_pct": 4.77260475676659,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:42:51.102788",
+      "portfolio_value": 103940.86,
+      "cash": -1193.18,
+      "total_pl": 4800.140462,
+      "total_pl_pct": 4.7841661533169235,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:43:21.410824",
+      "portfolio_value": 103940.86,
+      "cash": -1193.18,
+      "total_pl": 4800.140462,
+      "total_pl_pct": 4.7841661533169235,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:43:51.709988",
+      "portfolio_value": 103946.96,
+      "cash": -1193.18,
+      "total_pl": 4806.240462,
+      "total_pl_pct": 4.7902458532270105,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:44:22.008429",
+      "portfolio_value": 103958.71,
+      "cash": -1193.18,
+      "total_pl": 4817.990462,
+      "total_pl_pct": 4.801956750594804,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:44:52.339745",
+      "portfolio_value": 103957.52,
+      "cash": -1193.18,
+      "total_pl": 4816.800462,
+      "total_pl_pct": 4.800770710776279,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:45:22.653686",
+      "portfolio_value": 103972.21,
+      "cash": -1193.18,
+      "total_pl": 4831.490462,
+      "total_pl_pct": 4.815411824166311,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:45:52.980321",
+      "portfolio_value": 103965.26,
+      "cash": -1193.18,
+      "total_pl": 4824.540462,
+      "total_pl_pct": 4.808484952957276,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:46:23.309677",
+      "portfolio_value": 103965.26,
+      "cash": -1193.18,
+      "total_pl": 4824.540462,
+      "total_pl_pct": 4.808484952957276,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:46:53.636097",
+      "portfolio_value": 103998.84,
+      "cash": -1193.18,
+      "total_pl": 4858.120461999999,
+      "total_pl_pct": 4.841953202626254,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:47:23.963163",
+      "portfolio_value": 103998.84,
+      "cash": -1193.18,
+      "total_pl": 4858.120461999999,
+      "total_pl_pct": 4.841953202626254,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:47:54.303448",
+      "portfolio_value": 103976.6,
+      "cash": -1193.18,
+      "total_pl": 4835.880462,
+      "total_pl_pct": 4.819787214757342,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:48:24.609210",
+      "portfolio_value": 103976.6,
+      "cash": -1193.18,
+      "total_pl": 4835.880462,
+      "total_pl_pct": 4.819787214757342,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:48:54.910979",
+      "portfolio_value": 103976.6,
+      "cash": -1193.18,
+      "total_pl": 4835.880462,
+      "total_pl_pct": 4.819787214757342,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:49:25.217392",
+      "portfolio_value": 103975.92,
+      "cash": -1193.18,
+      "total_pl": 4835.200462000001,
+      "total_pl_pct": 4.819109477718186,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:49:55.512697",
+      "portfolio_value": 103993.32,
+      "cash": -1193.18,
+      "total_pl": 4852.600462,
+      "total_pl_pct": 4.836451572543683,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:50:25.808573",
+      "portfolio_value": 103986.12,
+      "cash": -1193.18,
+      "total_pl": 4845.4004620000005,
+      "total_pl_pct": 4.829275533305546,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:50:56.117537",
+      "portfolio_value": 103986.12,
+      "cash": -1193.18,
+      "total_pl": 4845.4004620000005,
+      "total_pl_pct": 4.829275533305546,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:51:26.427488",
+      "portfolio_value": 103992.9,
+      "cash": -1193.18,
+      "total_pl": 4852.180462,
+      "total_pl_pct": 4.8360329702547915,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:51:56.732752",
+      "portfolio_value": 103993.41,
+      "cash": -1193.18,
+      "total_pl": 4852.690462,
+      "total_pl_pct": 4.836541273034159,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:52:27.045815",
+      "portfolio_value": 103993.41,
+      "cash": -1193.18,
+      "total_pl": 4852.690462,
+      "total_pl_pct": 4.836541273034159,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:52:57.372310",
+      "portfolio_value": 104003.56,
+      "cash": -1193.18,
+      "total_pl": 4862.840461999999,
+      "total_pl_pct": 4.846657495015699,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:53:27.704507",
+      "portfolio_value": 103995.11,
+      "cash": -1193.18,
+      "total_pl": 4854.390462,
+      "total_pl_pct": 4.838235615632054,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:53:58.015431",
+      "portfolio_value": 103995.45,
+      "cash": -1193.18,
+      "total_pl": 4854.730462,
+      "total_pl_pct": 4.838574484151632,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:54:28.331223",
+      "portfolio_value": 103995.45,
+      "cash": -1193.18,
+      "total_pl": 4854.730462,
+      "total_pl_pct": 4.838574484151632,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:54:58.663273",
+      "portfolio_value": 103995.45,
+      "cash": -1193.18,
+      "total_pl": 4854.730462,
+      "total_pl_pct": 4.838574484151632,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:55:28.983208",
+      "portfolio_value": 103995.45,
+      "cash": -1193.18,
+      "total_pl": 4854.730462,
+      "total_pl_pct": 4.838574484151632,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:55:59.355921",
+      "portfolio_value": 103995.45,
+      "cash": -1193.18,
+      "total_pl": 4854.730462,
+      "total_pl_pct": 4.838574484151632,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:56:29.664774",
+      "portfolio_value": 103995.45,
+      "cash": -1193.18,
+      "total_pl": 4854.730462,
+      "total_pl_pct": 4.838574484151632,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:56:59.975433",
+      "portfolio_value": 103996.95,
+      "cash": -1193.18,
+      "total_pl": 4856.230462,
+      "total_pl_pct": 4.840069492326244,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:57:30.302385",
+      "portfolio_value": 103996.95,
+      "cash": -1193.18,
+      "total_pl": 4856.230462,
+      "total_pl_pct": 4.840069492326244,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:58:00.621851",
+      "portfolio_value": 103992.6,
+      "cash": -1193.18,
+      "total_pl": 4851.880462,
+      "total_pl_pct": 4.835733968619869,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:58:30.953529",
+      "portfolio_value": 103992.6,
+      "cash": -1193.18,
+      "total_pl": 4851.880462,
+      "total_pl_pct": 4.835733968619869,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:59:01.266897",
+      "portfolio_value": 103991.92,
+      "cash": -1193.18,
+      "total_pl": 4851.200462,
+      "total_pl_pct": 4.835056231580712,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T06:59:31.593362",
+      "portfolio_value": 103974.77,
+      "cash": -1193.18,
+      "total_pl": 4834.050462,
+      "total_pl_pct": 4.817963304784316,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:00:02.985882",
+      "portfolio_value": 103970.42,
+      "cash": -1193.18,
+      "total_pl": 4829.700462000001,
+      "total_pl_pct": 4.813627781077942,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:00:33.320863",
+      "portfolio_value": 103970.93,
+      "cash": -1193.18,
+      "total_pl": 4830.210462,
+      "total_pl_pct": 4.814136083857309,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:01:03.643099",
+      "portfolio_value": 103991.91,
+      "cash": -1193.18,
+      "total_pl": 4851.1904620000005,
+      "total_pl_pct": 4.835046264859548,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:01:33.962262",
+      "portfolio_value": 104001.61,
+      "cash": -1193.18,
+      "total_pl": 4860.890461999999,
+      "total_pl_pct": 4.844713984388704,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:02:04.281188",
+      "portfolio_value": 104005.96,
+      "cash": -1193.18,
+      "total_pl": 4865.240462,
+      "total_pl_pct": 4.849049508095079,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:02:34.611798",
+      "portfolio_value": 103995.96,
+      "cash": -1193.18,
+      "total_pl": 4855.240462,
+      "total_pl_pct": 4.839082786931,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:03:04.941501",
+      "portfolio_value": 103995.96,
+      "cash": -1193.18,
+      "total_pl": 4855.240462,
+      "total_pl_pct": 4.839082786931,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:03:35.250120",
+      "portfolio_value": 103995.96,
+      "cash": -1193.18,
+      "total_pl": 4855.240462,
+      "total_pl_pct": 4.839082786931,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:04:05.557498",
+      "portfolio_value": 104004.06,
+      "cash": -1193.18,
+      "total_pl": 4863.340462,
+      "total_pl_pct": 4.847155831073905,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:04:35.955218",
+      "portfolio_value": 104009.01,
+      "cash": -1193.18,
+      "total_pl": 4868.290461999999,
+      "total_pl_pct": 4.852089358050122,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:05:06.288851",
+      "portfolio_value": 104001.68,
+      "cash": -1193.18,
+      "total_pl": 4860.960462,
+      "total_pl_pct": 4.844783751436854,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:05:36.603397",
+      "portfolio_value": 104007.38,
+      "cash": -1193.18,
+      "total_pl": 4866.660462,
+      "total_pl_pct": 4.850464782500379,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:06:06.905999",
+      "portfolio_value": 104007.38,
+      "cash": -1193.18,
+      "total_pl": 4866.660462,
+      "total_pl_pct": 4.850464782500379,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:06:37.217511",
+      "portfolio_value": 104007.38,
+      "cash": -1193.18,
+      "total_pl": 4866.660462,
+      "total_pl_pct": 4.850464782500379,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:07:07.529936",
+      "portfolio_value": 104007.68,
+      "cash": -1193.18,
+      "total_pl": 4866.960462000001,
+      "total_pl_pct": 4.850763784135302,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:07:37.862026",
+      "portfolio_value": 104007.08,
+      "cash": -1193.18,
+      "total_pl": 4866.360462000001,
+      "total_pl_pct": 4.850165780865457,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:08:08.163739",
+      "portfolio_value": 104032.33,
+      "cash": -1193.18,
+      "total_pl": 4891.610462000001,
+      "total_pl_pct": 4.875331751804757,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:08:38.464040",
+      "portfolio_value": 104029.94,
+      "cash": -1193.18,
+      "total_pl": 4889.220462000001,
+      "total_pl_pct": 4.872949705446543,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:09:08.752817",
+      "portfolio_value": 104033.14,
+      "cash": -1193.18,
+      "total_pl": 4892.420462000001,
+      "total_pl_pct": 4.876139056219048,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:09:39.044322",
+      "portfolio_value": 104052.24,
+      "cash": -1193.18,
+      "total_pl": 4911.520462,
+      "total_pl_pct": 4.895175493642439,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:10:09.357621",
+      "portfolio_value": 104052.24,
+      "cash": -1193.18,
+      "total_pl": 4911.520462,
+      "total_pl_pct": 4.895175493642439,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:10:39.664752",
+      "portfolio_value": 104052.24,
+      "cash": -1193.18,
+      "total_pl": 4911.520462,
+      "total_pl_pct": 4.895175493642439,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:11:10.178203",
+      "portfolio_value": 104053.44,
+      "cash": -1193.18,
+      "total_pl": 4912.720461999999,
+      "total_pl_pct": 4.896371500182128,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:11:40.495994",
+      "portfolio_value": 104050.97,
+      "cash": -1193.18,
+      "total_pl": 4910.250462000001,
+      "total_pl_pct": 4.893909720054602,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:12:10.796860",
+      "portfolio_value": 104048.07,
+      "cash": -1193.18,
+      "total_pl": 4907.350462000001,
+      "total_pl_pct": 4.891019370917019,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:12:41.146408",
+      "portfolio_value": 104047.13,
+      "cash": -1193.18,
+      "total_pl": 4906.410462000001,
+      "total_pl_pct": 4.890082499127595,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:13:11.460010",
+      "portfolio_value": 104030.37,
+      "cash": -1193.18,
+      "total_pl": 4889.6504620000005,
+      "total_pl_pct": 4.873378274456598,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:13:41.760590",
+      "portfolio_value": 104030.37,
+      "cash": -1193.18,
+      "total_pl": 4889.6504620000005,
+      "total_pl_pct": 4.873378274456598,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:14:12.061189",
+      "portfolio_value": 104030.71,
+      "cash": -1193.18,
+      "total_pl": 4889.990462000001,
+      "total_pl_pct": 4.873717142976177,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:14:42.357158",
+      "portfolio_value": 104030.71,
+      "cash": -1193.18,
+      "total_pl": 4889.990462000001,
+      "total_pl_pct": 4.873717142976177,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:15:12.662208",
+      "portfolio_value": 104023.46,
+      "cash": -1193.18,
+      "total_pl": 4882.740462000001,
+      "total_pl_pct": 4.86649127013222,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:15:42.957633",
+      "portfolio_value": 104024.1,
+      "cash": -1193.18,
+      "total_pl": 4883.380462,
+      "total_pl_pct": 4.867129140286719,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:16:13.258796",
+      "portfolio_value": 104024.55,
+      "cash": -1193.18,
+      "total_pl": 4883.830462,
+      "total_pl_pct": 4.867577642739103,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:16:43.572522",
+      "portfolio_value": 104027.85,
+      "cash": -1193.18,
+      "total_pl": 4887.130462,
+      "total_pl_pct": 4.870866660723249,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:17:13.881817",
+      "portfolio_value": 104009.0,
+      "cash": -1193.18,
+      "total_pl": 4868.280462,
+      "total_pl_pct": 4.852079391328959,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:17:44.194758",
+      "portfolio_value": 104009.0,
+      "cash": -1193.18,
+      "total_pl": 4868.280462,
+      "total_pl_pct": 4.852079391328959,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:18:14.504478",
+      "portfolio_value": 104001.75,
+      "cash": -1193.18,
+      "total_pl": 4861.030462,
+      "total_pl_pct": 4.844853518485002,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:18:44.811824",
+      "portfolio_value": 104001.07,
+      "cash": -1193.18,
+      "total_pl": 4860.350461999999,
+      "total_pl_pct": 4.844175781445844,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:19:15.115219",
+      "portfolio_value": 103988.02,
+      "cash": -1193.18,
+      "total_pl": 4847.300462,
+      "total_pl_pct": 4.831169210326721,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:19:45.407278",
+      "portfolio_value": 103988.17,
+      "cash": -1193.18,
+      "total_pl": 4847.450462000001,
+      "total_pl_pct": 4.831318711144183,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:20:15.735741",
+      "portfolio_value": 104022.56,
+      "cash": -1193.18,
+      "total_pl": 4881.840462,
+      "total_pl_pct": 4.865594265227451,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:20:46.035272",
+      "portfolio_value": 104022.56,
+      "cash": -1193.18,
+      "total_pl": 4881.840462,
+      "total_pl_pct": 4.865594265227451,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:21:16.339050",
+      "portfolio_value": 104010.79,
+      "cash": -1193.18,
+      "total_pl": 4870.070462,
+      "total_pl_pct": 4.853863434417329,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:21:46.653264",
+      "portfolio_value": 104010.79,
+      "cash": -1193.18,
+      "total_pl": 4870.070462,
+      "total_pl_pct": 4.853863434417329,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:22:16.959531",
+      "portfolio_value": 104012.24,
+      "cash": -1193.18,
+      "total_pl": 4871.5204619999995,
+      "total_pl_pct": 4.85530860898612,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:22:47.263350",
+      "portfolio_value": 104012.24,
+      "cash": -1193.18,
+      "total_pl": 4871.5204619999995,
+      "total_pl_pct": 4.85530860898612,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:23:17.632394",
+      "portfolio_value": 104012.24,
+      "cash": -1193.18,
+      "total_pl": 4871.5204619999995,
+      "total_pl_pct": 4.85530860898612,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:23:47.950984",
+      "portfolio_value": 104013.08,
+      "cash": -1193.18,
+      "total_pl": 4872.360462,
+      "total_pl_pct": 4.856145813563904,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:24:18.259891",
+      "portfolio_value": 104013.08,
+      "cash": -1193.18,
+      "total_pl": 4872.360462,
+      "total_pl_pct": 4.856145813563904,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:24:48.566879",
+      "portfolio_value": 104011.08,
+      "cash": -1193.18,
+      "total_pl": 4870.360462,
+      "total_pl_pct": 4.854152469331088,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:25:18.922454",
+      "portfolio_value": 104016.88,
+      "cash": -1193.18,
+      "total_pl": 4876.160462,
+      "total_pl_pct": 4.859933167606254,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:25:49.227461",
+      "portfolio_value": 104015.75,
+      "cash": -1193.18,
+      "total_pl": 4875.030462,
+      "total_pl_pct": 4.8588069281147135,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:26:19.539683",
+      "portfolio_value": 104017.45,
+      "cash": -1193.18,
+      "total_pl": 4876.730462,
+      "total_pl_pct": 4.860501270712607,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:26:49.833824",
+      "portfolio_value": 104017.81,
+      "cash": -1193.18,
+      "total_pl": 4877.090462000001,
+      "total_pl_pct": 4.860860072674514,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:27:20.141999",
+      "portfolio_value": 104017.62,
+      "cash": -1193.18,
+      "total_pl": 4876.9004620000005,
+      "total_pl_pct": 4.860670704972397,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:27:50.458690",
+      "portfolio_value": 104019.08,
+      "cash": -1193.18,
+      "total_pl": 4878.360462000001,
+      "total_pl_pct": 4.8621258462623524,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:28:20.763326",
+      "portfolio_value": 104017.63,
+      "cash": -1193.18,
+      "total_pl": 4876.910462000001,
+      "total_pl_pct": 4.860680671693561,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:28:51.060677",
+      "portfolio_value": 104040.12,
+      "cash": -1193.18,
+      "total_pl": 4899.400462,
+      "total_pl_pct": 4.883095827591574,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:29:21.494255",
+      "portfolio_value": 104043.02,
+      "cash": -1193.18,
+      "total_pl": 4902.300461999999,
+      "total_pl_pct": 4.885986176729157,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:29:51.798136",
+      "portfolio_value": 104040.12,
+      "cash": -1193.18,
+      "total_pl": 4899.400462,
+      "total_pl_pct": 4.883095827591574,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:30:22.107413",
+      "portfolio_value": 104043.02,
+      "cash": -1193.18,
+      "total_pl": 4902.300461999999,
+      "total_pl_pct": 4.885986176729157,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:30:52.408073",
+      "portfolio_value": 104043.02,
+      "cash": -1193.18,
+      "total_pl": 4902.300461999999,
+      "total_pl_pct": 4.885986176729157,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:31:22.723087",
+      "portfolio_value": 104044.96,
+      "cash": -1193.18,
+      "total_pl": 4904.240462,
+      "total_pl_pct": 4.887919720634989,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:31:53.024950",
+      "portfolio_value": 104044.96,
+      "cash": -1193.18,
+      "total_pl": 4904.240462,
+      "total_pl_pct": 4.887919720634989,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:32:23.403737",
+      "portfolio_value": 104044.06,
+      "cash": -1193.18,
+      "total_pl": 4903.340462,
+      "total_pl_pct": 4.887022715730223,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:32:53.697569",
+      "portfolio_value": 104038.26,
+      "cash": -1193.18,
+      "total_pl": 4897.540462,
+      "total_pl_pct": 4.8812420174550555,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:33:23.997565",
+      "portfolio_value": 104038.26,
+      "cash": -1193.18,
+      "total_pl": 4897.540462,
+      "total_pl_pct": 4.8812420174550555,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:33:54.296668",
+      "portfolio_value": 104037.58,
+      "cash": -1193.18,
+      "total_pl": 4896.860462,
+      "total_pl_pct": 4.880564280415898,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:34:24.608715",
+      "portfolio_value": 104037.58,
+      "cash": -1193.18,
+      "total_pl": 4896.860462,
+      "total_pl_pct": 4.880564280415898,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:34:54.941924",
+      "portfolio_value": 104038.33,
+      "cash": -1193.18,
+      "total_pl": 4897.610462,
+      "total_pl_pct": 4.881311784503204,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:35:25.296067",
+      "portfolio_value": 104022.08,
+      "cash": -1193.18,
+      "total_pl": 4881.360462,
+      "total_pl_pct": 4.865115862611575,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:35:55.744633",
+      "portfolio_value": 104022.81,
+      "cash": -1193.18,
+      "total_pl": 4882.090462,
+      "total_pl_pct": 4.865843433256553,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:36:26.048257",
+      "portfolio_value": 104028.43,
+      "cash": -1193.18,
+      "total_pl": 4887.710462000001,
+      "total_pl_pct": 4.871444730550767,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:36:56.410983",
+      "portfolio_value": 104026.81,
+      "cash": -1193.18,
+      "total_pl": 4886.090462000001,
+      "total_pl_pct": 4.8698301217221855,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:37:26.743304",
+      "portfolio_value": 104023.21,
+      "cash": -1193.18,
+      "total_pl": 4882.490462000001,
+      "total_pl_pct": 4.866242102103117,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:37:57.050142",
+      "portfolio_value": 104023.21,
+      "cash": -1193.18,
+      "total_pl": 4882.490462000001,
+      "total_pl_pct": 4.866242102103117,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:38:27.384779",
+      "portfolio_value": 104034.47,
+      "cash": -1193.18,
+      "total_pl": 4893.750462,
+      "total_pl_pct": 4.877464630133869,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:38:57.688567",
+      "portfolio_value": 104069.82,
+      "cash": -1193.18,
+      "total_pl": 4929.100461999999,
+      "total_pl_pct": 4.91269698944889,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:39:27.998832",
+      "portfolio_value": 104068.82,
+      "cash": -1193.18,
+      "total_pl": 4928.100461999999,
+      "total_pl_pct": 4.911700317332482,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:39:58.305839",
+      "portfolio_value": 104068.82,
+      "cash": -1193.18,
+      "total_pl": 4928.100461999999,
+      "total_pl_pct": 4.911700317332482,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:40:28.617032",
+      "portfolio_value": 104068.82,
+      "cash": -1193.18,
+      "total_pl": 4928.100461999999,
+      "total_pl_pct": 4.911700317332482,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:40:58.940337",
+      "portfolio_value": 104066.06,
+      "cash": -1193.18,
+      "total_pl": 4925.340461999999,
+      "total_pl_pct": 4.908949502291195,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:41:29.251662",
+      "portfolio_value": 104069.92,
+      "cash": -1193.18,
+      "total_pl": 4929.200461999999,
+      "total_pl_pct": 4.91279665666053,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:41:59.553124",
+      "portfolio_value": 104070.97,
+      "cash": -1193.18,
+      "total_pl": 4930.250461999999,
+      "total_pl_pct": 4.913843162382758,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:42:29.861905",
+      "portfolio_value": 104069.14,
+      "cash": -1193.18,
+      "total_pl": 4928.420461999999,
+      "total_pl_pct": 4.912019252409732,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:43:00.164975",
+      "portfolio_value": 104069.95,
+      "cash": -1193.18,
+      "total_pl": 4929.2304619999995,
+      "total_pl_pct": 4.912826556824023,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:43:30.474075",
+      "portfolio_value": 104058.65,
+      "cash": -1193.18,
+      "total_pl": 4917.930461999999,
+      "total_pl_pct": 4.901564161908613,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:44:00.776977",
+      "portfolio_value": 104028.3,
+      "cash": -1193.18,
+      "total_pl": 4887.580461999999,
+      "total_pl_pct": 4.871315163175631,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:44:31.087503",
+      "portfolio_value": 104028.3,
+      "cash": -1193.18,
+      "total_pl": 4887.580461999999,
+      "total_pl_pct": 4.871315163175631,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:45:01.397809",
+      "portfolio_value": 104018.02,
+      "cash": -1193.18,
+      "total_pl": 4877.300461999999,
+      "total_pl_pct": 4.8610693738189585,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:45:31.719738",
+      "portfolio_value": 104018.02,
+      "cash": -1193.18,
+      "total_pl": 4877.300461999999,
+      "total_pl_pct": 4.8610693738189585,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:46:02.024470",
+      "portfolio_value": 104018.02,
+      "cash": -1193.18,
+      "total_pl": 4877.300461999999,
+      "total_pl_pct": 4.8610693738189585,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:46:32.386452",
+      "portfolio_value": 104036.57,
+      "cash": -1193.18,
+      "total_pl": 4895.850461999999,
+      "total_pl_pct": 4.879557641578326,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:47:02.696995",
+      "portfolio_value": 104036.57,
+      "cash": -1193.18,
+      "total_pl": 4895.850461999999,
+      "total_pl_pct": 4.879557641578326,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:47:33.057018",
+      "portfolio_value": 104036.57,
+      "cash": -1193.18,
+      "total_pl": 4895.850461999999,
+      "total_pl_pct": 4.879557641578326,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:48:03.368811",
+      "portfolio_value": 104029.32,
+      "cash": -1193.18,
+      "total_pl": 4888.600461999999,
+      "total_pl_pct": 4.872331768734369,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:48:33.670817",
+      "portfolio_value": 104029.32,
+      "cash": -1193.18,
+      "total_pl": 4888.600461999999,
+      "total_pl_pct": 4.872331768734369,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:49:03.980286",
+      "portfolio_value": 104019.15,
+      "cash": -1193.18,
+      "total_pl": 4878.430461999999,
+      "total_pl_pct": 4.862195613310499,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:49:34.279443",
+      "portfolio_value": 104013.5,
+      "cash": -1193.18,
+      "total_pl": 4872.780462,
+      "total_pl_pct": 4.856564415852795,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:50:04.625713",
+      "portfolio_value": 103998.33,
+      "cash": -1193.18,
+      "total_pl": 4857.610462,
+      "total_pl_pct": 4.841444899846886,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:50:34.939871",
+      "portfolio_value": 103998.33,
+      "cash": -1193.18,
+      "total_pl": 4857.610462,
+      "total_pl_pct": 4.841444899846886,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:51:05.256955",
+      "portfolio_value": 103998.33,
+      "cash": -1193.18,
+      "total_pl": 4857.610462,
+      "total_pl_pct": 4.841444899846886,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:51:35.580389",
+      "portfolio_value": 103998.33,
+      "cash": -1193.18,
+      "total_pl": 4857.610462,
+      "total_pl_pct": 4.841444899846886,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:52:05.876674",
+      "portfolio_value": 103999.98,
+      "cash": -1193.18,
+      "total_pl": 4859.260462,
+      "total_pl_pct": 4.84308940883896,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:52:36.171094",
+      "portfolio_value": 103964.63,
+      "cash": -1193.18,
+      "total_pl": 4823.910462,
+      "total_pl_pct": 4.807857049523939,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:53:06.481451",
+      "portfolio_value": 103964.63,
+      "cash": -1193.18,
+      "total_pl": 4823.910462,
+      "total_pl_pct": 4.807857049523939,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:53:36.790217",
+      "portfolio_value": 103964.63,
+      "cash": -1193.18,
+      "total_pl": 4823.910462,
+      "total_pl_pct": 4.807857049523939,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:54:07.104653",
+      "portfolio_value": 103964.63,
+      "cash": -1193.18,
+      "total_pl": 4823.910462,
+      "total_pl_pct": 4.807857049523939,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:54:37.400510",
+      "portfolio_value": 103964.63,
+      "cash": -1193.18,
+      "total_pl": 4823.910462,
+      "total_pl_pct": 4.807857049523939,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:55:07.706940",
+      "portfolio_value": 103964.63,
+      "cash": -1193.18,
+      "total_pl": 4823.910462,
+      "total_pl_pct": 4.807857049523939,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:55:38.018580",
+      "portfolio_value": 103965.14,
+      "cash": -1193.18,
+      "total_pl": 4824.420462,
+      "total_pl_pct": 4.808365352303308,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:56:08.332848",
+      "portfolio_value": 103965.14,
+      "cash": -1193.18,
+      "total_pl": 4824.420462,
+      "total_pl_pct": 4.808365352303308,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:56:38.730903",
+      "portfolio_value": 103965.14,
+      "cash": -1193.18,
+      "total_pl": 4824.420462,
+      "total_pl_pct": 4.808365352303308,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:57:09.041074",
+      "portfolio_value": 103965.14,
+      "cash": -1193.18,
+      "total_pl": 4824.420462,
+      "total_pl_pct": 4.808365352303308,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:57:39.375589",
+      "portfolio_value": 103958.34,
+      "cash": -1193.18,
+      "total_pl": 4817.620462,
+      "total_pl_pct": 4.801587981911734,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:58:09.710401",
+      "portfolio_value": 103958.34,
+      "cash": -1193.18,
+      "total_pl": 4817.620462,
+      "total_pl_pct": 4.801587981911734,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:58:40.016868",
+      "portfolio_value": 103958.34,
+      "cash": -1193.18,
+      "total_pl": 4817.620462,
+      "total_pl_pct": 4.801587981911734,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:59:10.358628",
+      "portfolio_value": 103958.55,
+      "cash": -1193.18,
+      "total_pl": 4817.830462000001,
+      "total_pl_pct": 4.80179728305618,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T07:59:40.679781",
+      "portfolio_value": 103965.33,
+      "cash": -1193.18,
+      "total_pl": 4824.610462000001,
+      "total_pl_pct": 4.808554720005425,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:00:11.011237",
+      "portfolio_value": 104119.52,
+      "cash": -1193.18,
+      "total_pl": 4978.803162,
+      "total_pl_pct": 4.962234284649079,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:00:41.362141",
+      "portfolio_value": 104198.87,
+      "cash": -1193.18,
+      "total_pl": 5058.153961999999,
+      "total_pl_pct": 5.041321014423742,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:01:11.681336",
+      "portfolio_value": 103995.1,
+      "cash": -1193.18,
+      "total_pl": 4854.380462,
+      "total_pl_pct": 4.838225648910889,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:01:42.020503",
+      "portfolio_value": 104005.5,
+      "cash": -1193.18,
+      "total_pl": 4864.780462000001,
+      "total_pl_pct": 4.8485910389215325,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:02:12.336944",
+      "portfolio_value": 103991.45,
+      "cash": -1193.18,
+      "total_pl": 4850.728962,
+      "total_pl_pct": 4.834586300677826,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:02:42.643016",
+      "portfolio_value": 103994.27,
+      "cash": -1193.18,
+      "total_pl": 4853.550961999999,
+      "total_pl_pct": 4.837398909390328,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:03:12.959526",
+      "portfolio_value": 104040.76,
+      "cash": -1193.18,
+      "total_pl": 4900.040461999999,
+      "total_pl_pct": 4.883733697746075,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:03:43.263680",
+      "portfolio_value": 104040.93,
+      "cash": -1193.18,
+      "total_pl": 4900.210461999999,
+      "total_pl_pct": 4.883903132005864,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:04:13.584085",
+      "portfolio_value": 104065.79,
+      "cash": -1193.18,
+      "total_pl": 4925.072462,
+      "total_pl_pct": 4.908682394163999,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:04:43.892015",
+      "portfolio_value": 104065.4,
+      "cash": -1193.18,
+      "total_pl": 4924.682462,
+      "total_pl_pct": 4.908293692038599,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:05:14.267712",
+      "portfolio_value": 104094.73,
+      "cash": -1193.18,
+      "total_pl": 4954.010461999999,
+      "total_pl_pct": 4.937524091868611,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:05:44.620262",
+      "portfolio_value": 103756.55,
+      "cash": -1193.18,
+      "total_pl": 4613.730462,
+      "total_pl_pct": 4.5983765040973195,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:06:14.945811",
+      "portfolio_value": 103894.62,
+      "cash": -1193.18,
+      "total_pl": 4753.9004620000005,
+      "total_pl_pct": 4.73808003465422,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:06:45.254493",
+      "portfolio_value": 103831.47,
+      "cash": -1193.18,
+      "total_pl": 4690.750462000001,
+      "total_pl_pct": 4.675140190503059,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:07:15.644021",
+      "portfolio_value": 103995.96,
+      "cash": -1193.18,
+      "total_pl": 4830.590462000001,
+      "total_pl_pct": 4.814514819261545,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:07:45.972761",
+      "portfolio_value": 104077.3,
+      "cash": -1193.18,
+      "total_pl": 4937.630461999999,
+      "total_pl_pct": 4.921198602601849,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:08:16.286251",
+      "portfolio_value": 104006.38,
+      "cash": -1193.18,
+      "total_pl": 4865.655462,
+      "total_pl_pct": 4.849463127023388,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:08:46.600771",
+      "portfolio_value": 104114.65,
+      "cash": -1193.18,
+      "total_pl": 4973.930462,
+      "total_pl_pct": 4.957377800427459,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:09:16.914546",
+      "portfolio_value": 103884.71,
+      "cash": -1193.18,
+      "total_pl": 4743.990462,
+      "total_pl_pct": 4.728203013980616,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:09:47.277637",
+      "portfolio_value": 104168.26,
+      "cash": -1193.18,
+      "total_pl": 5027.540462,
+      "total_pl_pct": 5.010809392588087,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:10:17.642584",
+      "portfolio_value": 104150.34,
+      "cash": -1193.18,
+      "total_pl": 5009.620462,
+      "total_pl_pct": 4.992949028262057,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:10:47.980140",
+      "portfolio_value": 104155.74,
+      "cash": -1193.18,
+      "total_pl": 5015.0204619999995,
+      "total_pl_pct": 4.9983310576906606,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:11:18.308996",
+      "portfolio_value": 104193.53,
+      "cash": -1193.18,
+      "total_pl": 5052.810462,
+      "total_pl_pct": 5.035995296969717,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:11:48.631124",
+      "portfolio_value": 104179.0,
+      "cash": -1193.18,
+      "total_pl": 5038.280462,
+      "total_pl_pct": 5.021513651118309,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:12:18.932271",
+      "portfolio_value": 104228.95,
+      "cash": -1193.18,
+      "total_pl": 5088.226962000001,
+      "total_pl_pct": 5.071293934980479,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:12:49.238928",
+      "portfolio_value": 104221.44,
+      "cash": -1193.18,
+      "total_pl": 5080.720462,
+      "total_pl_pct": 5.063812415738663,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:13:19.607811",
+      "portfolio_value": 104181.67,
+      "cash": -1193.18,
+      "total_pl": 5040.950462,
+      "total_pl_pct": 5.024174765669119,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:13:50.028062",
+      "portfolio_value": 104196.22,
+      "cash": -1193.18,
+      "total_pl": 5055.498562,
+      "total_pl_pct": 5.038674451285832,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:14:20.339120",
+      "portfolio_value": 104197.63,
+      "cash": -1193.18,
+      "total_pl": 5056.905861999999,
+      "total_pl_pct": 5.040077067955252,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:14:50.648903",
+      "portfolio_value": 104099.02,
+      "cash": -1193.18,
+      "total_pl": 4958.300461999999,
+      "total_pl_pct": 4.941799815248001,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:15:20.956501",
+      "portfolio_value": 104166.04,
+      "cash": -1193.18,
+      "total_pl": 5025.319862,
+      "total_pl_pct": 5.008596182486393,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:15:51.266264",
+      "portfolio_value": 104193.91,
+      "cash": -1193.18,
+      "total_pl": 5053.190462,
+      "total_pl_pct": 5.036374032373951,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:16:21.570256",
+      "portfolio_value": 104199.11,
+      "cash": -1193.18,
+      "total_pl": 5058.390461999999,
+      "total_pl_pct": 5.041556727379272,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:16:51.903255",
+      "portfolio_value": 104198.02,
+      "cash": -1193.18,
+      "total_pl": 5057.304161999999,
+      "total_pl_pct": 5.040474042459218,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:17:22.214107",
+      "portfolio_value": 104188.86,
+      "cash": -1193.18,
+      "total_pl": 5048.140462,
+      "total_pl_pct": 5.031340838186091,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:17:52.547549",
+      "portfolio_value": 104178.52,
+      "cash": -1193.18,
+      "total_pl": 5037.795462,
+      "total_pl_pct": 5.021030265141851,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:18:22.874398",
+      "portfolio_value": 104172.3,
+      "cash": -1193.18,
+      "total_pl": 5031.580461999999,
+      "total_pl_pct": 5.0148359479383755,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:18:53.176427",
+      "portfolio_value": 104150.6,
+      "cash": -1193.18,
+      "total_pl": 5008.745461999999,
+      "total_pl_pct": 4.992076940160199,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:19:23.520992",
+      "portfolio_value": 104162.1,
+      "cash": -1193.18,
+      "total_pl": 5021.380462,
+      "total_pl_pct": 5.004669892351015,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:19:53.833371",
+      "portfolio_value": 104156.39,
+      "cash": -1193.18,
+      "total_pl": 5015.671462,
+      "total_pl_pct": 4.9989798912384416,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:20:24.142048",
+      "portfolio_value": 104155.86,
+      "cash": -1193.18,
+      "total_pl": 5015.140461999999,
+      "total_pl_pct": 4.998450658344629,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:20:54.444406",
+      "portfolio_value": 104133.39,
+      "cash": -1193.18,
+      "total_pl": 4992.671961999999,
+      "total_pl_pct": 4.976056930897117,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:21:24.795621",
+      "portfolio_value": 104119.9,
+      "cash": -1193.18,
+      "total_pl": 4979.181961999999,
+      "total_pl_pct": 4.962611824046773,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:21:55.300035",
+      "portfolio_value": 104102.37,
+      "cash": -1193.18,
+      "total_pl": 4961.651961999999,
+      "total_pl_pct": 4.945140161846143,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:22:25.636837",
+      "portfolio_value": 104103.03,
+      "cash": -1193.18,
+      "total_pl": 4962.309461999999,
+      "total_pl_pct": 4.94579547376268,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:22:55.961852",
+      "portfolio_value": 104103.03,
+      "cash": -1193.18,
+      "total_pl": 4962.309461999999,
+      "total_pl_pct": 4.94579547376268,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:23:26.257982",
+      "portfolio_value": 104131.03,
+      "cash": -1193.18,
+      "total_pl": 4990.309461999999,
+      "total_pl_pct": 4.973702293022103,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:23:56.590661",
+      "portfolio_value": 104124.84,
+      "cash": -1193.19,
+      "total_pl": 4984.130462,
+      "total_pl_pct": 4.967543856014819,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:24:26.895865",
+      "portfolio_value": 104123.04,
+      "cash": -1193.19,
+      "total_pl": 4983.080461999999,
+      "total_pl_pct": 4.96649735029259,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:24:57.228933",
+      "portfolio_value": 104125.43,
+      "cash": -1193.19,
+      "total_pl": 4984.720461999999,
+      "total_pl_pct": 4.968131892563499,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:25:27.534672",
+      "portfolio_value": 104154.48,
+      "cash": -1193.19,
+      "total_pl": 5013.7704619999995,
+      "total_pl_pct": 4.99708521754515,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:25:57.850165",
+      "portfolio_value": 104107.04,
+      "cash": -1193.19,
+      "total_pl": 4966.330462,
+      "total_pl_pct": 4.949803092342758,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:26:28.194987",
+      "portfolio_value": 104093.03,
+      "cash": -1193.19,
+      "total_pl": 4952.320461999999,
+      "total_pl_pct": 4.935839715991881,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:26:58.514710",
+      "portfolio_value": 104090.85,
+      "cash": -1193.19,
+      "total_pl": 4950.140461999999,
+      "total_pl_pct": 4.933666970778113,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:27:28.847767",
+      "portfolio_value": 104096.02,
+      "cash": -1193.19,
+      "total_pl": 4955.3104619999995,
+      "total_pl_pct": 4.938819765619941,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:27:59.194263",
+      "portfolio_value": 104122.98,
+      "cash": -1193.19,
+      "total_pl": 4982.2704619999995,
+      "total_pl_pct": 4.9656900458783,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:28:29.492456",
+      "portfolio_value": 104127.78,
+      "cash": -1193.19,
+      "total_pl": 4987.070462,
+      "total_pl_pct": 4.970474072037058,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:28:59.815962",
+      "portfolio_value": 104136.66,
+      "cash": -1193.19,
+      "total_pl": 4995.950462,
+      "total_pl_pct": 4.979324520430761,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:29:30.252170",
+      "portfolio_value": 104185.44,
+      "cash": -1193.19,
+      "total_pl": 5044.7304619999995,
+      "total_pl_pct": 5.02794218626914,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:30:00.562073",
+      "portfolio_value": 104168.31,
+      "cash": -1193.19,
+      "total_pl": 5027.600462,
+      "total_pl_pct": 5.010869192915073,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:30:30.865569",
+      "portfolio_value": 104139.96,
+      "cash": -1193.19,
+      "total_pl": 4999.251962,
+      "total_pl_pct": 4.982615033423082,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:31:01.174199",
+      "portfolio_value": 104115.69,
+      "cash": -1193.19,
+      "total_pl": 4974.9804619999995,
+      "total_pl_pct": 4.958424306149686,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:31:31.516639",
+      "portfolio_value": 104106.27,
+      "cash": -1193.19,
+      "total_pl": 4965.5604619999995,
+      "total_pl_pct": 4.949035654813123,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:32:01.925582",
+      "portfolio_value": 104141.88,
+      "cash": -1193.19,
+      "total_pl": 5001.168962,
+      "total_pl_pct": 4.984525653870236,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:32:32.255763",
+      "portfolio_value": 104137.67,
+      "cash": -1193.19,
+      "total_pl": 4996.960461999999,
+      "total_pl_pct": 4.980331159268332,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:33:02.585444",
+      "portfolio_value": 104128.03,
+      "cash": -1193.19,
+      "total_pl": 4987.320462,
+      "total_pl_pct": 4.97072324006616,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:33:32.896949",
+      "portfolio_value": 104094.66,
+      "cash": -1193.19,
+      "total_pl": 4953.950462,
+      "total_pl_pct": 4.937464291541628,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:34:03.220516",
+      "portfolio_value": 104099.01,
+      "cash": -1193.19,
+      "total_pl": 4958.300461999999,
+      "total_pl_pct": 4.941799815248001,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:34:33.517467",
+      "portfolio_value": 104067.01,
+      "cash": -1193.19,
+      "total_pl": 4926.300461999999,
+      "total_pl_pct": 4.909906307522947,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:35:03.837628",
+      "portfolio_value": 104060.21,
+      "cash": -1193.19,
+      "total_pl": 4919.500462,
+      "total_pl_pct": 4.903128937131374,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:35:34.143727",
+      "portfolio_value": 104080.59,
+      "cash": -1193.19,
+      "total_pl": 4939.880462,
+      "total_pl_pct": 4.923441114863768,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:36:04.453043",
+      "portfolio_value": 104097.68,
+      "cash": -1193.19,
+      "total_pl": 4956.965462,
+      "total_pl_pct": 4.940469257972597,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:36:34.756107",
+      "portfolio_value": 104156.16,
+      "cash": -1193.19,
+      "total_pl": 5015.448462,
+      "total_pl_pct": 4.998757633356483,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:37:05.060014",
+      "portfolio_value": 104160.76,
+      "cash": -1193.19,
+      "total_pl": 5020.045462,
+      "total_pl_pct": 5.00333933507561,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:37:35.498225",
+      "portfolio_value": 104156.73,
+      "cash": -1193.19,
+      "total_pl": 5016.015462,
+      "total_pl_pct": 4.999322746446486,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:38:05.843139",
+      "portfolio_value": 104155.69,
+      "cash": -1193.19,
+      "total_pl": 5014.977462,
+      "total_pl_pct": 4.998288200789655,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:38:36.143408",
+      "portfolio_value": 104133.92,
+      "cash": -1193.19,
+      "total_pl": 4993.205462,
+      "total_pl_pct": 4.976588655471221,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:39:06.452181",
+      "portfolio_value": 104142.2,
+      "cash": -1193.19,
+      "total_pl": 5001.485462,
+      "total_pl_pct": 4.984841100595078,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:39:36.775958",
+      "portfolio_value": 104161.29,
+      "cash": -1193.19,
+      "total_pl": 5020.575462000001,
+      "total_pl_pct": 5.003867571297308,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:40:07.082483",
+      "portfolio_value": 104162.74,
+      "cash": -1193.19,
+      "total_pl": 5022.0254620000005,
+      "total_pl_pct": 5.005312745866099,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:40:37.386298",
+      "portfolio_value": 104229.95,
+      "cash": -1193.19,
+      "total_pl": 5089.240462,
+      "total_pl_pct": 5.072304062170457,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:41:07.681366",
+      "portfolio_value": 104217.52,
+      "cash": -1193.19,
+      "total_pl": 5076.8104619999995,
+      "total_pl_pct": 5.059915427763507,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:41:37.972682",
+      "portfolio_value": 104198.59,
+      "cash": -1193.19,
+      "total_pl": 5057.880461999999,
+      "total_pl_pct": 5.041048424599904,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:42:08.270661",
+      "portfolio_value": 104201.59,
+      "cash": -1193.19,
+      "total_pl": 5060.880461999999,
+      "total_pl_pct": 5.044038440949128,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:42:38.609429",
+      "portfolio_value": 104201.59,
+      "cash": -1193.19,
+      "total_pl": 5060.880461999999,
+      "total_pl_pct": 5.044038440949128,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:43:08.924347",
+      "portfolio_value": 104203.92,
+      "cash": -1193.19,
+      "total_pl": 5063.210461999999,
+      "total_pl_pct": 5.046360686980359,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:43:39.258824",
+      "portfolio_value": 104185.22,
+      "cash": -1193.19,
+      "total_pl": 5044.512961999999,
+      "total_pl_pct": 5.0277254100838205,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:44:09.573752",
+      "portfolio_value": 104153.51,
+      "cash": -1193.19,
+      "total_pl": 5012.802961999999,
+      "total_pl_pct": 4.996120937272525,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:44:39.876667",
+      "portfolio_value": 104173.2,
+      "cash": -1193.19,
+      "total_pl": 5032.490462,
+      "total_pl_pct": 5.015742919564307,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:45:10.194052",
+      "portfolio_value": 104151.64,
+      "cash": -1193.19,
+      "total_pl": 5010.930462,
+      "total_pl_pct": 4.994254668734553,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:45:40.523753",
+      "portfolio_value": 104165.17,
+      "cash": -1193.19,
+      "total_pl": 5024.460461999999,
+      "total_pl_pct": 5.00773964246955,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:46:10.879679",
+      "portfolio_value": 104168.37,
+      "cash": -1193.19,
+      "total_pl": 5027.660462,
+      "total_pl_pct": 5.010928993242056,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:46:41.234619",
+      "portfolio_value": 104198.59,
+      "cash": -1193.19,
+      "total_pl": 5057.880461999999,
+      "total_pl_pct": 5.041048424599904,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:47:11.550835",
+      "portfolio_value": 104191.17,
+      "cash": -1193.19,
+      "total_pl": 5050.460461999999,
+      "total_pl_pct": 5.033653117496157,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:47:41.868919",
+      "portfolio_value": 104193.57,
+      "cash": -1193.19,
+      "total_pl": 5052.860462,
+      "total_pl_pct": 5.036045130575537,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:48:12.185714",
+      "portfolio_value": 104194.68,
+      "cash": -1193.19,
+      "total_pl": 5053.970462,
+      "total_pl_pct": 5.037151436624749,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:48:42.499188",
+      "portfolio_value": 104194.64,
+      "cash": -1193.19,
+      "total_pl": 5053.925562,
+      "total_pl_pct": 5.037106686046723,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:49:12.807853",
+      "portfolio_value": 104200.98,
+      "cash": -1193.19,
+      "total_pl": 5060.2704619999995,
+      "total_pl_pct": 5.0434304709581195,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:49:43.111869",
+      "portfolio_value": 104122.19,
+      "cash": -1193.19,
+      "total_pl": 4981.480462,
+      "total_pl_pct": 4.964902674906338,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:50:13.583870",
+      "portfolio_value": 104114.66,
+      "cash": -1193.19,
+      "total_pl": 4973.950462,
+      "total_pl_pct": 4.957397733869786,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:50:43.884662",
+      "portfolio_value": 104115.34,
+      "cash": -1193.19,
+      "total_pl": 4974.630461999999,
+      "total_pl_pct": 4.958075470908943,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:51:14.185225",
+      "portfolio_value": 104116.02,
+      "cash": -1193.19,
+      "total_pl": 4975.3104619999995,
+      "total_pl_pct": 4.958753207948101,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:51:44.496569",
+      "portfolio_value": 104130.21,
+      "cash": -1193.19,
+      "total_pl": 4989.500462,
+      "total_pl_pct": 4.97289598527993,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:52:14.802688",
+      "portfolio_value": 104139.8,
+      "cash": -1193.19,
+      "total_pl": 4999.090462,
+      "total_pl_pct": 4.982454070876282,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:52:45.115990",
+      "portfolio_value": 104149.7,
+      "cash": -1193.19,
+      "total_pl": 5008.990461999999,
+      "total_pl_pct": 4.992321124828719,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:53:15.456144",
+      "portfolio_value": 104193.63,
+      "cash": -1193.19,
+      "total_pl": 5052.920462,
+      "total_pl_pct": 5.036104930902521,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:53:45.765156",
+      "portfolio_value": 104236.17,
+      "cash": -1193.19,
+      "total_pl": 5095.460462,
+      "total_pl_pct": 5.078503362734515,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:54:16.078399",
+      "portfolio_value": 104255.69,
+      "cash": -1193.19,
+      "total_pl": 5114.975462,
+      "total_pl_pct": 5.097953419086217,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:54:46.381183",
+      "portfolio_value": 104260.21,
+      "cash": -1193.19,
+      "total_pl": 5119.495462,
+      "total_pl_pct": 5.10245837705238,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:55:16.716465",
+      "portfolio_value": 104253.9,
+      "cash": -1193.19,
+      "total_pl": 5113.1904620000005,
+      "total_pl_pct": 5.096174359358428,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:55:47.029641",
+      "portfolio_value": 104275.21,
+      "cash": -1193.19,
+      "total_pl": 5134.502762,
+      "total_pl_pct": 5.117415734504949,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:56:17.340653",
+      "portfolio_value": 104299.88,
+      "cash": -1193.19,
+      "total_pl": 5159.169962000001,
+      "total_pl_pct": 5.142000844934808,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:56:47.675182",
+      "portfolio_value": 104317.4,
+      "cash": -1193.19,
+      "total_pl": 5176.686362,
+      "total_pl_pct": 5.159458952394655,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:57:17.995072",
+      "portfolio_value": 104334.38,
+      "cash": -1193.19,
+      "total_pl": 5193.666861999999,
+      "total_pl_pct": 5.176382943267319,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:57:48.309050",
+      "portfolio_value": 104292.65,
+      "cash": -1193.19,
+      "total_pl": 5151.9404620000005,
+      "total_pl_pct": 5.134795403869236,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:58:18.622080",
+      "portfolio_value": 104272.18,
+      "cash": -1193.19,
+      "total_pl": 5131.468662,
+      "total_pl_pct": 5.114391731636555,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:58:48.953589",
+      "portfolio_value": 104264.66,
+      "cash": -1193.19,
+      "total_pl": 5123.946962000001,
+      "total_pl_pct": 5.1068950629785705,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:59:19.260899",
+      "portfolio_value": 104263.81,
+      "cash": -1193.19,
+      "total_pl": 5123.0969620000005,
+      "total_pl_pct": 5.106047891679624,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T08:59:49.583384",
+      "portfolio_value": 104294.37,
+      "cash": -1193.19,
+      "total_pl": 5153.660462,
+      "total_pl_pct": 5.136509679909457,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:00:19.888786",
+      "portfolio_value": 104282.81,
+      "cash": -1193.19,
+      "total_pl": 5142.100461999999,
+      "total_pl_pct": 5.124988150243781,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:00:50.205361",
+      "portfolio_value": 104272.04,
+      "cash": -1193.19,
+      "total_pl": 5131.330462,
+      "total_pl_pct": 5.1142539915500675,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:01:20.658286",
+      "portfolio_value": 104233.3,
+      "cash": -1193.19,
+      "total_pl": 5092.590462,
+      "total_pl_pct": 5.075642913760425,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:01:50.952467",
+      "portfolio_value": 104214.4,
+      "cash": -1193.19,
+      "total_pl": 5073.6904620000005,
+      "total_pl_pct": 5.056805810760315,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:02:21.261927",
+      "portfolio_value": 104229.22,
+      "cash": -1193.19,
+      "total_pl": 5088.510462,
+      "total_pl_pct": 5.07157649152548,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:02:51.575064",
+      "portfolio_value": 104229.46,
+      "cash": -1193.19,
+      "total_pl": 5088.750462,
+      "total_pl_pct": 5.071815692833418,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:03:21.890359",
+      "portfolio_value": 104228.61,
+      "cash": -1193.19,
+      "total_pl": 5087.9004620000005,
+      "total_pl_pct": 5.070968521534472,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:03:52.203727",
+      "portfolio_value": 104229.29,
+      "cash": -1193.19,
+      "total_pl": 5088.580462,
+      "total_pl_pct": 5.071646258573629,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:04:22.530252",
+      "portfolio_value": 104265.28,
+      "cash": -1193.19,
+      "total_pl": 5124.570962000001,
+      "total_pl_pct": 5.107516986379209,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:04:52.859046",
+      "portfolio_value": 104271.96,
+      "cash": -1193.19,
+      "total_pl": 5131.250962,
+      "total_pl_pct": 5.114174756116814,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:05:23.160489",
+      "portfolio_value": 104380.68,
+      "cash": -1193.19,
+      "total_pl": 5239.965461999999,
+      "total_pl_pct": 5.222527466916044,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:05:53.478046",
+      "portfolio_value": 104379.93,
+      "cash": -1193.19,
+      "total_pl": 5239.215762,
+      "total_pl_pct": 5.221780261830373,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:06:23.785956",
+      "portfolio_value": 104330.96,
+      "cash": -1193.19,
+      "total_pl": 5190.250462,
+      "total_pl_pct": 5.172977912648824,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:06:54.101988",
+      "portfolio_value": 104318.55,
+      "cash": -1193.19,
+      "total_pl": 5177.840461999999,
+      "total_pl_pct": 5.1606092116842,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:07:24.397754",
+      "portfolio_value": 104334.5,
+      "cash": -1193.19,
+      "total_pl": 5193.790461999999,
+      "total_pl_pct": 5.176506131940907,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:07:54.698252",
+      "portfolio_value": 104339.35,
+      "cash": -1193.19,
+      "total_pl": 5198.8104619999995,
+      "total_pl_pct": 5.181509425965275,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:08:24.999512",
+      "portfolio_value": 104364.36,
+      "cash": -1193.19,
+      "total_pl": 5223.647862,
+      "total_pl_pct": 5.206264169989346,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:08:55.298149",
+      "portfolio_value": 104361.23,
+      "cash": -1193.19,
+      "total_pl": 5220.5204619999995,
+      "total_pl_pct": 5.203147177612491,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:09:25.622478",
+      "portfolio_value": 104356.86,
+      "cash": -1193.19,
+      "total_pl": 5216.1504620000005,
+      "total_pl_pct": 5.19879172046379,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:09:55.928096",
+      "portfolio_value": 104356.07,
+      "cash": -1193.19,
+      "total_pl": 5215.360462,
+      "total_pl_pct": 5.198004349491827,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:10:26.245210",
+      "portfolio_value": 104347.25,
+      "cash": -1193.19,
+      "total_pl": 5206.535462,
+      "total_pl_pct": 5.189208718064527,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:10:56.547758",
+      "portfolio_value": 104357.45,
+      "cash": -1193.19,
+      "total_pl": 5216.735461999999,
+      "total_pl_pct": 5.199374773651886,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:11:26.863849",
+      "portfolio_value": 104366.83,
+      "cash": -1193.19,
+      "total_pl": 5226.120462,
+      "total_pl_pct": 5.208728541464376,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:11:57.181853",
+      "portfolio_value": 104367.13,
+      "cash": -1193.19,
+      "total_pl": 5226.424762,
+      "total_pl_pct": 5.209031828789399,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:12:27.491088",
+      "portfolio_value": 104371.99,
+      "cash": -1193.19,
+      "total_pl": 5231.280462,
+      "total_pl_pct": 5.213871369585041,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:12:57.838591",
+      "portfolio_value": 104380.19,
+      "cash": -1193.19,
+      "total_pl": 5239.480462,
+      "total_pl_pct": 5.222044080939587,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:13:28.131698",
+      "portfolio_value": 104387.54,
+      "cash": -1193.19,
+      "total_pl": 5246.830462000001,
+      "total_pl_pct": 5.229369620995185,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:13:58.422282",
+      "portfolio_value": 104383.8,
+      "cash": -1193.19,
+      "total_pl": 5243.090562,
+      "total_pl_pct": 5.225642166947031,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:14:28.729547",
+      "portfolio_value": 104369.99,
+      "cash": -1193.19,
+      "total_pl": 5229.280562,
+      "total_pl_pct": 5.211878125019437,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:14:59.055569",
+      "portfolio_value": 104376.14,
+      "cash": -1193.19,
+      "total_pl": 5235.430562,
+      "total_pl_pct": 5.218007658535345,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:15:29.356763",
+      "portfolio_value": 104393.93,
+      "cash": -1193.19,
+      "total_pl": 5253.222162000001,
+      "total_pl_pct": 5.23574005016163,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:15:59.682400",
+      "portfolio_value": 104362.58,
+      "cash": -1193.19,
+      "total_pl": 5221.872162,
+      "total_pl_pct": 5.204494379312241,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:16:29.987242",
+      "portfolio_value": 104370.07,
+      "cash": -1193.19,
+      "total_pl": 5229.362161999999,
+      "total_pl_pct": 5.211959453464136,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:17:00.287882",
+      "portfolio_value": 104366.15,
+      "cash": -1193.19,
+      "total_pl": 5225.442162,
+      "total_pl_pct": 5.208052498767817,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:17:30.592932",
+      "portfolio_value": 104364.55,
+      "cash": -1193.19,
+      "total_pl": 5223.842162,
+      "total_pl_pct": 5.206457823381564,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:18:00.939950",
+      "portfolio_value": 104370.41,
+      "cash": -1193.19,
+      "total_pl": 5229.704662,
+      "total_pl_pct": 5.212300813664006,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:18:31.241958",
+      "portfolio_value": 104358.03,
+      "cash": -1193.19,
+      "total_pl": 5217.3221619999995,
+      "total_pl_pct": 5.199959521182584,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:19:01.556574",
+      "portfolio_value": 104261.59,
+      "cash": -1193.19,
+      "total_pl": 5121.050462,
+      "total_pl_pct": 5.104008202193394,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:19:31.870754",
+      "portfolio_value": 104264.49,
+      "cash": -1193.19,
+      "total_pl": 5123.780462000001,
+      "total_pl_pct": 5.106729117071188,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:20:02.254397",
+      "portfolio_value": 104267.08,
+      "cash": -1193.19,
+      "total_pl": 5126.366962,
+      "total_pl_pct": 5.109307009500277,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:20:32.583292",
+      "portfolio_value": 104265.89,
+      "cash": -1193.19,
+      "total_pl": 5125.1769620000005,
+      "total_pl_pct": 5.108120969681752,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:21:02.895617",
+      "portfolio_value": 104234.68,
+      "cash": -1193.19,
+      "total_pl": 5093.972462,
+      "total_pl_pct": 5.077020314625299,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:21:33.230676",
+      "portfolio_value": 104254.75,
+      "cash": -1193.19,
+      "total_pl": 5114.038462,
+      "total_pl_pct": 5.097019537313143,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:22:03.534365",
+      "portfolio_value": 104258.65,
+      "cash": -1193.19,
+      "total_pl": 5117.938462000001,
+      "total_pl_pct": 5.100906558567134,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:22:33.914632",
+      "portfolio_value": 104262.04,
+      "cash": -1193.19,
+      "total_pl": 5121.328462,
+      "total_pl_pct": 5.104285277041757,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:23:04.219747",
+      "portfolio_value": 104264.93,
+      "cash": -1193.19,
+      "total_pl": 5124.218462,
+      "total_pl_pct": 5.1071656594581745,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:23:34.527225",
+      "portfolio_value": 104265.02,
+      "cash": -1193.19,
+      "total_pl": 5124.308462000001,
+      "total_pl_pct": 5.1072553599486525,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:24:04.829111",
+      "portfolio_value": 104272.06,
+      "cash": -1193.19,
+      "total_pl": 5131.350462,
+      "total_pl_pct": 5.114273924992396,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:24:35.142064",
+      "portfolio_value": 104270.26,
+      "cash": -1193.19,
+      "total_pl": 5129.550462000001,
+      "total_pl_pct": 5.112479915182862,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:25:05.485411",
+      "portfolio_value": 104269.17,
+      "cash": -1193.19,
+      "total_pl": 5128.460462000001,
+      "total_pl_pct": 5.111393542575978,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:25:35.782566",
+      "portfolio_value": 104264.19,
+      "cash": -1193.19,
+      "total_pl": 5123.480462,
+      "total_pl_pct": 5.106430115436266,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:26:06.087252",
+      "portfolio_value": 104283.8,
+      "cash": -1193.19,
+      "total_pl": 5143.090462,
+      "total_pl_pct": 5.125974855639026,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:26:36.377167",
+      "portfolio_value": 104171.18,
+      "cash": -1193.19,
+      "total_pl": 5030.470462,
+      "total_pl_pct": 5.013729641889164,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:27:06.675489",
+      "portfolio_value": 104173.63,
+      "cash": -1193.19,
+      "total_pl": 5032.920462,
+      "total_pl_pct": 5.016171488574363,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:27:36.971953",
+      "portfolio_value": 104175.63,
+      "cash": -1193.19,
+      "total_pl": 5034.920462,
+      "total_pl_pct": 5.018164832807178,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:28:07.267814",
+      "portfolio_value": 104174.71,
+      "cash": -1193.19,
+      "total_pl": 5034.000462,
+      "total_pl_pct": 5.017247894460083,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:28:37.566003",
+      "portfolio_value": 104172.71,
+      "cash": -1193.19,
+      "total_pl": 5032.000462,
+      "total_pl_pct": 5.015254550227268,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:29:07.858655",
+      "portfolio_value": 104164.74,
+      "cash": -1193.19,
+      "total_pl": 5024.0317620000005,
+      "total_pl_pct": 5.007312369133248,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:29:38.150687",
+      "portfolio_value": 104165.94,
+      "cash": -1193.19,
+      "total_pl": 5025.2304619999995,
+      "total_pl_pct": 5.008507079999185,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:30:08.478476",
+      "portfolio_value": 104154.22,
+      "cash": -1193.19,
+      "total_pl": 5013.511761999999,
+      "total_pl_pct": 4.996827378468635,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:30:38.778157",
+      "portfolio_value": 104163.1,
+      "cash": -1193.19,
+      "total_pl": 5022.391762,
+      "total_pl_pct": 5.005677826862338,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:31:09.179100",
+      "portfolio_value": 104166.67,
+      "cash": -1193.19,
+      "total_pl": 5025.959162,
+      "total_pl_pct": 5.009233354970412,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:31:39.481200",
+      "portfolio_value": 104170.87,
+      "cash": -1193.19,
+      "total_pl": 5041.009161999999,
+      "total_pl_pct": 5.024233270322351,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:32:09.781723",
+      "portfolio_value": 104190.05,
+      "cash": -1193.19,
+      "total_pl": 5049.340462,
+      "total_pl_pct": 5.032536844725781,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:32:40.085494",
+      "portfolio_value": 104202.2,
+      "cash": -1193.19,
+      "total_pl": 5061.490462,
+      "total_pl_pct": 5.044646410940137,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:33:10.386899",
+      "portfolio_value": 104201.86,
+      "cash": -1193.19,
+      "total_pl": 5061.150462,
+      "total_pl_pct": 5.044307542420558,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:33:40.697333",
+      "portfolio_value": 104208.4,
+      "cash": -1193.19,
+      "total_pl": 5067.6863619999995,
+      "total_pl_pct": 5.050821691706188,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:34:11.076484",
+      "portfolio_value": 104209.37,
+      "cash": -1193.19,
+      "total_pl": 5068.660462,
+      "total_pl_pct": 5.051792550014782,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:34:41.412395",
+      "portfolio_value": 104231.07,
+      "cash": -1193.19,
+      "total_pl": 5090.360462,
+      "total_pl_pct": 5.073420334940834,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:35:11.705909",
+      "portfolio_value": 104231.75,
+      "cash": -1193.19,
+      "total_pl": 5091.040462,
+      "total_pl_pct": 5.074098071979992,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:35:42.002014",
+      "portfolio_value": 104165.39,
+      "cash": -1193.19,
+      "total_pl": 5024.680462,
+      "total_pl_pct": 5.007958910335161,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:36:12.302674",
+      "portfolio_value": 104130.01,
+      "cash": -1193.19,
+      "total_pl": 4989.300462,
+      "total_pl_pct": 4.972696650856649,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:36:42.594512",
+      "portfolio_value": 104128.04,
+      "cash": -1193.19,
+      "total_pl": 4987.329162000001,
+      "total_pl_pct": 4.970731911113574,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:37:12.910201",
+      "portfolio_value": 104124.65,
+      "cash": -1193.19,
+      "total_pl": 4983.939162000001,
+      "total_pl_pct": 4.96735319263895,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:37:43.225040",
+      "portfolio_value": 104120.73,
+      "cash": -1193.19,
+      "total_pl": 4980.022462000001,
+      "total_pl_pct": 4.963449526960616,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:38:13.523808",
+      "portfolio_value": 104111.93,
+      "cash": -1193.19,
+      "total_pl": 4971.220461999999,
+      "total_pl_pct": 4.954676818991992,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:38:43.834260",
+      "portfolio_value": 104122.08,
+      "cash": -1193.19,
+      "total_pl": 4981.370462,
+      "total_pl_pct": 4.964793040973533,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:39:14.139259",
+      "portfolio_value": 104124.87,
+      "cash": -1193.19,
+      "total_pl": 4984.155462,
+      "total_pl_pct": 4.967568772817729,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:39:44.439170",
+      "portfolio_value": 104108.92,
+      "cash": -1193.19,
+      "total_pl": 4968.205462,
+      "total_pl_pct": 4.951671852561023,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:40:14.752426",
+      "portfolio_value": 104108.75,
+      "cash": -1193.19,
+      "total_pl": 4968.035462,
+      "total_pl_pct": 4.951502418301233,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:40:45.061544",
+      "portfolio_value": 104118.92,
+      "cash": -1193.19,
+      "total_pl": 4978.205461999999,
+      "total_pl_pct": 4.961638573725101,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:41:15.366264",
+      "portfolio_value": 104115.32,
+      "cash": -1193.19,
+      "total_pl": 4974.6054619999995,
+      "total_pl_pct": 4.958050554106033,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:41:45.672573",
+      "portfolio_value": 104107.73,
+      "cash": -1193.19,
+      "total_pl": 4967.015462,
+      "total_pl_pct": 4.950485812742498,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:42:15.983435",
+      "portfolio_value": 104092.46,
+      "cash": -1193.19,
+      "total_pl": 4951.747162000001,
+      "total_pl_pct": 4.935268323867546,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:42:46.301879",
+      "portfolio_value": 104102.16,
+      "cash": -1193.19,
+      "total_pl": 4961.445462,
+      "total_pl_pct": 4.944934349054105,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:43:16.651476",
+      "portfolio_value": 104091.61,
+      "cash": -1193.19,
+      "total_pl": 4950.895461999999,
+      "total_pl_pct": 4.9344194582259995,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:43:46.985140",
+      "portfolio_value": 104075.51,
+      "cash": -1193.19,
+      "total_pl": 4934.795461999999,
+      "total_pl_pct": 4.918373037151833,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:44:17.285491",
+      "portfolio_value": 104079.01,
+      "cash": -1193.19,
+      "total_pl": 4938.295461999999,
+      "total_pl_pct": 4.921861389559261,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:44:47.596836",
+      "portfolio_value": 104033.52,
+      "cash": -1193.19,
+      "total_pl": 4892.8104619999995,
+      "total_pl_pct": 4.876527758344445,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:45:17.898855",
+      "portfolio_value": 104027.39,
+      "cash": -1193.19,
+      "total_pl": 4886.681562,
+      "total_pl_pct": 4.870419254610193,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:45:48.199024",
+      "portfolio_value": 104027.39,
+      "cash": -1193.19,
+      "total_pl": 4886.681562,
+      "total_pl_pct": 4.870419254610193,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:46:18.574189",
+      "portfolio_value": 104019.37,
+      "cash": -1193.19,
+      "total_pl": 4878.661562,
+      "total_pl_pct": 4.862425944236602,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:46:48.882426",
+      "portfolio_value": 104021.96,
+      "cash": -1193.19,
+      "total_pl": 4881.248462,
+      "total_pl_pct": 4.8650042353345375,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:47:19.182808",
+      "portfolio_value": 104122.05,
+      "cash": -1193.19,
+      "total_pl": 4981.340461999999,
+      "total_pl_pct": 4.9647631408100406,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:47:49.489158",
+      "portfolio_value": 104129.25,
+      "cash": -1193.19,
+      "total_pl": 4988.540461999999,
+      "total_pl_pct": 4.971939180048177,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:48:19.787661",
+      "portfolio_value": 104140.78,
+      "cash": -1193.19,
+      "total_pl": 5000.074962000001,
+      "total_pl_pct": 4.983435294574886,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:48:50.084808",
+      "portfolio_value": 104104.68,
+      "cash": -1193.19,
+      "total_pl": 4963.974961999999,
+      "total_pl_pct": 4.947455431172559,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:49:20.383626",
+      "portfolio_value": 104063.32,
+      "cash": -1193.19,
+      "total_pl": 4922.610462,
+      "total_pl_pct": 4.906228587413403,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:49:50.679068",
+      "portfolio_value": 104058.66,
+      "cash": -1193.19,
+      "total_pl": 4917.946462,
+      "total_pl_pct": 4.901580108662476,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:50:20.974947",
+      "portfolio_value": 104202.04,
+      "cash": -1193.19,
+      "total_pl": 5061.330462000001,
+      "total_pl_pct": 5.044486943401513,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:50:51.269838",
+      "portfolio_value": 104192.82,
+      "cash": -1193.19,
+      "total_pl": 5052.110462,
+      "total_pl_pct": 5.03529762648823,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:51:21.583590",
+      "portfolio_value": 104141.98,
+      "cash": -1193.19,
+      "total_pl": 5001.2704619999995,
+      "total_pl_pct": 4.984626816090051,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:51:51.877166",
+      "portfolio_value": 104120.53,
+      "cash": -1193.19,
+      "total_pl": 4979.820462,
+      "total_pl_pct": 4.963248199193101,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:52:22.180034",
+      "portfolio_value": 104146.03,
+      "cash": -1193.19,
+      "total_pl": 5005.320462,
+      "total_pl_pct": 4.988663338161503,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:52:52.492654",
+      "portfolio_value": 104150.99,
+      "cash": -1193.19,
+      "total_pl": 5010.280462,
+      "total_pl_pct": 4.993606831858886,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:53:22.797074",
+      "portfolio_value": 104150.48,
+      "cash": -1193.19,
+      "total_pl": 5009.7704619999995,
+      "total_pl_pct": 4.993098529079519,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:53:53.095798",
+      "portfolio_value": 104137.57,
+      "cash": -1193.19,
+      "total_pl": 4996.860462,
+      "total_pl_pct": 4.980231492056692,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:54:23.394754",
+      "portfolio_value": 104147.02,
+      "cash": -1193.19,
+      "total_pl": 5006.3104619999995,
+      "total_pl_pct": 4.989650043556747,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:54:53.708095",
+      "portfolio_value": 104147.02,
+      "cash": -1193.19,
+      "total_pl": 5006.3104619999995,
+      "total_pl_pct": 4.989650043556747,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:55:24.016731",
+      "portfolio_value": 104148.97,
+      "cash": -1193.19,
+      "total_pl": 5008.260461999999,
+      "total_pl_pct": 4.991593554183742,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:55:54.327782",
+      "portfolio_value": 104160.44,
+      "cash": -1193.19,
+      "total_pl": 5019.728762,
+      "total_pl_pct": 5.003023689016343,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:56:24.640206",
+      "portfolio_value": 104155.06,
+      "cash": -1193.19,
+      "total_pl": 5014.350461999999,
+      "total_pl_pct": 4.997663287372667,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:56:54.948486",
+      "portfolio_value": 104117.25,
+      "cash": -1193.19,
+      "total_pl": 4976.540462,
+      "total_pl_pct": 4.959979114651283,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:57:25.298487",
+      "portfolio_value": 104113.4,
+      "cash": -1193.19,
+      "total_pl": 4972.690462,
+      "total_pl_pct": 4.956141927003112,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:57:55.598963",
+      "portfolio_value": 104086.0,
+      "cash": -1193.19,
+      "total_pl": 4945.290462,
+      "total_pl_pct": 4.928833111013535,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:58:25.896793",
+      "portfolio_value": 104086.0,
+      "cash": -1193.19,
+      "total_pl": 4945.290462,
+      "total_pl_pct": 4.928833111013535,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:58:56.213457",
+      "portfolio_value": 104085.66,
+      "cash": -1193.19,
+      "total_pl": 4944.950462,
+      "total_pl_pct": 4.928494242493956,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:59:26.520301",
+      "portfolio_value": 104079.9,
+      "cash": -1193.19,
+      "total_pl": 4939.193962,
+      "total_pl_pct": 4.9227568994558535,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T09:59:56.808457",
+      "portfolio_value": 104083.43,
+      "cash": -1193.19,
+      "total_pl": 4942.723962,
+      "total_pl_pct": 4.926275152026774,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:00:27.113540",
+      "portfolio_value": 104092.09,
+      "cash": -1193.19,
+      "total_pl": 4951.380462,
+      "total_pl_pct": 4.934902844202459,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:00:57.427445",
+      "portfolio_value": 104097.04,
+      "cash": -1193.19,
+      "total_pl": 4956.330462,
+      "total_pl_pct": 4.939836371178679,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:01:27.744375",
+      "portfolio_value": 104112.41,
+      "cash": -1193.19,
+      "total_pl": 4971.698461999999,
+      "total_pl_pct": 4.955153228263636,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:01:58.105512",
+      "portfolio_value": 104098.64,
+      "cash": -1193.19,
+      "total_pl": 4957.929461999999,
+      "total_pl_pct": 4.941430049892814,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:02:28.418887",
+      "portfolio_value": 104097.44,
+      "cash": -1193.19,
+      "total_pl": 4956.729462,
+      "total_pl_pct": 4.940234043353126,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:02:58.731576",
+      "portfolio_value": 104098.64,
+      "cash": -1193.19,
+      "total_pl": 4957.929461999999,
+      "total_pl_pct": 4.941430049892814,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:03:29.043475",
+      "portfolio_value": 104098.64,
+      "cash": -1193.19,
+      "total_pl": 4957.929461999999,
+      "total_pl_pct": 4.941430049892814,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:03:59.348021",
+      "portfolio_value": 104194.27,
+      "cash": -1193.19,
+      "total_pl": 5053.560462,
+      "total_pl_pct": 5.036742801057023,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:04:29.712425",
+      "portfolio_value": 104277.27,
+      "cash": -1193.19,
+      "total_pl": 5136.560462,
+      "total_pl_pct": 5.119466586718882,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:05:00.010329",
+      "portfolio_value": 104279.11,
+      "cash": -1193.19,
+      "total_pl": 5138.4004620000005,
+      "total_pl_pct": 5.121300463413073,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:05:30.326064",
+      "portfolio_value": 104209.22,
+      "cash": -1193.19,
+      "total_pl": 5068.505461999999,
+      "total_pl_pct": 5.051638065836738,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:06:00.630923",
+      "portfolio_value": 104238.94,
+      "cash": -1193.19,
+      "total_pl": 5098.228462,
+      "total_pl_pct": 5.081262151152732,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:06:30.945191",
+      "portfolio_value": 104261.54,
+      "cash": -1193.19,
+      "total_pl": 5120.828462,
+      "total_pl_pct": 5.103786940983552,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:07:01.312245",
+      "portfolio_value": 104261.86,
+      "cash": -1193.19,
+      "total_pl": 5121.148462000001,
+      "total_pl_pct": 5.104105876060803,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:07:31.634782",
+      "portfolio_value": 104257.12,
+      "cash": -1193.19,
+      "total_pl": 5116.405462000001,
+      "total_pl_pct": 5.09937866021268,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:08:01.948833",
+      "portfolio_value": 104288.12,
+      "cash": -1193.19,
+      "total_pl": 5147.413762,
+      "total_pl_pct": 5.130283768199892,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:08:32.263222",
+      "portfolio_value": 104364.63,
+      "cash": -1193.19,
+      "total_pl": 5223.920462000001,
+      "total_pl_pct": 5.20653586280828,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:09:02.599257",
+      "portfolio_value": 104390.78,
+      "cash": -1193.19,
+      "total_pl": 5250.0704620000015,
+      "total_pl_pct": 5.232598838652349,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:09:32.995400",
+      "portfolio_value": 104417.73,
+      "cash": -1193.19,
+      "total_pl": 5277.020462000001,
+      "total_pl_pct": 5.2594591521895415,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:10:03.332630",
+      "portfolio_value": 104443.27,
+      "cash": -1193.19,
+      "total_pl": 5302.560462,
+      "total_pl_pct": 5.284914158042599,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:10:33.645130",
+      "portfolio_value": 104409.71,
+      "cash": -1193.19,
+      "total_pl": 5269.000462,
+      "total_pl_pct": 5.251465841815948,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:11:03.952240",
+      "portfolio_value": 104429.06,
+      "cash": -1193.19,
+      "total_pl": 5288.350461999999,
+      "total_pl_pct": 5.270751447268442,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:11:34.261799",
+      "portfolio_value": 104406.48,
+      "cash": -1193.19,
+      "total_pl": 5265.7704619999995,
+      "total_pl_pct": 5.24824659087995,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:12:04.557758",
+      "portfolio_value": 104401.68,
+      "cash": -1193.19,
+      "total_pl": 5260.970462,
+      "total_pl_pct": 5.243462564721193,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:12:34.854724",
+      "portfolio_value": 104434.09,
+      "cash": -1193.19,
+      "total_pl": 5293.375462,
+      "total_pl_pct": 5.275759724653392,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:13:05.179912",
+      "portfolio_value": 104457.82,
+      "cash": -1193.19,
+      "total_pl": 5317.105462,
+      "total_pl_pct": 5.299410753975753,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:13:35.477061",
+      "portfolio_value": 104500.56,
+      "cash": -1193.19,
+      "total_pl": 5359.850461999999,
+      "total_pl_pct": 5.34201350359161,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:14:05.777617",
+      "portfolio_value": 104503.63,
+      "cash": -1193.19,
+      "total_pl": 5368.570462,
+      "total_pl_pct": 5.350704484446687,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:14:36.076166",
+      "portfolio_value": 104530.02,
+      "cash": -1193.19,
+      "total_pl": 5389.310462,
+      "total_pl_pct": 5.371375464140988,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:15:06.376914",
+      "portfolio_value": 104534.21,
+      "cash": -1193.19,
+      "total_pl": 5393.496462,
+      "total_pl_pct": 5.375547533620272,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:15:36.675023",
+      "portfolio_value": 104557.71,
+      "cash": -1193.19,
+      "total_pl": 5417.000461999999,
+      "total_pl_pct": 5.398973315044323,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:16:06.985927",
+      "portfolio_value": 104532.59,
+      "cash": -1193.19,
+      "total_pl": 5391.880461999999,
+      "total_pl_pct": 5.373936911480155,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:16:37.297944",
+      "portfolio_value": 104579.0,
+      "cash": -1193.19,
+      "total_pl": 5438.285462,
+      "total_pl_pct": 5.420187481042067,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:17:07.628301",
+      "portfolio_value": 104570.86,
+      "cash": -1193.19,
+      "total_pl": 5430.149461999999,
+      "total_pl_pct": 5.412078556702971,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:17:37.981164",
+      "portfolio_value": 104547.23,
+      "cash": -1193.19,
+      "total_pl": 5406.521662,
+      "total_pl_pct": 5.388529387270909,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:18:08.280706",
+      "portfolio_value": 104543.64,
+      "cash": -1193.19,
+      "total_pl": 5402.930461999999,
+      "total_pl_pct": 5.384950138366464,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:18:38.583068",
+      "portfolio_value": 104555.4,
+      "cash": -1193.19,
+      "total_pl": 5414.687662,
+      "total_pl_pct": 5.396668211773496,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:19:08.894127",
+      "portfolio_value": 104567.97,
+      "cash": -1193.19,
+      "total_pl": 5427.260462000001,
+      "total_pl_pct": 5.40919917095867,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:19:39.201236",
+      "portfolio_value": 104547.5,
+      "cash": -1193.19,
+      "total_pl": 5406.790462,
+      "total_pl_pct": 5.3887972927357985,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:20:09.508495",
+      "portfolio_value": 104542.27,
+      "cash": -1193.19,
+      "total_pl": 5401.5604619999995,
+      "total_pl_pct": 5.383584697566985,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:20:39.814388",
+      "portfolio_value": 104549.88,
+      "cash": -1193.19,
+      "total_pl": 5409.173462,
+      "total_pl_pct": 5.391172362389199,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:21:10.125071",
+      "portfolio_value": 104523.48,
+      "cash": -1193.19,
+      "total_pl": 5382.772062,
+      "total_pl_pct": 5.364858823175067,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:21:40.440509",
+      "portfolio_value": 104520.13,
+      "cash": -1193.19,
+      "total_pl": 5379.420462,
+      "total_pl_pct": 5.3615183769097134,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:22:10.752506",
+      "portfolio_value": 104473.8,
+      "cash": -1193.19,
+      "total_pl": 5333.090462,
+      "total_pl_pct": 5.315342557756534,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:22:41.086377",
+      "portfolio_value": 104454.03,
+      "cash": -1193.19,
+      "total_pl": 5313.320462,
+      "total_pl_pct": 5.295638350015149,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:23:11.391579",
+      "portfolio_value": 104477.76,
+      "cash": -1193.19,
+      "total_pl": 5337.050462,
+      "total_pl_pct": 5.319289379337509,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:23:41.689056",
+      "portfolio_value": 104520.08,
+      "cash": -1193.19,
+      "total_pl": 5379.370462,
+      "total_pl_pct": 5.361468543303893,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:24:12.011237",
+      "portfolio_value": 104495.14,
+      "cash": -1193.19,
+      "total_pl": 5354.432961999999,
+      "total_pl_pct": 5.336614032400969,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:24:42.311388",
+      "portfolio_value": 104488.14,
+      "cash": -1193.19,
+      "total_pl": 5347.432961999999,
+      "total_pl_pct": 5.329637327586114,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:25:12.632993",
+      "portfolio_value": 104497.45,
+      "cash": -1193.19,
+      "total_pl": 5356.744862,
+      "total_pl_pct": 5.338918238666893,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:25:42.942797",
+      "portfolio_value": 104500.15,
+      "cash": -1193.19,
+      "total_pl": 5359.444862,
+      "total_pl_pct": 5.341609253381195,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:26:13.235096",
+      "portfolio_value": 104525.2,
+      "cash": -1193.19,
+      "total_pl": 5384.490462000001,
+      "total_pl_pct": 5.366571504539902,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:26:43.540182",
+      "portfolio_value": 104533.11,
+      "cash": -1193.19,
+      "total_pl": 5392.4004620000005,
+      "total_pl_pct": 5.374455180980689,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:27:13.879118",
+      "portfolio_value": 104525.62,
+      "cash": -1193.19,
+      "total_pl": 5384.905462,
+      "total_pl_pct": 5.36698512346821,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:27:44.226679",
+      "portfolio_value": 104526.42,
+      "cash": -1193.19,
+      "total_pl": 5385.710462,
+      "total_pl_pct": 5.36778744452192,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:28:14.541778",
+      "portfolio_value": 104524.73,
+      "cash": -1193.19,
+      "total_pl": 5384.020462000001,
+      "total_pl_pct": 5.366103068645192,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:28:44.842281",
+      "portfolio_value": 104496.21,
+      "cash": -1193.19,
+      "total_pl": 5355.503962000001,
+      "total_pl_pct": 5.337681468237643,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:29:15.148724",
+      "portfolio_value": 104485.7,
+      "cash": -1193.19,
+      "total_pl": 5344.9939620000005,
+      "total_pl_pct": 5.327206444294196,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:29:45.468934",
+      "portfolio_value": 104475.58,
+      "cash": -1193.19,
+      "total_pl": 5334.873962000001,
+      "total_pl_pct": 5.3171201224761475,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:30:15.850984",
+      "portfolio_value": 104496.65,
+      "cash": -1193.19,
+      "total_pl": 5355.9404620000005,
+      "total_pl_pct": 5.338116515616456,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:30:46.174508",
+      "portfolio_value": 104483.09,
+      "cash": -1193.19,
+      "total_pl": 5342.380462,
+      "total_pl_pct": 5.324601641717964,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:31:16.484785",
+      "portfolio_value": 104495.95,
+      "cash": -1193.19,
+      "total_pl": 5355.242961999999,
+      "total_pl_pct": 5.33742133681526,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:31:46.844624",
+      "portfolio_value": 104490.64,
+      "cash": -1193.19,
+      "total_pl": 5349.925462,
+      "total_pl_pct": 5.332121532836261,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:32:17.163198",
+      "portfolio_value": 104468.53,
+      "cash": -1193.19,
+      "total_pl": 5327.819962,
+      "total_pl_pct": 5.310089597367005,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:32:47.474420",
+      "portfolio_value": 104469.4,
+      "cash": -1193.19,
+      "total_pl": 5328.694962,
+      "total_pl_pct": 5.310961685468863,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:33:17.783300",
+      "portfolio_value": 104474.73,
+      "cash": -1193.19,
+      "total_pl": 5334.019462,
+      "total_pl_pct": 5.3162684661526765,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:33:48.101629",
+      "portfolio_value": 104474.73,
+      "cash": -1193.19,
+      "total_pl": 5334.019462,
+      "total_pl_pct": 5.3162684661526765,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:34:18.559798",
+      "portfolio_value": 104474.37,
+      "cash": -1193.19,
+      "total_pl": 5333.659962000001,
+      "total_pl_pct": 5.315910162526829,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:34:48.857822",
+      "portfolio_value": 104496.14,
+      "cash": -1193.19,
+      "total_pl": 5355.431962,
+      "total_pl_pct": 5.337609707845261,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:35:19.156094",
+      "portfolio_value": 104506.78,
+      "cash": -1193.19,
+      "total_pl": 5366.071961999999,
+      "total_pl_pct": 5.348214299163842,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:35:49.468412",
+      "portfolio_value": 104459.82,
+      "cash": -1193.19,
+      "total_pl": 5319.111962,
+      "total_pl_pct": 5.301410576577325,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:36:19.765974",
+      "portfolio_value": 104472.25,
+      "cash": -1193.19,
+      "total_pl": 5331.542562,
+      "total_pl_pct": 5.313799808987545,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:36:50.092187",
+      "portfolio_value": 104473.56,
+      "cash": -1193.19,
+      "total_pl": 5332.852362,
+      "total_pl_pct": 5.315105250125616,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:37:20.469519",
+      "portfolio_value": 104479.81,
+      "cash": -1193.19,
+      "total_pl": 5339.102362,
+      "total_pl_pct": 5.321334450853167,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:37:50.777988",
+      "portfolio_value": 104479.81,
+      "cash": -1193.19,
+      "total_pl": 5339.102362,
+      "total_pl_pct": 5.321334450853167,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:38:21.115230",
+      "portfolio_value": 104465.21,
+      "cash": -1193.19,
+      "total_pl": 5324.497461999999,
+      "total_pl_pct": 5.30677815426024,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:38:51.424807",
+      "portfolio_value": 104433.97,
+      "cash": -1193.19,
+      "total_pl": 5293.2574620000005,
+      "total_pl_pct": 5.275642117343657,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:39:21.734933",
+      "portfolio_value": 104452.31,
+      "cash": -1193.19,
+      "total_pl": 5311.597462000001,
+      "total_pl_pct": 5.293921083958578,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:39:52.038044",
+      "portfolio_value": 104454.01,
+      "cash": -1193.19,
+      "total_pl": 5313.300462,
+      "total_pl_pct": 5.295618416572821,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:40:22.339275",
+      "portfolio_value": 104446.1,
+      "cash": -1193.19,
+      "total_pl": 5305.390462,
+      "total_pl_pct": 5.287734740132034,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:40:52.643306",
+      "portfolio_value": 104459.47,
+      "cash": -1193.19,
+      "total_pl": 5318.760462,
+      "total_pl_pct": 5.301060246328408,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:41:22.960828",
+      "portfolio_value": 104451.86,
+      "cash": -1193.19,
+      "total_pl": 5311.1459620000005,
+      "total_pl_pct": 5.293471086498021,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:41:53.265564",
+      "portfolio_value": 104445.28,
+      "cash": -1193.19,
+      "total_pl": 5304.570462,
+      "total_pl_pct": 5.286917468996579,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:42:23.565011",
+      "portfolio_value": 104455.6,
+      "cash": -1193.19,
+      "total_pl": 5314.890462000001,
+      "total_pl_pct": 5.29720312523791,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:42:53.877167",
+      "portfolio_value": 104449.51,
+      "cash": -1193.19,
+      "total_pl": 5308.804262000001,
+      "total_pl_pct": 5.2911371794030275,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:43:24.187650",
+      "portfolio_value": 104433.93,
+      "cash": -1193.19,
+      "total_pl": 5293.224262000001,
+      "total_pl_pct": 5.275609027829392,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:43:54.513828",
+      "portfolio_value": 104418.32,
+      "cash": -1193.19,
+      "total_pl": 5277.609162000001,
+      "total_pl_pct": 5.26004589306447,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:44:24.822119",
+      "portfolio_value": 104458.14,
+      "cash": -1193.19,
+      "total_pl": 5317.430462,
+      "total_pl_pct": 5.299734672413585,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:44:55.180193",
+      "portfolio_value": 104446.84,
+      "cash": -1193.19,
+      "total_pl": 5306.130462,
+      "total_pl_pct": 5.288472277498175,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:45:25.484431",
+      "portfolio_value": 104445.32,
+      "cash": -1193.19,
+      "total_pl": 5304.613362,
+      "total_pl_pct": 5.286960226230373,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:45:55.942104",
+      "portfolio_value": 104443.97,
+      "cash": -1193.19,
+      "total_pl": 5303.263362,
+      "total_pl_pct": 5.285614718873222,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:46:26.245056",
+      "portfolio_value": 104445.18,
+      "cash": -1193.19,
+      "total_pl": 5304.470461999999,
+      "total_pl_pct": 5.286817801784938,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:46:56.566273",
+      "portfolio_value": 104445.52,
+      "cash": -1193.19,
+      "total_pl": 5304.8104619999995,
+      "total_pl_pct": 5.287156670304516,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:47:26.872500",
+      "portfolio_value": 104402.02,
+      "cash": -1193.19,
+      "total_pl": 5261.305462,
+      "total_pl_pct": 5.24379644988019,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:47:57.415943",
+      "portfolio_value": 104417.87,
+      "cash": -1193.19,
+      "total_pl": 5277.160462,
+      "total_pl_pct": 5.2595986862858375,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:48:27.727235",
+      "portfolio_value": 104419.37,
+      "cash": -1193.19,
+      "total_pl": 5278.660462000001,
+      "total_pl_pct": 5.261093694460451,
+      "notified": false
+    },
+    {
+      "timestamp": "2026-06-16T10:48:58.046880",
+      "portfolio_value": 104432.78,
+      "cash": -1193.19,
+      "total_pl": 5292.070462000001,
+      "total_pl_pct": 5.274459067541481,
+      "notified": false
+    }
+  ],
+  "last_check": "2026-06-16T10:48:58.046880",
+  "baseline_pl_pct": -0.636,
+  "last_updated": "2026-06-12T19:59:49.814133"
+}

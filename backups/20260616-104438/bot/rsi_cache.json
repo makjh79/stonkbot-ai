@@ -1,0 +1,147 @@
+{
+  "DKNG": {
+    "rsi": 70.4,
+    "timestamp": 1781582522.9058182,
+    "source": "Polygon"
+  },
+  "COIN": {
+    "rsi": 44.5,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "UPST": {
+    "rsi": 54.9,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "SHOP": {
+    "rsi": 57.2,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "TQQQ": {
+    "rsi": 52.9,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "XLE": {
+    "rsi": 39.7,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "ROKU": {
+    "rsi": 65.8,
+    "timestamp": 1781350026.8204052,
+    "source": "Cached"
+  },
+  "PATH": {
+    "rsi": 46.9,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "SQQQ": {
+    "rsi": 43.8,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "SNOW": {
+    "rsi": 67.6,
+    "timestamp": 1781481680.8394735,
+    "source": "Cached"
+  },
+  "NET": {
+    "rsi": 56.2,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "AMZN": {
+    "rsi": 35.4,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "NFLX": {
+    "rsi": 14.6,
+    "timestamp": 1781481680.8394735,
+    "source": "Cached"
+  },
+  "DDOG": {
+    "rsi": 53.2,
+    "timestamp": 1781362831.20512,
+    "source": "Polygon"
+  },
+  "OKTA": {
+    "rsi": 63.2,
+    "timestamp": 1781362831.20512,
+    "source": "Polygon"
+  },
+  "FSLY": {
+    "rsi": 59.6,
+    "timestamp": 1781362831.20512,
+    "source": "Cached"
+  },
+  "ZM": {
+    "rsi": 34.5,
+    "timestamp": 1781362831.20512,
+    "source": "Cached"
+  },
+  "LCID": {
+    "rsi": 39.1,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "NIO": {
+    "rsi": 48.7,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "XPEV": {
+    "rsi": 29.5,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "GM": {
+    "rsi": 60.4,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "ABNB": {
+    "rsi": 60.7,
+    "timestamp": 1781606718.3468068,
+    "source": "Polygon"
+  },
+  "CRWD": {
+    "rsi": 52.7,
+    "timestamp": 1781362831.20512,
+    "source": "Polygon"
+  },
+  "CDNS": {
+    "rsi": 54.6,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "SOFI": {
+    "rsi": 56.7,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "CSCO": {
+    "rsi": 50.9,
+    "timestamp": 1781362831.20512,
+    "source": "Polygon"
+  },
+  "IBM": {
+    "rsi": 56.3,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "ORCL": {
+    "rsi": 49.9,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  },
+  "AAPL": {
+    "rsi": 40.2,
+    "timestamp": 1781606718.3468068,
+    "source": "Cached"
+  }
+}
