@@ -9135,63 +9135,81 @@
             const trendingContent = `
                 <div style="margin-bottom: 20px;">
                     <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                        <strong>Spot market momentum before it moves.</strong> Real-time sentiment intelligence from millions of retail traders and institutional investors.
+                        <strong>Track real-time market sentiment</strong> across major financial platforms. No account or API keys required.
                     </div>
                     
                     <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.02)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">🎯 SMART MONEY SIGNALS</div>
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">📊 DATA SOURCES</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="margin-bottom: 8px;">We aggregate real-time trading chatter from:</div>
-                            <div style="margin-bottom: 6px;">• <strong>Wall Street's Pulse</strong> — Live sentiment from Yahoo Finance trending</div>
-                            <div style="margin-bottom: 6px;">• <strong>Retail Army</strong> — Social trading insights from StockTwits</div>
-                            <div style="margin-bottom: 6px;">• <strong>Cross-Platform Intelligence</strong> — Multi-source validation for accuracy</div>
-                            <div>• <strong>Zero Lag</strong> — No delays, no waiting, instant alerts</div>
+                            <div style="margin-bottom: 8px;">Sentiment is aggregated from:</div>
+                            <div style="margin-bottom: 6px;">• <strong>Yahoo Finance</strong> — Most active and trending tickers</div>
+                            <div style="margin-bottom: 6px;">• <strong>StockTwits</strong> — Social trading platform discussions</div>
+                            <div>• Data combined from multiple sources for validation</div>
                         </div>
                     </div>
                     
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">📊 HOW THE MAGIC WORKS</div>
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">📈 TECHNICAL SIGNALS</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="margin-bottom: 8px;">Our AI scans the market 24/7, identifying:</div>
+                            <div style="margin-bottom: 8px;">The system measures:</div>
                             <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>🔥 Breaking Momentum</span>
-                                <span style="color: var(--text-primary);">Surge in mentions</span>
+                                <span>Mention Volume</span>
+                                <span style="color: var(--text-primary);">Frequency across platforms</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span>⚡ Velocity Spikes</span>
-                                <span style="color: var(--text-primary);">Accelerating interest</span>
+                                <span>Velocity</span>
+                                <span style="color: var(--text-primary);">Rate of change in mentions</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding: 6px 0;">
-                                <span>💎 Diamond Hands</span>
-                                <span style="color: var(--text-primary);">Strong conviction levels</span>
+                                <span>Source Count</span>
+                                <span style="color: var(--text-primary);">Number of platforms detecting</span>
                             </div>
                         </div>
                     </div>
                     
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">📈 BUZZ SCORE – THE EDGE</div>
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">📊 SENTIMENT CLASSIFICATION</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="margin-bottom: 8px;">Know when the crowd is waking up:</div>
+                            <div style="margin-bottom: 8px;">Based on mention patterns and volume:</div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span style="background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Quiet</span>
-                                <span>Under the radar — early opportunity</span>
+                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Bullish</span>
+                                <span>High positive mention volume</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Heating Up</span>
-                                <span>Catching attention — watch closely</span>
+                                <span style="background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Bearish</span>
+                                <span>High negative mention volume</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 700;">🔥 VIRAL</span>
-                                <span>Maximum momentum — ride the wave</span>
+                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Neutral</span>
+                                <span>Mixed or low mention volume</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">🔢 BUZZ SCORE</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+                            <div style="margin-bottom: 8px;">Indicates overall attention level:</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Low</span>
+                                <span>Detected on 1-2 sources</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Medium</span>
+                                <span>Detected on 3-5 sources</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 600;">High</span>
+                                <span>Detected on 6+ sources</span>
                             </div>
                         </div>
                     </div>
                     
                     <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.02)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 12px; padding: 14px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">⚡ ALWAYS ON</div>
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">⏱️ UPDATE SCHEDULE</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div>Fresh intelligence every <strong style="color: var(--text-primary);">30 minutes</strong> during market hours. Never miss a move.</div>
-                            <div style="margin-top: 8px;"><strong style="color: #22c55e;">✓ Instant Access</strong> — No setup, no fees, no limits.</div>
+                            <div>Data refreshes automatically every <strong style="color: var(--text-primary);">30 minutes</strong> during market hours (9:30 AM - 8:00 PM ET).</div>
+                            <div style="margin-top: 8px;">No API registration or account setup required.</div>
                         </div>
                     </div>
                 </div>
