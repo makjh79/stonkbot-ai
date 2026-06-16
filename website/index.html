@@ -7911,6 +7911,34 @@
         // Global crowd sentiment cache
         let crowdSentimentData = {};
 
+        // Reddit sentiment cache
+        let redditSentimentData = {};
+
+        // Fetch Reddit sentiment data for watchlist
+        async function fetchRedditSentiment() {
+            try {
+                const response = await fetch('./reddit_sentiment_simple.json?t=' + Date.now());
+                if (!response.ok) throw new Error('Failed to fetch Reddit sentiment');
+                const data = await response.json();
+                redditSentimentData = data.tickers || {};
+                console.log('[Reddit] Sentiment loaded:', Object.keys(redditSentimentData).length, 'tickers');
+                return redditSentimentData;
+            } catch (e) {
+                console.log('[Reddit] Sentiment not available yet:', e);
+                redditSentimentData = {};
+                return {};
+            }
+        }
+
+        // Get Reddit sentiment for a specific ticker
+        function getRedditSentiment(ticker) {
+            const data = redditSentimentData[ticker];
+            if (!data) {
+                return { label: 'neutral', emoji: '⚪', score: 0, mentions: 0, buzz: 0 };
+            }
+            return data;
+        }
+
         // Global earnings data cache
         let earningsData = {};
         
@@ -8142,10 +8170,16 @@
             crowdSentimentData = await fetchCrowdSentiment();
         }, 300000);
         
+        // Refresh Reddit sentiment periodically (every 15 minutes)
+        setInterval(async () => {
+            redditSentimentData = await fetchRedditSentiment();
+        }, 900000);
+        
         // Init immediately
         initCrowdSentiment();
         fetchEarningsData();
         fetchSignalAccuracy(); // Load signal accuracy data
+        fetchRedditSentiment(); // Load Reddit sentiment data
         
         // Generate dynamic strategy description based on current conditions
         function generateDynamicStrategy(symbol, rsi, changePct, aiScore, company) {
@@ -8643,18 +8677,27 @@
                         </div>
                         ` : ''}
                         
-                        <!-- SOCIAL vs AI SENTIMENT BATTLE -->
+                        <!-- REDDIT vs AI SENTIMENT BATTLE -->
                         <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                 <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">SENTIMENT BATTLE</span>
                             </div>
+                            
+                            <!-- Reddit Sentiment -->
+                            ${(() => {
+                                const reddit = getRedditSentiment(stock.symbol);
+                                const redditBullish = reddit.label === 'bullish' ? 75 : reddit.label === 'bearish' ? 25 : 50;
+                                const redditColor = reddit.label === 'bullish' ? '#22c55e' : reddit.label === 'bearish' ? '#ef4444' : '#eab308';
+                                return `
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('crowd');" title="Click to learn how Crowd Sentiment is calculated">📱 Social <span style="opacity: 0.4; font-size: 9px; font-weight: 500;">(sim)</span> <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
-                                <span style="font-size: 11px; font-weight: 700; color: ${socialBullish > 50 ? '#22c55e' : '#ef4444'};">${socialBullish.toFixed(0)}% Bullish</span>
+                                <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('reddit');" title="Click to learn how Reddit Sentiment is calculated">${reddit.emoji} Reddit <span style="opacity: 0.4; font-size: 9px; font-weight: 500;">(${reddit.mentions} mentions)</span> <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
+                                <span style="font-size: 11px; font-weight: 700; color: ${redditColor};">${reddit.label.toUpperCase()}</span>
                             </div>
                             <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 12px; overflow: hidden;">
-                                <div style="width: ${socialBullish}%; height: 100%; background: linear-gradient(90deg, #ef4444, #22c55e); border-radius: 3px; transition: width 0.5s;"></div>
+                                <div style="width: ${redditBullish}%; height: 100%; background: ${reddit.label === 'bullish' ? 'linear-gradient(90deg, #16a34a, #22c55e)' : reddit.label === 'bearish' ? 'linear-gradient(90deg, #dc2626, #ef4444)' : 'linear-gradient(90deg, #ca8a04, #eab308)'}; border-radius: 3px; transition: width 0.5s;"></div>
                             </div>
+                                `;
+                            })()}
                             
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <span style="font-size: 11px; font-weight: 700; color: ${aiScoreColor}; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('enhanced');" title="Click to learn how AI Score is calculated">🤖 AI Score <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
@@ -8967,9 +9010,10 @@
             modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 10002; padding: 16px;';
             
             const isAI = type === 'ai' || type === 'enhanced';
-            const title = isAI ? '🤖 AI Score' : '📱 Social Sentiment';
-            const accentColor = isAI ? '#22c55e' : '#06b6d4';
-            const bgGradient = isAI ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(6, 182, 212, 0.05))' : 'linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(34, 197, 94, 0.05))';
+            const isReddit = type === 'reddit';
+            const title = isAI ? '🤖 AI Score' : isReddit ? '📱 Reddit Sentiment' : '📱 Social Sentiment';
+            const accentColor = isAI ? '#22c55e' : isReddit ? '#a855f7' : '#06b6d4';
+            const bgGradient = isAI ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(6, 182, 212, 0.05))' : isReddit ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05))' : 'linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(34, 197, 94, 0.05))';
             
             const aiContent = `
                 <div style="margin-bottom: 20px;">
@@ -9088,6 +9132,70 @@
                 </div>
             `;
             
+            const redditContent = `
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
+                        <strong>Real-time sentiment</strong> from Reddit's financial communities using AI-powered analysis.
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.02)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">🤖 HOW IT WORKS</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+                            <div style="margin-bottom: 8px;">We scrape and analyze posts from:</div>
+                            <div style="margin-bottom: 6px;">• r/wallstreetbets</div>
+                            <div style="margin-bottom: 6px;">• r/stocks</div>
+                            <div style="margin-bottom: 6px;">• r/investing</div>
+                            <div>• r/StockMarket</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">📊 FINBERT ANALYSIS</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+                            <div style="margin-bottom: 8px;">Each post is analyzed using <strong style="color: var(--text-primary);">ProsusAI FinBERT</strong>:</div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span>Positive Sentiment</span>
+                                <span style="color: #22c55e;">Bullish 🟢</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span>Negative Sentiment</span>
+                                <span style="color: #ef4444;">Bearish 🔴</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                                <span>Neutral/Mixed</span>
+                                <span style="color: #eab308;">Neutral ⚪</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">📈 BUZZ SCORE</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+                            <div style="margin-bottom: 8px;">Mentions weighted by upvote engagement:</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Low</span>
+                                <span>&lt; 5 mentions</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Medium</span>
+                                <span>5-20 mentions</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 700;">High</span>
+                                <span>&gt; 20 mentions</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.02)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 12px; padding: 14px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #a855f7; margin-bottom: 8px;">⏱️ UPDATE FREQUENCY</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
+                            <div>Data refreshes every <strong style="color: var(--text-primary);">30 minutes</strong> during market hours (9:30 AM - 8:00 PM ET)</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
             modal.innerHTML = `
                 <div style="background: var(--bg-elevated); border: 1px solid var(--border-strong); border-radius: 20px; max-width: 420px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
                     <div style="padding: 20px; background: ${bgGradient}; border-bottom: 1px solid var(--border); border-radius: 20px 20px 0 0; display: flex; justify-content: space-between; align-items: center;">
@@ -9096,7 +9204,7 @@
                     </div>
                     
                     <div style="padding: 20px;">
-                        ${isAI ? aiContent : crowdContent}
+                        ${isAI ? aiContent : isReddit ? redditContent : crowdContent}
                         
                         <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; margin-top: 16px;">
                             <div style="font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.5;">
