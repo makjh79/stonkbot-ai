@@ -3574,7 +3574,7 @@
             }
             
             const catMap = {
-                'Tech Giants': ['AAPL', 'GOOGL', 'NVDA'],
+                'Tech Giants': ['AAPL', 'AMZN', 'GOOGL', 'NVDA'],
                 'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
                 'Fintech': ['HOOD', 'UPST', 'DKNG'],
                 'Defense/Income': ['AVGO']
@@ -3686,7 +3686,7 @@
         function updateSectorHeatmap(positions) {
             console.log('Updating sector heatmap with', positions.length, 'positions');
             const sectorSymbols = {
-                'mega': ['AAPL', 'GOOGL', 'NVDA'],
+                'mega': ['AAPL', 'AMZN', 'GOOGL', 'NVDA'],
                 'ai': ['AMD', 'PLTR', 'APP', 'CRWD'],
                 'fintech': ['HOOD', 'UPST', 'DKNG'],
                 'defense': ['AVGO']
@@ -3891,7 +3891,7 @@
                 };
 
                 const sectorSymbols = {
-                    'mega': ['AAPL', 'GOOGL', 'NVDA'],
+                    'mega': ['AAPL', 'AMZN', 'GOOGL', 'NVDA'],
                     'ai': ['AMD', 'PLTR', 'APP', 'CRWD'],
                     'fintech': ['HOOD', 'UPST', 'DKNG'],
                     'defense': ['AVGO']
@@ -4036,7 +4036,7 @@
         // Get category for each stock
         function getCategory(symbol) {
             const categories = {
-                'Tech Giants': ['AAPL', 'GOOGL', 'NVDA'],
+                'Tech Giants': ['AAPL', 'AMZN', 'GOOGL', 'NVDA'],
                 'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
                 'Fintech': ['HOOD', 'UPST', 'DKNG'],
                 'Defense/Income': ['AVGO']
@@ -4835,7 +4835,7 @@
 
                     // Categorize positions
                     const categories = {
-                        'Tech Giants': { symbols: ['AAPL', 'GOOGL', 'NVDA'], color: '#fbbf24', icon: '🏢', positions: [] },
+                        'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], color: '#fbbf24', icon: '🏢', positions: [] },
                         'AI/Growth': { symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], color: '#f97316', icon: '🤖', positions: [] },
                         'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG'], color: '#06b6d4', icon: '💰', positions: [] },
                         'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', icon: '🛡️', positions: [] }
@@ -5555,7 +5555,7 @@
             
             // Sector definitions
             const sectorConfig = {
-                'mega': { name: 'Tech Giants', icon: '🏢', symbols: ['AAPL', 'GOOGL', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, search, and AI.' },
+                'mega': { name: 'Tech Giants', icon: '🏢', symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, search, cloud, and AI.' },
                 'ai': { name: 'AI/Growth', icon: '🤖', symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], riskLevel: 'High', aiInsight: 'High-growth AI names seeing volatility. Maintaining for upside.' },
                 'fintech': { name: 'Fintech', icon: '💳', symbols: ['HOOD', 'UPST', 'DKNG'], riskLevel: 'High', aiInsight: 'Fintech and betting exposure. Higher risk/reward profile.' },
                 'defense': { name: 'Defense/Income', icon: '🛡️', symbols: ['AVGO'], riskLevel: 'Low', aiInsight: 'Broadcom as stability anchor with dividend income.' }
