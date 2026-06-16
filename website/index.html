@@ -6530,8 +6530,8 @@
             
             // Build unified popup content using live + static data
             // Get company info
-            const companyInfo = companyData[symbol] || {};
-            const companyName = companyInfo.company || getCompanyName(symbol) || symbol;
+            const companyDataLocal = (typeof companyInfo !== 'undefined' ? companyInfo[symbol] : {}) || {};
+            const companyName = companyDataLocal.company || getCompanyName(symbol) || symbol;
             
             // Get live metrics
             const livePrice = liveData.price || (position ? position.current : 0);
@@ -6541,9 +6541,9 @@
             const targets = liveData.targets || {};
             
             // Merge static and live data
-            const thesis = staticData ? staticData.thesis : (companyInfo.strategy || `AI-selected position in ${companyName}`);
-            const catalyst = staticData ? staticData.catalyst : (companyInfo.catalyst || 'Active trading signal');
-            const risk = staticData ? staticData.risk : (companyInfo.risk || 'Market volatility, sector rotation');
+            const thesis = staticData ? staticData.thesis : (companyDataLocal.strategy || `AI-selected position in ${companyName}`);
+            const catalyst = staticData ? staticData.catalyst : (companyDataLocal.catalyst || 'Active trading signal');
+            const risk = staticData ? staticData.risk : (companyDataLocal.risk || 'Market volatility, sector rotation');
             const confidence = staticData ? staticData.confidence : `${liveAIScore}% - AI Confidence Score`;
             const entryReason = staticData ? staticData.entryReason : `RSI ${liveRSI.toFixed(1)} entry signal`;
             const stopReason = staticData ? staticData.stopReason : '-15% stop if thesis breaks';
