@@ -8071,26 +8071,26 @@
                     
                     <div style="padding: 20px;">
                         <div style="text-align: center; padding: 20px; background: var(--bg-surface); border-radius: 12px; margin-bottom: 16px;">
-                            <div style="font-size: 48px; font-weight: 800; color: ${winRateColor}; font-family: 'JetBrains Mono', monospace;">${winRate}%</div>
+                            <div style="font-size: 48px; font-weight: 800; color: ${winRateColor}; font-family: 'JetBrains Mono', monospace;">${winRate}%<span class="info-icon" style="font-size: 8px; width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Win Rate:</strong> Percentage of completed signals that hit profit targets (+25% or +50%).<br><br>0% = no signals have closed yet (still active).<br><br>Calculated as: Wins ÷ Closed Signals × 100')">ⓘ</span></div>
                             <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">${stats.closed_signals || 0} closed signals</div>
                         </div>
                         
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
                             <div style="text-align: center; padding: 12px; background: var(--bg-surface); border-radius: 10px;">
                                 <div style="font-size: 20px; font-weight: 700; color: #22c55e;">${stats.wins || 0}</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">Wins</div>
+                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Wins <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Wins:</strong> Signals that hit +25% or +50% profit targets.<br><br>Counted when any position reaches trim or full exit profit levels.')">ⓘ</span></div>
                             </div>
                             <div style="text-align: center; padding: 12px; background: var(--bg-surface); border-radius: 10px;">
                                 <div style="font-size: 20px; font-weight: 700; color: #ef4444;">${stats.losses || 0}</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">Losses</div>
+                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Losses <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Losses:</strong> Signals that hit -15% stop loss.<br><br>Stop loss triggers immediate sell to limit downside risk.')">ⓘ</span></div>
                             </div>
                             <div style="text-align: center; padding: 12px; background: var(--bg-surface); border-radius: 10px;">
                                 <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);">${stats.avg_return ? stats.avg_return.toFixed(1) : 0}%</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">Avg Return</div>
+                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Avg Return <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Avg Return:</strong> Average profit/loss across all closed signals (wins + losses).<br><br>Includes both profitable exits and stop losses.')">ⓘ</span></div>
                             </div>
                             <div style="text-align: center; padding: 12px; background: var(--bg-surface); border-radius: 10px;">
                                 <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);">${stats.pending_signals || 0}</div>
-                                <div style="font-size: 11px; color: var(--text-muted);">Active</div>
+                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Active <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Active Signals:</strong> Open positions awaiting exit.<br><br>Waiting to hit +25%/+50% profit targets or -15% stop loss.')">ⓘ</span></div>
                             </div>
                         </div>
                         
