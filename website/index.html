@@ -4329,7 +4329,7 @@
             // Calculate days active from timestamp
             const startDate = new Date('2026-06-04');
             const currentDate = new Date();
-            const daysActive = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)));
+            const daysActive = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
 
             // Market index reference values (LIVE from backend)
             const sp500Data = marketIndices?.['S&P 500'] || {};
