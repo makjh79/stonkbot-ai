@@ -6503,7 +6503,7 @@
         
         function showTradeDetails(symbol) {
             // Get live data from AI watchlist if available
-            const liveData = aiWatchlistPrices[symbol] || {};
+            const liveData = (typeof aiWatchlistPrices !== 'undefined' ? aiWatchlistPrices[symbol] : {}) || {};
             const staticData = tradeRationale[symbol];
             
             // Get current position data from portfolio
