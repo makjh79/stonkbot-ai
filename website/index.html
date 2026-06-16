@@ -6493,12 +6493,31 @@
             }
         };
 
+        // Track last data refresh time for freshness check
+        window.lastHoldingsDataRefresh = Date.now();
+        
+        // Refresh holdings data every 30 seconds
+        setInterval(() => {
+            window.lastHoldingsDataRefresh = Date.now();
+        }, 30000);
+        
         function showTradeDetails(symbol) {
-            const data = tradeRationale[symbol];
+            // Get live data from AI watchlist if available
+            const liveData = aiWatchlistPrices[symbol] || {};
+            const staticData = tradeRationale[symbol];
             
             // Get current position data from portfolio
             const currentData = window.lastPortfolioData || FALLBACK_DATA;
             const position = currentData.positions.find(p => p.symbol === symbol);
+            
+            // Check data freshness
+            const dataAge = Date.now() - window.lastHoldingsDataRefresh;
+            const isStale = dataAge > 120000; // 2 minutes = stale
+            const staleWarning = isStale ? `
+                <div style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; padding: 0.5rem; margin-bottom: 0.75rem; text-align: center;">
+                    <span style="font-size: 0.7rem; color: #ef4444;">⚠️ Data may be stale (${Math.round(dataAge/1000)}s old)</span>
+                </div>
+            ` : '';
             
             const modal = document.createElement('div');
             modal.id = 'trade-modal';
@@ -6509,101 +6528,88 @@
                 z-index: 10000; padding: 1rem;
             `;
             
-            // Build popup content - use detailed data if available, otherwise show basic position info
-            let content;
-            if (data) {
-                // Full rationale available
-                content = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">${data.company}</div>
-                        </div>
-                        <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
-                                font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
-                    </div>
-
-                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
-                        <div style="font-size: 0.7rem; color: var(--accent-blue); font-weight: 700; margin-bottom: 0.5rem;">🎯 INVESTMENT THESIS</div>
-                        <div style="font-size: 0.85rem; color: var(--text-primary); line-height: 1.5;">${data.thesis}</div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                        <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; padding: 0.6rem;">
-                            <div style="font-size: 0.6rem; color: var(--accent-green); text-transform: uppercase;">Catalyst</div>
-                            <div style="font-size: 0.7rem; color: var(--text-primary); margin-top: 0.2rem;">${data.catalyst}</div>
-                        </div>
-                        <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 0.6rem;">
-                            <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase;">Risk Factor</div>
-                            <div style="font-size: 0.7rem; color: var(--text-primary); margin-top: 0.2rem;">${data.risk}</div>
-                        </div>
-                    </div>
-
-                    <div style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.6rem; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 0.3rem;">🤖 AI CONFIDENCE</div>
-                        <div style="font-size: 0.8rem; color: var(--text-primary);">${data.confidence}</div>
-                    </div>
-
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
-                        <div style="margin-bottom: 0.4rem;"><strong style="color: var(--accent-green);">Entry:</strong> ${data.entryReason}</div>
-                        <div><strong style="color: var(--accent-red);">Stop:</strong> ${data.stopReason}</div>
-                    </div>
-                `;
-            } else if (position) {
-                // No rationale but have position data - show basic info
-                const isPositive = position.unrealized_plpc >= 0;
-                const plColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
-                const plSign = isPositive ? '+' : '';
+            // Build unified popup content using live + static data
+            // Get company info
+            const companyInfo = companyData[symbol] || {};
+            const companyName = companyInfo.company || getCompanyName(symbol) || symbol;
+            
+            // Get live metrics
+            const livePrice = liveData.price || (position ? position.current : 0);
+            const liveChange = liveData.change_pct || 0;
+            const liveRSI = liveData.rsi || 50;
+            const liveAIScore = liveData.ai_score || 50;
+            const targets = liveData.targets || {};
+            
+            // Merge static and live data
+            const thesis = staticData ? staticData.thesis : (companyInfo.strategy || `AI-selected position in ${companyName}`);
+            const catalyst = staticData ? staticData.catalyst : (companyInfo.catalyst || 'Active trading signal');
+            const risk = staticData ? staticData.risk : (companyInfo.risk || 'Market volatility, sector rotation');
+            const confidence = staticData ? staticData.confidence : `${liveAIScore}% - AI Confidence Score`;
+            const entryReason = staticData ? staticData.entryReason : `RSI ${liveRSI.toFixed(1)} entry signal`;
+            const stopReason = staticData ? staticData.stopReason : '-15% stop if thesis breaks';
+            
+            // Build content - UNIFIED format for all positions
+            const isPositive = position ? position.unrealized_plpc >= 0 : liveChange >= 0;
+            const plColor = isPositive ? '#22c55e' : '#ef4444';
+            const plSign = isPositive ? '+' : '';
+            const plValue = position ? position.unrealized_plpc.toFixed(2) : liveChange.toFixed(2);
+            
+            const content = `
+                ${staleWarning}
                 
-                content = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">${getCompanyName(symbol)}</div>
-                        </div>
-                        <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
-                                font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <div>
+                        <div style="font-size: 1.4rem; font-weight: 800; color: #fbbf24;">$${symbol}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">${companyName}</div>
                     </div>
+                    <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
+                            font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
+                </div>
 
-                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
-                        <div style="font-size: 0.7rem; color: var(--accent-blue); font-weight: 700; margin-bottom: 0.5rem;">📊 POSITION DETAILS</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.8rem; color: var(--text-primary);">
-                            <div><span style="color: var(--text-secondary);">Shares:</span> <strong>${position.qty}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Current:</span> <strong>$${position.current.toFixed(2)}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Avg Entry:</span> <strong>$${position.avg_entry.toFixed(2)}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Value:</span> <strong>$${position.market_value.toLocaleString()}</strong></div>
-                        </div>
+                ${position ? `
+                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="font-size: 0.7rem; color: #06b6d4; font-weight: 700; margin-bottom: 0.5rem;">📊 POSITION DETAILS</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.8rem; color: var(--text-primary);">
+                        <div><span style="color: var(--text-secondary);">Shares:</span> <strong>${position.qty}</strong></div>
+                        <div><span style="color: var(--text-secondary);">Current:</span> <strong>$${livePrice ? livePrice.toFixed(2) : position.current.toFixed(2)}</strong></div>
+                        <div><span style="color: var(--text-secondary);">Avg Entry:</span> <strong>$${position.avg_entry.toFixed(2)}</strong></div>
+                        <div><span style="color: var(--text-secondary);">Value:</span> <strong>$${position.market_value.toLocaleString()}</strong></div>
                     </div>
+                </div>
 
-                    <div style="background: ${isPositive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; border: 1px solid ${plColor}; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.3rem;">UNREALIZED P&L</div>
-                        <div style="font-size: 1.5rem; font-weight: 800; color: ${plColor}; font-family: 'JetBrains Mono', monospace;">${plSign}${position.unrealized_plpc.toFixed(2)}%</div>
-                    </div>
+                <div style="background: ${isPositive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; border: 1px solid ${plColor}; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.3rem;">UNREALIZED P&L</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: ${plColor}; font-family: 'JetBrains Mono', monospace;">${plSign}${plValue}%</div>
+                </div>
+                ` : ''}
 
-                    <div style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.6rem; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 0.3rem;">🤖 AI ANALYSIS</div>
-                        <div style="font-size: 0.8rem; color: var(--text-primary);">Position added by trading system. Detailed thesis being generated...</div>
-                    </div>
+                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="font-size: 0.7rem; color: #06b6d4; font-weight: 700; margin-bottom: 0.5rem;">🎯 INVESTMENT THESIS</div>
+                    <div style="font-size: 0.85rem; color: var(--text-primary); line-height: 1.5;">${thesis}</div>
+                </div>
 
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
-                        <div><strong style="color: var(--accent-blue);">Strategy:</strong> -15% stop loss, +25% trim, +50% exit target</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; padding: 0.6rem;">
+                        <div style="font-size: 0.6rem; color: #22c55e; text-transform: uppercase;">Catalyst</div>
+                        <div style="font-size: 0.7rem; color: var(--text-primary); margin-top: 0.2rem;">${catalyst}</div>
                     </div>
-                `;
-            } else {
-                // Unknown symbol
-                content = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                        <div>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent-gold);">$${symbol}</div>
-                        </div>
-                        <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
-                                font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
+                    <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 0.6rem;">
+                        <div style="font-size: 0.6rem; color: #ef4444; text-transform: uppercase;">Risk Factor</div>
+                        <div style="font-size: 0.7rem; color: var(--text-primary); margin-top: 0.2rem;">${risk}</div>
                     </div>
-                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                        Position details not available
-                    </div>
-                `;
-            }
+                </div>
+
+                <div style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
+                    <div style="font-size: 0.6rem; color: #06b6d4; text-transform: uppercase; margin-bottom: 0.3rem;">🤖 AI CONFIDENCE</div>
+                    <div style="font-size: 0.8rem; color: var(--text-primary);">${confidence}</div>
+                    ${liveRSI ? `<div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 0.3rem;">RSI: ${liveRSI.toFixed(1)} | Signal: ${targets.signal || 'HOLD'}</div>` : ''}
+                </div>
+
+                <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
+                    <div style="margin-bottom: 0.4rem;"><strong style="color: #22c55e;">Entry:</strong> ${entryReason}</div>
+                    <div><strong style="color: #ef4444;">Stop:</strong> ${stopReason}</div>
+                </div>
+            `;
 
             modal.innerHTML = `
                 <div style="background: linear-gradient(145deg, #1a1a24, #0f0f14); border: 1px solid rgba(255,255,255,0.1);
