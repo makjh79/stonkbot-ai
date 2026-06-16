@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-06-15T18:07:13.513891",
+  "indices": {
+    "S&P 500": {
+      "symbol": "^GSPC",
+      "current_price": 7561.22,
+      "start_price": 7599.96,
+      "return_pct": -0.51,
+      "current_value": 99490.26,
+      "last_updated": "2026-06-15T18:07:13.602413"
+    },
+    "Dow Jones": {
+      "symbol": "^DJI",
+      "current_price": 51827.28,
+      "start_price": 51078.88,
+      "return_pct": 1.47,
+      "current_value": 101465.19,
+      "last_updated": "2026-06-15T18:07:13.697174"
+    },
+    "NASDAQ": {
+      "symbol": "^IXIC",
+      "current_price": 26642.73,
+      "start_price": 27086.81,
+      "return_pct": -1.64,
+      "current_value": 98360.54,
+      "last_updated": "2026-06-15T18:07:13.782119"
+    }
+  }
+}
