@@ -6750,8 +6750,8 @@
 
             modal.innerHTML = `
                 <div style="background: linear-gradient(145deg, #1a1a24, #0f0f14); border: 1px solid rgba(255,255,255,0.1);
-                     border-radius: 16px; padding: 1.5rem; max-width: 420px; width: 100%;
-                     box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                     border-radius: 16px; padding: 1.5rem; max-width: 420px; width: 100%; max-height: 80vh;
+                     overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.5); -webkit-overflow-scrolling: touch;">
                     ${content}
                 </div>
             `;
