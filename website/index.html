@@ -6723,7 +6723,10 @@
                 const bestDay = dailySummaries.reduce((max, d) => d.totalReturn > max.totalReturn ? d : max, dailySummaries[0]);
                 const worstDay = dailySummaries.reduce((min, d) => d.totalReturn < min.totalReturn ? d : min, dailySummaries[0]);
                 const currentReturn = returns[0];
-                const daysActive = dailySummaries.length;
+                // Calculate days active consistently with main page (calendar days since start)
+                const startDate = new Date('2026-06-04');
+                const currentDate = new Date();
+                const daysActive = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)));
 
                 // Render summary cards
                 summaryDiv.innerHTML = `
