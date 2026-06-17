@@ -3843,11 +3843,12 @@
                 }
             }
             
-            // Generate HTML for active sectors only (up to 4 visible at once), sorted by weight
+            // Generate HTML for ALL active sectors (not just top 4), sorted by weight
             const sectorsToShow = Array.from(activeSectors)
                 .filter(key => sectorPerformance[key].value > 0)
-                .sort((a, b) => sectorPerformance[b].weight - sectorPerformance[a].weight)
-                .slice(0, 4);
+                .sort((a, b) => sectorPerformance[b].weight - sectorPerformance[a].weight);
+            
+            console.log('Active sectors found:', sectorsToShow.length, sectorsToShow.map(k => `${sectorPerformance[k].name}: $${sectorPerformance[k].value.toFixed(2)} (${sectorPerformance[k].weight.toFixed(3)}%)`).join(', '));
             
             if (sectorsToShow.length === 0) {
                 document.getElementById('sectorHeatmap').innerHTML = 
@@ -3855,11 +3856,23 @@
                 return;
             }
             
-            let html = '';
+            // Use 2-column grid, allow wrapping for all sectors
+            let html = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; width: 100%;">';
             sectorsToShow.forEach(key => {
                 const data = sectorPerformance[key];
                 const allocationPct = data.weight;
                 const dollarValue = data.value;
+                
+                // Format dollar value: show $X.XX for small values, $X.XK for larger
+                let dollarDisplay;
+                if (dollarValue < 1000) {
+                    dollarDisplay = '$' + dollarValue.toFixed(0);  // e.g., "$14" for small positions
+                } else {
+                    dollarDisplay = '$' + (dollarValue/1000).toFixed(1) + 'K';  // e.g., "$2.4K"
+                }
+                
+                // For very small percentages, show 2 decimals
+                const pctDisplay = allocationPct < 0.1 ? allocationPct.toFixed(2) : allocationPct.toFixed(1);
                 
                 html += `
                 <div id="heat-${key}" onclick="showAllocationModal()" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='${data.color}80'" onmouseout="this.style.borderColor='var(--border)'">
@@ -3867,10 +3880,11 @@
                         <span style="font-size: 1rem;">${data.icon}</span>
                         <span style="font-size: 0.75rem; color: var(--text-secondary);">${data.name}</span>
                     </div>
-                    <div class="heatmap-value" id="heat-${key}-val" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">${allocationPct.toFixed(1)}%</div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.125rem;">$${(dollarValue/1000).toFixed(1)}K</div>
+                    <div class="heatmap-value" id="heat-${key}-val" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">${pctDisplay}%</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.125rem;">${dollarDisplay}</div>
                 </div>`;
             });
+            html += '</div>';
             
             document.getElementById('sectorHeatmap').innerHTML = html;
             console.log('Sector heatmap updated:', sectorsToShow.map(k => `${sectorPerformance[k].name}: ${sectorPerformance[k].weight.toFixed(1)}%`).join(', '));
