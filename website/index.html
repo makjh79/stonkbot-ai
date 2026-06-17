@@ -3741,37 +3741,37 @@
                 symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], 
                 name: 'Tech Giants', 
                 color: '#fbbf24', 
-                icon: '🏢' 
+                icon: '' 
             },
             'ai-growth': { 
                 symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], 
                 name: 'AI/Growth', 
                 color: '#f97316', 
-                icon: '🤖' 
+                icon: '' 
             },
             'fintech': { 
                 symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], 
                 name: 'Fintech', 
                 color: '#06b6d4', 
-                icon: '💰' 
+                icon: '' 
             },
             'ev-auto': { 
                 symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], 
                 name: 'EV/Auto', 
                 color: '#10b981', 
-                icon: '🚗' 
+                icon: '' 
             },
             'defense': { 
                 symbols: ['AVGO'], 
                 name: 'Defense', 
                 color: '#22c55e', 
-                icon: '🛡️' 
+                icon: '' 
             },
             'other': { 
                 symbols: [], 
                 name: 'Other', 
                 color: '#8b5cf6', 
-                icon: '📊' 
+                icon: '' 
             }
         };
 
@@ -3876,10 +3876,7 @@
                 
                 html += `
                 <div id="heat-${key}" onclick="showAllocationModal()" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='${data.color}80'" onmouseout="this.style.borderColor='var(--border)'">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.35rem; margin-bottom: 0.375rem;">
-                        <span style="font-size: 1rem;">${data.icon}</span>
-                        <span style="font-size: 0.75rem; color: var(--text-secondary);">${data.name}</span>
-                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.375rem; font-weight: 500;">${data.name}</div>
                     <div class="heatmap-value" id="heat-${key}-val" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">${pctDisplay}%</div>
                     <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.125rem;">${dollarDisplay}</div>
                 </div>`;
