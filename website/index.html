@@ -4643,7 +4643,7 @@
                 tradeLogData = [...trades, ...alerts, ...botActions];
                 
                 // Update stats
-                updateTradeLogStats({trades: trades});
+                updateTradeLogStats({trades: trades, last_updated: data.last_updated});
                 
                 // Render
                 renderTradeLog();
