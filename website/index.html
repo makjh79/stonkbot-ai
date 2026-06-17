@@ -4888,13 +4888,31 @@
             }
         });
 
+        // Global variables for allocation modal auto-refresh
+        let allocationRefreshInterval = null;
+        
+        function refreshAllocationModal() {
+            const modal = document.getElementById('allocationModal');
+            if (modal && modal.classList.contains('active')) {
+                showAllocationModal(true); // true = isRefresh, skip loading state
+            }
+        }
+        
         // Allocation Modal Functions - Mobile First Design
-        function showAllocationModal() {
+        function showAllocationModal(isRefresh = false) {
             const modal = document.getElementById('allocationModal');
             const content = document.getElementById('allocation-content');
+            
+            // Clear any existing refresh interval
+            if (allocationRefreshInterval) {
+                clearInterval(allocationRefreshInterval);
+                allocationRefreshInterval = null;
+            }
 
-            // Show loading state
-            content.innerHTML = '<div style="display: flex; justify-content: center; padding: 2rem;"><div class="loading-spinner"></div></div>';
+            // Show loading state only on initial open
+            if (!isRefresh) {
+                content.innerHTML = '<div style="display: flex; justify-content: center; padding: 2rem;"><div class="loading-spinner"></div></div>';
+            }
             
             // Fetch latest data
             fetch('portfolio_data.json?t=' + Date.now())
@@ -4912,23 +4930,42 @@
                     const cashValue = data.account.cash || 0;
                     const equityValue = data.account.equity || portfolioValue || 0;
 
-                    // Categorize positions
+                    // Categorize positions - DYNAMIC from actual portfolio
                     const categories = {
                         'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], color: '#fbbf24', icon: '🏢', positions: [] },
                         'AI/Growth': { symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], color: '#f97316', icon: '🤖', positions: [] },
-                        'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG'], color: '#06b6d4', icon: '💰', positions: [] },
-                        'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', icon: '🛡️', positions: [] }
+                        'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], color: '#06b6d4', icon: '💰', positions: [] },
+                        'EV/Auto': { symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], color: '#10b981', icon: '🚗', positions: [] },
+                        'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', icon: '🛡️', positions: [] },
+                        'Other': { symbols: [], color: '#8b5cf6', icon: '📊', positions: [] }
                     };
+                    
+                    // Add "Other" category for any positions not in defined sectors
+                    const allDefinedSymbols = Object.values(categories).flatMap(c => c.symbols);
+                    positions.forEach(pos => {
+                        let categorized = false;
+                        for (const [cat, info] of Object.entries(categories)) {
+                            if (info.symbols.includes(pos.symbol)) {
+                                info.positions.push(pos);
+                                categorized = true;
+                                break;
+                            }
+                        }
+                        if (!categorized) {
+                            categories['Other'].positions.push(pos);
+                        }
+                    });
+                    
+                    // Remove empty categories
+                    for (const cat of Object.keys(categories)) {
+                        if (categories[cat].positions.length === 0) {
+                            delete categories[cat];
+                        }
+                    }
 
                     let investedValue = 0;
                     positions.forEach(pos => {
                         investedValue += pos.market_value;
-                        for (const [cat, info] of Object.entries(categories)) {
-                            if (info.symbols.includes(pos.symbol)) {
-                                info.positions.push(pos);
-                                break;
-                            }
-                        }
                     });
 
                     // Calculate percentages based on INVESTED capital (matches donut chart)
@@ -5024,6 +5061,13 @@
                     html += '</div></div>';
 
                     content.innerHTML = html;
+                    
+                    // Set up auto-refresh every 30 seconds (only on initial load, not refresh)
+                    if (!isRefresh) {
+                        allocationRefreshInterval = setInterval(() => {
+                            refreshAllocationModal();
+                        }, 30000); // 30 seconds
+                    }
                 })
                 .catch(e => {
                     console.error('Allocation modal error:', e);
@@ -5054,9 +5098,149 @@
         }
 
         function closeAllocationModal() {
+            // Clear the refresh interval
+            if (allocationRefreshInterval) {
+                clearInterval(allocationRefreshInterval);
+                allocationRefreshInterval = null;
+            }
+            
             const modal = document.getElementById('allocationModal');
             modal.classList.remove('active');
             document.body.style.overflow = '';
+        }
+        
+        // Helper function to render allocation HTML (used for cached data fallback)
+        function renderAllocationHTML(content, portfolioValue, positions, cashValue, equityValue) {
+            // Categorize positions - DYNAMIC from actual portfolio
+            const categories = {
+                'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], color: '#fbbf24', icon: '🏢', positions: [] },
+                'AI/Growth': { symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], color: '#f97316', icon: '🤖', positions: [] },
+                'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], color: '#06b6d4', icon: '💰', positions: [] },
+                'EV/Auto': { symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], color: '#10b981', icon: '🚗', positions: [] },
+                'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', icon: '🛡️', positions: [] },
+                'Other': { symbols: [], color: '#8b5cf6', icon: '📊', positions: [] }
+            };
+            
+            // Add "Other" category for any positions not in defined sectors
+            positions.forEach(pos => {
+                let categorized = false;
+                for (const [cat, info] of Object.entries(categories)) {
+                    if (info.symbols.includes(pos.symbol)) {
+                        info.positions.push(pos);
+                        categorized = true;
+                        break;
+                    }
+                }
+                if (!categorized) {
+                    categories['Other'].positions.push(pos);
+                }
+            });
+            
+            // Remove empty categories
+            for (const cat of Object.keys(categories)) {
+                if (categories[cat].positions.length === 0) {
+                    delete categories[cat];
+                }
+            }
+            
+            let investedValue = 0;
+            positions.forEach(pos => {
+                investedValue += pos.market_value;
+            });
+            
+            // Calculate percentages based on INVESTED capital
+            const totalInvested = investedValue;
+            const investedPctOfEquity = equityValue > 0 ? ((investedValue / equityValue) * 100) : 0;
+            const cashPctOfEquity = equityValue > 0 ? ((cashValue / equityValue) * 100) : 0;
+            
+            // Build HTML - Mobile First Design
+            let html = '<div style="margin-bottom: 1.5rem;">';
+            
+            // Portfolio Summary Card
+            html += '<div style="background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(168,85,247,0.05)); border: 1px solid rgba(6,182,212,0.2); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem;">';
+            html += '<div style="text-align: center;">';
+            html += '<div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Total Portfolio</div>';
+            html += '<div style="font-size: 1.75rem; font-weight: 700; font-family: \'JetBrains Mono\', monospace; color: var(--text-primary);">$' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
+            html += '<div style="display: flex; justify-content: center; gap: 1rem; margin-top: 0.75rem; font-size: 0.75rem;">';
+            html += '<div><span style="color: var(--text-muted);">Invested:</span> <span style="color: var(--text-primary); font-weight: 600;">' + investedPctOfEquity.toFixed(0) + '%</span></div>';
+            if (cashPctOfEquity < 0) {
+                html += '<div><span style="color: var(--text-muted);">Margin:</span> <span style="color: var(--accent-gold); font-weight: 600;">' + Math.abs(cashPctOfEquity).toFixed(0) + '%</span></div>';
+            } else {
+                html += '<div><span style="color: var(--text-muted);">Cash:</span> <span style="color: var(--accent-green); font-weight: 600;">' + cashPctOfEquity.toFixed(0) + '%</span></div>';
+            }
+            html += '</div></div></div>';
+            
+            // Each category
+            for (const [catName, info] of Object.entries(categories)) {
+                if (info.positions.length === 0) continue;
+                
+                const catValue = info.positions.reduce((sum, p) => sum + p.market_value, 0);
+                const catPct = totalInvested > 0 ? ((catValue / totalInvested) * 100) : 0;
+                
+                html += '<div style="margin-bottom: 1rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">';
+                
+                // Category Header
+                html += '<div style="padding: 0.875rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">';
+                html += '<div style="display: flex; align-items: center; gap: 0.5rem;">';
+                html += '<span style="font-size: 1.1rem;">' + info.icon + '</span>';
+                html += '<span style="font-weight: 600; color: ' + info.color + ';">' + catName + '</span>';
+                html += '</div>';
+                html += '<div style="text-align: right;">';
+                html += '<div style="font-weight: 600; color: var(--text-primary);">' + catPct.toFixed(1) + '%</div>';
+                html += '<div style="font-size: 0.7rem; color: var(--text-muted);">$' + (catValue/1000).toFixed(1) + 'K</div>';
+                html += '</div></div>';
+                
+                // Positions List
+                html += '<div style="padding: 0.5rem 0;">';
+                info.positions.forEach(pos => {
+                    const posPct = equityValue > 0 ? ((pos.market_value / equityValue) * 100) : 0;
+                    const isPositive = pos.unrealized_pl >= 0;
+                    const plColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
+                    const plSign = isPositive ? '+' : '';
+                    
+                    html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);">';
+                    html += '<div style="display: flex; align-items: center; gap: 0.75rem;">';
+                    html += '<div style="font-weight: 600; color: var(--text-primary); min-width: 48px;">' + pos.symbol + '</div>';
+                    html += '<div style="font-size: 0.75rem; color: var(--text-muted);">' + pos.qty + ' shares</div>';
+                    html += '</div>';
+                    html += '<div style="text-align: right;">';
+                    html += '<div style="font-weight: 500; color: var(--text-primary);">$' + pos.market_value.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
+                    html += '<div style="font-size: 0.7rem; color: ' + plColor + '">' + plSign + pos.unrealized_plpc.toFixed(1) + '%</div>';
+                    html += '</div></div>';
+                });
+                html += '</div></div>';
+            }
+            
+            // Cash/Margin Section
+            html += '<div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">';
+            html += '<div style="padding: 0.875rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">';
+            html += '<div style="display: flex; align-items: center; gap: 0.5rem;">';
+            html += '<span style="font-size: 1.1rem;">💵</span>';
+            if (cashPctOfEquity < 0) {
+                html += '<span style="font-weight: 600; color: var(--accent-gold);">Margin Used</span>';
+            } else {
+                html += '<span style="font-weight: 600; color: var(--accent-green);">Cash</span>';
+            }
+            html += '</div>';
+            html += '<div style="text-align: right;">';
+            if (cashPctOfEquity < 0) {
+                html += '<div style="font-weight: 600; color: var(--accent-gold);">' + Math.abs(cashPctOfEquity).toFixed(1) + '%</div>';
+            } else {
+                html += '<div style="font-weight: 600; color: var(--accent-green);">' + cashPctOfEquity.toFixed(1) + '%</div>';
+            }
+            html += '<div style="font-size: 0.7rem; color: var(--text-muted);">$' + Math.abs(cashValue).toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
+            html += '</div></div>';
+            
+            if (cashPctOfEquity < 0) {
+                html += '<div style="padding: 0.75rem 1rem; background: rgba(251, 191, 36, 0.05);">';
+                html += '<div style="font-size: 0.75rem; color: var(--accent-gold); text-align: center;">⚠️ Using margin for ' + Math.abs(cashPctOfEquity).toFixed(0) + '% of equity</div>';
+                html += '</div>';
+            } else {
+                html += '<div style="padding: 0.75rem 1rem; font-size: 0.75rem; color: var(--text-muted); text-align: center;">Available for new positions</div>';
+            }
+            html += '</div></div>';
+            
+            content.innerHTML = html;
         }
 
         document.addEventListener('click', function(e) {
