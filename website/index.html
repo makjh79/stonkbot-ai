@@ -8891,27 +8891,39 @@
                 return;
             }
             
-            let html = '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 13px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Stock</th><th style="text-align: right; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Price</th><th style="text-align: right; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Change</th><th style="text-align: center; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">AI</th><th style="text-align: center; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Signal</th><th style="text-align: right; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Targets</th><th style="text-align: center; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Save</th></tr></thead><tbody>';
+            let html = '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;"><table style="width: 100%; min-width: 360px; border-collapse: collapse; font-size: 12px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Stock</th><th style="text-align: right; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Price</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Chg</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">AI</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Signal</th><th style="text-align: right; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Targets</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">★</th></tr></thead><tbody>';
             
             stocksToShow.forEach(function(stock) {
+                // Map data fields (API uses snake_case)
+                const price = stock.price || 0;
+                const changePct = stock.change_pct || stock.changePct || 0;
+                const aiScore = stock.ai_score || stock.aiScore || 50;
+                const rsi = stock.rsi || 50;
+                const company = stock.company || stock.name || '';
+                
                 const isSaved = saved.includes(stock.symbol);
-                const aiScoreColor = stock.aiScore >= 90 ? '#22c55e' : stock.aiScore >= 75 ? '#eab308' : '#06b6d4';
-                const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
-                const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
-                const signalText = stock.rsi <= 35 ? 'BUY' : stock.rsi <= 45 ? 'WATCH' : 'WAIT';
-                const signalColor = stock.rsi <= 35 ? '#22c55e' : stock.rsi <= 45 ? '#fbbf24' : 'var(--text-muted)';
-                const isOversold = stock.rsi <= 35;
+                const aiScoreColor = aiScore >= 90 ? '#22c55e' : aiScore >= 75 ? '#eab308' : '#06b6d4';
+                const changeColor = changePct >= 0 ? '#22c55e' : '#ef4444';
+                const changeIcon = changePct >= 0 ? '▲' : '▼';
+                const signalText = rsi <= 35 ? 'BUY' : rsi <= 45 ? 'WATCH' : 'WAIT';
+                const signalColor = rsi <= 35 ? '#22c55e' : rsi <= 45 ? '#fbbf24' : 'var(--text-muted)';
+                const isOversold = rsi <= 35;
                 const rsiBadge = isOversold ? '<span style="background: #ef4444; color: white; font-size: 8px; font-weight: 700; padding: 1px 4px; border-radius: 3px; margin-left: 4px;">RSI</span>' : '';
                 
-                // Calculate price targets
-                const stopPrice = stock.stopLoss || (stock.price * 0.85);
-                const entryPrice = stock.price;
-                const target25 = stock.profit25 || (stock.price * 1.25);
-                const target50 = stock.profit50 || (stock.price * 1.50);
+                // Get targets from data or calculate
+                let stopPrice, target25;
+                if (stock.targets) {
+                    stopPrice = stock.targets.stop_loss || (price * 0.85);
+                    target25 = stock.targets.profit_25 || (price * 1.25);
+                } else {
+                    stopPrice = stock.stopLoss || (price * 0.85);
+                    target25 = stock.profit25 || (price * 1.25);
+                }
                 
-                const targetsHtml = '<span style="color: #ef4444; font-size: 11px;">$' + stopPrice.toFixed(0) + '</span> <span style="color: var(--text-muted);">→</span> <span style="color: var(--text-primary); font-weight: 600;">$' + entryPrice.toFixed(0) + '</span> <span style="color: var(--text-muted);">→</span> <span style="color: #22c55e; font-size: 11px;">$' + target25.toFixed(0) + '</span>';
+                // Compact targets: $stop → $price → $target
+                const targetsHtml = '<span style="color: #ef4444;">' + stopPrice.toFixed(0) + '</span><span style="color: var(--text-muted);">→</span><span style="color: var(--text-primary); font-weight: 600;">' + price.toFixed(0) + '</span><span style="color: var(--text-muted);">→</span><span style="color: #22c55e;">' + target25.toFixed(0) + '</span>';
                 
-                html += '<tr onclick="showStockChart(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background=\'rgba(255,255,255,0.03)\'" onmouseout="this.style.background=\'transparent\'"><td style="padding: 12px 6px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 14px; font-weight: 700;">' + stock.symbol + '</span>' + rsiBadge + '</div><div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">' + stock.company + '</div></td><td style="padding: 12px 6px; text-align: right; font-family: monospace; font-size: 14px; font-weight: 700;">$' + stock.price.toFixed(2) + '</td><td style="padding: 12px 6px; text-align: right;"><span style="color: ' + changeColor + '; font-weight: 600; font-size: 12px;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span></td><td style="padding: 12px 6px; text-align: center;"><span style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 10px; border: 1px solid ' + aiScoreColor + '40;">' + stock.aiScore + '</span></td><td style="padding: 12px 6px; text-align: center;"><span style="color: ' + signalColor + '; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">' + signalText + '</span></td><td style="padding: 12px 6px; text-align: right; font-family: monospace; font-size: 11px;">' + targetsHtml + '</td><td style="padding: 12px 6px; text-align: center;" onclick="event.stopPropagation();"><button onclick="toggleWatchStock(\'' + stock.symbol + '\')" style="background: none; border: none; font-size: 16px; cursor: pointer; color: ' + (isSaved ? '\'#fbbf24\'' : 'var(--text-muted)') + '; padding: 2px;">' + (isSaved ? '★' : '☆') + '</button></td></tr>';
+                html += '<tr onclick="showStockChart(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background=\'rgba(255,255,255,0.03)\'" onmouseout="this.style.background=\'transparent\'"><td style="padding: 10px 4px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 13px; font-weight: 700;">' + stock.symbol + '</span>' + rsiBadge + '</div><div style="font-size: 9px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;">' + company + '</div></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 700;">$' + price.toFixed(2) + '</td><td style="padding: 10px 4px; text-align: center;"><span style="color: ' + changeColor + '; font-weight: 600; font-size: 11px;">' + changeIcon + Math.abs(changePct).toFixed(1) + '%</span></td><td style="padding: 10px 4px; text-align: center;"><span style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px; border: 1px solid ' + aiScoreColor + '40;">' + aiScore + '</span></td><td style="padding: 10px 4px; text-align: center;"><span style="color: ' + signalColor + '; font-size: 10px; font-weight: 700; text-transform: uppercase;">' + signalText + '</span></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 10px; white-space: nowrap;">' + targetsHtml + '</td><td style="padding: 10px 4px; text-align: center;" onclick="event.stopPropagation();"><button onclick="toggleWatchStock(\'' + stock.symbol + '\')" style="background: none; border: none; font-size: 14px; cursor: pointer; color: ' + (isSaved ? '\'#fbbf24\'' : 'var(--text-muted)') + '; padding: 2px;">' + (isSaved ? '★' : '☆') + '</button></td></tr>';
             });
             
             html += '</tbody></table></div><div style="text-align: center; padding: 16px; color: var(--text-muted); font-size: 12px; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 8px;">Tap any row to view detailed chart and analysis</div>';
