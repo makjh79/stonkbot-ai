@@ -3475,7 +3475,7 @@
                         window.lastPortfolioData = data;
                         updateDashboard(data);
                         updateHoldingsCards(data.positions);
-                        updateSectorHeatmap(data.positions);
+                        updateSectorHeatmap(data.positions, data.account?.portfolio_value || 0);
                         updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                     })
                     .catch(err => {
@@ -3775,8 +3775,8 @@
             }
         };
 
-        // Update sector heatmap with live data - DYNAMIC
-        function updateSectorHeatmap(positions) {
+        // Update sector heatmap with live data - DYNAMIC (shows ALLOCATION %)
+        function updateSectorHeatmap(positions, portfolioValue) {
             console.log('Updating sector heatmap with', positions.length, 'positions');
             
             if (!positions || positions.length === 0) {
@@ -3785,7 +3785,7 @@
                 return;
             }
             
-            // Calculate performance for each sector
+            // Calculate allocation for each sector
             const sectorPerformance = {};
             const activeSectors = new Set();
             
@@ -3795,19 +3795,23 @@
                     name: def.name, 
                     color: def.color, 
                     icon: def.icon,
-                    value: 0, 
-                    weight: 0,
+                    value: 0,  // total market value in sector
+                    weight: 0,  // allocation % of portfolio
+                    pl: 0,      // total P&L
                     symbols: def.symbols 
                 };
             }
             
-            // Categorize positions and calculate performance
+            // Calculate total invested value
+            const totalInvested = positions.reduce((sum, pos) => sum + pos.market_value, 0);
+            
+            // Categorize positions
             positions.forEach(pos => {
                 let categorized = false;
                 for (const [key, data] of Object.entries(sectorPerformance)) {
                     if (key !== 'other' && data.symbols.includes(pos.symbol)) {
-                        data.value += (pos.unrealized_plpc * pos.market_value);
-                        data.weight += pos.market_value;
+                        data.value += pos.market_value;
+                        data.pl += pos.unrealized_pl;
                         activeSectors.add(key);
                         categorized = true;
                         break;
@@ -3815,14 +3819,24 @@
                 }
                 if (!categorized) {
                     // Add to Other
-                    sectorPerformance['other'].value += (pos.unrealized_plpc * pos.market_value);
-                    sectorPerformance['other'].weight += pos.market_value;
+                    sectorPerformance['other'].value += pos.market_value;
+                    sectorPerformance['other'].pl += pos.unrealized_pl;
                     activeSectors.add('other');
                 }
             });
             
-            // Generate HTML for active sectors only (up to 4 visible at once)
-            const sectorsToShow = Array.from(activeSectors).filter(key => sectorPerformance[key].weight > 0).slice(0, 4);
+            // Calculate allocation percentages (based on INVESTED capital)
+            for (const key of Object.keys(sectorPerformance)) {
+                if (totalInvested > 0) {
+                    sectorPerformance[key].weight = (sectorPerformance[key].value / totalInvested) * 100;
+                }
+            }
+            
+            // Generate HTML for active sectors only (up to 4 visible at once), sorted by weight
+            const sectorsToShow = Array.from(activeSectors)
+                .filter(key => sectorPerformance[key].value > 0)
+                .sort((a, b) => sectorPerformance[b].weight - sectorPerformance[a].weight)
+                .slice(0, 4);
             
             if (sectorsToShow.length === 0) {
                 document.getElementById('sectorHeatmap').innerHTML = 
@@ -3833,25 +3847,22 @@
             let html = '';
             sectorsToShow.forEach(key => {
                 const data = sectorPerformance[key];
-                const pct = data.weight > 0 ? (data.value / data.weight) : 0;
-                const pctStr = pct.toFixed(1);
-                const isPositive = pct >= 0;
-                const colorClass = isPositive ? 'heatmap-positive' : 'heatmap-negative';
-                const textColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
-                const sign = isPositive ? '+' : '';
+                const allocationPct = data.weight;
+                const dollarValue = data.value;
                 
                 html += `
                 <div id="heat-${key}" onclick="showAllocationModal()" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='${data.color}80'" onmouseout="this.style.borderColor='var(--border)'">
                     <div style="display: flex; align-items: center; justify-content: center; gap: 0.35rem; margin-bottom: 0.375rem;">
-                        <div style="width: 8px; height: 8px; border-radius: 50%; background: ${data.color};"></div>
+                        <span style="font-size: 1rem;">${data.icon}</span>
                         <span style="font-size: 0.75rem; color: var(--text-secondary);">${data.name}</span>
                     </div>
-                    <div class="heatmap-value" id="heat-${key}-val" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: ${textColor};">${sign}${pctStr}%</div>
+                    <div class="heatmap-value" id="heat-${key}-val" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">${allocationPct.toFixed(1)}%</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.125rem;">$${(dollarValue/1000).toFixed(1)}K</div>
                 </div>`;
             });
             
             document.getElementById('sectorHeatmap').innerHTML = html;
-            console.log('Sector heatmap updated:', sectorsToShow.map(k => sectorPerformance[k].name).join(', '));
+            console.log('Sector heatmap updated:', sectorsToShow.map(k => `${sectorPerformance[k].name}: ${sectorPerformance[k].weight.toFixed(1)}%`).join(', '));
         }
         
         // Minimal fallback - only used if ALL live data sources fail
@@ -3875,7 +3886,7 @@
                             console.log('XHR data loaded:', data.positions.length, 'positions');
                             window.lastPortfolioData = data;
                             updateHoldingsCards(data.positions);
-                            updateSectorHeatmap(data.positions);
+                            updateSectorHeatmap(data.positions, data.account?.portfolio_value || 0);
                             updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                         } catch (e) {
                             showError('Parse error: ' + e.message);
@@ -5859,12 +5870,14 @@
             const positions = portfolioData.positions || [];
             const totalValue = portfolioData.account?.portfolio_value || 100000;
             
-            // Sector definitions
+            // Sector definitions - DYNAMIC from actual portfolio holdings
             const sectorConfig = {
                 'mega': { name: 'Tech Giants', icon: '🏢', symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, search, cloud, and AI.' },
                 'ai': { name: 'AI/Growth', icon: '🤖', symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], riskLevel: 'High', aiInsight: 'High-growth AI names seeing volatility. Maintaining for upside.' },
-                'fintech': { name: 'Fintech', icon: '💳', symbols: ['HOOD', 'UPST', 'DKNG'], riskLevel: 'High', aiInsight: 'Fintech and betting exposure. Higher risk/reward profile.' },
-                'defense': { name: 'Defense/Income', icon: '🛡️', symbols: ['AVGO'], riskLevel: 'Low', aiInsight: 'Broadcom as stability anchor with dividend income.' }
+                'fintech': { name: 'Fintech', icon: '💳', symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], riskLevel: 'High', aiInsight: 'Fintech and betting exposure. Higher risk/reward profile.' },
+                'ev-auto': { name: 'EV/Auto', icon: '🚗', symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], riskLevel: 'High', aiInsight: 'EV and_auto disruptive growth. High volatility, high potential.' },
+                'defense': { name: 'Defense/Income', icon: '🛡️', symbols: ['AVGO'], riskLevel: 'Low', aiInsight: 'Broadcom as stability anchor with dividend income.' },
+                'other': { name: 'Other', icon: '📊', symbols: [], riskLevel: 'Medium', aiInsight: 'Positions not in defined sectors.' }
             };
             
             const config = sectorConfig[sectorId];
