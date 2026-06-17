@@ -6638,7 +6638,26 @@
             window.lastHoldingsDataRefresh = Date.now();
         }, 30000);
         
-        function showTradeDetails(symbol) {
+        // Global variable to track active popup refresh interval
+        let activePopupRefreshInterval = null;
+        let activePopupSymbol = null;
+
+        function refreshActivePopup() {
+            if (activePopupSymbol && document.getElementById('trade-modal')) {
+                // Re-render the popup with fresh data
+                showTradeDetails(activePopupSymbol, true);
+            }
+        }
+
+        function showTradeDetails(symbol, isRefresh = false) {
+            // Track the active symbol for refresh
+            activePopupSymbol = symbol;
+
+            // Clear any existing refresh interval
+            if (activePopupRefreshInterval) {
+                clearInterval(activePopupRefreshInterval);
+            }
+
             // Get live data from AI watchlist if available
             const liveData = (typeof aiWatchlistPrices !== 'undefined' ? aiWatchlistPrices[symbol] : {}) || {};
             const staticData = tradeRationale[symbol];
@@ -6762,9 +6781,23 @@
 
             document.body.appendChild(modal);
             document.body.style.overflow = 'hidden';
+
+            // Set up auto-refresh every 30 seconds (only if not already a refresh)
+            if (!isRefresh) {
+                activePopupRefreshInterval = setInterval(() => {
+                    refreshActivePopup();
+                }, 30000); // 30 seconds
+            }
         }
 
         function closeTradeDetails() {
+            // Clear the refresh interval
+            if (activePopupRefreshInterval) {
+                clearInterval(activePopupRefreshInterval);
+                activePopupRefreshInterval = null;
+            }
+            activePopupSymbol = null;
+
             const modal = document.getElementById('trade-modal');
             if (modal) {
                 modal.remove();
