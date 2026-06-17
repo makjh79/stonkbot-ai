@@ -3856,8 +3856,8 @@
                 return;
             }
             
-            // Use 2-column grid, allow wrapping for all sectors
-            let html = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; width: 100%;">';
+            // Generate cards for all sectors (grid container already exists in HTML)
+            let html = '';
             sectorsToShow.forEach(key => {
                 const data = sectorPerformance[key];
                 const allocationPct = data.weight;
@@ -3884,7 +3884,6 @@
                     <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.125rem;">${dollarDisplay}</div>
                 </div>`;
             });
-            html += '</div>';
             
             document.getElementById('sectorHeatmap').innerHTML = html;
             console.log('Sector heatmap updated:', sectorsToShow.map(k => `${sectorPerformance[k].name}: ${sectorPerformance[k].weight.toFixed(1)}%`).join(', '));
