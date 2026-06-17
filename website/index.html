@@ -8862,7 +8862,7 @@
             renderWatchlistContent();
         }
         
-        // Render watchlist content - Compact Table Layout (Option 1)
+        // Render watchlist content with Social vs AI Sentiment Battle
         function renderWatchlistContent() {
             const container = document.getElementById('watchlist-content');
             if (!container) return;
@@ -8893,80 +8893,154 @@
                     <div style="text-align: center; padding: 40px; color: var(--text-muted);">
                         <div style="font-size: 48px; margin-bottom: 16px;">☆</div>
                         <div style="font-size: 16px; margin-bottom: 8px;">No saved stocks yet</div>
-                        <div style="font-size: 13px;">Click the star on any stock to save it here</div>
+                        <div style="font-size: 13px;">Click the star ☆ on any stock to save it here</div>
                     </div>
                 `;
                 return;
             }
             
-            // Build compact table layout
-            let html = `
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <th style="text-align: left; padding: 12px 8px; color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Stock</th>
-                                <th style="text-align: right; padding: 12px 8px; color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Price</th>
-                                <th style="text-align: right; padding: 12px 8px; color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Change</th>
-                                <th style="text-align: center; padding: 12px 8px; color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">AI</th>
-                                <th style="text-align: center; padding: 12px 8px; color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Signal</th>
-                                <th style="text-align: center; padding: 12px 8px; color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Save</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            stocksToShow.forEach(stock => {
-                const isSaved = saved.includes(stock.symbol);
+            const stockRows = stocksToShow.map(stock => {
                 const aiScoreColor = stock.aiScore >= 90 ? '#22c55e' : stock.aiScore >= 75 ? '#eab308' : '#06b6d4';
-                const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
-                const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
-                const signalText = stock.rsi <= 35 ? 'BUY' : stock.rsi <= 45 ? 'WATCH' : 'WAIT';
-                const signalColor = stock.rsi <= 35 ? '#22c55e' : stock.rsi <= 45 ? '#fbbf24' : 'var(--text-muted)';
-                const isOversold = stock.rsi <= 35;
+                const isSaved = saved.includes(stock.symbol);
+                // Calculate upside dynamically based on current price vs intrinsic value
+                const upsidePct = ((stock.intrinsic - stock.price) / stock.price * 100);
+                const upsideStr = upsidePct >= 0 ? `+${upsidePct.toFixed(1)}%` : `${upsidePct.toFixed(1)}%`;
+                const upsideColor = upsidePct >= 20 ? '#22c55e' : upsidePct >= 0 ? '#eab308' : '#ef4444';
                 
-                html += `
-                    <tr onclick="showStockChart('${stock.symbol}')" 
-                        style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s;"
-                        onmouseover="this.style.background='rgba(255,255,255,0.03)'" 
-                        onmouseout="this.style.background='transparent'">
-                        <td style="padding: 14px 8px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-family: monospace; font-size: 16px; font-weight: 700;">${stock.symbol}</span>
-                                ${isOversold ? '<span style="background: #ef4444; color: white; font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 4px;">RSI</span>' : ''}
+                // Get REAL crowd sentiment from crowdSentimentData
+                const crowdData = crowdSentimentData[stock.symbol];
+                let socialBullish = 50;
+                let socialBearish = 50;
+                let crowdVolume = 0;
+                let sources = [];
+                
+                if (crowdData && crowdData.composite) {
+                    socialBullish = crowdData.composite.bullish || 50;
+                    socialBearish = crowdData.composite.bearish || 50;
+                    crowdVolume = crowdData.composite.volume || 0;
+                    sources = crowdData.composite.sources || [];
+                }
+                
+                // AI sentiment score
+                const aiBullish = stock.sentiment.bullish;
+                const aiBearish = 100 - aiBullish;
+                
+                // Calculate divergence
+                const divergence = Math.abs(socialBullish - aiBullish);
+                const isDivergence = divergence > 15;
+                const divergenceDirection = socialBullish > aiBullish ? 'CROWD > AI' : 'AI > CROWD';
+                const divergenceColor = isDivergence ? (socialBullish > aiBullish ? '#fbbf24' : '#06b6d4') : 'var(--text-muted)';
+                
+                // Get earnings status
+                const earningsStatus = getEarningsStatus(stock.symbol);
+                const hasEarnings = earningsStatus && earningsStatus.daysUntil >= 0 && earningsStatus.daysUntil <= 14;
+                const earningsUrgent = earningsStatus && (earningsStatus.isToday || earningsStatus.isTomorrow);
+                const earningsBadgeColor = earningsUrgent ? '#ef4444' : (earningsStatus && earningsStatus.isThisWeek ? '#fbbf24' : '#06b6d4');
+                const earningsText = earningsStatus ? 
+                    (earningsStatus.isToday ? 'TODAY' : 
+                     earningsStatus.isTomorrow ? 'Tomorrow' : 
+                     earningsStatus.daysUntil + 'd') : '';
+                
+                return `
+                    <div onclick="showStockChart('${stock.symbol}')" style="background: var(--bg-surface); border: 1px solid ${isDivergence ? divergenceColor + '40' : hasEarnings ? earningsBadgeColor + '30' : 'rgba(255,255,255,0.08)'}; border-radius: 16px; padding: 16px; margin-bottom: 12px; position: relative; cursor: pointer; ${isDivergence ? 'box-shadow: 0 0 20px ' + divergenceColor + '20;' : hasEarnings ? 'box-shadow: 0 0 15px ' + earningsBadgeColor + '15;' : ''}" onmouseover="this.style.background='var(--bg-elevated)'" onmouseout="this.style.background='var(--bg-surface)'">
+                        
+                        
+                        <!-- Earnings Warning Badge -->
+                        ${hasEarnings ? `
+                        <div style="position: absolute; top: ${isDivergence ? '16px' : '-8px'}; right: 12px; background: ${earningsBadgeColor}20; border: 1px solid ${earningsBadgeColor}60; color: ${earningsBadgeColor}; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; z-index: 2;" title="Earnings ${earningsStatus.date}">
+                            <span style="font-size: 11px;">📅</span>
+                            <span>${earningsText}</span>
+                        </div>` : ''}
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <div style="flex: 1;">
+                                <div style="font-family: monospace; font-size: 20px; font-weight: 800;">${stock.symbol}</div>
+                                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.3; max-width: 200px;">${stock.company}</div>
                             </div>
-                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${stock.company}</div>
-                        </td>
-                        <td style="padding: 14px 8px; text-align: right; font-family: monospace; font-size: 16px; font-weight: 700;">
-                            $${stock.price.toFixed(2)}
-                        </td>
-                        <td style="padding: 14px 8px; text-align: right;">
-                            <span style="color: ${changeColor}; font-weight: 600; font-size: 13px;">${changeIcon} ${Math.abs(stock.changePct).toFixed(1)}%</span>
-                        </td>
-                        <td style="padding: 14px 8px; text-align: center;">
-                            <span style="background: ${aiScoreColor}20; color: ${aiScoreColor}; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 12px; border: 1px solid ${aiScoreColor}40;">${stock.aiScore}</span>
-                        </td>
-                        <td style="padding: 14px 8px; text-align: center;">
-                            <span style="color: ${signalColor}; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">${signalText}</span>
-                        </td>
-                        <td style="padding: 14px 8px; text-align: center;" onclick="event.stopPropagation();">
-                            <button onclick="toggleWatchStock('${stock.symbol}')" style="background: none; border: none; font-size: 18px; cursor: pointer; color: ${isSaved ? '#fbbf24' : 'var(--text-muted)'}; padding: 4px;">${isSaved ? '★' : '☆'}</button>
-                        </td>
-                    </tr>
+                            <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                <button id="star-${stock.symbol}" onclick="toggleWatchStock('${stock.symbol}')" style="background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px; color: ${isSaved ? '#fbbf24' : 'var(--text-muted)'};">${isSaved ? '★' : '☆'}</button>
+                                <div style="display: flex; align-items: center; gap: 4px;" onclick="event.stopPropagation()">
+                                    <div style="background: ${aiScoreColor}20; border: 1px solid ${aiScoreColor}40; border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: ${aiScoreColor}; cursor: pointer;" onclick="showSentimentExplainer('ai')" title="Click to learn how AI Score works">AI ${stock.aiScore} <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></div>
+                                    ${stock.readinessTag ? `<div style="background: ${stock.readinessTag === 'READY' ? 'rgba(34,197,94,0.2)' : 'rgba(251,191,36,0.2)'}; border: 1px solid ${stock.readinessTag === 'READY' ? 'rgba(34,197,94,0.5)' : 'rgba(251,191,36,0.5)'}; border-radius: 20px; padding: 4px 8px; font-size: 10px; font-weight: 700; color: ${stock.readinessTag === 'READY' ? '#22c55e' : '#fbbf24'};">${stock.readinessTag}</div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: ${hasEarnings ? '10px' : '12px'};">
+                            <span style="font-family: monospace; font-size: 24px; font-weight: 800;">$${stock.price.toFixed(2)}</span>
+                        </div>
+                        
+                        <!-- Earnings Alert Banner -->
+                        ${hasEarnings ? `
+                        <div style="background: linear-gradient(135deg, ${earningsBadgeColor}15, ${earningsBadgeColor}05); border: 1px solid ${earningsBadgeColor}40; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;" onclick="event.stopPropagation();" title="Earnings date: ${earningsStatus.date}">
+                            <span style="font-size: 18px; flex-shrink: 0;">📊</span>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-size: 11px; font-weight: 800; color: ${earningsBadgeColor}; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">
+                                    ${earningsStatus.isToday ? 'EARNINGS TODAY' : earningsStatus.isTomorrow ? 'EARNINGS TOMORROW' : 'EARNINGS IN ' + earningsStatus.daysUntil + ' DAYS'}
+                                </div>
+                                <div style="font-size: 10px; color: var(--text-muted); line-height: 1.4;">
+                                    ${earningsStatus.isToday ? 'High volatility expected. Consider position size.' : earningsStatus.isTomorrow ? 'Prepare for potential volatility tomorrow.' : 'Earnings approaching. Review position before announcement.'}
+                                </div>
+                            </div>
+                            <span style="font-size: 10px; color: var(--text-muted); flex-shrink: 0; white-space: nowrap;">${earningsStatus.date.slice(5)}</span>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- REDDIT vs AI SENTIMENT BATTLE -->
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span style="font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">SENTIMENT BATTLE</span>
+                            </div>
+                            
+                            <!-- Trending Sentiment -->
+                            ${(() => {
+                                const trending = getTrendingSentiment(stock.symbol);
+                                const trendingBullish = trending.label === 'bullish' ? 75 : trending.label === 'bearish' ? 25 : 50;
+                                const trendingColor = trending.label === 'bullish' ? '#22c55e' : trending.label === 'bearish' ? '#ef4444' : '#eab308';
+                                return `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('trending');" title="Click to learn how Trending Sentiment is calculated">${trending.emoji} Trending <span style="opacity: 0.4; font-size: 9px; font-weight: 500;">(${trending.mentions} sources)</span> <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
+                                <span style="font-size: 11px; font-weight: 700; color: ${trendingColor};">${trending.label.toUpperCase()}</span>
+                            </div>
+                            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 12px; overflow: hidden;">
+                                <div style="width: ${trendingBullish}%; height: 100%; background: ${trending.label === 'bullish' ? 'linear-gradient(90deg, #16a34a, #22c55e)' : trending.label === 'bearish' ? 'linear-gradient(90deg, #dc2626, #ef4444)' : 'linear-gradient(90deg, #ca8a04, #eab308)'}; border-radius: 3px; transition: width 0.5s;"></div>
+                            </div>
+                                `;
+                            })()}
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 11px; font-weight: 700; color: ${aiScoreColor}; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;" onclick="event.stopPropagation(); showSentimentExplainer('enhanced');" title="Click to learn how AI Score is calculated">🤖 AI Score <span style="opacity: 0.5; margin-left: 2px;">ⓘ</span></span>
+                                <span style="font-size: 11px; font-weight: 700; color: ${aiScoreColor};">${stock.aiScore}</span>
+                            </div>
+                            <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                                <div style="width: ${stock.aiScore}%; height: 100%; background: linear-gradient(90deg, #ef4444, ${aiScoreColor}); border-radius: 3px; transition: width 0.5s;"></div>
+                            </div>
+                            
+                            <!-- Divergence comments removed - uses fake fallback data -->
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">RSI</div>
+                                <div style="font-size: 14px; font-weight: 700; color: ${stock.rsi < 30 ? '#06b6d4' : stock.rsi > 70 ? '#ef4444' : 'var(--text-secondary)'};">${stock.rsi}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Volume</div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--text-secondary);">${stock.volume}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Signal</div>
+                                <div style="font-size: 12px; font-weight: 700; color: ${stock.rsi <= 35 ? '#22c55e' : stock.rsi <= 45 ? '#fbbf24' : 'var(--text-muted)'};">${stock.rsi <= 35 ? 'BUY' : stock.rsi <= 45 ? 'WATCH' : 'WAIT'}</div>
+                            </div>
+                        </div>
+                    </div>
                 `;
-            });
+            }).join('');
             
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-                <div style="text-align: center; padding: 16px; color: var(--text-muted); font-size: 12px; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 8px;">
-                    Tap any row to view detailed chart and analysis
-                </div>
-            `;
-            
-            container.innerHTML = html;
-            return;
+            container.innerHTML = stockRows;
+        }
+
+        // Live prices fetched from ai_watchlist_live.json (updated every 30s by backend)
 
         // Generate dynamic chart data based on live price, RSI, and recent performance
         function generateDynamicChartData(stock) {
