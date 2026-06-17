@@ -8891,7 +8891,7 @@
                 return;
             }
             
-            let html = '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;"><table style="width: 100%; min-width: 360px; border-collapse: collapse; font-size: 12px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Stock</th><th style="text-align: right; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Price</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Chg</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; cursor: help;" title="AI Score (0-100): Composite of technical indicators including RSI, momentum, and volatility. Higher = more bullish setup.">AI <span style="opacity:0.5; font-size:8px;">ⓘ</span></th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; cursor: help;" title="Signal: BUY (RSI ≤35 – oversold, entry zone), WATCH (RSI 36-45 – approaching), WAIT (RSI >45 – hold off).">Signal <span style="opacity:0.5; font-size:8px;">ⓘ</span></th><th style="text-align: right; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; cursor: help;" title="Price Targets: Stop Loss → Current Price → Profit Target. Based on -15% stop loss and +25% take profit strategy.">Targets <span style="opacity:0.5; font-size:8px;">ⓘ</span></th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; cursor: help;" title="Save stocks to your personal watchlist for quick access. Click star to toggle.">★</th></tr></thead><tbody>';
+            let html = '<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.08);"><span style="font-size: 12px; color: var(--text-muted);">Watchlist Legend</span><button onclick="showWatchlistLegend()" style="background: rgba(255,255,255,0.08); border: none; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--text-secondary); cursor: pointer;">? How to read</button></div><div style="overflow-x: auto; -webkit-overflow-scrolling: touch;"><table style="width: 100%; min-width: 360px; border-collapse: collapse; font-size: 12px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Stock</th><th style="text-align: right; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Price</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Chg</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">AI</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Signal</th><th style="text-align: right; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">Targets</th><th style="text-align: center; padding: 8px 4px; color: var(--text-muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">★</th></tr></thead><tbody>';
             
             stocksToShow.forEach(function(stock) {
                 // Map data fields (API uses snake_case)
@@ -8930,6 +8930,37 @@
             
             container.innerHTML = html;
         }
+        
+        // Show watchlist legend modal - works on both desktop and mobile
+        function showWatchlistLegend() {
+            const legendContent = `
+                <div style="max-width: 400px;">
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">AI Score (0-100)</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Composite of technical indicators including RSI, price momentum, and volatility. Higher scores indicate more bullish setups.</div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Signal</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">
+                            <span style="color: #22c55e; font-weight: 600;">BUY</span> = RSI ≤35 (oversold, entry zone)<br>
+                            <span style="color: #fbbf24; font-weight: 600;">WATCH</span> = RSI 36-45 (approaching)<br>
+                            <span style="color: var(--text-muted); font-weight: 600;">WAIT</span> = RSI >45 (hold off)
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Targets</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;"><span style="color: #ef4444;">Stop Loss</span> → <span style="color: var(--text-primary); font-weight: 600;">Current Price</span> → <span style="color: #22c55e;">Profit Target</span><br>Based on -15% stop loss and +25% take profit strategy.</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">RSI Badge</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">Red "RSI" badge appears when Relative Strength Index is below 35, indicating potentially oversold conditions.</div>
+                    </div>
+                </div>
+            `;
+            
+            showModal('Watchlist Guide', legendContent);
+        }
+        
         // Live prices fetched from ai_watchlist_live.json (updated every 30s by backend)
 
         // Generate dynamic chart data based on live price, RSI, and recent performance
