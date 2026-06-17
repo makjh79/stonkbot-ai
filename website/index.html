@@ -9016,13 +9016,7 @@
                                 <div style="width: ${stock.aiScore}%; height: 100%; background: linear-gradient(90deg, #ef4444, ${aiScoreColor}); border-radius: 3px; transition: width 0.5s;"></div>
                             </div>
                             
-                            ${isDivergence ? `
-                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-                                <span style="font-size: 10px; color: ${divergenceColor}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    ${socialBullish > aiBullish ? '⚠️ Crowd overconfident - AI more cautious' : '💡 AI sees opportunity - Crowd missing it'}
-                                </span>
-                            </div>
-                            ` : ''}
+                            <!-- Divergence comments removed - uses fake fallback data -->
                         </div>
                         
                         <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
