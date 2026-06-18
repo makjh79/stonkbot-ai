@@ -6877,6 +6877,8 @@
         // Global variable to track active popup refresh interval
         let activePopupRefreshInterval = null;
         let activePopupSymbol = null;
+        let watchlistPopupRefreshInterval = null;
+        let watchlistPopupSymbol = null;
 
         function refreshActivePopup() {
             if (activePopupSymbol && document.getElementById('trade-modal')) {
@@ -8928,14 +8930,25 @@
         }
 
         // Show stock decision popup - focused on actionable metrics
-        function showStockChart(symbol) {
+        function showStockChart(symbol, isRefresh = false) {
+            // Track the active symbol for refresh
+            watchlistPopupSymbol = symbol;
+            
+            // Clear any existing refresh interval
+            if (watchlistPopupRefreshInterval) {
+                clearInterval(watchlistPopupRefreshInterval);
+                watchlistPopupRefreshInterval = null;
+            }
+            
             aiWatchlist = getWatchlistWithLivePrices();
             const stock = aiWatchlist.find(s => s.symbol === symbol);
             if (!stock) return;
             
-            // Close watchlist modal if open
-            const watchlistModal = document.getElementById('watchlist-modal');
-            if (watchlistModal) watchlistModal.remove();
+            // Close watchlist modal if open (only on first open, not refresh)
+            if (!isRefresh) {
+                const watchlistModal = document.getElementById('watchlist-modal');
+                if (watchlistModal) watchlistModal.remove();
+            }
             
             const chartData = generateDynamicChartData(stock);
             const modal = document.createElement('div');
@@ -9070,9 +9083,25 @@
             modal.onclick = function(e) { if (e.target === modal) closeStockChart(); };
             document.body.appendChild(modal);
             document.body.style.overflow = 'hidden';
+            
+            // Set up auto-refresh every 30 seconds (only if not already a refresh)
+            if (!isRefresh) {
+                watchlistPopupRefreshInterval = setInterval(() => {
+                    if (watchlistPopupSymbol && document.getElementById('stock-chart-modal')) {
+                        showStockChart(watchlistPopupSymbol, true);
+                    }
+                }, 30000); // 30 seconds
+            }
         }
         
         function closeStockChart() {
+            // Clear the refresh interval
+            if (watchlistPopupRefreshInterval) {
+                clearInterval(watchlistPopupRefreshInterval);
+                watchlistPopupRefreshInterval = null;
+            }
+            watchlistPopupSymbol = null;
+            
             const modal = document.getElementById('stock-chart-modal');
             if (modal) {
                 modal.remove();
