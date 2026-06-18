@@ -5017,13 +5017,15 @@
                     const cashValue = data.account.cash || 0;
                     const equityValue = data.account.equity || portfolioValue || 0;
 
-                    // Categorize positions - DYNAMIC from actual portfolio
+                    // Categorize positions - ALIGNED with SECTOR_DEFINITIONS
                     const categories = {
-                        'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], color: '#fbbf24', icon: '🏢', positions: [] },
-                        'AI/Growth': { symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], color: '#f97316', icon: '🤖', positions: [] },
-                        'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], color: '#06b6d4', icon: '💰', positions: [] },
-                        'EV/Auto': { symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], color: '#10b981', icon: '🚗', positions: [] },
-                        'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', icon: '🛡️', positions: [] },
+                        'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'META', 'NVDA', 'NFLX', 'CRM', 'ORCL', 'SAP'], color: '#fbbf24', icon: '🏢', positions: [] },
+                        'AI/Growth': { symbols: ['AMD', 'PLTR', 'CRWD', 'NET', 'DDOG', 'SNOW', 'OKTA', 'FSLY', 'TWLO', 'ASAN', 'ZM', 'AI', 'PATH', 'SOUN', 'CRNC'], color: '#f97316', icon: '🤖', positions: [] },
+                        'Fintech': { symbols: ['HOOD', 'UPST', 'SQ', 'SOFI', 'COIN', 'AFRM', 'LMND', 'ROOT', 'RELY', 'PYPL'], color: '#06b6d4', icon: '💰', positions: [] },
+                        'Consumer/Gaming': { symbols: ['DKNG', 'PENN', 'CHWY', 'ETSY', 'LULU', 'NKE', 'SHOP', 'ABNB', 'UBER', 'LYFT', 'DASH', 'COUR', 'RBLX'], color: '#ec4899', icon: '🎮', positions: [] },
+                        'EV/Auto': { symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID', 'GM', 'F', 'RACE'], color: '#10b981', icon: '🚗', positions: [] },
+                        'Semiconductors': { symbols: ['AVGO', 'MU', 'LRCX', 'AMAT', 'KLAC', 'SNPS', 'CDNS', 'MRVL', 'NXPI', 'QCOM', 'INTC', 'TXN', 'ADI'], color: '#22c55e', icon: '🔌', positions: [] },
+                        'Crypto': { symbols: ['MSTR', 'RIOT', 'MARA', 'BITF', 'CLSK', 'HUT', 'CORZ'], color: '#a855f7', icon: '₿', positions: [] },
                         'Other': { symbols: [], color: '#8b5cf6', icon: '📊', positions: [] }
                     };
                     
