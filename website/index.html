@@ -8984,6 +8984,10 @@
             const stock = aiWatchlist.find(s => s.symbol === symbol);
             if (!stock) return;
             
+            // Close watchlist modal if open
+            const watchlistModal = document.getElementById('watchlist-modal');
+            if (watchlistModal) watchlistModal.remove();
+            
             const chartData = generateDynamicChartData(stock);
             const modal = document.createElement('div');
             modal.id = 'stock-chart-modal';
