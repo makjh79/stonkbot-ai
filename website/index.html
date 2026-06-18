@@ -2693,7 +2693,7 @@
                         <span class="faq-chevron">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <div class="faq-answer-text"><strong>Autonomous Trading System:</strong><br><br>🛡️ <strong>Protect:</strong> Hard stops at -15% on all positions<br>🎯 <strong>Profit Taking:</strong> Trim 25% at +25%, full exit at +50%<br>🔥 <strong>Auto-Entry:</strong> Buys when RSI ≤ 35 AND AI Score ≥ 70 with 1.5x volume<br><br><strong>3-Tier Watchlist System:</strong><br>🔥 <strong>NOW:</strong> RSI ≤ 35 + AI ≥ 80 — Highest conviction, bot prioritizes<br>👀 <strong>WATCH:</strong> RSI ≤ 45 + AI ≥ 70 — Bot also buys when RSI < 35<br>📋 <strong>MONITOR:</strong> All others — Waiting for setup<br><br>Scans 5,000+ stocks every 5 minutes. Executes during market hours only. No emotions, no exceptions.</div>
+                        <div class="faq-answer-text"><strong>Autonomous Trading System:</strong><br><br>🛡️ <strong>Protect:</strong> Hard stops at -15% on all positions<br>🎯 <strong>Profit Taking:</strong> Trim 25% at +25%, full exit at +50%<br>🔥 <strong>Auto-Entry:</strong> Buys when RSI ≤ 35 AND AI Score ≥ 60 with 1.5x volume<br><br><strong>3-Tier Watchlist System:</strong><br>🔥 <strong>NOW:</strong> RSI ≤ 35 + AI ≥ 75 — Highest conviction, bot prioritizes<br>👀 <strong>WATCH:</strong> RSI ≤ 48 + AI ≥ 60 — Bot also buys when RSI < 35<br>📋 <strong>MONITOR:</strong> All others — Waiting for setup<br><br>Scans 5,000+ stocks every 5 minutes. Executes during market hours only. No emotions, no exceptions.</div>
                     </div>
                 </div>
                 <div class="faq-item" id="faq4">
@@ -2702,7 +2702,7 @@
                         <span class="faq-chevron">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <div class="faq-answer-text"><strong>Dynamic 15-Stock Curated List</strong> — updates every 5 minutes during market hours.<br><br><strong>Entry Criteria (High Bar):</strong><br>• RSI between 30-50 (buy zone)<br>• AI Score ≥ 70 (high quality only)<br>• Positive momentum vs S&P 500<br><br><strong>Auto-Removal (Strict Rotation):</strong><br>• RSI > 50 — moved past buy zone<br>• Up > 5% in a day — entry missed<br>• 3 days without RSI < 40 signal — stale<br>• Lagging S&P by 3% — weak setup<br><br>Only the best setups stay. Constant rotation keeps the list fresh and actionable.</div>
+                        <div class="faq-answer-text"><strong>Dynamic 15-Stock Curated List</strong> — updates every 5 minutes during market hours.<br><br><strong>Entry Criteria (Quality Filter):</strong><br>• RSI between 28-48 (buy zone)<br>• AI Score ≥ 60 (quality setups)<br>• Positive momentum vs S&P 500<br><br><strong>Auto-Removal (Strict Rotation):</strong><br>• RSI > 50 — moved past buy zone<br>• Up > 5% in a day — entry missed<br>• 3 days without RSI < 40 signal — stale<br>• Lagging S&P by 3% — weak setup<br><br>Only the best setups stay. Constant rotation keeps the list fresh and actionable.</div>
                     </div>
                 </div>
             </div>
@@ -8840,8 +8840,8 @@
             
             // Assign tiers based on RSI and AI Score (matching bot criteria)
             const watchlistWithTiers = aiWatchlist.map(stock => {
-                const tier = stock.rsi <= 35 && stock.aiScore >= 80 ? 'NOW' :
-                             stock.rsi <= 45 && stock.aiScore >= 70 ? 'WATCH' : 'MONITOR';
+                const tier = stock.rsi <= 35 && stock.aiScore >= 75 ? 'NOW' :
+                             stock.rsi <= 48 && stock.aiScore >= 60 ? 'WATCH' : 'MONITOR';
                 return {...stock, tier};
             });
             
@@ -8985,11 +8985,11 @@
                         </div>
                         <div style="margin-bottom: 16px; padding: 14px; background: rgba(239,68,68,0.1); border-radius: 10px; border-left: 3px solid #ef4444;">
                             <div style="font-weight: 700; color: #ef4444; font-size: 14px; margin-bottom: 4px;">🔥 NOW</div>
-                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 35 + AI Score ≥ 80. Highest conviction. Bot auto-buys (with 1.5x volume).</div>
+                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 35 + AI Score ≥ 75. Highest conviction. Bot auto-buys (with 1.5x volume).</div>
                         </div>
                         <div style="margin-bottom: 16px; padding: 14px; background: rgba(251,191,36,0.1); border-radius: 10px; border-left: 3px solid #fbbf24;">
                             <div style="font-weight: 700; color: #fbbf24; font-size: 14px; margin-bottom: 4px;">👀 WATCH</div>
-                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 45 + AI Score ≥ 70. Bot also buys when RSI drops below 35. Watch for entry.</div>
+                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 48 + AI Score ≥ 60. Bot also buys when RSI drops below 35. Watch for entry.</div>
                         </div>
                         <div style="padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid var(--text-muted);">
                             <div style="font-weight: 700; color: var(--text-muted); font-size: 14px; margin-bottom: 4px;">📋 MONITOR</div>

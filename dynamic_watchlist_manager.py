@@ -23,16 +23,16 @@ WATCHLIST_CONFIG = {
     'remove_underperform_sp500': -3,  # REMOVE if lagging S&P by 3%
     'max_days_in_watchlist': 3,  # REMOVE after 3 days if no RSI <40 signal
     
-    # ADDITION THRESHOLDS - High bar for entry
-    'add_rsi_min': 30,  # Must be in buy zone
-    'add_rsi_max': 45,  # But not too hot
-    'add_ai_score_min': 70,  # HIGH QUALITY only
+    # ADDITION THRESHOLDS - High bar but achievable
+    'add_rsi_min': 28,  # Must be in buy zone (slightly lower for more opportunities)
+    'add_rsi_max': 48,  # But not too hot
+    'add_ai_score_min': 60,  # Quality threshold (was 70, lowered for rotation)
     
     # TIER THRESHOLDS for frontend display
     'tier_now_rsi_max': 35,
-    'tier_now_ai_min': 80,
-    'tier_watch_rsi_max': 45,
-    'tier_watch_ai_min': 70,
+    'tier_now_ai_min': 75,  # High conviction
+    'tier_watch_rsi_max': 48,
+    'tier_watch_ai_min': 60,  # Quality entry zone
 }
 
 # Permanent positions (don't auto-replace these)

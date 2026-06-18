@@ -104,7 +104,7 @@ class StrategyConfig:
     # Only buy Core positions
     RSI_ENTRY_ENABLED = True  # ENABLED: Aggressive dip buying
     RSI_ENTRY_THRESHOLD = 35.0  # NOW tier: RSI < 35 triggers immediate entry
-    RSI_ENTRY_AI_MIN = 70  # Minimum AI Score for auto-entry (WATCH tier or better)
+    RSI_ENTRY_AI_MIN = 60  # Minimum AI Score for auto-entry (WATCH tier or better)
     RSI_ENTRY_POSITION_SIZE = 0.10  # 10% per dip buy (NOW tier only)
     MAX_RSI_POSITIONS_PER_DAY = 2  # Allow 2 dip buys per day
     # Dynamic watchlist - loaded from watchlist_changes.json
