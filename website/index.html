@@ -2874,25 +2874,7 @@
                     </div>
                 </div>
 
-                <!-- Stats Row - Dynamic from portfolio history -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase;">Start Value</div>
-                        <div id="detail-start-value" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">$100K</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase;">High</div>
-                        <div id="detail-high" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">--</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase;">Low</div>
-                        <div id="detail-low" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">--</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase;">Volatility</div>
-                        <div id="detail-volatility-modal" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">--</div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -4582,46 +4564,7 @@
                         : 'var(--accent-green)';
                 }
                 
-                // Fetch portfolio history for High/Low/Volatility
-                fetch('./portfolio_history.json?t=' + Date.now())
-                    .then(r => r.json())
-                    .then(history => {
-                        const checks = history.checks || [];
-                        if (checks.length > 0) {
-                            const values = checks.map(c => c.portfolio_value);
-                            const high = Math.max(...values);
-                            const low = Math.min(...values);
-                            
-                            // Calculate volatility (standard deviation)
-                            const mean = values.reduce((a, b) => a + b, 0) / values.length;
-                            const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
-                            const volatility = Math.sqrt(variance);
-                            const volatilityPct = (volatility / mean) * 100;
-                            
-                            // Update UI
-                            const highEl = document.getElementById('detail-high');
-                            const lowEl = document.getElementById('detail-low');
-                            const volEl = document.getElementById('detail-volatility-modal');
-                            
-                            if (highEl) highEl.textContent = '$' + (high/1000).toFixed(1) + 'K';
-                            if (lowEl) lowEl.textContent = '$' + (low/1000).toFixed(1) + 'K';
-                            if (volEl) {
-                                let volLabel = 'Low';
-                                if (volatilityPct > 2) volLabel = 'Med';
-                                if (volatilityPct > 5) volLabel = 'High';
-                                volEl.textContent = volLabel;
-                            }
-                            
-                            // Update date text
-                            const lastCheck = new Date(history.last_check || Date.now());
-                            const dateStr = lastCheck.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                            const dowDateEl = document.getElementById('detail-dow-date');
-                            const nasdaqDateEl = document.getElementById('detail-nasdaq-date');
-                            if (dowDateEl) dowDateEl.textContent = 'Last updated: ' + dateStr + ' • Live data';
-                            if (nasdaqDateEl) nasdaqDateEl.textContent = 'Last updated: ' + dateStr + ' • Live data';
-                        }
-                    })
-                    .catch(e => console.log('History fetch failed:', e));
+
         }
 
         // Trade Log Modal Functions
