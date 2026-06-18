@@ -72,9 +72,9 @@ class StrategyConfig:
     
     # THE COUNCIL'S AGGRESSIVE STRATEGY - MAX ALPHA
     MAX_POSITION_SIZE = 0.25  # Max 25% in top conviction plays (more concentrated)
-    STOP_LOSS_PCT = -10.0  # -10% stop loss (cut losers faster)
-    TAKE_PROFIT_TRIM = 15.0  # Trim at +15% (take gains quicker, compound faster)
-    TAKE_PROFIT_FULL = 30.0  # Full exit at +30% (lock in profits)
+    STOP_LOSS_PCT = -15.0  # -15% stop loss (hard stop, no exceptions)
+    TAKE_PROFIT_TRIM = 25.0  # Trim at +25% (sell 25% of position)
+    TAKE_PROFIT_FULL = 50.0  # Full exit at +50% (lock in profits)
     MAX_SECTOR_DEVIATION = 20.0  # Allow more concentration in winners
     MIN_CASH_ABSOLUTE = 500  # Keep $500 cash minimum (NO MARGIN), deploy rest
     
@@ -82,9 +82,8 @@ class StrategyConfig:
     # Removed: ALLOWED_RSI_SYMBOLS whitelist
     # Now uses full dynamic watchlist from watchlist_changes.json
     
-    # Keep these for rebalancing decisions
+    # Core positions for rebalancing focus
     CORE_POSITIONS = ['PLTR', 'AMD', 'CRWD', 'HOOD', 'AAPL', 'NVDA']
-    SELL_LIST = ['MSFT', 'SOFI', 'SCHD', 'SGOV']
     
     # AGGRESSIVE target allocations - Higher conviction weights
     TARGET_ALLOCATIONS = {
@@ -104,8 +103,9 @@ class StrategyConfig:
     
     # Only buy Core positions
     RSI_ENTRY_ENABLED = True  # ENABLED: Aggressive dip buying
-    RSI_ENTRY_THRESHOLD = 35.0  # Buy earlier (RSI < 35 instead of 30)
-    RSI_ENTRY_POSITION_SIZE = 0.10  # 10% per dip buy (more aggressive sizing)
+    RSI_ENTRY_THRESHOLD = 35.0  # NOW tier: RSI < 35 triggers immediate entry
+    RSI_ENTRY_AI_MIN = 70  # Minimum AI Score for auto-entry (WATCH tier or better)
+    RSI_ENTRY_POSITION_SIZE = 0.10  # 10% per dip buy (NOW tier only)
     MAX_RSI_POSITIONS_PER_DAY = 2  # Allow 2 dip buys per day
     # Dynamic watchlist - loaded from watchlist_changes.json
     # Falls back to core positions if watchlist unavailable
@@ -143,8 +143,7 @@ class StrategyConfig:
     
     # Special Rules
     CORE_HOLDINGS = ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA']  # Long-term holds
-    NEVER_SELL = ['SCHD', 'SGOV']  # Permanent stabilizers
-    TRIM_ON_GAIN = ['AMD', 'PLTR', 'APP', 'CRWD']  # Trim on +25%
+    TRIM_ON_GAIN = ['AMD', 'PLTR', 'APP', 'CRWD']  # Trim at +25%, full exit at +50%
 
 
 def is_market_open():
@@ -504,10 +503,6 @@ class STONKAIBot:
             symbol = pos['symbol']
             plpc = pos['unrealized_plpc']
             
-            # Skip never-sell positions
-            if symbol in StrategyConfig.NEVER_SELL:
-                continue
-            
             if plpc <= StrategyConfig.STOP_LOSS_PCT:
                 stops.append({
                     'symbol': symbol,
@@ -618,62 +613,14 @@ class STONKAIBot:
         return trades
     
     def check_council_rebalancing(self, portfolio_data: Dict) -> List[Dict]:
-        """Execute The Council's Compromise Plan:
-        1. Sell MSFT, SOFI, SCHD, SGOV (Jones + Paulson)
-        2. Add to PLTR, AMD, CRWD, HOOD (Wood)
-        3. Maintain 50% cash target
+        """DEPRECATED: Council rebalancing with SELL_LIST removed.
+        
+        Original plan sold MSFT/SOFI/SCHD/SGOV to buy Core positions.
+        Since portfolio doesn't hold those stocks, this now just logs
+        a debug message and returns empty trades.
         """
         trades = []
-        
-        positions = {p['symbol']: p for p in portfolio_data.get('positions', [])}
-        cash = portfolio_data['account']['cash']
-        portfolio_value = portfolio_data['account']['portfolio_value']
-        
-        # PHASE 1: Sell Tier 3 positions (Jones + Paulson)
-        for symbol in StrategyConfig.SELL_LIST:
-            if symbol in positions:
-                pos = positions[symbol]
-                trades.append({
-                    'symbol': symbol,
-                    'qty': pos['qty'],
-                    'action': 'SELL',
-                    'reason': f"Council Plan: Sell {symbol} (Tier 3) to raise cash and concentrate in Core 6",
-                    'current_pl': pos['unrealized_plpc']
-                })
-                logger.info(f"COUNCIL PLAN: Selling {symbol} - {pos['unrealized_plpc']:+.1f}%")
-        
-        # PHASE 2: Build Core positions (Wood)
-        # Only buy if we have plenty of cash (target 50%)
-        cash_pct = cash / portfolio_value
-        
-        if cash_pct > 0.50 and trades:  # Only buy after selling
-            # Calculate freed cash from sells
-            freed_cash = sum(positions[s]['market_value'] for s in StrategyConfig.SELL_LIST if s in positions)
-            available_for_core = freed_cash * 0.70  # Use 70% of freed cash for core
-            
-            # Priority: AMD > PLTR > CRWD > HOOD
-            core_priority = ['AMD', 'PLTR', 'CRWD', 'HOOD']
-            
-            for symbol in core_priority:
-                if symbol in positions:
-                    pos = positions[symbol]
-                    current_value = pos['market_value']
-                    target_value = portfolio_value * StrategyConfig.TARGET_ALLOCATIONS.get(symbol, 0.05)
-                    
-                    if current_value < target_value * 0.8:  # If below 80% of target
-                        add_value = min(target_value - current_value, available_for_core / len(core_priority))
-                        if add_value > 1000:  # Minimum $1K trade
-                            qty = int(add_value / pos['current'])
-                            if qty > 0:
-                                trades.append({
-                                    'symbol': symbol,
-                                    'qty': qty,
-                                    'action': 'BUY',
-                                    'reason': f"Council Plan: Add to {symbol} Core position (Wood conviction)",
-                                    'target_pct': StrategyConfig.TARGET_ALLOCATIONS.get(symbol, 0.05) * 100
-                                })
-                                logger.info(f"COUNCIL PLAN: Adding to {symbol} - target {StrategyConfig.TARGET_ALLOCATIONS.get(symbol, 0.05)*100:.0f}%")
-        
+        logger.debug("Council rebalancing: SELL_LIST positions not in portfolio, skipping")
         return trades
     
     def check_emergency_triggers(self, portfolio_data: Dict) -> List[str]:
@@ -714,6 +661,57 @@ class STONKAIBot:
                 alerts.append(f"WARNING: Cash buffer low at ${cash:,.2f} (need ${StrategyConfig.MIN_CASH_ABSOLUTE} minimum)")
         
         return alerts
+    
+    def liquidate_for_negative_cash(self, portfolio_data: Dict) -> List[Dict]:
+        """CRITICAL: If cash is negative, liquidate positions to cover deficit.
+        
+        Priority: Sell smallest positions first (by market value), 
+        then losing positions, until cash >= 0
+        """
+        trades = []
+        cash = portfolio_data['account']['cash']
+        
+        if cash >= 0:
+            return trades  # No action needed
+        
+        deficit = abs(cash)
+        logger.critical(f"NEGATIVE CASH: ${cash:.2f} - LIQUIDATION REQUIRED to cover ${deficit:.2f}")
+        
+        positions = portfolio_data.get('positions', [])
+        if not positions:
+            logger.error("No positions to liquidate! Cannot cover negative cash.")
+            return trades
+        
+        # Sort by market value (smallest first) - sell smallest positions first
+        # Then sort by P&L (losers first) within same size bracket
+        sorted_positions = sorted(positions, key=lambda p: (p['market_value'], p.get('unrealized_plpc', 0)))
+        
+        liquidated_value = 0
+        for pos in sorted_positions:
+            if liquidated_value >= deficit * 1.05:  # Add 5% buffer for price slippage
+                break
+            
+            symbol = pos['symbol']
+            qty = pos['qty']
+            market_value = pos['market_value']
+            plpc = pos.get('unrealized_plpc', 0)
+            
+            # Sell entire position
+            trades.append({
+                'symbol': symbol,
+                'qty': qty,
+                'action': 'SELL',
+                'reason': f'LIQUIDATION: Cover negative cash (${cash:.2f}). Position was {plpc:+.1f}%',
+                'current_pl': plpc
+            })
+            
+            liquidated_value += market_value
+            logger.critical(f"LIQUIDATION ORDER: Sell {qty} {symbol} (${market_value:.2f}) - {plpc:+.1f}%")
+        
+        if liquidated_value < deficit:
+            logger.critical(f"CRITICAL: Liquidated ${liquidated_value:.2f} but need ${deficit:.2f}")
+        
+        return trades
     
     def execute_trade(self, trade: Dict) -> bool:
         """Execute a trade through Alpaca - NEVER use margin"""
@@ -864,6 +862,21 @@ class STONKAIBot:
         if not self.state.can_trade():
             return
         
+        # PRIORITY 0: CRITICAL - Liquidate to cover negative cash
+        # Must happen before any other trades to prevent margin usage
+        liquidation_trades = self.liquidate_for_negative_cash(portfolio_data)
+        for trade in liquidation_trades:
+            if self.state.can_trade():
+                logger.critical(f"Executing liquidation trade: {trade['action']} {trade['qty']} {trade['symbol']}")
+                self.execute_trade(trade)
+        
+        # Re-fetch portfolio data if liquidations occurred
+        if liquidation_trades:
+            logger.info(f"Re-fetching portfolio data after {len(liquidation_trades)} liquidation trades")
+            portfolio_data = self.fetch_portfolio_data()
+            if not portfolio_data:
+                return
+        
         # Priority 1: Stop losses (execute immediately)
         stop_trades = self.check_stop_losses(portfolio_data)
         for trade in stop_trades:
@@ -959,8 +972,23 @@ class STONKAIBot:
                 else:
                     logger.warning(f"{symbol}: Could not fetch RSI")
                 
+                # Get AI Score from watchlist data
+                ai_score = 50  # Default
+                try:
+                    with open('/var/www/hedge-fund-website/ai_watchlist_live.json', 'r') as f:
+                        watchlist_data = json.load(f)
+                        ai_score = watchlist_data.get('prices', {}).get(symbol, {}).get('ai_score', 50)
+                except:
+                    pass
+                
                 if rsi and rsi <= StrategyConfig.RSI_ENTRY_THRESHOLD:
-                    logger.info(f"🎯 {symbol}: RSI {rsi:.1f} <= {StrategyConfig.RSI_ENTRY_THRESHOLD} - SIGNAL FOUND!")
+                    # Check AI score - must be WATCH tier or better (>= 70)
+                    if ai_score < StrategyConfig.RSI_ENTRY_AI_MIN:
+                        logger.info(f"❌ {symbol}: RSI {rsi:.1f} ≤ {StrategyConfig.RSI_ENTRY_THRESHOLD} but AI Score {ai_score} < {StrategyConfig.RSI_ENTRY_AI_MIN} (needs WATCH tier)")
+                        continue
+                    
+                    logger.info(f"🎯 {symbol}: NOW TIER SIGNAL - RSI {rsi:.1f}, AI Score {ai_score} - HIGH QUALITY SETUP!")
+                    
                     # Check volume confirmation (1.5x average)
                     volume_ok = True
                     if volume_data:
@@ -996,10 +1024,11 @@ class STONKAIBot:
                             'symbol': symbol,
                             'qty': qty,
                             'action': 'BUY',
-                            'reason': f'RSI Auto-Entry: RSI {rsi:.1f} (below {StrategyConfig.RSI_ENTRY_THRESHOLD}) with volume confirmation [CASH ONLY]',
-                            'rsi': rsi
+                            'reason': f'🔥 NOW TIER: RSI {rsi:.1f}, AI {ai_score} - High conviction dip entry [CASH ONLY]',
+                            'rsi': rsi,
+                            'ai_score': ai_score
                         })
-                        logger.info(f"RSI ENTRY SIGNAL: {symbol} at RSI {rsi:.1f} (qty: {qty}, cash: ${available_cash:.2f})")
+                        logger.info(f"🔥 NOW TIER ENTRY: {symbol} at RSI {rsi:.1f}, AI {ai_score} (qty: {qty}, cash: ${available_cash:.2f})")
             except Exception as e:
                 logger.warning(f"Could not check RSI for {symbol}: {e}")
         
