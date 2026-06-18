@@ -3723,40 +3723,60 @@
         // Sector definitions - matches allocation popup
         const SECTOR_DEFINITIONS = {
             'tech-giants': { 
-                symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], 
+                symbols: ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'META', 'NVDA', 'NFLX', 'CRM', 'ORCL', 'SAP'], 
                 name: 'Tech Giants', 
                 color: '#fbbf24', 
-                icon: '' 
+                icon: '',
+                description: 'Large-cap tech leaders'
             },
             'ai-growth': { 
-                symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], 
+                symbols: ['AMD', 'PLTR', 'CRWD', 'NET', 'DDOG', 'SNOW', 'OKTA', 'FSLY', 'TWLO', 'ASAN', 'ZM', 'AI', 'PATH', 'SOUN', 'CRNC'], 
                 name: 'AI/Growth', 
                 color: '#f97316', 
-                icon: '' 
+                icon: '',
+                description: 'AI-enabled software & growth tech'
             },
             'fintech': { 
-                symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], 
+                symbols: ['HOOD', 'UPST', 'SQ', 'SOFI', 'COIN', 'AFRM', 'LMND', 'ROOT', 'RELY', 'PYPL'], 
                 name: 'Fintech', 
                 color: '#06b6d4', 
-                icon: '' 
+                icon: '',
+                description: 'Digital financial services'
+            },
+            'consumer-growth': { 
+                symbols: ['DKNG', 'PENN', 'CHWY', 'ETSY', 'LULU', 'NKE', 'SHOP', 'ABNB', 'UBER', 'LYFT', 'DASH', 'COUR', 'RBLX'], 
+                name: 'Consumer/Gaming', 
+                color: '#ec4899', 
+                icon: '',
+                description: 'Consumer discretionary & gaming'
             },
             'ev-auto': { 
-                symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], 
+                symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID', 'GM', 'F', 'RACE'], 
                 name: 'EV/Auto', 
                 color: '#10b981', 
-                icon: '' 
+                icon: '',
+                description: 'Electric vehicles & automotive'
             },
-            'defense': { 
-                symbols: ['AVGO'], 
-                name: 'Defense', 
+            'semiconductors': { 
+                symbols: ['AVGO', 'MU', 'LRCX', 'AMAT', 'KLAC', 'SNPS', 'CDNS', 'MRVL', 'NXPI', 'QCOM', 'INTC', 'TXN', 'ADI'], 
+                name: 'Semiconductors', 
                 color: '#22c55e', 
-                icon: '' 
+                icon: '',
+                description: 'Chip makers & equipment'
+            },
+            'crypto': { 
+                symbols: ['MSTR', 'RIOT', 'MARA', 'BITF', 'CLSK', 'HUT', 'CORZ'], 
+                name: 'Crypto', 
+                color: '#a855f7', 
+                icon: '',
+                description: 'Bitcoin & crypto miners'
             },
             'other': { 
                 symbols: [], 
                 name: 'Other', 
                 color: '#8b5cf6', 
-                icon: '' 
+                icon: '',
+                description: 'Miscellaneous holdings'
             }
         };
 
