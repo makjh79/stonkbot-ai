@@ -2654,7 +2654,7 @@
             </div>
             
             <!-- Sector Performance Cards - Dynamic -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem;" id="sectorHeatmap">
+            <div style="display: flex; flex-direction: column;" id="sectorHeatmap">
                 <!-- Sectors will be dynamically generated based on portfolio holdings -->
                 <div style="text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.75rem; grid-column: span 2;">Loading sectors...</div>
             </div>
@@ -3778,7 +3778,7 @@
             
             if (!positions || positions.length === 0) {
                 document.getElementById('sectorHeatmap').innerHTML = 
-                    '<div style="text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.75rem; grid-column: span 2;">No positions</div>';
+                    '<div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.75rem;">No positions</div>';
                 return;
             }
             
@@ -3849,12 +3849,16 @@
             
             if (sectorsToShow.length === 0) {
                 document.getElementById('sectorHeatmap').innerHTML = 
-                    '<div style="text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.75rem; grid-column: span 2;">No active sectors</div>';
+                    '<div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.75rem;">No active positions</div>';
                 return;
             }
             
-            // Generate cards for all sectors (grid container already exists in HTML)
-            let html = '';
+            // Horizontal bar chart for sectors
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px; cursor: pointer;" onclick="showAllocationModal()">';
+            
+            // Find max value for bar scaling
+            const maxValue = Math.max(...sectorsToShow.map(k => sectorPerformance[k].value));
+            
             sectorsToShow.forEach(key => {
                 const data = sectorPerformance[key];
                 const allocationPct = data.weight;
@@ -3863,36 +3867,42 @@
                 // Calculate sector return (P&L %)
                 const sectorReturn = data.value > 0 ? ((data.pl / data.value) * 100) : 0;
                 const isPositive = sectorReturn >= 0;
-                const isNeutral = data.value === 0;
+                const returnColor = isPositive ? '#22c55e' : '#ef4444';
+                const returnSign = isPositive ? '+' : '';
                 
-                // Determine heatmap styling
-                let bgStyle;
-                if (isNeutral) {
-                    bgStyle = 'background: linear-gradient(135deg, rgba(156, 163, 175, 0.15), rgba(156, 163, 175, 0.05)); border-color: rgba(156, 163, 175, 0.2);';
-                } else if (isPositive) {
-                    bgStyle = 'background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05)); border-color: rgba(34, 197, 94, 0.3);';
-                } else {
-                    bgStyle = 'background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05)); border-color: rgba(239, 68, 68, 0.3);';
-                }
+                // Skip tiny allocations (< 1%) unless it's the only one
+                if (allocationPct < 1 && sectorsToShow.length > 1) return;
                 
-                // Format dollar value: show $X.XX for small values, $X.XK for larger
+                // Format dollar value
                 let dollarDisplay;
                 if (dollarValue < 1000) {
-                    dollarDisplay = '$' + dollarValue.toFixed(0);  // e.g., "$14" for small positions
+                    dollarDisplay = '$' + dollarValue.toFixed(0);
                 } else {
-                    dollarDisplay = '$' + (dollarValue/1000).toFixed(1) + 'K';  // e.g., "$2.4K"
+                    dollarDisplay = '$' + (dollarValue/1000).toFixed(1) + 'K';
                 }
                 
-                // For very small percentages, show 2 decimals
-                const pctDisplay = allocationPct < 0.1 ? allocationPct.toFixed(2) : allocationPct.toFixed(1);
+                // Bar width scaled to max
+                const barWidth = maxValue > 0 ? (dollarValue / maxValue) * 100 : 0;
                 
                 html += `
-                <div id="heat-${key}" onclick="showAllocationModal()" style="${bgStyle} border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 0.875rem; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.12)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.04)'">
-                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.375rem; font-weight: 500;">${data.name}</div>
-                    <div class="heatmap-value" id="heat-${key}-val" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">${pctDisplay}%</div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.125rem;">${dollarDisplay}</div>
+                <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <div style="flex: 0 0 100px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">${data.name}</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                                <div style="width: ${barWidth}%; height: 100%; background: ${data.color}; border-radius: 3px; transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dollarDisplay}</span>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${allocationPct.toFixed(1)}%</span>
+                        </div>
+                    </div>
+                    <div style="flex: 0 0 50px; text-align: right; font-size: 0.7rem; font-weight: 600; color: ${returnColor}; font-family: 'JetBrains Mono', monospace;">${returnSign}${sectorReturn.toFixed(1)}%</div>
                 </div>`;
             });
+            
+            html += '</div>';
             
             document.getElementById('sectorHeatmap').innerHTML = html;
             console.log('Sector heatmap updated:', sectorsToShow.map(k => `${sectorPerformance[k].name}: ${sectorPerformance[k].weight.toFixed(1)}%`).join(', '));
