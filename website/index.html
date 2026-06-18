@@ -4479,21 +4479,35 @@
             const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
             
             // Get day change from Alpaca (calculated from last_equity vs current equity)
-            let dayChange = data.day_change !== undefined ? data.day_change : null;
+            let dayChange = data.day_change !== undefined && data.day_change !== null ? data.day_change : null;
             
-            // Calculate day change from history if not provided
-            if (dayChange === null && historyData && historyData.checks && historyData.checks.length > 0) {
+            // Calculate day change from history if not provided by API
+            if ((dayChange === null || isNaN(dayChange)) && historyData && historyData.checks && historyData.checks.length > 0) {
                 const checks = historyData.checks;
                 const currentValue = portfolioValue;
-                const currentTime = new Date();
-                const currentDate = currentTime.toDateString();
                 
-                // Find the first check from today
-                const todayChecks = checks.filter(c => new Date(c.timestamp).toDateString() === currentDate);
-                if (todayChecks.length > 0) {
-                    const firstCheck = todayChecks[0];
-                    const openValue = firstCheck.portfolio_value;
-                    dayChange = ((currentValue - openValue) / openValue) * 100;
+                // Sort checks by timestamp (oldest first)
+                const sortedChecks = [...checks].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                
+                // Find the oldest check from today (market open)
+                const now = new Date();
+                const currentDateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+                
+                for (let check of sortedChecks) {
+                    const checkDateStr = new Date(check.timestamp).toISOString().split('T')[0];
+                    if (checkDateStr === currentDateStr && check.portfolio_value > 0) {
+                        const openValue = check.portfolio_value;
+                        dayChange = ((currentValue - openValue) / openValue) * 100;
+                        break;
+                    }
+                }
+                
+                // If no today's check found, use the most recent previous check
+                if (dayChange === null && sortedChecks.length > 0) {
+                    const lastCheck = sortedChecks[sortedChecks.length - 1];
+                    if (lastCheck.portfolio_value > 0) {
+                        dayChange = ((currentValue - lastCheck.portfolio_value) / lastCheck.portfolio_value) * 100;
+                    }
                 }
             }
             
