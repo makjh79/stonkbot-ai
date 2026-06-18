@@ -4186,15 +4186,33 @@
             const names = {
                 'AAPL': 'Apple Inc.',
                 'AMD': 'Advanced Micro Devices',
+                'AMZN': 'Amazon.com Inc.',
                 'APP': 'AppLovin Corp',
                 'AVGO': 'Broadcom Inc.',
-                'CRWD': 'CrowdStrike',
+                'COIN': 'Coinbase Global',
+                'CRWD': 'CrowdStrike Holdings',
                 'DKNG': 'DraftKings Inc.',
+                'GM': 'General Motors',
                 'GOOGL': 'Alphabet Inc.',
-                'HOOD': 'Robinhood',
-                'NVDA': 'NVIDIA Corp',
+                'HOOD': 'Robinhood Markets',
+                'INTC': 'Intel Corp.',
+                'LCID': 'Lucid Group',
+                'MSFT': 'Microsoft Corp.',
+                'NET': 'Cloudflare Inc.',
+                'NIO': 'NIO Inc.',
+                'NVDA': 'NVIDIA Corp.',
+                'ORCL': 'Oracle Corp.',
+                'PATH': 'UiPath Inc.',
                 'PLTR': 'Palantir Technologies',
-                'UPST': 'Upstart Holdings'
+                'QCOM': 'Qualcomm Inc.',
+                'SHOP': 'Shopify Inc.',
+                'SQ': 'Block Inc.',
+                'TSLA': 'Tesla Inc.',
+                'UPST': 'Upstart Holdings',
+                'XPEV': 'XPeng Inc.',
+                'NFLX': 'Netflix Inc.',
+                'META': 'Meta Platforms',
+                'CRM': 'Salesforce Inc.'
             };
             return names[symbol] || symbol;
         }
@@ -6878,7 +6896,7 @@
                 stopReason: '-15% stop if AI adoption lags'
             },
             'MSFT': {
-                company: 'Microsoft Corp',
+                company: 'Microsoft Corp.',
                 thesis: 'AI infrastructure leader, Azure growth',
                 catalyst: 'Copilot monetization, cloud market share',
                 risk: 'Antitrust scrutiny, valuation',
@@ -8087,25 +8105,32 @@
         
         // Fallback company info (used if JSON fails to load)
         const companyInfoFallback = {
+            'AAPL': { company: 'Apple Inc.', strategy: 'Consumer electronics leader', catalyst: 'AI iPhone upgrade cycle', risk: 'China exposure' },
             'ABNB': { company: 'Airbnb Inc.', strategy: 'Travel platform recovery', catalyst: 'Experience economy + international expansion', risk: 'Regulatory crackdowns' },
+            'AMD': { company: 'Advanced Micro Devices', strategy: 'AI chip challenger', catalyst: 'MI300 gaining data center share', risk: 'Competition with NVIDIA' },
             'AMZN': { company: 'Amazon.com Inc.', strategy: 'E-commerce + AWS cloud', catalyst: 'AI integration + Prime growth', risk: 'Regulatory pressure' },
-            'CDNS': { company: 'Cadence Design Systems', strategy: 'EDA software leader', catalyst: 'AI chip design demand', risk: 'Semiconductor cycle' },
             'COIN': { company: 'Coinbase Global', strategy: 'Crypto infrastructure', catalyst: 'Bitcoin ETF + institutional adoption', risk: 'Crypto volatility' },
+            'CRWD': { company: 'CrowdStrike Holdings', strategy: 'Endpoint security leader', catalyst: 'Zero trust adoption + platform expansion', risk: 'Competition from Microsoft' },
             'DKNG': { company: 'DraftKings Inc.', strategy: 'Sports betting platform', catalyst: 'NFL season + state legalization', risk: 'Regulatory uncertainty' },
             'GM': { company: 'General Motors', strategy: 'EV transition leader', catalyst: 'Ultium platform + Cruise autonomy', risk: 'EV competition' },
+            'GOOGL': { company: 'Alphabet Inc.', strategy: 'Search + cloud + AI', catalyst: 'Gemini AI + cloud market share', risk: 'Search disruption fears' },
+            'HOOD': { company: 'Robinhood Markets', strategy: 'Retail trading platform', catalyst: 'Crypto + 24-hour market expansion', risk: 'Regulatory scrutiny' },
+            'INTC': { company: 'Intel Corp.', strategy: 'Chip manufacturing turnaround', catalyst: 'Foundry business + AI PC', risk: 'Execution challenges' },
             'LCID': { company: 'Lucid Group', strategy: 'Luxury EV manufacturer', catalyst: 'Saudi backing + technology edge', risk: 'Production ramp + cash burn' },
+            'MSFT': { company: 'Microsoft Corp.', strategy: 'AI infrastructure leader', catalyst: 'Copilot monetization + Azure growth', risk: 'Antitrust scrutiny' },
             'NET': { company: 'Cloudflare Inc.', strategy: 'Edge computing + security', catalyst: 'AI edge demand + zero trust', risk: 'Extended valuation' },
             'NFLX': { company: 'Netflix Inc.', strategy: 'Streaming dominance', catalyst: 'Ad tier + password crackdown', risk: 'Competition intensity' },
             'NIO': { company: 'NIO Inc.', strategy: 'Premium Chinese EV', catalyst: 'Battery swap network + Europe expansion', risk: 'China regulation + cash' },
+            'NVDA': { company: 'NVIDIA Corp.', strategy: 'AI chip monopoly', catalyst: 'Data center demand + Blackwell', risk: 'China export restrictions' },
+            'ORCL': { company: 'Oracle Corp.', strategy: 'Database + cloud infrastructure', catalyst: 'AI workloads + multi-cloud', risk: 'Cloud competition' },
             'PATH': { company: 'UiPath Inc.', strategy: 'RPA + AI automation', catalyst: 'Enterprise AI adoption', risk: 'Big tech competition' },
+            'PLTR': { company: 'Palantir Technologies', strategy: 'AI analytics platform', catalyst: 'Government contracts + AIP', risk: 'Valuation + growth rate' },
             'SHOP': { company: 'Shopify Inc.', strategy: 'E-commerce platform', catalyst: 'AI tools + logistics network', risk: 'Amazon competition' },
             'SNOW': { company: 'Snowflake Inc.', strategy: 'Data cloud platform', catalyst: 'AI data pipelines + partnerships', risk: 'Growth deceleration' },
             'SOFI': { company: 'SoFi Technologies', strategy: 'Digital finance platform', catalyst: 'Bank charter + Galileo growth', risk: 'Student loan headwinds' },
             'SQ': { company: 'Block Inc.', strategy: 'Fintech ecosystem', catalyst: 'Cash App + Square integration', risk: 'Consumer spending' },
-            'SQQQ': { company: 'ProShares Short QQQ', strategy: 'Nasdaq hedge', catalyst: 'Market timing tool', risk: 'Decay over time' },
-            'TQQQ': { company: 'ProShares Ultra QQQ', strategy: 'Nasdaq leverage', catalyst: 'Bull market acceleration', risk: 'High volatility decay' },
+            'TSLA': { company: 'Tesla Inc.', strategy: 'EV + energy + autonomy', catalyst: 'Robotaxi + Model 2 + energy storage', risk: 'Execution + competition' },
             'UPST': { company: 'Upstart Holdings', strategy: 'AI lending platform', catalyst: 'Rate cuts + loan volume', risk: 'Credit cycle sensitivity' },
-            'XLE': { company: 'Energy Select SPDR', strategy: 'Energy sector ETF', catalyst: 'Oil prices + geopolitics', risk: 'Energy transition' },
             'XPEV': { company: 'XPeng Inc.', strategy: 'Chinese EV + autonomy', catalyst: 'G6 launch + self-driving tech', risk: 'China market competition' }
         };
         
