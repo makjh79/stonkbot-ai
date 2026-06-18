@@ -8707,11 +8707,6 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
             
-            // Get current signal accuracy for header
-            const stats = signalAccuracyData.stats || {};
-            const winRate = stats.win_rate || 0;
-            const winRateText = winRate > 0 ? winRate + '%' : '--%';
-            
             // Get saved watchlist from localStorage for header
             const headerSavedWatchlist = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
             
@@ -8747,13 +8742,7 @@
                     <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.06);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div>
-                                <div style="display: flex; align-items: baseline; gap: 8px;">
-                                    <span style="font-size: 20px; font-weight: 800;">AI Watchlist</span>
-                                    <a onclick="showSignalAccuracyModal(); event.stopPropagation();" style="color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.3); transition: all 0.2s ease;" onmouseover="this.style.color='#22c55e'; this.style.borderColor='#22c55e'" onmouseout="this.style.color='var(--text-muted)'; this.style.borderColor='rgba(255,255,255,0.3)'" title="View detailed signal performance">
-                                        <span id="watchlistWinRate">${winRateText}</span> signal accuracy
-                                    </a>
-                                    <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Signal Accuracy:</strong> % of completed signals that hit profit targets (+25% or +50%).<br><br>0% = no signals have closed yet (still active).<br><br>Tracks from RSI entry signal to exit.')">ⓘ</span>
-                                </div>
+                                <div style="font-size: 20px; font-weight: 800;">AI Watchlist</div>
                                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
                                     ${liveIndicator}
                                 </div>
