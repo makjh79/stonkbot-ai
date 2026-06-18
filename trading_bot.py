@@ -82,7 +82,8 @@ class StrategyConfig:
     # Removed: ALLOWED_RSI_SYMBOLS whitelist
     # Now uses full dynamic watchlist from watchlist_changes.json
     
-    # Core positions for rebalancing focus
+    # Core positions for rebalancing focus (individual stocks only - NO ETFs)
+    # ETFs (SQQQ, TQQQ, etc.) are excluded from auto-trading due to leverage decay
     CORE_POSITIONS = ['PLTR', 'AMD', 'CRWD', 'HOOD', 'AAPL', 'NVDA']
     
     # AGGRESSIVE target allocations - Higher conviction weights
@@ -120,8 +121,8 @@ class StrategyConfig:
                     return symbols
         except Exception as e:
             logger.debug(f"Could not load watchlist: {e}")
-        # Fallback to core positions
-        return ['PLTR', 'AMD', 'CRWD', 'HOOD', 'NVDA', 'GOOGL', 'TQQQ', 'SQQQ']
+        # Fallback to core positions (individual stocks only, no ETFs)
+        return ['PLTR', 'AMD', 'CRWD', 'HOOD', 'NVDA', 'GOOGL', 'AAPL', 'MSFT', 'COIN', 'NET']
     
     ALLOWED_RSI_SYMBOLS = None  # Deprecated - use get_allowed_symbols() instead
     VOLUME_MULTIPLIER = 0.5  # 0.5x average volume required (relaxed for more entries)
@@ -932,7 +933,14 @@ class STONKAIBot:
         
         # Get watchlist stocks from dynamic rotation
         watchlist_symbols = self.state.load_dynamic_watchlist()
-        logger.info(f"🔍 Checking {len(watchlist_symbols)} watchlist symbols for RSI entries")
+        
+        # Filter out ETFs - bot only trades individual stocks
+        ETF_SYMBOLS = {'SQQQ', 'TQQQ', 'SPY', 'QQQ', 'IWM', 'VIX', 'GLD', 'SLV', 'USO', 'TLT', 
+                       'XLE', 'XLF', 'XLK', 'XLI', 'XLP', 'XLU', 'XLV', 'XLY', 'XBI',
+                       'ARKK', 'ARKG', 'ARKF', 'ARKW', 'ARKX', 'BITO', 'SOXL', 'SOXS'}
+        watchlist_symbols = [s for s in watchlist_symbols if s not in ETF_SYMBOLS]
+        
+        logger.info(f"🔍 Checking {len(watchlist_symbols)} watchlist symbols for RSI entries (ETFs excluded)")
         
         # Get current positions
         current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
