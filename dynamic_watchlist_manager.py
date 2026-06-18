@@ -36,7 +36,10 @@ WATCHLIST_CONFIG = {
 }
 
 # Permanent positions (don't auto-replace these)
-PERMANENT_POSITIONS = {'SQQQ', 'TQQQ'}  # Hedge/momentum tools
+# ETFs excluded from watchlist (manual trading only, no auto-rotation)
+ETF_SYMBOLS = {'SQQQ', 'TQQQ', 'SPY', 'QQQ', 'IWM', 'VIX', 'GLD', 'SLV', 'USO', 'TLT',
+               'XLE', 'XLF', 'XLK', 'XLI', 'XLP', 'XLU', 'XLV', 'XLY', 'XBI',
+               'ARKK', 'ARKG', 'ARKF', 'ARKW', 'ARKX', 'BITO', 'SOXL', 'SOXS'}
 
 def load_current_watchlist():
     """Load current watchlist from JSON file"""
@@ -46,8 +49,8 @@ def load_current_watchlist():
             return data.get('new_watchlist', [])
     except Exception as e:
         print(f"⚠️ Could not load watchlist from JSON: {e}")
-        # Fallback to default
-        return ['COIN', 'DKNG', 'NET', 'PATH', 'SHOP', 'SQ', 'SQQQ', 'TQQQ', 'UPST', 'XLE']
+        # Fallback to default (individual stocks only - no ETFs)
+        return ['COIN', 'DKNG', 'NET', 'PATH', 'SHOP', 'SQ', 'UPST', 'PLTR', 'CRWD', 'HOOD']
 
 # Current watchlist - loaded dynamically from JSON
 CURRENT_WATCHLIST = load_current_watchlist()
@@ -82,8 +85,10 @@ CANDIDATE_POOL = [
     'BABA', 'JD', 'PDD', 'BIDU', 'NTES', 'TCEHY', 'DIDI',
     # SaaS/Mid-cap
     'VEEV', 'NOW', 'TEAM', 'ATLASSIAN', 'ZOOM', 'SLACK', 'NOTION', 'FIGMA',
-    # ETFs for hedging
-    'SPY', 'QQQ', 'IWM', 'VIX', 'GLD', 'SLV', 'USO', 'TLT',
+    # Airlines/Transport
+    'DAL', 'UAL', 'AAL', 'LUV', 'JBLU',
+    # Additional Growth
+    'RBLX', 'U', 'DDOG', 'NET', 'CRWD', 'OKTA',
 ]
 
 # Load Alpaca config
@@ -177,9 +182,9 @@ def evaluate_stock(symbol, data, sp500_return):
     if not data:
         return {'keep': False, 'reason': 'No data available', 'action': 'REPLACE', 'tier': None}
     
-    # Skip permanent positions (hedges)
-    if symbol in PERMANENT_POSITIONS:
-        return {'keep': True, 'reason': 'Hedge position - permanent', 'action': 'KEEP', 'tier': 'HEDGE'}
+    # Exclude ETFs from watchlist (manual trading only)
+    if symbol in ETF_SYMBOLS:
+        return {'keep': False, 'reason': 'ETF excluded - individual stocks only', 'action': 'REPLACE', 'tier': None}
     
     rsi = data.get('rsi') or 50
     change_pct = data.get('change_pct') or 0
@@ -341,7 +346,7 @@ def update_watchlist():
     # Evaluate current stocks
     to_remove = []
     to_keep = []
-    tier_summary = {'NOW': [], 'WATCH': [], 'MONITOR': [], 'HEDGE': []}
+    tier_summary = {'NOW': [], 'WATCH': [], 'MONITOR': []}
     
     for symbol in CURRENT_WATCHLIST:
         data = prices.get(symbol, {})
