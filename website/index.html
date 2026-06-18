@@ -2690,7 +2690,7 @@
                         <span class="faq-chevron">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <div class="faq-answer-text"><strong>Four-Pillar Automation:</strong><br>🛡️ <strong>Protect:</strong> Hard stops at -15%<br>🎯 <strong>Harvest:</strong> +25% trim / +50% exit targets<br>🔍 <strong>Discover:</strong> RSI &lt;35 entries with 1.5x volume confirmation<br>👁️ <strong>Monitor:</strong> 5,000+ stocks scanned continuously<br><br>Executes during market hours only. No emotions, no exceptions.</div>
+                        <div class="faq-answer-text"><strong>Autonomous Trading System:</strong><br><br>🛡️ <strong>Protect:</strong> Hard stops at -15% on all positions<br>🎯 <strong>Profit Taking:</strong> Trim 25% at +25%, full exit at +50%<br>🔥 <strong>Auto-Entry (NOW Tier):</strong> Buys when RSI ≤ 35 AND AI Score ≥ 70 with 1.5x volume<br><br><strong>3-Tier Watchlist System:</strong><br>🔥 <strong>NOW:</strong> RSI ≤ 35 + AI ≥ 80 — Bot auto-buys these dips<br>👀 <strong>WATCH:</strong> RSI ≤ 45 + AI ≥ 70 — Approaching entry zone<br>📋 <strong>MONITOR:</strong> All others — Waiting for setup<br><br>Scans 5,000+ stocks every 5 minutes. Executes during market hours only. No emotions, no exceptions.</div>
                     </div>
                 </div>
                 <div class="faq-item" id="faq4">
@@ -2699,7 +2699,7 @@
                         <span class="faq-chevron">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <div class="faq-answer-text">Dynamic 20-stock watchlist updates every 5 minutes during market hours. Stocks are added/removed based on RSI, momentum, and vs S&P 500 performance. Tracks high-conviction setups in real-time.</div>
+                        <div class="faq-answer-text"><strong>Dynamic 15-Stock Curated List</strong> — updates every 5 minutes during market hours.<br><br><strong>Entry Criteria (High Bar):</strong><br>• RSI between 30-50 (buy zone)<br>• AI Score ≥ 70 (high quality only)<br>• Positive momentum vs S&P 500<br><br><strong>Auto-Removal (Strict Rotation):</strong><br>• RSI > 50 — moved past buy zone<br>• Up > 5% in a day — entry missed<br>• 3 days without RSI < 40 signal — stale<br>• Lagging S&P by 3% — weak setup<br><br>Only the best setups stay. Constant rotation keeps the list fresh and actionable.</div>
                     </div>
                 </div>
             </div>
@@ -8851,10 +8851,11 @@
             const watchCount = watchlistWithTiers.filter(s => s.tier === 'WATCH').length;
             const monitorCount = watchlistWithTiers.filter(s => s.tier === 'MONITOR').length;
             
-            let html = '<div style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px;">';
+            let html = '<div style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; align-items: center;">';
             html += '<span style="color: #ef4444; font-weight: 700;">🔥 NOW: ' + nowCount + '</span>';
             html += '<span style="color: #fbbf24; font-weight: 700;">👀 WATCH: ' + watchCount + '</span>';
             html += '<span style="color: var(--text-muted);">📋 MONITOR: ' + monitorCount + '</span>';
+            html += '<span style="margin-left: auto; cursor: pointer; color: var(--text-muted); font-size: 14px;" onclick="showTierExplainer(event)" title="What do these tiers mean?">ⓘ</span>';
             html += '</div>';
             
             // Build clean table with tier column
@@ -8951,6 +8952,39 @@
                 minPrice: minPrice,
                 maxPrice: maxPrice
             };
+        }
+
+        // Show tier explainer popup
+        function showTierExplainer(event) {
+            event.stopPropagation();
+            const modal = document.createElement('div');
+            modal.id = 'tier-explainer-modal';
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;" onclick="this.remove()">
+                    <div style="background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; max-width: 380px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="margin: 0; font-size: 18px; font-weight: 700;">Watchlist Tiers</h3>
+                            <button onclick="document.getElementById('tier-explainer-modal').remove()" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">×</button>
+                        </div>
+                        <div style="margin-bottom: 16px; padding: 14px; background: rgba(239,68,68,0.1); border-radius: 10px; border-left: 3px solid #ef4444;">
+                            <div style="font-weight: 700; color: #ef4444; font-size: 14px; margin-bottom: 4px;">🔥 NOW</div>
+                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 35 + AI Score ≥ 80. Immediate entry zone. Bot auto-buys these dips.</div>
+                        </div>
+                        <div style="margin-bottom: 16px; padding: 14px; background: rgba(251,191,36,0.1); border-radius: 10px; border-left: 3px solid #fbbf24;">
+                            <div style="font-weight: 700; color: #fbbf24; font-size: 14px; margin-bottom: 4px;">👀 WATCH</div>
+                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 45 + AI Score ≥ 70. Approaching entry. Check daily for NOW upgrade.</div>
+                        </div>
+                        <div style="padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid var(--text-muted);">
+                            <div style="font-weight: 700; color: var(--text-muted); font-size: 14px; margin-bottom: 4px;">📋 MONITOR</div>
+                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">Tracking but not ready. May become WATCH if RSI cools or AI Score improves.</div>
+                        </div>
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: var(--text-muted); line-height: 1.5;">
+                            <strong>Rotation Rules:</strong> Removed if RSI > 50 (past buy zone), up > 5% daily (chased), or after 3 days without entry signal.
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         // Show stock decision popup - focused on actionable metrics
