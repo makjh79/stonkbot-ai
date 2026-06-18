@@ -4268,11 +4268,15 @@
                 // Generate mini chart
                 const chartBars = generateMiniChart(pos.unrealized_plpc, chartColor);
 
+                // Get company name from dynamic companyInfo if available
+                const companyData = (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]) ? companyInfo[pos.symbol] : {};
+                const companyName = companyData.company || getCompanyName(pos.symbol) || pos.symbol;
+                
                 return `
                 <div onclick="showTradeDetails('${pos.symbol}')" data-positive="${isPositive}" class="holding-card">
                     <div class="holding-info">
                         <div class="holding-symbol">${pos.symbol}</div>
-                        <div class="holding-company">${getCompanyName(pos.symbol)}</div>
+                        <div class="holding-company">${companyName}</div>
                         <div class="holding-shares">${pos.qty} shares @ $${pos.avg_entry.toFixed(2)}</div>
                     </div>
                     <div class="holding-price">$${pos.current.toFixed(2)}</div>
