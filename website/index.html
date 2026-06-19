@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0119-4ITEM-NAV -->
+    <!-- CACHE BUST: v=20260620-0122-NAV-PADDING-FIX -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1711,7 +1711,7 @@
                 display: block;
             }
             body {
-                padding-bottom: 70px;
+                padding-bottom: calc(62px + env(safe-area-inset-bottom));
             }
         }
 
@@ -2183,11 +2183,13 @@
         
         /* iPhone safe area support */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            .mobile-nav {
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-            body {
-                padding-bottom: calc(65px + env(safe-area-inset-bottom));
+            @media (max-width: 768px) {
+                .mobile-nav {
+                    padding-bottom: env(safe-area-inset-bottom);
+                }
+                body {
+                    padding-bottom: calc(62px + env(safe-area-inset-bottom));
+                }
             }
         }
         
