@@ -6,18 +6,52 @@
 
 - **Repo**: `https://github.com/makjh79/stonkbot-ai`
 - **Live Site**: Auto-deploys on every push to `master`
+- **Staging Branch**: `staging` (for testing before production)
 - **Owner**: H Mak (Howie)
 
-## Setup
+## Multi-Agent Workflow (STAGING BRANCH)
+
+**⚠️ CRITICAL: Never push directly to `master`. Auto-deploy is LIVE.**
+
+### For Frontend Changes (Jeeves/Jarvis)
 
 ```bash
-# Clone the repo
-git clone https://github.com/makjh79/stonkbot-ai.git
-cd stonkbot-ai
+# 1. Always start fresh from master
+git checkout main
+git pull origin main
 
-# Create a branch for your changes
-git checkout -b feature/your-change-name
+# 2. Switch to staging branch
+git checkout staging
+git pull origin staging
+
+# 3. Make your changes to website/index.html
+# Edit, test locally if possible
+
+# 4. Commit with [READY] flag when done
+git add website/index.html
+git commit -m "[READY] Fix: Clear description of what changed"
+git push origin staging
+
+# 5. Notify H Mak — he'll review and merge to master
 ```
+
+### What [READY] Means
+- Code is complete and tested
+- Ready for H Mak to review
+- No more changes coming in this batch
+
+### Jarvis (Me) Will
+- Merge staging → master when H Mak approves
+- Handle any conflicts between our changes
+- Keep master stable
+
+### Coordination Rules
+1. **Check before you start**: `git fetch origin` — see if staging has unmerged changes
+2. **One agent at a time on staging** — coordinate with Jarvis if both working
+3. **Small, focused commits** — easier to review and rollback
+4. **Never commit API keys** — already gitignored, but important
+
+## Setup (Old Workflow - use staging above instead)
 
 ## Critical Files
 
