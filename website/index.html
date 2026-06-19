@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260619-2332-TEXT-LINKS -->
+    <!-- CACHE BUST: v=20260619-2342-ACTIVITY-STAT -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2485,8 +2485,8 @@
                 <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 60px;">--</span>)</span>
             </div>
 
-            <!-- Quick Stats Row + Activity Link -->
-            <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <!-- Quick Stats Row -->
+            <div style="display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Day</div>
                     <div id="day-counter" class="skeleton skeleton-text" style="font-weight: 700; min-width: 40px; margin: 0 auto;">--</div>
@@ -2499,11 +2499,10 @@
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Cash</div>
                     <div id="cash-available" class="skeleton skeleton-text" style="font-weight: 700; min-width: 70px; margin: 0 auto;">--</div>
                 </div>
-            </div>
-
-            <!-- Subtle Activity Link -->
-            <div style="margin-top: 0.875rem; text-align: right;">
-                <button onclick="showTradeLogModal()" class="text-link" aria-label="View activity log">Activity log →</button>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Activity</div>
+                    <button onclick="showTradeLogModal()" class="text-link" style="min-height: auto; font-size: 0.9rem;" aria-label="View activity log">→</button>
+                </div>
             </div>
         </div>
 
