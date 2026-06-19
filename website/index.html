@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0049-WATCHLIST-MODAL -->
+    <!-- CACHE BUST: v=20260620-0052-COMPACT-SECTORS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -3846,7 +3846,7 @@
             }
             
             // Horizontal bar chart for sectors
-            let html = '<div style="display: flex; flex-direction: column; gap: 12px; cursor: pointer;" onclick="showAllocationModal()">';
+            let html = '<div style="display: flex; flex-direction: column; gap: 8px; cursor: pointer;" onclick="showAllocationModal()">';
             
             // Find max value for bar scaling
             const maxValue = Math.max(...sectorsToShow.map(k => sectorPerformance[k].value));
@@ -3877,20 +3877,20 @@
                 const barWidth = maxValue > 0 ? (dollarValue / maxValue) * 100 : 0;
                 
                 html += `
-                <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                    <div style="flex: 0 0 100px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">${data.name}</div>
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <div style="flex: 0 0 100px; font-size: 0.7rem; color: var(--text-secondary); font-weight: 500;">${data.name}</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="flex: 1; height: 5px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
                                 <div style="width: ${barWidth}%; height: 100%; background: ${data.color}; border-radius: 3px; transition: width 0.3s ease;"></div>
                             </div>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dollarDisplay}</span>
-                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${allocationPct.toFixed(1)}%</span>
+                            <span style="font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dollarDisplay}</span>
+                            <span style="font-size: 0.7rem; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${allocationPct.toFixed(1)}%</span>
                         </div>
                     </div>
-                    <div style="flex: 0 0 50px; text-align: right; font-size: 0.7rem; font-weight: 600; color: ${returnColor}; font-family: 'JetBrains Mono', monospace;">${returnSign}${sectorReturn.toFixed(1)}%</div>
+                    <div style="flex: 0 0 50px; text-align: right; font-size: 0.65rem; font-weight: 600; color: ${returnColor}; font-family: 'JetBrains Mono', monospace;">${returnSign}${sectorReturn.toFixed(1)}%</div>
                 </div>`;
             });
             
