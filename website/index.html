@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0207-FIX-FILTER-BUTTONS -->
+    <!-- CACHE BUST: v=20260620-0210-FILTER-REDESIGN -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1344,29 +1344,42 @@
 
                 .holdings-controls {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.625rem;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 2px;
+        }
+
+        .holdings-section-header {
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .holdings-updated {
+            font-size: 0.65rem;
+            color: var(--text-muted);
         }
 
         .holdings-filter-btn {
-            padding: 0.4rem 0.75rem;
+            flex-shrink: 0;
+            padding: 0.45rem 0.85rem;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 20px;
             color: var(--text-secondary);
-            font-size: 0.7rem;
-            font-weight: 500;
+            font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
         }
 
         .holdings-filter-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .holdings-filter-btn.active {
@@ -2065,12 +2078,13 @@
                 font-size: 0.75rem;
             }
             .holdings-controls {
-                flex-wrap: wrap;
-                gap: 0.5rem;
+                flex-wrap: nowrap;
+                gap: 0.4rem;
             }
             .holdings-filter-btn {
                 font-size: 0.7rem;
-                padding: 0.4rem 0.6rem;
+                padding: 0.4rem 0.7rem;
+                min-height: auto;
             }
             .hero-title {
                 font-size: 2rem !important;
@@ -2135,8 +2149,8 @@
                 padding: 16px !important;
             }
             .holdings-filter-btn {
-                min-height: 44px;
-                padding: 12px 16px;
+                padding: 0.4rem 0.7rem;
+                min-height: auto;
             }
             .time-btn {
                 min-height: 44px;
@@ -2510,9 +2524,11 @@
 
         <div id="holdings" class="section-anchor"></div>
         <div class="section">
-            <div class="section-header">
-                <div class="section-title">Current Holdings</div>
-                <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: auto;">Updated live</span>
+            <div class="section-header holdings-section-header">
+                <div>
+                    <div class="section-title">Current Holdings</div>
+                    <div class="holdings-updated">Updated live</div>
+                </div>
             </div>
             <!-- Holdings Sort & Filter Controls -->
             <div class="holdings-controls">
@@ -2526,18 +2542,18 @@
                     A-Z
                 </button>
                 <button class="holdings-filter-btn" onclick="filterHoldings('all'); return false;" data-filter="all">
-                    <span>All</span>
+                    All
                 </button>
                 <button class="holdings-filter-btn" onclick="filterHoldings('gainers'); return false;" data-filter="gainers">
-                    <span>🟢</span> Gainers
+                    🟢 Gainers
                 </button>
                 <button class="holdings-filter-btn" onclick="filterHoldings('losers'); return false;" data-filter="losers">
-                    <span>🔴</span> Losers
+                    🔴 Losers
                 </button>
             </div>
             
-            <div style="font-size: 0.7rem; color: var(--text-muted); margin: 0.5rem 0; text-align: center; font-style: italic;">
-                💡 Click any holding to see "Why Did It Buy?" - Investment thesis, catalysts, and AI confidence
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin: 0.25rem 0 0.5rem; text-align: center; font-style: italic;">
+                💡 Click any holding to see "Why Did It Buy?"
             </div>
             <!-- Holdings cards -->
             <!-- Holdings cards - Populated by JavaScript -->
@@ -3159,6 +3175,23 @@
         }
         .more-menu-item:active {
             background: rgba(255, 255, 255, 0.10);
+        }
+
+        /* Skeleton loading states */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s infinite linear;
+            border-radius: 4px;
+            color: transparent !important;
+            user-select: none;
+        }
+        .skeleton > * {
+            visibility: hidden;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         /* Page load transition */
