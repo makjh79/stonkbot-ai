@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0004-NAV-3ITEM -->
+    <!-- CACHE BUST: v=20260620-0033-MODAL-UNIFY -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -4382,47 +4382,107 @@
         updateMarketStatus();
         setInterval(updateMarketStatus, 30000); // Refresh every 30 seconds
 
+        // ============================================
+        // UNIFIED MODAL CONTROLLER
+        // ============================================
+        const ModalController = {
+            activeModal: null,
+            touchStartY: 0,
+            touchStartTime: 0,
+
+            open(modalId, cleanupCallback) {
+                const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+                if (!modal) return;
+                if (this.activeModal && this.activeModal !== modal) {
+                    this.close(this.activeModal);
+                }
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                this.activeModal = modal;
+                modal._modalCleanup = cleanupCallback || null;
+            },
+
+            close(modalId) {
+                const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+                if (!modal) return;
+                modal.classList.remove('active');
+                if (this.activeModal === modal) {
+                    this.activeModal = null;
+                    document.body.style.overflow = '';
+                }
+                if (typeof modal._modalCleanup === 'function') {
+                    try { modal._modalCleanup(); } catch (e) { console.error('Modal cleanup error:', e); }
+                }
+            },
+
+            closeActive() {
+                if (this.activeModal) this.close(this.activeModal);
+            }
+        };
+
+        // Backdrop click closes active modal
+        document.addEventListener('click', function(e) {
+            const modal = ModalController.activeModal;
+            if (!modal || !modal.classList.contains('active')) return;
+            if (e.target === modal) ModalController.close(modal);
+        });
+
+        // Escape key closes active modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') ModalController.closeActive();
+        });
+
+        // Swipe-down to close on mobile (only when modal content is at top)
+        document.addEventListener('touchstart', function(e) {
+            ModalController.touchStartY = e.touches[0].clientY;
+            ModalController.touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', function(e) {
+            const modal = ModalController.activeModal;
+            if (!modal) return;
+            const modalContent = modal.querySelector('.chart-modal-content, .trade-log-modal-content, .watchlist-modal-content');
+            if (!modalContent) return;
+            const touchEndY = e.changedTouches[0].clientY;
+            const deltaY = touchEndY - ModalController.touchStartY;
+            const elapsed = Date.now() - ModalController.touchStartTime;
+            if (deltaY > 80 && elapsed < 400 && modalContent.scrollTop <= 0) {
+                ModalController.close(modal);
+            }
+        }, { passive: true });
+
         function openChart(symbol) {
             const modal = document.getElementById('chartModal');
             const iframe = document.getElementById('chartIframe');
             const title = document.getElementById('chartTitle');
             title.textContent = symbol + ' Chart 📈';
             iframe.src = `https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${symbol}&interval=15&hidesidetoolbar=1&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=America/New_York&locale=en&utm_source=&utm_medium=widget&utm_campaign=chart&utm_term=${symbol}`;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            ModalController.open(modal, function() { iframe.src = ''; });
         }
 
         function closeChart() {
-            const modal = document.getElementById('chartModal');
-            const iframe = document.getElementById('chartIframe');
-            modal.classList.remove('active');
-            iframe.src = '';
-            document.body.style.overflow = '';
+            ModalController.close('chartModal');
         }
 
         // Performance Detail Modal Functions
         function showPerformanceDetailModal() {
-            const modal = document.getElementById('performanceDetailModal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
+            ModalController.open('performanceDetailModal');
+
             // Clear previous data and show loading state
-            const loadingElements = ['detail-portfolio-value', 'detail-total-return', 'detail-day-change', 
+            const loadingElements = ['detail-portfolio-value', 'detail-total-return', 'detail-day-change',
                                      'detail-days-active', 'detail-stonk-pct', 'detail-sp500-pct'];
             loadingElements.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.textContent = '--';
             });
-            
+
             // Fetch fresh data
             latestPortfolioData = null; // Force refresh
             updatePerformanceDetailData();
         }
 
         function closePerformanceDetailModal() {
-            const modal = document.getElementById('performanceDetailModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
+            ModalController.close('performanceDetailModal');
         }
 
         // Global variable to store latest portfolio data
@@ -4587,28 +4647,23 @@
         let tradeLogRefreshInterval = null;
 
         function showTradeLogModal() {
-            const modal = document.getElementById('tradeLogModal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
+            ModalController.open('tradeLogModal', function() {
+                if (tradeLogRefreshInterval) {
+                    clearInterval(tradeLogRefreshInterval);
+                    tradeLogRefreshInterval = null;
+                }
+            });
+
             // Load trade data
             loadTradeLogData();
-            
+
             // Start auto-refresh
             if (tradeLogRefreshInterval) clearInterval(tradeLogRefreshInterval);
             tradeLogRefreshInterval = setInterval(loadTradeLogData, 30000); // Refresh every 30s
         }
 
         function closeTradeLogModal() {
-            const modal = document.getElementById('tradeLogModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            // Stop auto-refresh
-            if (tradeLogRefreshInterval) {
-                clearInterval(tradeLogRefreshInterval);
-                tradeLogRefreshInterval = null;
-            }
+            ModalController.close('tradeLogModal');
         }
 
         async function loadTradeLogData() {
@@ -5149,20 +5204,16 @@
                     }
                 });
 
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            ModalController.open('allocationModal', function() {
+                if (allocationRefreshInterval) {
+                    clearInterval(allocationRefreshInterval);
+                    allocationRefreshInterval = null;
+                }
+            });
         }
 
         function closeAllocationModal() {
-            // Clear the refresh interval
-            if (allocationRefreshInterval) {
-                clearInterval(allocationRefreshInterval);
-                allocationRefreshInterval = null;
-            }
-            
-            const modal = document.getElementById('allocationModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
+            ModalController.close('allocationModal');
         }
         
         // Helper function to render allocation HTML (used for cached data fallback)
@@ -6627,15 +6678,11 @@
 
         // Mobile menu toggle
         function toggleMobileMenu() {
-            const modal = document.getElementById('mobileMenuModal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            ModalController.open('mobileMenuModal');
         }
 
         function closeMobileMenu() {
-            const modal = document.getElementById('mobileMenuModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
+            ModalController.close('mobileMenuModal');
         }
 
         // Desktop nav visibility on scroll
@@ -7108,8 +7155,7 @@
             // Show loading state
             summaryDiv.innerHTML = '<div style="grid-column: span 2; text-align: center; padding: 1rem; color: var(--text-secondary);">Loading performance data...</div>';
             entriesDiv.innerHTML = '';
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            ModalController.open('performanceLogModal');
 
             try {
                 // Fetch both history and current data
@@ -7271,15 +7317,8 @@
         }
 
         function closePerformanceLog() {
-            const modal = document.getElementById('performanceLogModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
+            ModalController.close('performanceLogModal');
         }
-
-        // Add click handler for performance log modal background
-        document.addEventListener('click', function(e) {
-            if (e.target === document.getElementById('performanceLogModal')) closePerformanceLog();
-        });
 
         // ============================================
         // ACTIVITY LOG MODAL - Fintech Style
@@ -7289,11 +7328,14 @@
         let activityRefreshInterval = null;
 
         function showActivityLog() {
-            const modal = document.getElementById('activityLogModal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            ModalController.open('activityLogModal', function() {
+                if (activityRefreshInterval) {
+                    clearInterval(activityRefreshInterval);
+                    activityRefreshInterval = null;
+                }
+            });
             loadActivityLog();
-            
+
             // Auto-refresh every 30 seconds while modal is open
             if (activityRefreshInterval) clearInterval(activityRefreshInterval);
             activityRefreshInterval = setInterval(() => {
@@ -7304,13 +7346,7 @@
         }
 
         function closeActivityLog() {
-            const modal = document.getElementById('activityLogModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-            if (activityRefreshInterval) {
-                clearInterval(activityRefreshInterval);
-                activityRefreshInterval = null;
-            }
+            ModalController.close('activityLogModal');
         }
 
         function filterActivityLog(filter) {
