@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0043-FRESHNESS -->
+    <!-- CACHE BUST: v=20260620-0045-COMPACT-RACE -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1901,6 +1901,11 @@
 
         /* Tablet and smaller (768px and below) */
         @media (max-width: 768px) {
+            .race-card { padding: 0.75rem 0.5rem; border-radius: 14px; }
+            .race-card > div:first-child { font-size: 1.1rem; }
+            .race-card > div:nth-child(2) { font-size: 0.8rem; }
+            .race-card > div:nth-child(3) { font-size: 0.55rem; margin-bottom: 0.4rem; }
+
             .container { padding: 0.75rem !important; }
             header { padding: 1.25rem 1rem 1rem !important; }
 
@@ -2492,7 +2497,7 @@
             </div>
 
             <!-- THE RACE - Cards -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <!-- S&P 500 Card -->
                 <div class="race-card">
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
