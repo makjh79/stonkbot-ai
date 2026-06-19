@@ -24,7 +24,7 @@ def write_status(conf, headers_added, note=None, error=None):
 
 # Find the active nginx config file that serves this site.
 paths = (
-    list(glob.glob("/etc/nginx/sites-enabled/*"))
+    [p for p in glob.glob("/etc/nginx/sites-enabled/*") if ".bak." not in p]
     + list(glob.glob("/etc/nginx/conf.d/*"))
     + list(glob.glob("/etc/nginx/sites-available/*"))
     + ["/etc/nginx/nginx.conf", "/usr/local/nginx/conf/nginx.conf"]
