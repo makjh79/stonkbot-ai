@@ -6,7 +6,7 @@ SITE_PATH = "/var/www/hedge-fund-website"
 STATUS_FILE = "/var/www/hedge-fund-website/.nginx-cache-status.json"
 
 
-def write_status(conf, headers_added, note=None, error=None):
+def write_status(conf, headers_added, note=None, error=None, snippet=None):
     status = {
         "checked_at": datetime.datetime.now().isoformat(),
         "site_path": SITE_PATH,
@@ -14,6 +14,7 @@ def write_status(conf, headers_added, note=None, error=None):
         "headers_added": headers_added,
         "note": note,
         "error": error,
+        "snippet": snippet,
     }
     try:
         with open(STATUS_FILE, "w") as f:
@@ -47,7 +48,8 @@ if not conf:
 
 if "Cache-Control" in text and "no-store" in text:
     msg = "Cache headers already present in {}".format(conf)
-    write_status(conf, True, note=msg)
+    snippet = server_text[:800]
+    write_status(conf, True, note=msg, snippet=snippet)
     print(msg)
     sys.exit(0)
 
@@ -78,7 +80,6 @@ def find_server_block(s, marker):
     return None
 
 
-block = find_server_block(text, SITE_PATH)
 if not block:
     msg = "Could not locate server block for {}".format(SITE_PATH)
     write_status(conf, False, error=msg)
@@ -111,8 +112,9 @@ new_text = text[:s_start] + new_server + text[s_end:]
 with open(conf, "w") as f:
     f.write(new_text)
 
+snippet = new_server[:800]
 msg = "Updated {} (server_level={})".format(conf, server_level)
-write_status(conf, True, note=msg)
+write_status(conf, True, note=msg, snippet=snippet)
 print(msg)
 subprocess.run(["nginx", "-t"], check=True)
 subprocess.run(["nginx", "-s", "reload"], check=True)
