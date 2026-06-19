@@ -6,10 +6,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script>(function(){var v='20260620-0220';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-0616';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0220-CACHE-BUST-V2 -->
+    <!-- CACHE BUST: v=20260620-0616-CACHE-BUST-V3 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1368,8 +1368,8 @@
         .holdings-filter-btn {
             flex-shrink: 0;
             padding: 0.35rem 0.65rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 20px;
             color: var(--text-secondary);
             font-size: 0.7rem;
@@ -1380,14 +1380,14 @@
         }
 
         .holdings-filter-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             color: var(--text-primary);
-            border-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.12);
         }
 
         .holdings-filter-btn.active {
-            background: rgba(6, 182, 212, 0.2);
-            border-color: rgba(6, 182, 212, 0.5);
+            background: rgba(6, 182, 212, 0.18);
+            border-color: rgba(6, 182, 212, 0.55);
             color: var(--accent-blue);
             font-weight: 600;
         }
@@ -2089,6 +2089,12 @@
                 font-size: 0.65rem;
                 padding: 0.3rem 0.55rem;
                 min-height: auto;
+                background: var(--bg-base);
+                border-color: rgba(255, 255, 255, 0.06);
+            }
+            .holdings-filter-btn.active {
+                background: rgba(6, 182, 212, 0.18);
+                border-color: rgba(6, 182, 212, 0.55);
             }
             .hero-title {
                 font-size: 2rem !important;
@@ -2155,6 +2161,12 @@
             .holdings-filter-btn {
                 padding: 0.3rem 0.55rem;
                 min-height: auto;
+                background: var(--bg-base);
+                border-color: rgba(255, 255, 255, 0.06);
+            }
+            .holdings-filter-btn.active {
+                background: rgba(6, 182, 212, 0.18);
+                border-color: rgba(6, 182, 212, 0.55);
             }
             .time-btn {
                 min-height: 44px;
