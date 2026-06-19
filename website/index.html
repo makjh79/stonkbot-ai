@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260619-2221-HEADER-CLEANUP -->
+    <!-- CACHE BUST: v=20260619-2250-HOLDINGS-CARDS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -190,101 +190,105 @@
             background: rgba(255,255,255,0.05);
         }
 
-        /* Holdings cards - Robinhood-inspired clean design */
-        .holdings-cards > div {
-            transition: all 0.15s ease;
-            display: grid;
-            grid-template-columns: 1fr auto auto auto;
-            gap: 0.75rem;
-            align-items: center;
-            background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(25, 25, 35, 0.95));
-            border: 1px solid rgba(100, 130, 180, 0.25);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        /* Holdings cards - mobile-first clean design */
+        .holdings-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .holdings-cards > div:hover {
+        .holding-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(25, 25, 35, 0.95));
+            border: 1px solid rgba(100, 130, 180, 0.25);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.15s ease;
+            min-height: 68px;
+        }
+
+        .holding-card:hover,
+        .holding-card:active {
             background: linear-gradient(135deg, rgba(35, 35, 48, 0.95), rgba(30, 30, 42, 1));
             border-color: rgba(120, 160, 220, 0.4);
             box-shadow: 0 4px 16px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+            transform: translateY(-1px);
         }
 
-        /* Left side - Symbol and Info */
-        .holding-info {
+        /* Left side - Symbol, company, shares */
+        .holding-main {
+            flex: 1;
             min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
         .holding-symbol {
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-primary);
             font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
             letter-spacing: -0.5px;
+            line-height: 1.2;
         }
         .holding-shares {
             font-size: 0.7rem;
             color: var(--text-secondary);
         }
         .holding-company {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 140px;
+            max-width: 160px;
         }
 
-        /* Current Price */
-        .holding-price {
+        /* Right side - Price and P&L */
+        .holding-metrics {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
             text-align: right;
+        }
+        .holding-price {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.95rem;
             color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* P&L Percentage */
-        .holding-pl {
-            text-align: right;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
             font-weight: 600;
+        }
+        .holding-pl {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
         }
         .holding-pl.positive { color: var(--accent-green); }
         .holding-pl.negative { color: var(--accent-red); }
 
-        /* Loading Spinner */
-        .loading-spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: var(--accent-cyan);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Mini Chart */
-        .holding-chart {
-            width: 60px;
-            height: 32px;
+        /* Why/action indicator - always visible on touch */
+        .holding-action {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
             display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 1px;
-        }
-        .holding-chart-bar {
-            flex: 1;
-            border-radius: 1px;
-            min-height: 2px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(6, 182, 212, 0.12);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            font-size: 0.85rem;
             opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        .holding-card:hover .holding-action,
+        .holding-card:active .holding-action {
+            opacity: 1;
         }
 
         /* Experiment Section */
@@ -1850,18 +1854,7 @@
                 margin: 0 auto !important;
             }
 
-            /* Holdings cards - clean 4 columns */
-            .holdings-cards > div {
-                padding: 0.625rem 0.75rem !important;
-                grid-template-columns: 1fr auto auto auto !important;
-                gap: 0.625rem !important;
-                border-radius: 8px !important;
-            }
-            .holding-symbol { font-size: 0.85rem !important; }
-            .holding-shares { font-size: 0.6rem !important; }
-            .holding-price { font-size: 0.8rem !important; }
-            .holding-pl { font-size: 0.8rem !important; }
-            .holding-chart { width: 45px !important; height: 24px !important; }
+            /* Holdings card sizing handled by mobile-first base styles */
 
             /* Activity cards */
             .activity-item {
@@ -1901,33 +1894,7 @@
             }
             .stats-bar > div { text-align: center; }
 
-            /* Mobile: Clean 2-column layout */
-            .holdings-cards { gap: 0.4rem !important; }
-            .holdings-cards > div {
-                border-radius: 8px !important;
-                padding: 0.625rem 0.75rem !important;
-                grid-template-columns: 1fr auto !important;
-                grid-template-rows: auto auto !important;
-                grid-template-areas:
-                    "info price"
-                    "shares pl" !important;
-                gap: 0.2rem 0.75rem !important;
-                display: grid;
-            }
-            .holding-info {
-                grid-area: info !important;
-            }
-            .holding-price {
-                grid-area: price !important;
-                text-align: right !important;
-            }
-            .holding-shares {
-                grid-area: shares !important;
-            }
-            .holding-pl {
-                grid-area: pl !important;
-                text-align: right !important;
-            }
+            /* Holdings card sizing handled by mobile-first base styles */
 
             /* Sector popup mobile */
             .sector-popup {
@@ -1959,7 +1926,6 @@
             .sector-holding-name {
                 font-size: 0.8rem !important;
             }
-            .holding-chart { display: none !important; }
 
             /* Activity - smaller text */
             .activity-title { font-size: 0.8rem !important; }
@@ -2002,13 +1968,6 @@
             .stats-bar { max-width: 100%; }
         }
 
-        /* Default mobile styles for holdings */
-        .holdings-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
         /* Desktop maintains mobile layout - single column for consistency */
         @media (min-width: 1024px) {
             .container {
@@ -2026,53 +1985,32 @@
             }
         }
         
-        .holding-card {
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .holding-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-        .why-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 0.6rem;
-            padding: 3px 8px;
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.2));
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            border-radius: 12px;
-            color: var(--accent-blue);
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        .holding-card:hover .why-badge {
-            opacity: 1;
-        }
-        
-        /* Mobile Responsive */
+        /* Mobile-first holdings layout */
         @media (max-width: 768px) {
-            .why-badge {
-                opacity: 1;
-                font-size: 0.55rem;
-                padding: 2px 6px;
-            }
             .holding-card {
-                padding: 0.75rem;
+                padding: 0.75rem 0.875rem;
+                min-height: 64px;
+                gap: 0.625rem;
             }
             .holding-symbol {
-                font-size: 1rem;
+                font-size: 0.95rem;
+            }
+            .holding-company {
+                font-size: 0.65rem;
+                max-width: 120px;
             }
             .holding-shares {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
             .holding-price {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
             }
             .holding-pl {
+                font-size: 0.8rem;
+            }
+            .holding-action {
+                width: 24px;
+                height: 24px;
                 font-size: 0.75rem;
             }
             .holdings-controls {
@@ -2113,7 +2051,7 @@
                 grid-template-columns: 1fr !important;
             }
         }
-        
+
         @media (max-width: 480px) {
             .strategy-cards {
                 grid-template-columns: 1fr !important;
@@ -2127,35 +2065,26 @@
             .section-title {
                 font-size: 1.1rem !important;
             }
-            .why-badge {
-                font-size: 0.5rem;
-                padding: 2px 5px;
-                top: 6px;
-                right: 6px;
+            .holding-action {
+                font-size: 0.7rem;
+                width: 22px;
+                height: 22px;
             }
-            
-            /* Mobile-first card improvements */
             .holding-card {
-                padding: 16px !important;
-                min-height: 80px;
+                padding: 0.625rem 0.75rem;
+                min-height: 60px;
             }
-            
             .section {
                 padding: 16px !important;
             }
-            
-            /* Better touch targets on mobile */
             .holdings-filter-btn {
                 min-height: 44px;
                 padding: 12px 16px;
             }
-            
             .time-btn {
                 min-height: 44px;
                 min-width: 44px;
             }
-            
-            /* Modal improvements */
             #watchlist-modal > div {
                 border-radius: 20px 20px 0 0 !important;
                 max-height: 95vh !important;
@@ -4187,33 +4116,30 @@
                 const isPositive = pos.unrealized_plpc >= 0;
                 const plClass = isPositive ? 'positive' : 'negative';
                 const sign = isPositive ? '+' : '';
-                const chartColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
-
-                // Generate mini chart
-                const chartBars = generateMiniChart(pos.unrealized_plpc, chartColor);
 
                 // Get company name from dynamic companyInfo if available
                 const companyData = (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]) ? companyInfo[pos.symbol] : {};
                 const companyName = companyData.company || getCompanyName(pos.symbol) || pos.symbol;
-                
+
                 return `
-                <div onclick="showTradeDetails('${pos.symbol}')" data-positive="${isPositive}" class="holding-card">
-                    <div class="holding-info">
+                <div onclick="showTradeDetails('${pos.symbol}')" data-positive="${isPositive}" class="holding-card" role="button" tabindex="0" aria-label="View details for ${pos.symbol}">
+                    <div class="holding-main">
                         <div class="holding-symbol">${pos.symbol}</div>
                         <div class="holding-company">${companyName}</div>
                         <div class="holding-shares">${pos.qty} shares @ $${pos.avg_entry.toFixed(2)}</div>
                     </div>
-                    <div class="holding-price">$${pos.current.toFixed(2)}</div>
-                    <div class="holding-pl ${plClass}">${sign}${pos.unrealized_plpc.toFixed(2)}%</div>
-                    <div class="why-badge">Why? 💡</div>
-                    <div class="holding-chart">${chartBars}</div>
+                    <div class="holding-metrics">
+                        <div class="holding-price">$${pos.current.toFixed(2)}</div>
+                        <div class="holding-pl ${plClass}">${sign}${pos.unrealized_plpc.toFixed(2)}%</div>
+                    </div>
+                    <div class="holding-action" aria-hidden="true">💡</div>
                 </div>
                 `;
             }).join('');
             console.log('Holdings cards updated successfully');
         }
 
-        // Generate simple mini chart (Robinhood style)
+        // Legacy mini chart generator kept for any code that may still reference it.
         function generateMiniChart(plpc, color) {
             const bars = [];
             const trend = plpc > 0 ? 1 : -1;
@@ -4221,10 +4147,8 @@
             for (let i = 0; i < 10; i++) {
                 let height;
                 if (trend > 0) {
-                    // Uptrend: ascending bars
                     height = 20 + (i * 8) + (Math.random() * 15);
                 } else {
-                    // Downtrend: descending bars
                     height = 100 - (i * 8) - (Math.random() * 15);
                 }
                 height = Math.max(10, Math.min(100, height));
