@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0210-FILTER-REDESIGN -->
+    <!-- CACHE BUST: v=20260620-0214-FILTER-COMPACT -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1344,13 +1344,14 @@
 
                 .holdings-controls {
             display: flex;
-            gap: 0.4rem;
+            gap: 0.35rem;
             margin-bottom: 0.625rem;
             overflow-x: auto;
             flex-wrap: nowrap;
             scrollbar-width: none;
             -ms-overflow-style: none;
             padding-bottom: 2px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .holdings-section-header {
@@ -1365,27 +1366,29 @@
 
         .holdings-filter-btn {
             flex-shrink: 0;
-            padding: 0.45rem 0.85rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
+            padding: 0.35rem 0.65rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             color: var(--text-secondary);
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .holdings-filter-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             color: var(--text-primary);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .holdings-filter-btn.active {
-            background: rgba(6, 182, 212, 0.15);
-            border-color: rgba(6, 182, 212, 0.4);
+            background: rgba(6, 182, 212, 0.2);
+            border-color: rgba(6, 182, 212, 0.5);
             color: var(--accent-blue);
+            font-weight: 600;
         }
 
                 .pull-to-refresh {
@@ -2079,11 +2082,11 @@
             }
             .holdings-controls {
                 flex-wrap: nowrap;
-                gap: 0.4rem;
+                gap: 0.3rem;
             }
             .holdings-filter-btn {
-                font-size: 0.7rem;
-                padding: 0.4rem 0.7rem;
+                font-size: 0.65rem;
+                padding: 0.3rem 0.55rem;
                 min-height: auto;
             }
             .hero-title {
@@ -2149,7 +2152,7 @@
                 padding: 16px !important;
             }
             .holdings-filter-btn {
-                padding: 0.4rem 0.7rem;
+                padding: 0.3rem 0.55rem;
                 min-height: auto;
             }
             .time-btn {
