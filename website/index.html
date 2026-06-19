@@ -8,7 +8,8 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0056-SECTOR-SKELETON -->
+    <!-- CACHE BUST: v=20260620-0100-COMPACT-STRATEGY -->
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1112,7 +1113,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 0.875rem;
             cursor: pointer;
             transition: background 0.15s ease;
         }
@@ -1122,19 +1123,19 @@
         }
 
         .strategy-card-icon {
-            font-size: 1.25rem;
-            margin-right: 0.75rem;
+            font-size: 1.15rem;
+            margin-right: 0.625rem;
         }
 
         .strategy-card-title {
             flex: 1;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-primary);
         }
 
         .strategy-card-chevron {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
             transition: transform 0.2s ease;
         }
@@ -1151,13 +1152,13 @@
 
         .strategy-card.expanded .strategy-card-content {
             max-height: 300px;
-            padding: 0 1rem 1rem;
+            padding: 0 0.875rem 0.875rem;
         }
 
         .strategy-card-text {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.55;
         }
 
         .strategy-card-text strong {
@@ -1905,6 +1906,11 @@
             .race-card > div:first-child { font-size: 1.1rem; }
             .race-card > div:nth-child(2) { font-size: 0.8rem; }
             .race-card > div:nth-child(3) { font-size: 0.55rem; margin-bottom: 0.4rem; }
+            .strategy-card-header { padding: 0.625rem 0.75rem; }
+            .strategy-card-icon { font-size: 1rem; margin-right: 0.5rem; }
+            .strategy-card-title { font-size: 0.8rem; }
+            .strategy-card.expanded .strategy-card-content { padding: 0 0.75rem 0.75rem; }
+            .strategy-card-text { font-size: 0.7rem; line-height: 1.5; }
 
             .container { padding: 0.75rem !important; }
             header { padding: 1.25rem 1rem 1rem !important; }
