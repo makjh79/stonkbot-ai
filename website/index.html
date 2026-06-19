@@ -6,10 +6,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script>(function(){var v='20260620-0714';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-0725';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0714-CACHE-BUST-V7 -->
+    <!-- CACHE BUST: v=20260620-0725-CACHE-BUST-V8 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1363,6 +1363,52 @@
         .holdings-updated {
             font-size: 0.65rem;
             color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .holdings-updated-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 4px var(--accent-green);
+        }
+
+        .holdings-empty-state {
+            display: none;
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .holdings-empty-state-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .holdings-empty-state-btn {
+            margin-top: 0.75rem;
+            padding: 0.4rem 0.875rem;
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 20px;
+            color: var(--accent-blue);
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .holdings-empty-state-btn:hover {
+            background: rgba(6, 182, 212, 0.25);
+            border-color: rgba(6, 182, 212, 0.6);
         }
 
         .holdings-filter-btn {
@@ -2553,7 +2599,10 @@
             <div class="section-header holdings-section-header">
                 <div>
                     <div class="section-title">Current Holdings</div>
-                    <div class="holdings-updated">Updated live</div>
+                    <div id="holdings-updated" class="holdings-updated">
+                        <span class="holdings-updated-dot"></span>
+                        <span>Updated live</span>
+                    </div>
                 </div>
             </div>
             <!-- Holdings Sort & Filter Controls -->
@@ -2619,6 +2668,14 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Empty state shown when filter returns no results -->
+            <div id="holdings-empty-state" class="holdings-empty-state">
+                <div class="holdings-empty-state-icon">🔍</div>
+                <div>No holdings match this filter.</div>
+                <button class="holdings-empty-state-btn" onclick="filterHoldings('all'); return false;" aria-label="Show all holdings">Show all holdings</button>
+            </div>
+
         <!-- Sector Performance - Clickable Cards -->
         <div class="section" style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px;">
             <div class="section-header">
@@ -3657,6 +3714,17 @@
 
             // Update visible data freshness indicator
             updateDataFreshness(data?.timestamp || new Date().toISOString());
+
+            // Update holdings section timestamp
+            const holdingsUpdated = document.getElementById('holdings-updated');
+            if (holdingsUpdated) {
+                const then = data?.timestamp ? new Date(data.timestamp) : new Date();
+                const timeStr = then.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/New_York' });
+                const dot = holdingsUpdated.querySelector('.holdings-updated-dot');
+                const text = holdingsUpdated.querySelector('span:last-child');
+                if (text) text.textContent = `Updated ${timeStr} ET`;
+                if (dot) dot.style.background = 'var(--accent-green)';
+            }
 
             // Update stonk meter if available (using $100K baseline)
             if (data.account) {
@@ -6688,6 +6756,7 @@
             if (!container) return;
 
             var cards = container.querySelectorAll(':scope > div[onclick*="showTradeDetails"]');
+            var anyVisible = false;
 
             cards.forEach(function(card) {
                 var plEl = card.querySelector('.holding-pl');
@@ -6697,14 +6766,21 @@
                 var isGainer = plText.indexOf('+') !== -1;
 
                 // Simple display toggle
+                var visible = true;
                 if (filterType === 'gainers') {
-                    card.style.display = isGainer ? '' : 'none';
+                    visible = isGainer;
                 } else if (filterType === 'losers') {
-                    card.style.display = isGainer ? 'none' : '';
-                } else {
-                    card.style.display = '';
+                    visible = !isGainer;
                 }
+                card.style.display = visible ? '' : 'none';
+                if (visible) anyVisible = true;
             });
+
+            // Toggle empty state
+            var emptyState = document.getElementById('holdings-empty-state');
+            if (emptyState) {
+                emptyState.style.display = anyVisible ? 'none' : 'flex';
+            }
         };
         // ============================================
         // PULL TO REFRESH - Mobile
