@@ -2693,7 +2693,7 @@
                         <span class="faq-chevron">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <div class="faq-answer-text"><strong>Autonomous Trading System:</strong><br><br>🛡️ <strong>Protect:</strong> Hard stops at -15% on all positions<br>🎯 <strong>Profit Taking:</strong> Trim 25% at +25%, full exit at +50%<br>🔥 <strong>Auto-Entry:</strong> Buys when RSI ≤ 35 AND AI Score ≥ 60 with 1.5x volume<br><br><strong>3-Tier Watchlist System:</strong> Dynamic 15-stock list updates every 5 minutes<br>🔥 <strong>NOW:</strong> RSI ≤ 35 + AI ≥ 75 — Highest conviction, bot auto-buys<br>👀 <strong>WATCH:</strong> RSI ≤ 48 + AI ≥ 60 — Bot buys if RSI drops below 35<br>📋 <strong>MONITOR:</strong> All others — Waiting for setup<br><br><strong>Watchlist Entry Criteria:</strong><br>• RSI 28-48 (buy zone)<br>• AI Score ≥ 60 (quality)<br>• Positive momentum vs S&P 500<br><br><strong>Auto-Removal Rules:</strong><br>• RSI > 50 — moved past buy zone<br>• Up > 5% daily — entry missed<br>• 3 days without RSI < 40 — stale<br>• Lagging S&P by 3% — weak setup<br><br>Executes during market hours only. No emotions, no exceptions.</div>
+                        <div class="faq-answer-text"><strong>Autonomous Trading System:</strong><br><br>🛡️ <strong>Protect:</strong> Hard stops at -15% on all positions<br>🎯 <strong>Profit Taking:</strong> Trim 25% at +25%, full exit at +50%<br>🚀 <strong>Capital Recycling:</strong> Trim 25% when RSI > 75 (euphoria) to fund new entries<br>🔥 <strong>Auto-Entry:</strong> Buys when RSI ≤ 35 AND AI Score ≥ 60 with 1.5x volume<br><br><strong>3-Tier Watchlist System:</strong> Dynamic 15-stock list updates every 5 minutes<br>🔥 <strong>NOW:</strong> RSI ≤ 35 + AI ≥ 75 — Highest conviction, bot auto-buys<br>👀 <strong>WATCH:</strong> RSI ≤ 48 + AI ≥ 60 — Bot buys if RSI drops below 35<br>📋 <strong>MONITOR:</strong> All others — Waiting for setup<br><br><strong>Watchlist Entry Criteria:</strong><br>• RSI 28-48 (buy zone)<br>• AI Score ≥ 60 (quality)<br>• Positive momentum vs S&P 500<br><br><strong>Auto-Removal Rules:</strong><br>• RSI > 50 — moved past buy zone<br>• Up > 5% daily — entry missed<br>• 3 days without RSI < 40 — stale<br>• Lagging S&P by 3% — weak setup<br><br>Executes during market hours only. No emotions, no exceptions.</div>
                     </div>
                 </div>
 
@@ -4746,7 +4746,7 @@
                         description: 'Autonomous trading system active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K initial capital. Strategy: RSI auto-entry, -15% stop loss, +25% trim, +50% exit.'
+                        rationale: 'AI trading bot started with $100K initial capital. Strategy: RSI auto-entry (≤35), -15% stop loss, +25% trim, +50% exit, RSI >75 overbought trim (recycles capital).'
                     }
                 ];
                 
@@ -4973,7 +4973,7 @@
                         <div style="margin-bottom: 0.5rem;">📊 <strong>Strategy Active</strong></div>
                         <div>• RSI-based entry signals</div>
                         <div>• -15% stop losses</div>
-                        <div>• +25% profit trimming</div>
+                        <div>• +25% profit trimming (or RSI >75 overbought trim)</div>
                     </div>
                 </div>
             `;
@@ -6944,11 +6944,12 @@
             window.lastHoldingsDataRefresh = Date.now();
         }, 30000);
         
-        // Global variable to track active popup refresh interval
+        // Global variables to track active popup refresh intervals
         let activePopupRefreshInterval = null;
         let activePopupSymbol = null;
         let watchlistPopupRefreshInterval = null;
         let watchlistPopupSymbol = null;
+        let watchlistModalRefreshInterval = null;  // Separate from stock chart refresh
 
         function refreshActivePopup() {
             if (activePopupSymbol && document.getElementById('trade-modal')) {
@@ -7482,7 +7483,7 @@
                         subtype: 'buy',
                         icon: '🟢',
                         title: 'Bought AMD',
-                        description: '10 shares @ $517.49 • Target: +25% | Stop: -15%',
+                        description: '10 shares @ $517.49 • Target: +25% | Trim: RSI>75 | Stop: -15%',
                         timestamp: new Date('2026-06-05T16:16:00Z'),
                         badge: 'Buy',
                         badgeClass: 'buy',
@@ -7495,7 +7496,7 @@
                         subtype: 'buy',
                         icon: '🟢',
                         title: 'Bought PLTR',
-                        description: '15 shares @ $142.52 • Target: +25% | Stop: -15%',
+                        description: '15 shares @ $142.52 • Target: +25% | Trim: RSI>75 | Stop: -15%',
                         timestamp: new Date('2026-06-05T16:18:00Z'),
                         badge: 'Buy',
                         badgeClass: 'buy',
@@ -7524,7 +7525,7 @@
                         timestamp: new Date('2026-06-06T15:27:00Z'),
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'Autonomous trading bot deployed with AI-designed strategy. Bot monitors portfolio 24/7 during market hours. Executes stop losses at -15%, takes profits at +25%/+50%, and rebalances when needed. All trades logged in real-time. Human intervention only for emergencies.',
+                        rationale: 'Autonomous trading bot deployed with AI-designed strategy. Bot monitors portfolio 24/7 during market hours. Executes stop losses at -15%, takes profits at +25%/+50%, trims overbought positions at RSI >75 to recycle capital, and rebalances when needed. All trades logged in real-time. Human intervention only for emergencies.',
                         marketContext: 'Markets closed Saturday. Bot will begin active monitoring Monday 9:30 AM ET. Initial cash deployment: 35% invested, 65% dry powder for opportunities.'
                     },
                     {
@@ -7853,7 +7854,7 @@
                         subtype: 'buy',
                         icon: '🟢',
                         title: 'Bought AMD',
-                        description: '25 shares @ $517.49 • Target: +25% | Stop: -15%',
+                        description: '25 shares @ $517.49 • Target: +25% | Trim: RSI>75 | Stop: -15%',
                         timestamp: new Date('2026-06-05T16:16:00Z'),
                         badge: 'Buy',
                         badgeClass: 'buy',
@@ -8787,7 +8788,7 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                <button onclick="document.getElementById('watchlist-modal').remove(); document.body.style.overflow = '';" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-size: 20px; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">×</button>
+                                <button onclick="closeWatchlistModal()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); font-size: 20px; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px;">×</button>
                             </div>
                         </div>
                         
@@ -8795,14 +8796,16 @@
                         
                         <!-- Sort Dropdown -->
                         <div style="display: flex; gap: 8px; align-items: center;">
-                            <select id="sort-select" onchange="sortWatchlist(this.value)" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; color: var(--text-secondary); font-size: 14px; cursor: pointer; flex: 1;">
-                                <option value="rank">Sort by: AI Rank</option>
-                                <option value="price">Sort by: Price</option>
-                                <option value="upside">Sort by: Upside %</option>
-                                <option value="rsi">Sort by: RSI</option>
-                                <option value="aiScore">Sort by: AI Score</option>
+                            <select id="sort-select" onchange="sortWatchlist(this.value)" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 10px; color: var(--text-secondary); font-size: 13px; cursor: pointer; flex: 1; min-width: 0;">
+                                <option value="opportunity">🔥 Best Opportunity</option>
+                                <option value="rsi">📉 RSI (Oversold)</option>
+                                <option value="dip">💧 Biggest Drop</option>
+                                <option value="aiScore">🤖 AI Score</option>
+                                <option value="price">💰 Price</option>
+                                <option value="change">📈 Gainers</option>
+                                <option value="alpha">🔤 A-Z</option>
                             </select>
-                            <button onclick="showSavedOnly()" id="saved-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; color: var(--text-secondary); font-size: 14px; cursor: pointer; white-space: nowrap;">
+                            <button onclick="showSavedOnly()" id="saved-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; color: var(--text-secondary); font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
                                 ★ Saved (${headerSavedWatchlist.length})
                             </button>
                         </div>
@@ -8817,6 +8820,43 @@
             
             // Render the watchlist content
             renderWatchlistContent();
+            
+            // Auto-refresh every 30 seconds while modal is open
+            if (watchlistModalRefreshInterval) clearInterval(watchlistModalRefreshInterval);
+            watchlistModalRefreshInterval = setInterval(() => {
+                if (document.getElementById('watchlist-modal')) {
+                    fetchWatchlistPrices().then(() => {
+                        renderWatchlistContent();
+                        const indicator = document.querySelector('#watchlist-modal span[style*="animation: pulse"]');
+                        if (indicator) {
+                            const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                            indicator.parentElement.innerHTML = `<span style="color: #22c55e; animation: pulse 2s infinite;">●</span> LIVE · Updated ${now}`;
+                        }
+                    });
+                } else {
+                    clearInterval(watchlistModalRefreshInterval);
+                    watchlistModalRefreshInterval = null;
+                }
+            }, 30000);
+            
+            // Auto-refresh every 30 seconds while modal is open
+            if (watchlistPopupRefreshInterval) clearInterval(watchlistPopupRefreshInterval);
+            watchlistPopupRefreshInterval = setInterval(() => {
+                if (document.getElementById('watchlist-modal')) {
+                    fetchWatchlistPrices().then(() => {
+                        renderWatchlistContent();
+                        // Update live indicator
+                        const indicator = document.querySelector('#watchlist-modal span[style*="animation: pulse"]');
+                        if (indicator) {
+                            const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                            indicator.parentElement.innerHTML = `<span style="color: #22c55e; animation: pulse 2s infinite;">●</span> LIVE · Updated ${now}`;
+                        }
+                    });
+                } else {
+                    clearInterval(watchlistPopupRefreshInterval);
+                    watchlistPopupRefreshInterval = null;
+                }
+            }, 30000);
             
             // Show loading state initially, then refresh when data loads
             const container = document.getElementById('watchlist-content');
@@ -8905,13 +8945,36 @@
                 return {...stock, tier};
             });
             
-            // Sort: NOW first, then WATCH, then MONITOR, then by AI score
+            // Apply selected sort
             watchlistWithTiers.sort((a, b) => {
-                const tierOrder = { 'NOW': 0, 'WATCH': 1, 'MONITOR': 2 };
-                if (tierOrder[a.tier] !== tierOrder[b.tier]) {
-                    return tierOrder[a.tier] - tierOrder[b.tier];
+                switch(currentWatchlistSort) {
+                    case 'rsi':
+                        // Oversold first (lower RSI = better entry)
+                        return a.rsi - b.rsi;
+                    case 'dip':
+                        // Biggest drop today first
+                        return a.changePct - b.changePct;
+                    case 'aiScore':
+                        // Pure AI score ranking
+                        return b.aiScore - a.aiScore;
+                    case 'price':
+                        // Low to high price
+                        return a.price - b.price;
+                    case 'change':
+                        // Biggest gainers first
+                        return b.changePct - a.changePct;
+                    case 'alpha':
+                        // Alphabetical
+                        return a.symbol.localeCompare(b.symbol);
+                    case 'opportunity':
+                    default:
+                        // Best opportunity: NOW tier first, then WATCH, then by AI score
+                        const tierOrder = { 'NOW': 0, 'WATCH': 1, 'MONITOR': 2 };
+                        if (tierOrder[a.tier] !== tierOrder[b.tier]) {
+                            return tierOrder[a.tier] - tierOrder[b.tier];
+                        }
+                        return b.aiScore - a.aiScore;
                 }
-                return b.aiScore - a.aiScore;
             });
             
             let stocksToShow = showingSavedOnly 
@@ -9238,6 +9301,20 @@
             watchlistPopupSymbol = null;
             
             const modal = document.getElementById('stock-chart-modal');
+            if (modal) {
+                modal.remove();
+                document.body.style.overflow = '';
+            }
+        }
+        
+        function closeWatchlistModal() {
+            // Clear the watchlist modal refresh interval
+            if (watchlistModalRefreshInterval) {
+                clearInterval(watchlistModalRefreshInterval);
+                watchlistModalRefreshInterval = null;
+            }
+            
+            const modal = document.getElementById('watchlist-modal');
             if (modal) {
                 modal.remove();
                 document.body.style.overflow = '';
