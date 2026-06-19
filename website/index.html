@@ -5131,12 +5131,19 @@
                             const plColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
                             const plSign = isPositive ? '+' : '';
                             
-                            html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);">';
-                            html += '<div style="display: flex; align-items: center; gap: 0.75rem;">';
-                            html += '<div style="font-weight: 600; color: var(--text-primary); min-width: 48px;">' + pos.symbol + '</div>';
-                            html += '<div style="font-size: 0.75rem; color: var(--text-muted);">' + pos.qty + ' shares</div>';
+                            // Get dynamic company name
+                            const companyData = (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]) ? companyInfo[pos.symbol] : {};
+                            const companyName = companyData.company || getCompanyName(pos.symbol) || pos.symbol;
+                            
+                            html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);">';
+                            html += '<div style="flex: 1; min-width: 0;">';
+                            html += '<div style="display: flex; align-items: center; gap: 0.5rem;">';
+                            html += '<div style="font-weight: 600; color: var(--text-primary);">' + pos.symbol + '</div>';
+                            html += '<div style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + companyName + '</div>';
                             html += '</div>';
-                            html += '<div style="text-align: right;">';
+                            html += '<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">' + pos.qty + ' shares</div>';
+                            html += '</div>';
+                            html += '<div style="text-align: right; flex-shrink: 0;">';
                             html += '<div style="font-weight: 500; color: var(--text-primary);">$' + pos.market_value.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
                             html += '<div style="font-size: 0.7rem; color: ' + plColor + '">' + plSign + pos.unrealized_plpc.toFixed(1) + '%</div>';
                             html += '</div></div>';
