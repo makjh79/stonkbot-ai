@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260619-2310-SKELETON-LOADING -->
+    <!-- CACHE BUST: v=20260619-2325-CLICK-TARGETS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -399,6 +399,56 @@
             flex-direction: column;
             align-items: flex-end;
             gap: 0.35rem;
+        }
+
+        /* Action buttons - clear click targets */
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            padding: 0.625rem 1rem;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 12px;
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            width: 100%;
+            max-width: 260px;
+        }
+        .action-button:hover,
+        .action-button:active {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(168, 85, 247, 0.25));
+            border-color: rgba(6, 182, 212, 0.5);
+            transform: translateY(-1px);
+        }
+        .action-button-secondary {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.12);
+            color: var(--text-secondary);
+        }
+        .action-button-secondary:hover,
+        .action-button-secondary:active {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+            color: var(--text-primary);
+        }
+
+        /* Race cards - non-clickable, decorative summary cards */
+        .race-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            transition: border-color 0.2s ease;
+        }
+        .race-card:hover {
+            border-color: rgba(255,255,255,0.2);
         }
 
         .experiment-metric-label {
@@ -2439,9 +2489,9 @@
             <p style="color: var(--text-muted); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin: 0;">AI Powered Trading</p>
         </header>
 
-        <!-- WORLD-CLASS HERO CARD - Click to view Activity -->
+        <!-- WORLD-CLASS HERO CARD -->
         <div id="overview" class="section-anchor"></div>
-        <div onclick="showTradeLogModal()" style="background: var(--bg-surface); border-radius: 24px; padding: 2rem 1.5rem; text-align: center; border: 1px solid var(--border); margin-bottom: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+        <div style="background: var(--bg-surface); border-radius: 24px; padding: 2rem 1.5rem 1.25rem; text-align: center; border: 1px solid var(--border); margin-bottom: 1rem;">
             <!-- Portfolio Value - BIG -->
             <div id="portfolio-value" class="skeleton skeleton-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5); min-height: 3rem; margin-left: auto; margin-right: auto; width: 220px;">Loading...</div>
 
@@ -2466,12 +2516,11 @@
                     <div id="cash-available" class="skeleton skeleton-text" style="font-weight: 700; min-width: 70px; margin: 0 auto;">--</div>
                 </div>
             </div>
-            
-            <!-- Click Indicator -->
-            <div style="margin-top: 1rem; font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                <span>Tap to view Activity Log</span>
-                <span style="font-size: 0.8rem;">→</span>
-            </div>
+
+            <!-- Explicit Action Button -->
+            <button onclick="showTradeLogModal()" class="action-button" style="margin-top: 1.25rem;" aria-label="View activity log">
+                View Activity Log <span style="margin-left: 0.25rem;">→</span>
+            </button>
         </div>
 
         <!-- THE EXPERIMENT - Enhanced Timeline -->
@@ -2481,10 +2530,10 @@
                 <div class="section-title">The $100K Experiment</div>
             </div>
 
-            <!-- THE RACE - Clickable Cards -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem; cursor: pointer;" onclick="showPerformanceDetailModal()" title="Click for detailed analytics">
+            <!-- THE RACE - Cards -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
                 <!-- S&P 500 Card -->
-                <div style="background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1rem; text-align: center; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+                <div class="race-card">
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
@@ -2494,7 +2543,7 @@
                 </div>
                 
                 <!-- StonkBOT.AI Card -->
-                <div style="background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1rem; text-align: center; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+                <div class="race-card">
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">StonkBOT.AI</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
@@ -2503,7 +2552,11 @@
                     <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 50px;">--</span>
                 </div>
             </div>
-            <div style="text-align: center; font-size: 0.6rem; color: var(--text-muted); margin-bottom: 0.5rem;">👆 Tap cards for detailed analytics</div>
+
+            <!-- Explicit Action Button -->
+            <button onclick="showPerformanceDetailModal()" class="action-button action-button-secondary" aria-label="View detailed analytics">
+                Detailed Analytics <span style="margin-left: 0.25rem;">→</span>
+            </button>
         </div>
 
         <div id="holdings" class="section-anchor"></div>
