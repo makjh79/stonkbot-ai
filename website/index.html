@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260619-2325-CLICK-TARGETS -->
+    <!-- CACHE BUST: v=20260619-2332-TEXT-LINKS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -401,41 +401,25 @@
             gap: 0.35rem;
         }
 
-        /* Action buttons - clear click targets */
-        .action-button {
+        /* Subtle text links for secondary actions */
+        .text-link {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.35rem;
-            padding: 0.625rem 1rem;
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(168, 85, 247, 0.15));
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            border-radius: 12px;
-            color: var(--accent-blue);
-            font-size: 0.8rem;
-            font-weight: 700;
+            gap: 0.2rem;
+            padding: 0.25rem 0;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
             cursor: pointer;
-            transition: all 0.2s ease;
-            min-height: 44px;
-            width: 100%;
-            max-width: 260px;
+            transition: color 0.2s ease;
+            min-height: 36px;
         }
-        .action-button:hover,
-        .action-button:active {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(168, 85, 247, 0.25));
-            border-color: rgba(6, 182, 212, 0.5);
-            transform: translateY(-1px);
-        }
-        .action-button-secondary {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.12);
-            color: var(--text-secondary);
-        }
-        .action-button-secondary:hover,
-        .action-button-secondary:active {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.2);
-            color: var(--text-primary);
+        .text-link:hover,
+        .text-link:active {
+            color: var(--accent-blue);
         }
 
         /* Race cards - non-clickable, decorative summary cards */
@@ -2501,7 +2485,7 @@
                 <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 60px;">--</span>)</span>
             </div>
 
-            <!-- Quick Stats Row -->
+            <!-- Quick Stats Row + Activity Link -->
             <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Day</div>
@@ -2517,10 +2501,10 @@
                 </div>
             </div>
 
-            <!-- Explicit Action Button -->
-            <button onclick="showTradeLogModal()" class="action-button" style="margin-top: 1.25rem;" aria-label="View activity log">
-                View Activity Log <span style="margin-left: 0.25rem;">→</span>
-            </button>
+            <!-- Subtle Activity Link -->
+            <div style="margin-top: 0.875rem; text-align: right;">
+                <button onclick="showTradeLogModal()" class="text-link" aria-label="View activity log">Activity log →</button>
+            </div>
         </div>
 
         <!-- THE EXPERIMENT - Enhanced Timeline -->
@@ -2553,10 +2537,10 @@
                 </div>
             </div>
 
-            <!-- Explicit Action Button -->
-            <button onclick="showPerformanceDetailModal()" class="action-button action-button-secondary" aria-label="View detailed analytics">
-                Detailed Analytics <span style="margin-left: 0.25rem;">→</span>
-            </button>
+            <!-- Subtle Analytics Link -->
+            <div style="text-align: center; margin-top: 0.25rem; margin-bottom: 0.5rem;">
+                <button onclick="showPerformanceDetailModal()" class="text-link" aria-label="View detailed analytics">Detailed analytics →</button>
+            </div>
         </div>
 
         <div id="holdings" class="section-anchor"></div>
