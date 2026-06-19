@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0141-REMOVE-FOOTER-BORDER -->
+    <!-- CACHE BUST: v=20260620-0153-POLISH-BATCH-2 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2369,6 +2369,9 @@
             } catch (e) {
                 console.error('[CACHE] Error reading cache:', e);
             }
+            try {
+                document.body.classList.add('page-loaded');
+            } catch (e) {}
         })();
     </script>
     <!-- Scroll Progress Indicator -->
@@ -2430,29 +2433,32 @@
 
     <!-- Mobile Menu Modal ("More" Menu) -->
     <div id="mobileMenuModal" class="chart-modal" style="z-index: 999;">
-        <div class="chart-modal-content" style="max-width: 320px; margin: auto 1rem auto auto; height: auto; max-height: 70vh; display: flex; flex-direction: column;">
+        <div class="chart-modal-content" style="max-width: 320px; margin: auto 1rem auto auto; height: auto; max-height: 70vh; display: flex; flex-direction: column; border-radius: 18px;">
             <div class="chart-modal-header">
                 <span class="chart-modal-title">More</span>
                 <button class="chart-modal-close" onclick="closeMobileMenu()">✕</button>
             </div>
-            <div class="chart-modal-body" style="padding: 0; overflow-y: auto; max-height: calc(70vh - 60px);">
-                <div style="display: flex; flex-direction: column;">
-                    <!-- Quick Actions -->
-                    <a href="#" onclick="showTradeLogModal(); closeMobileMenu(); return false;" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); color: var(--text-primary); text-decoration: none; font-size: 0.9rem;">
-                        <span>📜</span>
-                        <span>Recent Activity</span>
+            <div class="chart-modal-body" style="padding: 0.75rem 0; overflow-y: auto; max-height: calc(70vh - 60px);">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+
+                    <div style="padding: 0 1rem 0.25rem; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Insights</div>
+                    <a href="#" onclick="showTradeLogModal(); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
+                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">📜</span>
+                        <span style="font-weight: 500;">Recent Activity</span>
                     </a>
-                    <a href="#" onclick="showAllocationModal(); closeMobileMenu(); return false;" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); color: var(--text-primary); text-decoration: none; font-size: 0.9rem;">
-                        <span>🥧</span>
-                        <span>Allocation</span>
+                    <a href="#" onclick="showAllocationModal(); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
+                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">🥧</span>
+                        <span style="font-weight: 500;">Allocation</span>
                     </a>
-                    <a href="#" onclick="showPerformanceDetailModal(); closeMobileMenu(); return false;" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); color: var(--text-primary); text-decoration: none; font-size: 0.9rem;">
-                        <span>📈</span>
-                        <span>Performance</span>
+                    <a href="#" onclick="showPerformanceDetailModal(); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
+                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">📈</span>
+                        <span style="font-weight: 500;">Performance</span>
                     </a>
-                    <a href="#faq" onclick="scrollToSection('faq'); closeMobileMenu(); return false;" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; color: var(--text-primary); text-decoration: none; font-size: 0.9rem;">
-                        <span>❓</span>
-                        <span>FAQ</span>
+
+                    <div style="margin-top: 0.5rem; padding: 0.75rem 1rem 0.25rem; border-top: 1px solid var(--border); font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Learn</div>
+                    <a href="#faq" onclick="scrollToSection('faq'); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
+                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">❓</span>
+                        <span style="font-weight: 500;">FAQ</span>
                     </a>
                 </div>
             </div>
@@ -3158,6 +3164,63 @@
             background: var(--accent-green);
             border-radius: 50%;
             animation: pulse 2s infinite;
+        }
+
+        /* Mobile-first compact hero/header */
+        @media (max-width: 480px) {
+            header {
+                padding: 1.25rem 1rem 0.75rem !important;
+            }
+            .hero-card {
+                padding: 1.25rem 1rem 0.875rem !important;
+                border-radius: 18px !important;
+            }
+            .hero-card #portfolio-value {
+                font-size: 2.5rem !important;
+                min-height: 2.5rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            .hero-stats {
+                margin-top: 1rem !important;
+                padding-top: 1rem !important;
+                gap: 1.25rem !important;
+            }
+            .section-header {
+                margin-bottom: 0.75rem !important;
+            }
+        }
+
+        .more-menu-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .more-menu-item:active {
+            background: rgba(255, 255, 255, 0.10);
+        }
+
+        /* Skeleton loading states */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s infinite linear;
+            border-radius: 4px;
+            color: transparent !important;
+            user-select: none;
+        }
+        .skeleton > * {
+            visibility: hidden;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Page load transition */
+        body {
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        body.page-loaded {
+            opacity: 1;
         }
     </style>
 
