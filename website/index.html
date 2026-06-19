@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0037-COMPACT-HERO -->
+    <!-- CACHE BUST: v=20260620-0043-FRESHNESS -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2461,6 +2461,12 @@
                 <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 60px;">--</span>)</span>
             </div>
 
+            <!-- Data Freshness Indicator -->
+            <div id="data-freshness" class="skeleton skeleton-text" style="margin-top: 0.5rem; font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 0.35rem; min-width: 120px; margin-left: auto; margin-right: auto; width: 140px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); display: inline-block;"></span>
+                <span>Waiting for data...</span>
+            </div>
+
             <!-- Quick Stats Row -->
             <div class="hero-stats" style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <div style="text-align: center;">
@@ -3443,6 +3449,37 @@
         window.currentPortfolioData = null;
         
         // Update dashboard with fresh data
+        // Helper to format relative freshness time
+        function updateDataFreshness(timestamp) {
+            const el = document.getElementById('data-freshness');
+            if (!el) return;
+
+            const then = timestamp ? new Date(timestamp) : new Date();
+            const now = new Date();
+            const seconds = Math.floor((now - then) / 1000);
+
+            let text;
+            let dotColor = 'var(--accent-green)';
+
+            if (seconds < 60) {
+                text = 'Updated just now';
+            } else if (seconds < 3600) {
+                const mins = Math.floor(seconds / 60);
+                text = `Updated ${mins}m ago`;
+                dotColor = mins <= 5 ? 'var(--accent-green)' : '#fbbf24';
+            } else if (seconds < 86400) {
+                const hours = Math.floor(seconds / 3600);
+                text = `Updated ${hours}h ago`;
+                dotColor = hours <= 2 ? '#fbbf24' : 'var(--accent-red)';
+            } else {
+                text = 'Data stale — refreshing...';
+                dotColor = 'var(--accent-red)';
+            }
+
+            el.classList.remove('skeleton', 'skeleton-text');
+            el.innerHTML = `<span style="width: 6px; height: 6px; border-radius: 50%; background: ${dotColor}; display: inline-block; box-shadow: 0 0 6px ${dotColor};"></span><span>${text}</span>`;
+        }
+
         function updateDashboard(data) {
             // Store for fallback use in modals
             window.currentPortfolioData = data;
@@ -3526,6 +3563,9 @@
                 const now = new Date();
                 lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()} • <span style="color: var(--accent-green);">Live Data</span>`;
             }
+
+            // Update visible data freshness indicator
+            updateDataFreshness(data?.timestamp || new Date().toISOString());
 
             // Update stonk meter if available (using $100K baseline)
             if (data.account) {
@@ -5765,7 +5805,10 @@
                 }
                 
                 console.log('updateRaceValues: Updated display successfully');
-                
+
+                // Update visible data freshness indicator
+                updateDataFreshness(portfolioData?.timestamp || new Date().toISOString());
+
                 // Cache the values for next time to prevent flicker
                 setRaceCache({
                     spValue: '$' + Math.round(spValue).toLocaleString(),
