@@ -64,81 +64,9 @@ jobs:
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected'" || echo "SSH connection failed"
         
         # Deploy + ensure nginx sends no-cache headers for HTML
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 <<'REMOTE_EOF'
-set -e
-cd /root/.openclaw/workspace
-git pull origin master
-cp website/index.html /var/www/hedge-fund-website/index.html
-
-python3 - <<'PY'
-import glob, os, datetime, subprocess, shutil
-
-paths = list(glob.glob('/etc/nginx/sites-enabled/*')) + list(glob.glob('/etc/nginx/conf.d/*')) + ['/etc/nginx/nginx.conf']
-conf = None
-text = ''
-for p in paths:
-    if os.path.exists(p):
-        with open(p) as f:
-            text = f.read()
-        if '/var/www/hedge-fund-website' in text:
-            conf = p
-            break
-
-if not conf:
-    print('No nginx config found for hedge-fund-website; skipping header setup')
-    raise SystemExit(0)
-
-if 'no-store' in text:
-    print('Cache headers already present')
-    raise SystemExit(0)
-
-bak = conf + '.bak.' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-shutil.copy(conf, bak)
-
-def find_server_block(s, marker):
-    idx = s.find(marker)
-    if idx == -1:
-        return None
-    start = s.rfind('server {', 0, idx)
-    if start == -1:
-        return None
-    brace = s.find('{', start)
-    depth = 0
-    i = brace
-    while i < len(s):
-        if s[i] == '{':
-            depth += 1
-        elif s[i] == '}':
-            depth -= 1
-            if depth == 0:
-                return (start, i + 1)
-        i += 1
-    return None
-
-block = find_server_block(text, '/var/www/hedge-fund-website')
-if not block:
-    print('Could not locate server block')
-    raise SystemExit(1)
-
-s_start, s_end = block
-server_text = text[s_start:s_end]
-loc = server_text.find('location / {')
-if loc != -1:
-    insert_at = server_text.find('{', loc) + 1
-else:
-    insert_at = server_text.find('{') + 1
-
-headers = '\n\t\t# Cache-busting headers for HTML deploys\n\t\tadd_header Cache-Control "no-cache, no-store, must-revalidate" always;\n\t\tadd_header Pragma "no-cache" always;\n\t\tadd_header Expires "0" always;'
-new_server = server_text[:insert_at] + headers + server_text[insert_at:]
-new_text = text[:s_start] + new_server + text[s_end:]
-
-with open(conf, 'w') as f:
-    f.write(new_text)
-
-print(f'Updated {conf}')
-subprocess.run(['nginx', '-t'], check=True)
-subprocess.run(['nginx', '-s', 'reload'], check=True)
-PY
-
-echo "Deployed at $(date)" >> /var/www/hedge-fund-website/deploy.log
-REMOTE_EOF
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
+          "cd /root/.openclaw/workspace && \
+           git pull origin master && \
+           cp website/index.html /var/www/hedge-fund-website/index.html && \
+           python3 scripts/patch_nginx_cache_headers.py && \
+           echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"
