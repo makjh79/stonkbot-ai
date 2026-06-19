@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0033-MODAL-UNIFY -->
+    <!-- CACHE BUST: v=20260620-0037-COMPACT-HERO -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2126,6 +2126,12 @@
         }
 
         @media (max-width: 480px) {
+            .hero-card { padding: 1rem 0.875rem 0.875rem !important; }
+            .hero-card #portfolio-value { font-size: 2rem !important; margin-bottom: 0.4rem !important; min-height: 2.2rem !important; }
+            .hero-card #portfolio-return-badge { font-size: 0.75rem !important; padding: 0.3rem 0.6rem !important; }
+            .hero-card .hero-stats { gap: 1rem !important; margin-top: 0.75rem !important; padding-top: 0.75rem !important; }
+            .hero-card .hero-stats > div > div:first-child { font-size: 0.6rem !important; margin-bottom: 0.15rem !important; }
+
             .strategy-cards {
                 grid-template-columns: 1fr !important;
             }
@@ -2445,7 +2451,7 @@
 
         <!-- WORLD-CLASS HERO CARD -->
         <div id="overview" class="section-anchor"></div>
-        <div style="background: var(--bg-surface); border-radius: 24px; padding: 2rem 1.5rem 1.25rem; text-align: center; border: 1px solid var(--border); margin-bottom: 1rem;">
+        <div class="hero-card" style="background: var(--bg-surface); border-radius: 24px; padding: 2rem 1.5rem 1.25rem; text-align: center; border: 1px solid var(--border); margin-bottom: 1rem;">
             <!-- Portfolio Value - BIG -->
             <div id="portfolio-value" class="skeleton skeleton-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5); min-height: 3rem; margin-left: auto; margin-right: auto; width: 220px;">Loading...</div>
 
@@ -2456,7 +2462,7 @@
             </div>
 
             <!-- Quick Stats Row -->
-            <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <div class="hero-stats" style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Day</div>
                     <div id="day-counter" class="skeleton skeleton-text" style="font-weight: 700; min-width: 40px; margin: 0 auto;">--</div>
