@@ -6,10 +6,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script>(function(){var v='20260620-0734';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-0740';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0734-CACHE-BUST-V10 -->
+    <!-- CACHE BUST: v=20260620-0740-CACHE-BUST-V11 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1365,6 +1365,17 @@
             color: rgba(139, 146, 168, 0.65);
             font-weight: 400;
             letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .holdings-updated .live-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            box-shadow: 0 0 3px var(--accent-green);
         }
 
         .holdings-filter-btn {
@@ -2555,7 +2566,10 @@
             <div class="section-header holdings-section-header">
                 <div>
                     <div class="section-title">Current Holdings</div>
-                    <div class="holdings-updated">Updated live</div>
+                    <div class="holdings-updated">
+                        <span class="live-dot"></span>
+                        <span>Live</span>
+                    </div>
                 </div>
             </div>
             <!-- Holdings Sort & Filter Controls -->
