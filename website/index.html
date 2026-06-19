@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260619-2250-HOLDINGS-CARDS -->
+    <!-- CACHE BUST: v=20260619-2310-SKELETON-LOADING -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -339,6 +339,66 @@
         #sp500Value, #stonkAiValue, #sp500Return, #stonkAiReturn {
             min-height: 1.5rem;
             transition: opacity 0.15s ease;
+        }
+
+        /* Skeleton loading states */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.06) 75%);
+            background-size: 200% 100%;
+            border-radius: 6px;
+            animation: skeleton-shimmer 1.4s ease-in-out infinite;
+            color: transparent !important;
+            pointer-events: none;
+        }
+        .skeleton-dark {
+            background: linear-gradient(90deg, rgba(0,0,0,0.25) 25%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.25) 75%);
+            background-size: 200% 100%;
+        }
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .skeleton-text {
+            display: inline-block;
+            height: 1em;
+            min-width: 80px;
+        }
+        .skeleton-title {
+            height: 1.2em;
+            min-width: 120px;
+            border-radius: 8px;
+        }
+        .skeleton-value {
+            height: 1.5em;
+            min-width: 100px;
+            border-radius: 8px;
+        }
+        .skeleton-badge {
+            height: 1em;
+            min-width: 60px;
+            border-radius: 12px;
+        }
+        .skeleton-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            min-height: 68px;
+        }
+        .skeleton-card .skeleton-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .skeleton-card .skeleton-metrics {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.35rem;
         }
 
         .experiment-metric-label {
@@ -2383,27 +2443,27 @@
         <div id="overview" class="section-anchor"></div>
         <div onclick="showTradeLogModal()" style="background: var(--bg-surface); border-radius: 24px; padding: 2rem 1.5rem; text-align: center; border: 1px solid var(--border); margin-bottom: 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
             <!-- Portfolio Value - BIG -->
-            <div id="portfolio-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5);"><span style="opacity:0.5">Loading...</span></div>
+            <div id="portfolio-value" class="skeleton skeleton-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5); min-height: 3rem; margin-left: auto; margin-right: auto; width: 220px;">Loading...</div>
 
             <!-- Return Badge - Clean -->
             <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,82,82,0.15); border: 1px solid rgba(255,82,82,0.3); border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">
-                <span id="portfolio-return"><span style="opacity:0.5">--</span></span>
-                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl"><span style="opacity:0.5">--</span></span>)</span>
+                <span id="portfolio-return" class="skeleton skeleton-badge" style="min-width: 70px;">--</span>
+                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 60px;">--</span>)</span>
             </div>
 
             <!-- Quick Stats Row -->
             <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Day</div>
-                    <div id="day-counter" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);"><span style="opacity:0.5">--</span></div>
+                    <div id="day-counter" class="skeleton skeleton-text" style="font-weight: 700; min-width: 40px; margin: 0 auto;">--</div>
                 </div>
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Positions</div>
-                    <div id="position-count" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);"><span style="opacity:0.5">--</span></div>
+                    <div id="position-count" class="skeleton skeleton-text" style="font-weight: 700; min-width: 40px; margin: 0 auto;">--</div>
                 </div>
                 <div style="text-align: center;">
                     <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Cash</div>
-                    <div id="cash-available" style="font-size: 1rem; font-weight: 700; color: var(--accent-green);"><span style="opacity:0.5">--</span></div>
+                    <div id="cash-available" class="skeleton skeleton-text" style="font-weight: 700; min-width: 70px; margin: 0 auto;">--</div>
                 </div>
             </div>
             
@@ -2428,9 +2488,9 @@
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
-                    <div id="sp500Value" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;"><script>document.write(window.__RACE_CACHE__?.spValue || '<span style="opacity:0.5">Loading...</span>')</script></div>
-                    <div id="sp500Return" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;"><script>document.write(window.__RACE_CACHE__?.spReturnText || '&nbsp;')</script></div>
-                    <span id="sp500Status" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">--</span>
+                    <div id="sp500Value" class="skeleton skeleton-value" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem; margin-left: auto; margin-right: auto; width: 90px; min-height: 1.3rem;"><span style="opacity:0.5">Loading...</span></div>
+                    <div id="sp500Return" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; margin-left: auto; margin-right: auto; width: 80px;"> </div>
+                    <span id="sp500Status" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 50px;">--</span>
                 </div>
                 
                 <!-- StonkBOT.AI Card -->
@@ -2438,9 +2498,9 @@
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">StonkBOT.AI</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
-                    <div id="stonkAiValue" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem;"><script>document.write(window.__RACE_CACHE__?.stonkValue || '<span style="opacity:0.5">Loading...</span>')</script></div>
-                    <div id="stonkAiReturn" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;"><script>document.write(window.__RACE_CACHE__?.stonkReturnText || '&nbsp;')</script></div>
-                    <span id="stonkAiStatus" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">--</span>
+                    <div id="stonkAiValue" class="skeleton skeleton-value" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem; margin-left: auto; margin-right: auto; width: 90px; min-height: 1.3rem;"><span style="opacity:0.5">Loading...</span></div>
+                    <div id="stonkAiReturn" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; margin-left: auto; margin-right: auto; width: 80px;"> </div>
+                    <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 50px;">--</span>
                 </div>
             </div>
             <div style="text-align: center; font-size: 0.6rem; color: var(--text-muted); margin-bottom: 0.5rem;">👆 Tap cards for detailed analytics</div>
@@ -2480,11 +2540,39 @@
             <!-- Holdings cards -->
             <!-- Holdings cards - Populated by JavaScript -->
             <div class="holdings-cards" id="holdingsCards">
-                <div id="loading-message" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⟳</div>
-                    <div>Loading live portfolio data...</div>
-                    <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">From Alpaca Markets</div>
-                    <div style="font-size: 0.7rem; margin-top: 1rem; opacity: 0.5;" id="debug-info"></div>
+                <!-- Skeleton loading cards -->
+                <div class="skeleton-card">
+                    <div class="skeleton-main">
+                        <div class="skeleton skeleton-text" style="width: 60px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90px;"></div>
+                    </div>
+                    <div class="skeleton-metrics">
+                        <div class="skeleton skeleton-text" style="width: 70px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 55px;"></div>
+                    </div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-main">
+                        <div class="skeleton skeleton-text" style="width: 55px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 110px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80px;"></div>
+                    </div>
+                    <div class="skeleton-metrics">
+                        <div class="skeleton skeleton-text" style="width: 65px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 50px;"></div>
+                    </div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-main">
+                        <div class="skeleton skeleton-text" style="width: 50px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 100px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 85px;"></div>
+                    </div>
+                    <div class="skeleton-metrics">
+                        <div class="skeleton skeleton-text" style="width: 60px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 55px;"></div>
+                    </div>
                 </div>
             </div>
         <!-- Sector Performance - Clickable Cards -->
@@ -3354,7 +3442,16 @@
         function updateDashboard(data) {
             // Store for fallback use in modals
             window.currentPortfolioData = data;
-            
+
+            // Helper to populate an element and remove skeleton state
+            function setValue(id, value) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = value;
+                    el.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
+                }
+            }
+
             // Update portfolio value (only if changed to prevent flicker)
             const portfolioValueEl = document.getElementById('portfolio-value');
             if (portfolioValueEl && data.account) {
@@ -3362,10 +3459,13 @@
                 const currentValue = portfolioValueEl.textContent?.trim() || '';
                 // Only update if value actually changed (prevents flicker from cache → live)
                 if (currentValue !== newValue) {
-                    portfolioValueEl.textContent = newValue;
+                    setValue('portfolio-value', newValue);
+                    portfolioValueEl.style.width = 'auto';
+                    portfolioValueEl.style.marginLeft = 'auto';
+                    portfolioValueEl.style.marginRight = 'auto';
                 }
             }
-            
+
             // Update return badge (Simple return from $100K baseline)
             const returnBadge = document.getElementById('portfolio-return-badge');
             const returnEl = document.getElementById('portfolio-return');
@@ -3383,46 +3483,46 @@
                 if (returnEl) {
                     const newReturn = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
                     if (returnEl.textContent?.trim() !== newReturn) {
-                        returnEl.textContent = newReturn;
+                        setValue('portfolio-return', newReturn);
                     }
                 }
                 if (pnlEl) {
                     const newPnl = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
                     if (pnlEl.textContent?.trim() !== newPnl) {
-                        pnlEl.textContent = newPnl;
+                        setValue('portfolio-pnl', newPnl);
                     }
                     pnlEl.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
                 }
             }
-            
+
             // Update new stats
             const dayCounter = document.getElementById('day-counter');
             if (dayCounter) {
                 const startDate = new Date('2026-06-04');
                 const today = new Date();
                 const dayNumber = Math.max(1, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1);
-                dayCounter.textContent = dayNumber;
+                setValue('day-counter', dayNumber);
             }
-            
+
             const positionCount = document.getElementById('position-count');
             if (positionCount && data.positions) {
-                positionCount.textContent = data.positions.length;
+                setValue('position-count', data.positions.length);
             }
-            
+
             const cashAvailable = document.getElementById('cash-available');
             if (cashAvailable && data.account) {
                 const cash = data.account.cash;
-                cashAvailable.textContent = '$' + Math.floor(cash).toLocaleString();
+                setValue('cash-available', '$' + Math.floor(cash).toLocaleString());
                 cashAvailable.style.color = cash < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
             }
-            
+
             // Update last updated timestamp
             const lastUpdated = document.querySelector('.last-updated');
             if (lastUpdated) {
                 const now = new Date();
                 lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()} • <span style="color: var(--accent-green);">Live Data</span>`;
             }
-            
+
             // Update stonk meter if available (using $100K baseline)
             if (data.account) {
                 const STARTING_VALUE = 100000;
@@ -3433,7 +3533,7 @@
                     updateStonkMeter(totalReturn, spReturn);
                 });
             }
-            
+
             // Update allocation chart
             updateAllocationChart(data);
         }
@@ -5503,17 +5603,25 @@
                 const raceCache = getRaceCache();
                 if (raceCache) {
                     console.log('updateRaceValues: Showing cached values immediately');
-                    if (spValueEl && raceCache.spValue) spValueEl.textContent = raceCache.spValue;
-                    if (stonkValueEl && raceCache.stonkValue) stonkValueEl.textContent = raceCache.stonkValue;
+                    if (spValueEl && raceCache.spValue) {
+                        spValueEl.textContent = raceCache.spValue;
+                        spValueEl.classList.remove('skeleton', 'skeleton-value');
+                    }
+                    if (stonkValueEl && raceCache.stonkValue) {
+                        stonkValueEl.textContent = raceCache.stonkValue;
+                        stonkValueEl.classList.remove('skeleton', 'skeleton-value');
+                    }
                     const spReturnEl = document.getElementById('sp500Return');
                     const stonkReturnEl = document.getElementById('stonkAiReturn');
                     if (spReturnEl && raceCache.spReturnText) {
                         spReturnEl.textContent = raceCache.spReturnText;
                         spReturnEl.style.color = raceCache.spReturnColor || 'var(--text-muted)';
+                        spReturnEl.classList.remove('skeleton', 'skeleton-text');
                     }
                     if (stonkReturnEl && raceCache.stonkReturnText) {
                         stonkReturnEl.textContent = raceCache.stonkReturnText;
                         stonkReturnEl.style.color = raceCache.stonkReturnColor || 'var(--text-muted)';
+                        stonkReturnEl.classList.remove('skeleton', 'skeleton-text');
                     }
                 }
                 
@@ -5539,10 +5647,15 @@
                 const spBar = document.getElementById('sp500Bar');
                 const spStatus = document.getElementById('sp500Status');
 
-                if (spValueEl) spValueEl.textContent = '$' + Math.round(spValue).toLocaleString();
+                if (spValueEl) {
+                    spValueEl.textContent = '$' + Math.round(spValue).toLocaleString();
+                    spValueEl.classList.remove('skeleton', 'skeleton-value');
+                    spValueEl.style.width = 'auto';
+                }
                 if (spReturnEl) {
                     spReturnEl.textContent = (spReturn >= 0 ? '+' : '') + spReturn.toFixed(2) + '%';
                     spReturnEl.style.color = spReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    spReturnEl.classList.remove('skeleton', 'skeleton-text');
                 }
                 if (spBar) {
                     spBar.style.width = Math.max(0, 100 + spReturn) + '%';
@@ -5561,6 +5674,7 @@
                     spStatus.style.color = spReturn >= stonkReturn
                         ? 'var(--accent-green)'
                         : 'var(--accent-red)';
+                    spStatus.classList.remove('skeleton', 'skeleton-badge');
                 }
 
                 // Update StonkBOT.AI display (The Race section)
@@ -5568,10 +5682,15 @@
                 const stonkBar = document.getElementById('stonkAiBar');
                 const stonkStatus = document.getElementById('stonkAiStatus');
 
-                if (stonkValueEl) stonkValueEl.textContent = '$' + Math.round(currentValue).toLocaleString();
+                if (stonkValueEl) {
+                    stonkValueEl.textContent = '$' + Math.round(currentValue).toLocaleString();
+                    stonkValueEl.classList.remove('skeleton', 'skeleton-value');
+                    stonkValueEl.style.width = 'auto';
+                }
                 if (stonkReturnEl) {
                     stonkReturnEl.textContent = (stonkReturn >= 0 ? '+' : '') + stonkReturn.toFixed(2) + '%';
                     stonkReturnEl.style.color = stonkReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    stonkReturnEl.classList.remove('skeleton', 'skeleton-text');
                 }
                 if (stonkBar) {
                     stonkBar.style.width = Math.max(0, 100 + stonkReturn) + '%';
@@ -5587,6 +5706,7 @@
                     stonkStatus.style.color = stonkReturn >= spReturn
                         ? 'var(--accent-green)'
                         : 'var(--accent-red)';
+                    stonkStatus.classList.remove('skeleton', 'skeleton-badge');
                 }
                 
                 console.log('updateRaceValues: Updated display successfully');
