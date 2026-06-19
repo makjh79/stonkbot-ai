@@ -3454,6 +3454,8 @@
                         updateHoldingsCards(data.positions);
                         updateSectorHeatmap(data.positions, data.account?.portfolio_value || 0);
                         updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
+                        // Also fetch popup content for holdings
+                        fetchPopupContent().catch(e => console.log('Popup content fetch failed:', e));
                     })
                     .catch(err => {
                         console.error('Fetch failed:', err);
@@ -6951,14 +6953,37 @@
         let watchlistPopupSymbol = null;
         let watchlistModalRefreshInterval = null;  // Separate from stock chart refresh
 
-        function refreshActivePopup() {
+        // Global cache for popup content
+        let popupContentCache = {};
+        let popupContentLastFetch = 0;
+        
+        async function fetchPopupContent() {
+            try {
+                const response = await fetch('./popup_content.json?t=' + Date.now());
+                if (response.ok) {
+                    const data = await response.json();
+                    popupContentCache = data.holdings || {};
+                    popupContentLastFetch = Date.now();
+                    return popupContentCache;
+                }
+            } catch (e) {
+                console.log('Could not fetch popup content:', e);
+            }
+            return {};
+        }
+        
+        async function refreshActivePopup() {
             if (activePopupSymbol && document.getElementById('trade-modal')) {
+                // Fetch latest popup content and data
+                await fetchPopupContent();
+                await fetchPortfolioData();
+                await fetchWatchlistPrices();
                 // Re-render the popup with fresh data
                 showTradeDetails(activePopupSymbol, true);
             }
         }
 
-        function showTradeDetails(symbol, isRefresh = false) {
+        async function showTradeDetails(symbol, isRefresh = false) {
             // Track the active symbol for refresh
             activePopupSymbol = symbol;
 
@@ -6967,9 +6992,15 @@
                 clearInterval(activePopupRefreshInterval);
             }
 
+            // Fetch pre-generated popup content if not cached or stale (>30s)
+            if (!isRefresh || Date.now() - popupContentLastFetch > 30000) {
+                await fetchPopupContent();
+            }
+            
             // Get live data from AI watchlist if available
             const liveData = (typeof aiWatchlistPrices !== 'undefined' ? aiWatchlistPrices[symbol] : {}) || {};
             const staticData = tradeRationale[symbol];
+            const preGenerated = popupContentCache[symbol] || {};
             
             // Get current position data from portfolio
             const currentData = window.lastPortfolioData || FALLBACK_DATA;
@@ -6993,25 +7024,25 @@
                 z-index: 10000; padding: 1rem;
             `;
             
-            // Build unified popup content using live + static data
+            // Build unified popup content using pre-generated + live data
             // Get company info
             const companyDataLocal = (typeof companyInfo !== 'undefined' ? companyInfo[symbol] : {}) || {};
             const companyName = companyDataLocal.company || getCompanyName(symbol) || symbol;
             
-            // Get live metrics
-            const livePrice = liveData.price || (position ? position.current : 0);
+            // Use pre-generated content if available, otherwise fall back to dynamic generation
+            const livePrice = liveData.price || (position ? position.current : 0) || preGenerated.price || 0;
             const liveChange = liveData.change_pct || 0;
-            const liveRSI = liveData.rsi || 50;
-            const liveAIScore = liveData.ai_score || 50;
+            const liveRSI = liveData.rsi || preGenerated.rsi || 50;
+            const liveAIScore = liveData.ai_score || preGenerated.aiScore || 50;
             const targets = liveData.targets || {};
             
-            // Merge static and live data
-            const thesis = staticData ? staticData.thesis : (companyDataLocal.strategy || `AI-selected position in ${companyName}`);
-            const catalyst = staticData ? staticData.catalyst : (companyDataLocal.catalyst || 'Active trading signal');
-            const risk = staticData ? staticData.risk : (companyDataLocal.risk || 'Market volatility, sector rotation');
-            const confidence = staticData ? staticData.confidence : `${liveAIScore}% - AI Confidence Score`;
-            const entryReason = staticData ? staticData.entryReason : `RSI ${liveRSI.toFixed(1)} entry signal`;
-            const stopReason = staticData ? staticData.stopReason : '-15% stop if thesis breaks';
+            // Get narratives from pre-generated content or fall back to static/dynamic
+            let thesis = preGenerated.thesis || (staticData ? staticData.thesis : `AI-selected position in ${companyName}. Monitoring technical levels and market context for optimal exit timing.`);
+            let catalyst = preGenerated.catalyst || (staticData ? staticData.catalyst : 'Active trading signal');
+            let risk = preGenerated.risk || (staticData ? staticData.risk : 'Market volatility, sector rotation');
+            let confidence = preGenerated.confidence || `${liveAIScore}% - AI Confidence Score`;
+            let entryReason = preGenerated.entryReason || (staticData ? staticData.entryReason : `RSI entry signal triggered at avg cost $${position ? position.avg_entry.toFixed(2) : 'N/A'}`);
+            let stopReason = preGenerated.stopReason || (staticData ? staticData.stopReason : '-15% hard stop protects capital');
             
             // Build content - UNIFIED format for all positions
             const isPositive = position ? position.unrealized_plpc >= 0 : liveChange >= 0;
