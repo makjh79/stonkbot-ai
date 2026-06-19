@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-0115-NAV-REVERT -->
+    <!-- CACHE BUST: v=20260620-0119-4ITEM-NAV -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2380,7 +2380,12 @@
             </div>
             <div class="nav-links">
                 <div class="nav-item">
-                    <a class="nav-link" href="#holdings" onclick="scrollToSection('overview'); return false;" data-nav="portfolio">
+                    <a class="nav-link" href="#" onclick="scrollToSection('overview'); return false;" data-nav="home">
+                        <span>🏠 Home</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" href="#holdings" onclick="scrollToSection('holdings'); return false;" data-nav="portfolio">
                         <span>📊 Portfolio</span>
                     </a>
                 </div>
@@ -2398,10 +2403,14 @@
         </div>
     </nav>
 
-    <!-- Mobile Bottom Navigation - 3-Item Thumb-Friendly -->
+    <!-- Mobile Bottom Navigation - 4-Item Thumb-Friendly -->
     <nav class="mobile-nav" id="mobileNav">
         <div class="mobile-nav-items">
-            <a class="mobile-nav-item" href="#holdings" onclick="scrollToSection('overview'); return false;" data-section="portfolio">
+            <a class="mobile-nav-item" href="#" onclick="scrollToSection('overview'); return false;" data-section="home">
+                <span class="icon">🏠</span>
+                <span class="label">Home</span>
+            </a>
+            <a class="mobile-nav-item" href="#holdings" onclick="scrollToSection('holdings'); return false;" data-section="portfolio">
                 <span class="icon">📊</span>
                 <span class="label">Portfolio</span>
             </a>
@@ -6818,11 +6827,11 @@
 
                 // Map sections to mobile nav items
                 const sectionMap = {
-                    'overview': 'portfolio',
-                    'experiment': 'portfolio',
-                    'how-it-works': 'portfolio',
-                    'holdings': 'portfolio',
-                    'strategy': 'portfolio'
+                    'overview': 'experiment',
+                    'experiment': 'experiment',
+                    'how-it-works': 'how-it-works',
+                    'holdings': 'holdings',
+                    'strategy': 'strategy'
                 };
 
                 if (sectionMap[currentSection] === section) {
