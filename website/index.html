@@ -1720,13 +1720,20 @@
             }
         }
 
-        /* Show desktop nav on larger screens */
+        /* Show desktop nav on larger screens - Hide mobile navs */
         @media (min-width: 769px) {
             .mobile-nav {
                 display: none;
             }
+            .bottom-nav-mobile {
+                display: none !important;
+            }
+            .bottom-nav-spacer {
+                display: none;
+            }
             body {
                 padding-top: 0;
+                padding-bottom: 0;
             }
         }
 
@@ -9576,8 +9583,8 @@
         }
     </script>
 
-    <!-- BOTTOM NAVIGATION - Mobile First -->
-    <nav style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(20, 21, 31, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 0.75rem 0; z-index: 100; max-width: 480px; margin: 0 auto;">
+    <!-- BOTTOM NAVIGATION - Mobile Only -->
+    <nav class="bottom-nav-mobile" style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(20, 21, 31, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 0.75rem 0; z-index: 100; max-width: 480px; margin: 0 auto;">
         <div style="display: flex; justify-content: space-around; align-items: center;">
             <a href="#overview" onclick="scrollToSection('overview'); return false;" style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; text-decoration: none; color: var(--text-secondary); font-size: 0.65rem; font-weight: 600;">
                 <span style="font-size: 1.25rem;">🏠</span>
@@ -9598,7 +9605,7 @@
         </div>
     </nav>
     
-    <!-- Spacer for bottom nav -->
-    <div style="height: 80px;"></div>
+    <!-- Spacer for bottom nav (mobile only) -->
+    <div class="bottom-nav-spacer" style="height: 80px;"></div>
 </body>
 </html>
