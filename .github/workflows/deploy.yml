@@ -68,6 +68,7 @@ jobs:
           "cd /root/.openclaw/workspace && \
            git pull origin master && \
            cp website/index.html /var/www/hedge-fund-website/index.html && \
+           rsync -a --delete website/sentiment/ /var/www/hedge-fund-website/sentiment/ && \
            rm -f /etc/nginx/sites-enabled/*.bak.* && \
            python3 scripts/patch_nginx_cache_headers.py 2>&1 | tee /var/www/hedge-fund-website/.nginx-patch.log || echo 'nginx header patch failed, see .nginx-patch.log' && \
            echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"
