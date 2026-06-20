@@ -12,15 +12,16 @@ import json
 SITE_PATH = "/var/www/hedge-fund-website"
 STATUS_FILE = "/var/www/hedge-fund-website/.nginx-cache-status.json"
 
-NO_CACHE_BLOCK = """
-        # Aggressive no-cache for HTML deploys
-        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
-        add_header Pragma "no-cache" always;
-        add_header Expires "0" always;
-""".strip("\n")
+NO_CACHE_HEADERS = (
+    "\n\t# Aggressive no-cache for HTML deploys"
+    "\n\tadd_header Cache-Control \"no-cache, no-store, must-revalidate\" always;"
+    "\n\tadd_header Pragma \"no-cache\" always;"
+    "\n\tadd_header Expires \"0\" always;"
+    "\n"
+)
 
 
-def write_status(conf, headers_added, note=None, error=None, snippet=None, headers_found=None):
+def write_status(conf, headers_added, note=None, error=None, snippet=None, headers_found=None, diagnostics=None):
     status = {
         "checked_at": datetime.datetime.now().isoformat(),
         "site_path": SITE_PATH,
@@ -30,12 +31,25 @@ def write_status(conf, headers_added, note=None, error=None, snippet=None, heade
         "note": note,
         "error": error,
         "snippet": snippet,
+        "diagnostics": diagnostics,
     }
     try:
         with open(STATUS_FILE, "w") as f:
             json.dump(status, f, indent=2)
     except Exception as e:
         print("Could not write status file: {}".format(e), file=sys.stderr)
+
+
+def local_headers_check():
+    """Request http://localhost/ and return response headers."""
+    try:
+        proc = subprocess.run(
+            ["curl", "-s", "-D", "-", "-o", "/dev/null", "http://localhost/"],
+            capture_output=True, text=True, check=False, timeout=10
+        )
+        return proc.stdout + proc.stderr
+    except Exception as e:
+        return "Local curl failed: {}".format(e)
 
 
 # Find the active nginx config file that serves this site.
@@ -69,10 +83,14 @@ def find_server_block(s, marker):
     idx = s.find(marker)
     if idx == -1:
         return None, None
-    # Find the "server {" that contains this marker.
     start = s.rfind("server {", 0, idx)
     if start == -1:
-        return None, None
+        # Try "server {" with leading whitespace/newline.
+        m = re.search(r"server\s*\{", s[:idx])
+        if m:
+            start = m.start()
+        else:
+            return None, None
     brace = s.find("{", start)
     depth = 0
     i = brace
@@ -96,56 +114,19 @@ if block_start is None:
 
 server_text = text[block_start:block_end]
 
-# Determine where to insert: inside "location / {" if present, else server level.
-loc_match = re.search(r"location\s+/\s*\{", server_text)
-if loc_match:
-    insert_at = server_text.find("{", loc_match.start()) + 1
-    level = "location /"
-else:
-    insert_at = server_text.find("{") + 1
-    level = "server"
-
-# Check if the target block already has the no-cache headers.
-target_block = server_text[insert_at:block_end if loc_match is None else None]
-# Recompute target block cleanly.
-if loc_match:
-    loc_open = server_text.find("{", loc_match.start())
-    loc_close = None
-    depth = 0
-    i = loc_open
-    while i < len(server_text):
-        if server_text[i] == "{":
-            depth += 1
-        elif server_text[i] == "}":
-            depth -= 1
-            if depth == 0:
-                loc_close = i + 1
-                break
-        i += 1
-    target_block = server_text[loc_open:loc_close]
-else:
-    target_block = server_text
-
-headers_found = "Cache-Control" in target_block and "no-store" in target_block
+# Check if server-level no-cache headers already exist and are correct.
+headers_found = (
+    re.search(r"add_header\s+Cache-Control\s+\"no-cache,\s*no-store,\s*must-revalidate\"\s+always", server_text)
+    and re.search(r"add_header\s+Pragma\s+\"no-cache\"\s+always", server_text)
+    and re.search(r"add_header\s+Expires\s+\"0\"\s+always", server_text)
+)
 
 if headers_found:
-    msg = "No-cache headers already present in {} block of {}".format(level, conf)
-    # Diagnose: test a local request and capture response headers.
-    try:
-        proc = subprocess.run(
-            ["curl", "-I", "-s", "http://localhost/"],
-            capture_output=True, text=True, check=False, timeout=10
-        )
-        local_headers = proc.stdout + proc.stderr
-    except Exception as e:
-        local_headers = "Local curl failed: {}".format(e)
-    write_status(
-        conf, True, note=msg, headers_found=True,
-        snippet=target_block[:1200], error=local_headers
-    )
+    msg = "No-cache headers already present at server level in {}".format(conf)
+    diag = local_headers_check()
+    write_status(conf, True, note=msg, headers_found=True, snippet=server_text[:800], diagnostics=diag)
     print(msg)
-    print("Local response headers:\n{}".format(local_headers))
-    # Even if headers are present, ensure nginx is reloaded so they take effect.
+    print("Local response headers:\n{}".format(diag))
     try:
         subprocess.run(["nginx", "-t"], check=True)
         subprocess.run(["nginx", "-s", "reload"], check=True)
@@ -165,19 +146,36 @@ bak = os.path.join(
 shutil.copy(conf, bak)
 print("Backed up {} to {}".format(conf, bak))
 
-# Insert headers.
-indent = "\t" if level == "server" else "\t\t"
-new_server = server_text[:insert_at] + "\n" + NO_CACHE_BLOCK.replace("        ", indent) + "\n" + server_text[insert_at:]
+# Remove any existing cache-related add_header/expires directives in the server block
+# so we don't end up with duplicates or conflicting directives.
+clean_server = re.sub(
+    r"\n?\s*add_header\s+(Cache-Control|Pragma|Expires)[^;]+;",
+    "",
+    server_text,
+    flags=re.IGNORECASE,
+)
+clean_server = re.sub(
+    r"\n?\s*expires\s+[^;]+;",
+    "",
+    clean_server,
+    flags=re.IGNORECASE,
+)
+
+# Insert headers right after the server block opening brace.
+insert_at = clean_server.find("{") + 1
+new_server = clean_server[:insert_at] + NO_CACHE_HEADERS + clean_server[insert_at:]
 new_text = text[:block_start] + new_server + text[block_end:]
 
 with open(conf, "w") as f:
     f.write(new_text)
 
 snippet = new_server[:900]
-msg = "Added no-cache headers to {} block of {}".format(level, conf)
-write_status(conf, True, note=msg, headers_found=False, snippet=snippet)
+msg = "Added no-cache headers at server level in {}".format(conf)
+diag = local_headers_check()
+write_status(conf, True, note=msg, headers_found=False, snippet=snippet, diagnostics=diag)
 print(msg)
 print(snippet)
+print("Local response headers:\n{}".format(diag))
 
 try:
     subprocess.run(["nginx", "-t"], check=True)
@@ -185,6 +183,6 @@ try:
     print("nginx reloaded successfully")
 except subprocess.CalledProcessError as e:
     error = "nginx reload failed: {}".format(e)
-    write_status(conf, False, error=error, snippet=snippet)
+    write_status(conf, False, error=error, snippet=snippet, diagnostics=diag)
     print(error, file=sys.stderr)
     sys.exit(1)
