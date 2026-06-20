@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260620-1526-v27">
-    <script>(function(){var v='20260620-2210-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-2215-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-2210-FORCE-V36 -->
+    <!-- CACHE BUST: v=20260620-2215-FORCE-V37 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -303,11 +303,11 @@
         .holding-pl.positive { color: var(--accent-green); }
         .holding-pl.negative { color: var(--accent-red); }
 
-        /* Tiny center sparkline */
+        /* Center sparkline */
         .holding-sparkline {
             flex: 0 0 auto;
-            width: 54px;
-            height: 26px;
+            width: 72px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -4867,33 +4867,43 @@
             return colors[cat] || '#9ca3af';
         }
 
-        // Generate a tiny neutral SVG sparkline from current price trend
+        // Generate a wider, smoother SVG sparkline with more historical-looking data
         function generateSparkline(pos) {
-            const points = 18;
+            const points = 40;
             const startPrice = pos.avg_entry || pos.current * 0.98;
             const endPrice = pos.current;
-            const trend = endPrice >= startPrice ? 1 : -1;
+            const totalChange = endPrice - startPrice;
+            const trend = totalChange >= 0 ? 1 : -1;
             const data = [];
             let price = startPrice;
-            const step = (endPrice - startPrice) / (points - 1);
+            const baseStep = totalChange / (points - 1);
+            const volatility = Math.abs(totalChange) * 0.12 + pos.current * 0.015;
+
             for (let i = 0; i < points; i++) {
-                const jitter = (Math.random() - 0.5) * Math.abs(step) * 1.8;
-                price = i === points - 1 ? endPrice : startPrice + step * i + jitter;
+                const progress = i / (points - 1);
+                const trendComponent = baseStep * i;
+                const wave = Math.sin(progress * Math.PI * 2.5) * volatility * 0.35;
+                const noise = (Math.random() - 0.5) * volatility;
+                price = startPrice + trendComponent + wave + noise;
+                if (i === points - 1) price = endPrice;
                 data.push(price);
             }
+
             const min = Math.min(...data);
             const max = Math.max(...data);
             const range = max - min || 1;
-            const width = 48;
-            const height = 24;
-            const padding = 2;
-            const coords = data.map((v, i) => {
-                const x = padding + (i / (points - 1)) * (width - padding * 2);
-                const y = height - padding - ((v - min) / range) * (height - padding * 2);
-                return `${x.toFixed(1)},${y.toFixed(1)}`;
-            }).join(' ');
+            const width = 72;
+            const height = 28;
+            const paddingX = 2;
+            const paddingY = 3;
+            let path = '';
+            data.forEach((v, i) => {
+                const x = paddingX + (i / (points - 1)) * (width - paddingX * 2);
+                const y = height - paddingY - ((v - min) / range) * (height - paddingY * 2);
+                path += (i === 0 ? 'M' : 'L') + ` ${x.toFixed(1)},${y.toFixed(1)}`;
+            });
             const stroke = trend > 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-            return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><path d="M ${coords}" stroke="${stroke}"/></svg>`;
+            return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><path d="${path}" stroke="${stroke}"/></svg>`;
         }
 
         // Update holdings cards dynamically
