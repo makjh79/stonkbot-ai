@@ -142,8 +142,13 @@ if headers_found:
         sys.exit(1)
     sys.exit(0)
 
-# Backup before editing.
-bak = "{}.bak.{}".format(conf, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+# Backup before editing into /root so we never leave extra files in sites-enabled.
+backup_dir = "/root/nginx-config-backups"
+os.makedirs(backup_dir, exist_ok=True)
+bak = os.path.join(
+    backup_dir,
+    "{}-bak-{}".format(os.path.basename(conf), datetime.datetime.now().strftime("%Y%m%d-%H%M%S")),
+)
 shutil.copy(conf, bak)
 print("Backed up {} to {}".format(conf, bak))
 
