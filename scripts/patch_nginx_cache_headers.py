@@ -130,8 +130,21 @@ headers_found = "Cache-Control" in target_block and "no-store" in target_block
 
 if headers_found:
     msg = "No-cache headers already present in {} block of {}".format(level, conf)
-    write_status(conf, True, note=msg, headers_found=True, snippet=target_block[:600])
+    # Diagnose: test a local request and capture response headers.
+    try:
+        proc = subprocess.run(
+            ["curl", "-I", "-s", "http://localhost/"],
+            capture_output=True, text=True, check=False, timeout=10
+        )
+        local_headers = proc.stdout + proc.stderr
+    except Exception as e:
+        local_headers = "Local curl failed: {}".format(e)
+    write_status(
+        conf, True, note=msg, headers_found=True,
+        snippet=target_block[:1200], error=local_headers
+    )
     print(msg)
+    print("Local response headers:\n{}".format(local_headers))
     # Even if headers are present, ensure nginx is reloaded so they take effect.
     try:
         subprocess.run(["nginx", "-t"], check=True)
