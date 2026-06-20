@@ -85,7 +85,6 @@ def find_server_block(s, marker):
         return None, None
     start = s.rfind("server {", 0, idx)
     if start == -1:
-        # Try "server {" with leading whitespace/newline.
         m = re.search(r"server\s*\{", s[:idx])
         if m:
             start = m.start()
@@ -114,17 +113,20 @@ if block_start is None:
 
 server_text = text[block_start:block_end]
 
-# Check if server-level no-cache headers already exist and are correct.
-headers_found = (
-    re.search(r"add_header\s+Cache-Control\s+\"no-cache,\s*no-store,\s*must-revalidate\"\s+always", server_text)
-    and re.search(r"add_header\s+Pragma\s+\"no-cache\"\s+always", server_text)
-    and re.search(r"add_header\s+Expires\s+\"0\"\s+always", server_text)
+# Check if the headers are present *before* the first nested block (i.e. at server level).
+first_nested = re.search(r"\n\s*(location|if)\s+", server_text)
+server_level_text = server_text[:first_nested.start()] if first_nested else server_text
+
+headers_at_server_level = (
+    re.search(r"add_header\s+Cache-Control\s+\"no-cache,\s*no-store,\s*must-revalidate\"\s+always", server_level_text, re.IGNORECASE)
+    and re.search(r"add_header\s+Pragma\s+\"no-cache\"\s+always", server_level_text, re.IGNORECASE)
+    and re.search(r"add_header\s+Expires\s+\"0\"\s+always", server_level_text, re.IGNORECASE)
 )
 
-if headers_found:
+if headers_at_server_level:
     msg = "No-cache headers already present at server level in {}".format(conf)
     diag = local_headers_check()
-    write_status(conf, True, note=msg, headers_found=True, snippet=server_text[:800], diagnostics=diag)
+    write_status(conf, True, note=msg, headers_found=True, snippet=server_level_text[:800], diagnostics=diag)
     print(msg)
     print("Local response headers:\n{}".format(diag))
     try:
@@ -146,7 +148,7 @@ bak = os.path.join(
 shutil.copy(conf, bak)
 print("Backed up {} to {}".format(conf, bak))
 
-# Remove any existing cache-related add_header/expires directives in the server block
+# Remove any existing cache-related add_header/expires directives anywhere in the server block
 # so we don't end up with duplicates or conflicting directives.
 clean_server = re.sub(
     r"\n?\s*add_header\s+(Cache-Control|Pragma|Expires)[^;]+;",
