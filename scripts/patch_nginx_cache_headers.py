@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ensure the nginx server block for stonkbot.ai sends no-cache headers for HTML."""
+"""Ensure all nginx server blocks for stonkbot.ai send no-cache headers for HTML."""
 import glob
 import os
 import re
@@ -40,11 +40,11 @@ def write_status(conf, headers_added, note=None, error=None, snippet=None, heade
         print("Could not write status file: {}".format(e), file=sys.stderr)
 
 
-def local_headers_check():
-    """Request http://localhost/ and return response headers."""
+def local_headers_check(url="http://127.0.0.1/"):
+    """Request a local URL and return response headers."""
     try:
         proc = subprocess.run(
-            ["curl", "-s", "-D", "-", "-o", "/dev/null", "http://localhost/"],
+            ["curl", "-s", "-D", "-", "-o", "/dev/null", url],
             capture_output=True, text=True, check=False, timeout=10
         )
         return proc.stdout + proc.stderr
@@ -79,54 +79,69 @@ if not conf:
 print("Found nginx config: {}".format(conf))
 
 
-def find_server_block(s, marker):
-    idx = s.find(marker)
-    if idx == -1:
-        return None, None
-    start = s.rfind("server {", 0, idx)
-    if start == -1:
-        m = re.search(r"server\s*\{", s[:idx])
-        if m:
-            start = m.start()
+def find_all_server_blocks(s, marker):
+    """Return a list of (start, end) tuples for every server block containing marker."""
+    blocks = []
+    search_start = 0
+    while True:
+        idx = s.find(marker, search_start)
+        if idx == -1:
+            break
+        start = s.rfind("server {", 0, idx)
+        if start == -1:
+            m = re.search(r"server\s*\{", s[:idx])
+            if m:
+                start = m.start()
+            else:
+                search_start = idx + 1
+                continue
+        brace = s.find("{", start)
+        depth = 0
+        i = brace
+        while i < len(s):
+            if s[i] == "{":
+                depth += 1
+            elif s[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    blocks.append((start, i + 1))
+                    search_start = i + 1
+                    break
+            i += 1
         else:
-            return None, None
-    brace = s.find("{", start)
-    depth = 0
-    i = brace
-    while i < len(s):
-        if s[i] == "{":
-            depth += 1
-        elif s[i] == "}":
-            depth -= 1
-            if depth == 0:
-                return start, i + 1
-        i += 1
-    return None, None
+            break
+    return blocks
 
 
-block_start, block_end = find_server_block(text, SITE_PATH)
-if block_start is None:
+server_blocks = find_all_server_blocks(text, SITE_PATH)
+if not server_blocks:
     msg = "Could not locate server block for {} in {}".format(SITE_PATH, conf)
     write_status(conf, False, error=msg)
     print(msg, file=sys.stderr)
     sys.exit(1)
 
-server_text = text[block_start:block_end]
+print("Found {} server block(s) for {}".format(len(server_blocks), SITE_PATH))
 
-# Check if the headers are present *before* the first nested block (i.e. at server level).
-first_nested = re.search(r"\n\s*(location|if)\s+", server_text)
-server_level_text = server_text[:first_nested.start()] if first_nested else server_text
+all_have_headers = True
+for idx, (block_start, block_end) in enumerate(server_blocks):
+    server_text = text[block_start:block_end]
+    first_nested = re.search(r"\n\s*(location|if)\s+", server_text)
+    server_level_text = server_text[:first_nested.start()] if first_nested else server_text
+    has_headers = (
+        re.search(r"add_header\s+Cache-Control\s+\"no-cache,\s*no-store,\s*must-revalidate\"\s+always", server_level_text, re.IGNORECASE)
+        and re.search(r"add_header\s+Pragma\s+\"no-cache\"\s+always", server_level_text, re.IGNORECASE)
+        and re.search(r"add_header\s+Expires\s+\"0\"\s+always", server_level_text, re.IGNORECASE)
+    )
+    if not has_headers:
+        all_have_headers = False
+        print("Server block #{} missing server-level no-cache headers".format(idx + 1))
+    else:
+        print("Server block #{} already has server-level no-cache headers".format(idx + 1))
 
-headers_at_server_level = (
-    re.search(r"add_header\s+Cache-Control\s+\"no-cache,\s*no-store,\s*must-revalidate\"\s+always", server_level_text, re.IGNORECASE)
-    and re.search(r"add_header\s+Pragma\s+\"no-cache\"\s+always", server_level_text, re.IGNORECASE)
-    and re.search(r"add_header\s+Expires\s+\"0\"\s+always", server_level_text, re.IGNORECASE)
-)
-
-if headers_at_server_level:
-    msg = "No-cache headers already present at server level in {}".format(conf)
+if all_have_headers:
+    msg = "No-cache headers already present at server level in all {} server block(s) of {}".format(len(server_blocks), conf)
     diag = local_headers_check()
-    write_status(conf, True, note=msg, headers_found=True, snippet=server_level_text[:800], diagnostics=diag)
+    write_status(conf, True, note=msg, headers_found=True, snippet=text[server_blocks[0][0]:server_blocks[0][1]][:800], diagnostics=diag)
     print(msg)
     print("Local response headers:\n{}".format(diag))
     try:
@@ -148,31 +163,33 @@ bak = os.path.join(
 shutil.copy(conf, bak)
 print("Backed up {} to {}".format(conf, bak))
 
-# Remove any existing cache-related add_header/expires directives anywhere in the server block
-# so we don't end up with duplicates or conflicting directives.
-clean_server = re.sub(
-    r"\n?\s*add_header\s+(Cache-Control|Pragma|Expires)[^;]+;",
-    "",
-    server_text,
-    flags=re.IGNORECASE,
-)
-clean_server = re.sub(
-    r"\n?\s*expires\s+[^;]+;",
-    "",
-    clean_server,
-    flags=re.IGNORECASE,
-)
-
-# Insert headers right after the server block opening brace.
-insert_at = clean_server.find("{") + 1
-new_server = clean_server[:insert_at] + NO_CACHE_HEADERS + clean_server[insert_at:]
-new_text = text[:block_start] + new_server + text[block_end:]
+# Process blocks in reverse order so earlier indices stay valid after replacements.
+new_text = text
+for block_start, block_end in reversed(server_blocks):
+    server_text = new_text[block_start:block_end]
+    # Remove any existing cache-related add_header/expires directives anywhere in the server block.
+    clean_server = re.sub(
+        r"\n?\s*add_header\s+(Cache-Control|Pragma|Expires)[^;]+;",
+        "",
+        server_text,
+        flags=re.IGNORECASE,
+    )
+    clean_server = re.sub(
+        r"\n?\s*expires\s+[^;]+;",
+        "",
+        clean_server,
+        flags=re.IGNORECASE,
+    )
+    # Insert headers right after the server block opening brace.
+    insert_at = clean_server.find("{") + 1
+    new_server = clean_server[:insert_at] + NO_CACHE_HEADERS + clean_server[insert_at:]
+    new_text = new_text[:block_start] + new_server + new_text[block_end:]
 
 with open(conf, "w") as f:
     f.write(new_text)
 
-snippet = new_server[:900]
-msg = "Added no-cache headers at server level in {}".format(conf)
+snippet = new_text[server_blocks[0][0]:server_blocks[0][1]][:900]
+msg = "Added no-cache headers at server level in all {} server block(s) of {}".format(len(server_blocks), conf)
 diag = local_headers_check()
 write_status(conf, True, note=msg, headers_found=False, snippet=snippet, diagnostics=diag)
 print(msg)
