@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260620-1526-v27">
-    <script>(function(){var v='20260620-2245-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-2250-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-2245-FORCE-V42 -->
+    <!-- CACHE BUST: v=20260620-2250-FORCE-V43 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -466,10 +466,25 @@
             border-radius: 14px;
             padding: 0.75rem;
             text-align: center;
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
         }
         .race-card:hover {
-            border-color: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.3);
+        }
+
+        /* Sector rows hover */
+        .sector-row:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* Hero / section separator */
+        .hero-separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
+            margin: 0.25rem 0 0.5rem;
+            border: none;
         }
 
         .experiment-metric-label {
@@ -3055,6 +3070,8 @@
             </div>
         </div>
 
+        <hr class="hero-separator">
+
         <!-- THE EXPERIMENT - Enhanced Timeline -->
         <div id="experiment" class="section-anchor"></div>
         <div class="section section-featured" style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
@@ -3065,7 +3082,7 @@
             <!-- THE RACE - Cards -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
                 <!-- S&P 500 Card -->
-                <div class="race-card">
+                <div class="race-card" onclick="scrollToSection('experiment')" role="button" tabindex="0" aria-label="View experiment details" style="cursor: pointer;">
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
@@ -3075,7 +3092,7 @@
                 </div>
                 
                 <!-- StonkBOT.AI Card -->
-                <div class="race-card">
+                <div class="race-card" onclick="scrollToSection('experiment')" role="button" tabindex="0" aria-label="View experiment details" style="cursor: pointer;">
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">StonkBOT.AI</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
@@ -3173,7 +3190,7 @@
         <div id="faq" class="section-anchor"></div>
         <div class="section">
             <div class="section-header">
-                <div class="section-title">Questions?</div>
+                <div class="section-title">FAQ</div>
             </div>
             <div class="faq-section">
                 <div class="faq-item" id="faq1">
