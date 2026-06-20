@@ -6,10 +6,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script>(function(){var v='20260620-1311';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-1345';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-1311-CACHE-BUST-V26 -->
+    <!-- CACHE BUST: v=20260620-1345-CACHE-BUST-V27 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -3580,25 +3580,23 @@
             const seconds = Math.floor((now - then) / 1000);
 
             let text;
-            let dotColor = 'var(--accent-green)';
+            let dotColor = 'var(--text-muted)';
 
             if (seconds < 60) {
                 text = 'Updated just now';
             } else if (seconds < 3600) {
                 const mins = Math.floor(seconds / 60);
                 text = `Updated ${mins}m ago`;
-                dotColor = mins <= 5 ? 'var(--accent-green)' : '#fbbf24';
             } else if (seconds < 86400) {
                 const hours = Math.floor(seconds / 3600);
                 text = `Updated ${hours}h ago`;
-                dotColor = hours <= 2 ? '#fbbf24' : 'var(--accent-red)';
             } else {
-                text = 'Data stale — refreshing...';
-                dotColor = 'var(--accent-red)';
+                const days = Math.floor(seconds / 86400);
+                text = days === 1 ? 'Updated 1d ago' : `Updated ${days}d ago`;
             }
 
             el.classList.remove('skeleton', 'skeleton-text');
-            el.innerHTML = `<span style="width: 6px; height: 6px; border-radius: 50%; background: ${dotColor}; display: inline-block; box-shadow: 0 0 6px ${dotColor};"></span><span>${text}</span>`;
+            el.innerHTML = `<span style="width: 5px; height: 5px; border-radius: 50%; background: ${dotColor}; display: inline-block; opacity: 0.6;"></span><span>${text}</span>`;
         }
 
         function updateDashboard(data) {
