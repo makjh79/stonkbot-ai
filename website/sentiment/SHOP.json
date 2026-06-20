@@ -1,0 +1,43 @@
+{
+  "symbol": "SHOP",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "bullish",
+  "toneScore": 0.29,
+  "mentionCount24h": 30,
+  "headlines": [
+    {
+      "title": "Shopify merchant growth accelerates",
+      "source": "The Verge",
+      "url": "#",
+      "sentiment": 0.68,
+      "published": "2026-06-20T01:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "Shop Pay gains market share",
+      "source": "Seeking Alpha",
+      "url": "#",
+      "sentiment": 0.51,
+      "published": "2026-06-20T00:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "Consumer spending worries weigh on e-commerce",
+      "source": "The Verge",
+      "url": "#",
+      "sentiment": -0.33,
+      "published": "2026-06-19T20:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    0.38,
+    0.4,
+    0.37,
+    0.43,
+    0.35,
+    0.48,
+    0.08
+  ],
+  "dataSource": "Sample data for UI demo"
+}

@@ -1,0 +1,43 @@
+{
+  "symbol": "GM",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "bullish",
+  "toneScore": 0.2,
+  "mentionCount24h": 13,
+  "headlines": [
+    {
+      "title": "Truck demand supports cash flow",
+      "source": "Bloomberg",
+      "url": "#",
+      "sentiment": 0.46,
+      "published": "2026-06-20T00:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "GM EV losses narrow faster than expected",
+      "source": "Financial Times",
+      "url": "#",
+      "sentiment": 0.52,
+      "published": "2026-06-19T23:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "UAW tensions resurface ahead of contract talks",
+      "source": "CNBC",
+      "url": "#",
+      "sentiment": -0.38,
+      "published": "2026-06-19T18:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    0.01,
+    0.04,
+    0.38,
+    -0.04,
+    0.11,
+    -0.02,
+    0.42
+  ],
+  "dataSource": "Sample data for UI demo"
+}

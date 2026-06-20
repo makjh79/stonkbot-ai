@@ -1,0 +1,43 @@
+{
+  "symbol": "META",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "bullish",
+  "toneScore": 0.22,
+  "mentionCount24h": 38,
+  "headlines": [
+    {
+      "title": "Reality Labs losses weigh on margins",
+      "source": "The Verge",
+      "url": "#",
+      "sentiment": -0.4,
+      "published": "2026-06-20T00:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "Instagram Reels monetization improves",
+      "source": "CNBC",
+      "url": "#",
+      "sentiment": 0.47,
+      "published": "2026-06-19T23:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "Meta AI engagement drives ad efficiency",
+      "source": "Reuters",
+      "url": "#",
+      "sentiment": 0.58,
+      "published": "2026-06-19T20:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    0.27,
+    0.12,
+    0.21,
+    -0.01,
+    0.15,
+    0.24,
+    0.44
+  ],
+  "dataSource": "Sample data for UI demo"
+}

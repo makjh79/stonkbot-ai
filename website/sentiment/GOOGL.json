@@ -1,0 +1,43 @@
+{
+  "symbol": "GOOGL",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "neutral",
+  "toneScore": 0.1,
+  "mentionCount24h": 39,
+  "headlines": [
+    {
+      "title": "YouTube Shorts monetization improves",
+      "source": "CNBC",
+      "url": "#",
+      "sentiment": 0.38,
+      "published": "2026-06-20T03:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "Search monopoly ruling creates overhang",
+      "source": "MarketWatch",
+      "url": "#",
+      "sentiment": -0.52,
+      "published": "2026-06-19T22:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "Gemini rollout gains enterprise traction",
+      "source": "Bloomberg",
+      "url": "#",
+      "sentiment": 0.44,
+      "published": "2026-06-19T21:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    0.25,
+    0.14,
+    -0.04,
+    -0.01,
+    0.17,
+    -0.04,
+    0.16
+  ],
+  "dataSource": "Sample data for UI demo"
+}

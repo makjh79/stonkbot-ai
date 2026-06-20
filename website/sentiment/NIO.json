@@ -1,0 +1,43 @@
+{
+  "symbol": "NIO",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "neutral",
+  "toneScore": 0.09,
+  "mentionCount24h": 15,
+  "headlines": [
+    {
+      "title": "Battery swap partnerships expand",
+      "source": "The Verge",
+      "url": "#",
+      "sentiment": 0.33,
+      "published": "2026-06-20T03:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "EV price war deepens in China",
+      "source": "CNBC",
+      "url": "#",
+      "sentiment": -0.48,
+      "published": "2026-06-19T22:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "Chinese stimulus hopes lift ADRs",
+      "source": "MarketWatch",
+      "url": "#",
+      "sentiment": 0.41,
+      "published": "2026-06-19T20:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    -0.1,
+    -0.02,
+    0.26,
+    0.04,
+    0.33,
+    0.3,
+    0.06
+  ],
+  "dataSource": "Sample data for UI demo"
+}

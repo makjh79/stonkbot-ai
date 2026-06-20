@@ -1,0 +1,43 @@
+{
+  "symbol": "TWLO",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "neutral",
+  "toneScore": -0.03,
+  "mentionCount24h": 6,
+  "headlines": [
+    {
+      "title": "Margin expansion slower than hoped",
+      "source": "The Verge",
+      "url": "#",
+      "sentiment": -0.22,
+      "published": "2026-06-20T03:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "Communications platform competition fierce",
+      "source": "The Verge",
+      "url": "#",
+      "sentiment": -0.35,
+      "published": "2026-06-20T00:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "AI contact center demand helps growth",
+      "source": "TechCrunch",
+      "url": "#",
+      "sentiment": 0.48,
+      "published": "2026-06-19T20:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    0.01,
+    0.05,
+    0.08,
+    -0.24,
+    0.04,
+    -0.18,
+    -0.12
+  ],
+  "dataSource": "Sample data for UI demo"
+}

@@ -1,0 +1,43 @@
+{
+  "symbol": "NVDA",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "neutral",
+  "toneScore": -0.05,
+  "mentionCount24h": 12,
+  "headlines": [
+    {
+      "title": "Competition from custom silicon rises",
+      "source": "Financial Times",
+      "url": "#",
+      "sentiment": -0.33,
+      "published": "2026-06-20T02:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "Data center capex cycle extends",
+      "source": "MarketWatch",
+      "url": "#",
+      "sentiment": 0.62,
+      "published": "2026-06-19T21:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "Chinese chip restrictions create uncertainty",
+      "source": "TechCrunch",
+      "url": "#",
+      "sentiment": -0.44,
+      "published": "2026-06-19T21:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    -0.17,
+    -0.01,
+    0.12,
+    -0.17,
+    0.18,
+    0.09,
+    -0.2
+  ],
+  "dataSource": "Sample data for UI demo"
+}

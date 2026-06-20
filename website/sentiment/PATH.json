@@ -1,0 +1,43 @@
+{
+  "symbol": "PATH",
+  "timestamp": "2026-06-20T06:41:41Z",
+  "tone": "bullish",
+  "toneScore": 0.17,
+  "mentionCount24h": 25,
+  "headlines": [
+    {
+      "title": "UiPath automation demand stabilizes",
+      "source": "MarketWatch",
+      "url": "#",
+      "sentiment": 0.38,
+      "published": "2026-06-20T03:41:41Z",
+      "publishedRelative": "3h ago"
+    },
+    {
+      "title": "Path partners with Microsoft on copilots",
+      "source": "MarketWatch",
+      "url": "#",
+      "sentiment": 0.55,
+      "published": "2026-06-19T23:41:41Z",
+      "publishedRelative": "6h ago"
+    },
+    {
+      "title": "AI agent hype fails to lift RPA stocks",
+      "source": "Reuters",
+      "url": "#",
+      "sentiment": -0.42,
+      "published": "2026-06-19T21:41:41Z",
+      "publishedRelative": "9h ago"
+    }
+  ],
+  "sparkline": [
+    0.07,
+    0.02,
+    0.1,
+    0.3,
+    0.28,
+    -0.01,
+    0.32
+  ],
+  "dataSource": "Sample data for UI demo"
+}
