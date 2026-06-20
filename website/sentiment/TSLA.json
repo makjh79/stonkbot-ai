@@ -1,43 +1,43 @@
 {
   "symbol": "TSLA",
-  "timestamp": "2026-06-20T06:41:41Z",
-  "tone": "neutral",
-  "toneScore": 0.14,
-  "mentionCount24h": 31,
+  "timestamp": "2026-06-20T07:11:52.562918+00:00",
+  "tone": "bullish",
+  "toneScore": 0.121,
+  "mentionCount24h": 24,
+  "sparkline": [
+    0.0,
+    0.083,
+    0.122,
+    0.047,
+    0.177,
+    0.18,
+    0.599
+  ],
   "headlines": [
     {
-      "title": "EV deliveries edge above estimates",
-      "source": "CNBC",
-      "url": "#",
-      "sentiment": 0.49,
-      "published": "2026-06-20T02:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "3 \"Magnificent Seven\" Stocks to Buy and Hold Right Now",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=dba5b2a37de5b3d900d18ae198c6463e3db023dc5330db5a983cf668f879ab09",
+      "sentiment": 0.599,
+      "published": "2026-06-20T04:20:00+00:00",
+      "publishedRelative": "2h ago"
     },
     {
-      "title": "Energy storage business scales rapidly",
-      "source": "Bloomberg",
-      "url": "#",
-      "sentiment": 0.55,
-      "published": "2026-06-19T23:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "Bernie Sanders vs. Elon Musk: Would Taxing the Rich Actually Save Social Security?",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=d9b32ab7fa1736d3ecd553aa627ccd1dc4b9afabd0957485e33e1f269e2d3e03",
+      "sentiment": 0.848,
+      "published": "2026-06-19T22:16:47+00:00",
+      "publishedRelative": "8h ago"
     },
     {
-      "title": "Tesla robotaxi event disappoints investors",
-      "source": "MarketWatch",
-      "url": "#",
-      "sentiment": -0.62,
-      "published": "2026-06-19T18:41:41Z",
-      "publishedRelative": "9h ago"
+      "title": "Wall Street expects Tesla rival to surge 90% despite cash crunch",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=a72a0c50469d155a6f0f45449f595de4b77584d861667976b66adeb4f6524821",
+      "sentiment": 0.0,
+      "published": "2026-06-19T20:07:00+00:00",
+      "publishedRelative": "11h ago"
     }
   ],
-  "sparkline": [
-    0.21,
-    0.19,
-    0.08,
-    0.19,
-    0.15,
-    -0.06,
-    0.38
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

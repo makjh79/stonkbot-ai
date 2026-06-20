@@ -1,43 +1,43 @@
 {
   "symbol": "GM",
-  "timestamp": "2026-06-20T06:41:41Z",
+  "timestamp": "2026-06-20T07:11:46.348537+00:00",
   "tone": "bullish",
-  "toneScore": 0.2,
-  "mentionCount24h": 13,
+  "toneScore": 0.057,
+  "mentionCount24h": 2,
+  "sparkline": [
+    0.015,
+    -0.095,
+    0.002,
+    0.123,
+    0.216,
+    0.064,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "Truck demand supports cash flow",
-      "source": "Bloomberg",
-      "url": "#",
-      "sentiment": 0.46,
-      "published": "2026-06-20T00:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "GM, UAW face sudden high-stakes factory rift",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=33952c9a6550dd6a44fce7641834e5bac667e67fe491365e80d0e3cd444f4f6a",
+      "sentiment": 0.0,
+      "published": "2026-06-19T18:17:00+00:00",
+      "publishedRelative": "12h ago"
     },
     {
-      "title": "GM EV losses narrow faster than expected",
-      "source": "Financial Times",
-      "url": "#",
-      "sentiment": 0.52,
-      "published": "2026-06-19T23:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "General Motors (GM) Shares Key Software Update to Enable Power Transmition",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=7246d01b3de5229a84d793456dc6d47aa3db844544073e6cb2cc6fd1610e11ab",
+      "sentiment": 0.296,
+      "published": "2026-06-19T12:18:58+00:00",
+      "publishedRelative": "18h ago"
     },
     {
-      "title": "UAW tensions resurface ahead of contract talks",
-      "source": "CNBC",
-      "url": "#",
-      "sentiment": -0.38,
-      "published": "2026-06-19T18:41:41Z",
-      "publishedRelative": "9h ago"
+      "title": "Traders’ Latest AI-Related Play Is a Struggling Car Parts Stock",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=2ae498d76f3aaaf57048bb7941484a3cd80a736c548a21fc4e7faf22418945fd",
+      "sentiment": -0.103,
+      "published": "2026-06-19T05:15:00+00:00",
+      "publishedRelative": "1d ago"
     }
   ],
-  "sparkline": [
-    0.01,
-    0.04,
-    0.38,
-    -0.04,
-    0.11,
-    -0.02,
-    0.42
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

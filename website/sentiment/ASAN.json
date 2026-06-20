@@ -1,43 +1,27 @@
 {
   "symbol": "ASAN",
-  "timestamp": "2026-06-20T06:41:41Z",
+  "timestamp": "2026-06-20T07:12:02.223671+00:00",
   "tone": "bullish",
-  "toneScore": 0.16,
-  "mentionCount24h": 9,
+  "toneScore": 0.226,
+  "mentionCount24h": 0,
+  "sparkline": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "Work management software demand softens",
-      "source": "Seeking Alpha",
-      "url": "#",
-      "sentiment": -0.4,
-      "published": "2026-06-20T01:41:41Z",
-      "publishedRelative": "3h ago"
-    },
-    {
-      "title": "New AI features drive upgrades",
-      "source": "TechCrunch",
-      "url": "#",
-      "sentiment": 0.52,
-      "published": "2026-06-19T22:41:41Z",
-      "publishedRelative": "6h ago"
-    },
-    {
-      "title": "Asana enterprise adoption improves",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": 0.36,
-      "published": "2026-06-19T19:41:41Z",
-      "publishedRelative": "9h ago"
+      "title": "Asana: Improving Fundamentals, But Not Yet A Buy",
+      "source": "SeekingAlpha",
+      "url": "https://finnhub.io/api/news?id=abf07245ad0d61d99b44234f58ed0322e04a47df20753d4c6d280f1bd44c9bad",
+      "sentiment": 0.226,
+      "published": "2026-06-13T01:07:15+00:00",
+      "publishedRelative": "7d ago"
     }
   ],
-  "sparkline": [
-    0.13,
-    0.08,
-    0.29,
-    0.17,
-    0.4,
-    -0.06,
-    0.04
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

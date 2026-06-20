@@ -1,43 +1,18 @@
 {
   "symbol": "SQ",
-  "timestamp": "2026-06-20T06:41:41Z",
-  "tone": "bullish",
-  "toneScore": 0.33,
-  "mentionCount24h": 39,
-  "headlines": [
-    {
-      "title": "Bitcoin holdings boost Square balance sheet",
-      "source": "Seeking Alpha",
-      "url": "#",
-      "sentiment": 0.39,
-      "published": "2026-06-20T02:41:41Z",
-      "publishedRelative": "3h ago"
-    },
-    {
-      "title": "Analysts mixed after earnings",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": 0.12,
-      "published": "2026-06-19T23:41:41Z",
-      "publishedRelative": "6h ago"
-    },
-    {
-      "title": "Block Cash App engagement rises",
-      "source": "Financial Times",
-      "url": "#",
-      "sentiment": 0.48,
-      "published": "2026-06-19T21:41:41Z",
-      "publishedRelative": "9h ago"
-    }
-  ],
+  "timestamp": "2026-06-20T07:11:42.251598+00:00",
+  "tone": "neutral",
+  "toneScore": 0.0,
+  "mentionCount24h": 0,
   "sparkline": [
-    0.25,
-    0.4,
-    0.33,
-    0.54,
-    0.27,
-    0.26,
-    0.18
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
   ],
-  "dataSource": "Sample data for UI demo"
+  "headlines": [],
+  "dataSource": "Finnhub News + VADER — no recent coverage"
 }

@@ -1,43 +1,43 @@
 {
   "symbol": "META",
-  "timestamp": "2026-06-20T06:41:41Z",
+  "timestamp": "2026-06-20T07:11:56.760746+00:00",
   "tone": "bullish",
-  "toneScore": 0.22,
-  "mentionCount24h": 38,
+  "toneScore": 0.066,
+  "mentionCount24h": 29,
+  "sparkline": [
+    0.0,
+    0.051,
+    0.039,
+    0.015,
+    0.09,
+    0.17,
+    0.599
+  ],
   "headlines": [
     {
-      "title": "Reality Labs losses weigh on margins",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": -0.4,
-      "published": "2026-06-20T00:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "3 \"Magnificent Seven\" Stocks to Buy and Hold Right Now",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=dba5b2a37de5b3d900d18ae198c6463e3db023dc5330db5a983cf668f879ab09",
+      "sentiment": 0.599,
+      "published": "2026-06-20T04:20:00+00:00",
+      "publishedRelative": "2h ago"
     },
     {
-      "title": "Instagram Reels monetization improves",
-      "source": "CNBC",
-      "url": "#",
-      "sentiment": 0.47,
-      "published": "2026-06-19T23:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "Broadcom Builds Custom Chips for Google, Meta, Anthropic, and OpenAI. At 25 Times Forward Earnings, It's the Cheapest Mega-Cap AI Stock Nobody Talks About.",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=df556cb1406830b3fb6dfc9935f1b56ea3b5e3c55d7180259a2dcdd8f8510a20",
+      "sentiment": 0.0,
+      "published": "2026-06-19T21:50:00+00:00",
+      "publishedRelative": "9h ago"
     },
     {
-      "title": "Meta AI engagement drives ad efficiency",
-      "source": "Reuters",
-      "url": "#",
-      "sentiment": 0.58,
-      "published": "2026-06-19T20:41:41Z",
+      "title": "Making Six Figures but Betting Everything on U.S. Stocks? AVUV Fixes That Problem",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=0afbebec5abf734da03c9f244eec5833f0669930a170b3801fffc82e0b4fd09d",
+      "sentiment": -0.55,
+      "published": "2026-06-19T21:30:35+00:00",
       "publishedRelative": "9h ago"
     }
   ],
-  "sparkline": [
-    0.27,
-    0.12,
-    0.21,
-    -0.01,
-    0.15,
-    0.24,
-    0.44
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

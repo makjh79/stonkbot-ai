@@ -1,43 +1,43 @@
 {
   "symbol": "SHOP",
-  "timestamp": "2026-06-20T06:41:41Z",
-  "tone": "bullish",
-  "toneScore": 0.29,
-  "mentionCount24h": 30,
+  "timestamp": "2026-06-20T07:11:40.514439+00:00",
+  "tone": "neutral",
+  "toneScore": 0.042,
+  "mentionCount24h": 3,
+  "sparkline": [
+    0.382,
+    0.215,
+    -0.061,
+    -0.063,
+    0.0,
+    0.134,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "Shopify merchant growth accelerates",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": 0.68,
-      "published": "2026-06-20T01:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "10 Information Technology Stocks Whale Activity In Today’s Session",
+      "source": "Benzinga",
+      "url": "https://finnhub.io/api/news?id=7aeef91669afb2d4cb52007b5539b3cd83d011b665b6ed8ad29bec775939a086",
+      "sentiment": 0.0,
+      "published": "2026-06-19T13:35:22+00:00",
+      "publishedRelative": "17h ago"
     },
     {
-      "title": "Shop Pay gains market share",
-      "source": "Seeking Alpha",
-      "url": "#",
-      "sentiment": 0.51,
-      "published": "2026-06-20T00:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "Jim Cramer on Adobe: “At Least Wait Until You Can Put a Face on the Company’s Future”",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=a4f630def549373bf107a4c8f1321f5e73406e6a5a76f662bd9f78c6c86edc4a",
+      "sentiment": 0.0,
+      "published": "2026-06-19T13:35:16+00:00",
+      "publishedRelative": "17h ago"
     },
     {
-      "title": "Consumer spending worries weigh on e-commerce",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": -0.33,
-      "published": "2026-06-19T20:41:41Z",
-      "publishedRelative": "9h ago"
+      "title": "In 10 Years, Will You Wish You'd Bought Shopify Stock During This Dip?",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=dd14361fca207fddd99f1c09df5dae727f8674f2a8ac91d6bbc37bec3e37dc89",
+      "sentiment": 0.402,
+      "published": "2026-06-19T09:45:00+00:00",
+      "publishedRelative": "21h ago"
     }
   ],
-  "sparkline": [
-    0.38,
-    0.4,
-    0.37,
-    0.43,
-    0.35,
-    0.48,
-    0.08
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

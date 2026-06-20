@@ -1,43 +1,43 @@
 {
   "symbol": "NIO",
-  "timestamp": "2026-06-20T06:41:41Z",
-  "tone": "neutral",
-  "toneScore": 0.09,
-  "mentionCount24h": 15,
+  "timestamp": "2026-06-20T07:11:44.200183+00:00",
+  "tone": "bullish",
+  "toneScore": 0.064,
+  "mentionCount24h": 0,
+  "sparkline": [
+    0.0,
+    0.318,
+    -0.148,
+    -0.402,
+    0.0,
+    0.0,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "Battery swap partnerships expand",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": 0.33,
-      "published": "2026-06-20T03:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "What's Going On With NIO Stock Thursday?",
+      "source": "Benzinga",
+      "url": "https://finnhub.io/api/news?id=62f352724e9d51a8c72ac6f99d2ea73fb44ce12221e2c5acf795f05f2d476aed",
+      "sentiment": 0.0,
+      "published": "2026-06-18T09:22:42+00:00",
+      "publishedRelative": "1d ago"
     },
     {
-      "title": "EV price war deepens in China",
-      "source": "CNBC",
-      "url": "#",
-      "sentiment": -0.48,
-      "published": "2026-06-19T22:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "Why Is NIO Stock Spiking Nearly 4% In Overnight Trading?",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=34df358b8ebcdd5f08ba69d6b5ba179534d92134d5a046578880819e003d6fa4",
+      "sentiment": 0.0,
+      "published": "2026-06-18T04:37:20+00:00",
+      "publishedRelative": "2d ago"
     },
     {
-      "title": "Chinese stimulus hopes lift ADRs",
-      "source": "MarketWatch",
-      "url": "#",
-      "sentiment": 0.41,
-      "published": "2026-06-19T20:41:41Z",
-      "publishedRelative": "9h ago"
+      "title": "NIO Stock Pauses Wednesday: What Traders Should Watch Next Amid Regulatory Tensions",
+      "source": "Benzinga",
+      "url": "https://finnhub.io/api/news?id=2ad802f24ba174090c49e51777ddb53811f5356fc4832b8505a909a7eee2c303",
+      "sentiment": -0.402,
+      "published": "2026-06-17T09:34:21+00:00",
+      "publishedRelative": "2d ago"
     }
   ],
-  "sparkline": [
-    -0.1,
-    -0.02,
-    0.26,
-    0.04,
-    0.33,
-    0.3,
-    0.06
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

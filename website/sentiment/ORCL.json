@@ -1,43 +1,43 @@
 {
   "symbol": "ORCL",
-  "timestamp": "2026-06-20T06:41:41Z",
+  "timestamp": "2026-06-20T07:11:48.314555+00:00",
   "tone": "bullish",
-  "toneScore": 0.39,
-  "mentionCount24h": 31,
+  "toneScore": 0.123,
+  "mentionCount24h": 5,
+  "sparkline": [
+    0.288,
+    0.147,
+    0.097,
+    0.044,
+    0.047,
+    0.093,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "Oracle cloud revenue beats expectations",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": 0.66,
-      "published": "2026-06-20T03:41:41Z",
-      "publishedRelative": "3h ago"
-    },
-    {
-      "title": "On-premise database decline continues",
-      "source": "TechCrunch",
-      "url": "#",
-      "sentiment": -0.22,
-      "published": "2026-06-20T00:41:41Z",
-      "publishedRelative": "6h ago"
-    },
-    {
-      "title": "AI training contracts boost backlog",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": 0.74,
-      "published": "2026-06-19T19:41:41Z",
+      "title": "CPI FIM (BDL:ORCL) Stock Looks Cheap With A 9.7x P E But Is The Market Right",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=aca3d58471afc976476bcb3b6fce4c5d7cf738255d5109c90506659bd953a495",
+      "sentiment": 0.0,
+      "published": "2026-06-19T21:13:06+00:00",
       "publishedRelative": "9h ago"
+    },
+    {
+      "title": "SpaceX stock joins AI bond frenzy",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=773da44d54d110b7ad818a794c8785dffed431b9d33af9d031297108d324ddd3",
+      "sentiment": -0.318,
+      "published": "2026-06-19T19:13:00+00:00",
+      "publishedRelative": "11h ago"
+    },
+    {
+      "title": "Nearing 52-Week High, This is Where DTE Energy Will End The Year",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=d8a8ee7f6e1b295ccd37c963b9742fe7bd5563da39d2cb27920ae0743ea60404",
+      "sentiment": 0.273,
+      "published": "2026-06-19T18:30:28+00:00",
+      "publishedRelative": "12h ago"
     }
   ],
-  "sparkline": [
-    0.29,
-    0.59,
-    0.61,
-    0.53,
-    0.15,
-    0.33,
-    0.6
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

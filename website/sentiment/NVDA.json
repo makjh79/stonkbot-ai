@@ -1,43 +1,43 @@
 {
   "symbol": "NVDA",
-  "timestamp": "2026-06-20T06:41:41Z",
-  "tone": "neutral",
-  "toneScore": -0.05,
-  "mentionCount24h": 12,
+  "timestamp": "2026-06-20T07:11:54.635704+00:00",
+  "tone": "bullish",
+  "toneScore": 0.093,
+  "mentionCount24h": 147,
+  "sparkline": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.085,
+    0.105,
+    -0.051
+  ],
   "headlines": [
     {
-      "title": "Competition from custom silicon rises",
-      "source": "Financial Times",
-      "url": "#",
-      "sentiment": -0.33,
-      "published": "2026-06-20T02:41:41Z",
+      "title": "Is Cardano Too Cheap to Ignore at Today's Price?",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=42027daa82935c5e47bf285c15ad5f2ad14cd4f0621dffa8f7edf9b7c9b3664b",
+      "sentiment": -0.361,
+      "published": "2026-06-20T05:57:00+00:00",
+      "publishedRelative": "1h ago"
+    },
+    {
+      "title": "3 \"Magnificent Seven\" Stocks to Buy and Hold Right Now",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=dba5b2a37de5b3d900d18ae198c6463e3db023dc5330db5a983cf668f879ab09",
+      "sentiment": 0.599,
+      "published": "2026-06-20T04:20:00+00:00",
+      "publishedRelative": "2h ago"
+    },
+    {
+      "title": "SpaceX Has a Glaring Problem. Here's What Investors Can Do About It.",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=2f7aeb5270ee71586b66f701e97f57d033d24106f9bb64c1d1158480191d21ee",
+      "sentiment": -0.402,
+      "published": "2026-06-20T03:33:00+00:00",
       "publishedRelative": "3h ago"
-    },
-    {
-      "title": "Data center capex cycle extends",
-      "source": "MarketWatch",
-      "url": "#",
-      "sentiment": 0.62,
-      "published": "2026-06-19T21:41:41Z",
-      "publishedRelative": "6h ago"
-    },
-    {
-      "title": "Chinese chip restrictions create uncertainty",
-      "source": "TechCrunch",
-      "url": "#",
-      "sentiment": -0.44,
-      "published": "2026-06-19T21:41:41Z",
-      "publishedRelative": "9h ago"
     }
   ],
-  "sparkline": [
-    -0.17,
-    -0.01,
-    0.12,
-    -0.17,
-    0.18,
-    0.09,
-    -0.2
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

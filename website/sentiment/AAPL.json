@@ -1,43 +1,43 @@
 {
   "symbol": "AAPL",
-  "timestamp": "2026-06-20T06:41:41Z",
-  "tone": "neutral",
-  "toneScore": -0.04,
-  "mentionCount24h": 41,
+  "timestamp": "2026-06-20T07:11:50.338706+00:00",
+  "tone": "bullish",
+  "toneScore": 0.094,
+  "mentionCount24h": 28,
+  "sparkline": [
+    0.0,
+    0.0,
+    0.087,
+    0.061,
+    0.111,
+    0.105,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "Vision Pro interest cools",
-      "source": "Bloomberg",
-      "url": "#",
-      "sentiment": -0.28,
-      "published": "2026-06-20T01:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "Making $100K a Year? Here’s the One Fund That Compounds Without the Research",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=a8bf0a3df31990823c36c289e6814604100b40e8959412dc8f0421c9807f4a5d",
+      "sentiment": 0.0,
+      "published": "2026-06-19T22:13:34+00:00",
+      "publishedRelative": "8h ago"
     },
     {
-      "title": "Services growth remains a bright spot",
-      "source": "TechCrunch",
-      "url": "#",
-      "sentiment": 0.51,
-      "published": "2026-06-20T00:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "The Memory Boom Has Been a Gift to Micron. For Apple, It's Becoming a Problem. Or Is It?",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=1a5a010fed01dc1cb77c6ffba068f19e246876a83e1ac21360a6455ba56cecf5",
+      "sentiment": 0.052,
+      "published": "2026-06-19T21:37:53+00:00",
+      "publishedRelative": "9h ago"
     },
     {
-      "title": "DOJ antitrust suit overhang persists",
-      "source": "TechCrunch",
-      "url": "#",
-      "sentiment": -0.36,
-      "published": "2026-06-19T20:41:41Z",
+      "title": "Making Six Figures but Betting Everything on U.S. Stocks? AVUV Fixes That Problem",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=0afbebec5abf734da03c9f244eec5833f0669930a170b3801fffc82e0b4fd09d",
+      "sentiment": -0.55,
+      "published": "2026-06-19T21:30:35+00:00",
       "publishedRelative": "9h ago"
     }
   ],
-  "sparkline": [
-    -0.29,
-    -0.2,
-    -0.09,
-    0.15,
-    0.08,
-    -0.16,
-    0.0
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

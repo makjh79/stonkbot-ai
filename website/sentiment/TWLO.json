@@ -1,43 +1,43 @@
 {
   "symbol": "TWLO",
-  "timestamp": "2026-06-20T06:41:41Z",
-  "tone": "neutral",
-  "toneScore": -0.03,
-  "mentionCount24h": 6,
+  "timestamp": "2026-06-20T07:12:00.480981+00:00",
+  "tone": "bullish",
+  "toneScore": 0.099,
+  "mentionCount24h": 1,
+  "sparkline": [
+    0.0,
+    0.0,
+    -0.421,
+    0.153,
+    0.381,
+    0.0,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "Margin expansion slower than hoped",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": -0.22,
-      "published": "2026-06-20T03:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "Brokers Suggest Investing in Twilio (TWLO): Read This Before Placing a Bet",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=6565566b6a7399db4310beddf668041bb8640416353ccc4d2a08ca3f7e0d971b",
+      "sentiment": 0.0,
+      "published": "2026-06-19T13:30:04+00:00",
+      "publishedRelative": "17h ago"
     },
     {
-      "title": "Communications platform competition fierce",
-      "source": "The Verge",
-      "url": "#",
-      "sentiment": -0.35,
-      "published": "2026-06-20T00:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "Twilio (TWLO) Stock Sinks As Market Gains: What You Should Know",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=307fddbae34517a03b81378bf0ef48d44ac0f3624ce48d635f5dc0374a2c6013",
+      "sentiment": 0.34,
+      "published": "2026-06-18T22:00:06+00:00",
+      "publishedRelative": "1d ago"
     },
     {
-      "title": "AI contact center demand helps growth",
-      "source": "TechCrunch",
-      "url": "#",
-      "sentiment": 0.48,
-      "published": "2026-06-19T20:41:41Z",
-      "publishedRelative": "9h ago"
+      "title": "Time for a Checkup on Stock Picks United Parcel Services, Twilio, Vita Coco",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=167b95adffb68b561cd0885178b0c6c355f969ec3fc467e542074ae2fa3fc186",
+      "sentiment": 0.421,
+      "published": "2026-06-18T04:37:00+00:00",
+      "publishedRelative": "2d ago"
     }
   ],
-  "sparkline": [
-    0.01,
-    0.05,
-    0.08,
-    -0.24,
-    0.04,
-    -0.18,
-    -0.12
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }

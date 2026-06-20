@@ -1,43 +1,43 @@
 {
   "symbol": "PATH",
-  "timestamp": "2026-06-20T06:41:41Z",
+  "timestamp": "2026-06-20T07:11:38.667785+00:00",
   "tone": "bullish",
-  "toneScore": 0.17,
-  "mentionCount24h": 25,
+  "toneScore": 0.299,
+  "mentionCount24h": 2,
+  "sparkline": [
+    0.0,
+    0.247,
+    0.382,
+    0.0,
+    0.43,
+    0.191,
+    0.0
+  ],
   "headlines": [
     {
-      "title": "UiPath automation demand stabilizes",
-      "source": "MarketWatch",
-      "url": "#",
-      "sentiment": 0.38,
-      "published": "2026-06-20T03:41:41Z",
-      "publishedRelative": "3h ago"
+      "title": "10 Information Technology Stocks Whale Activity In Today’s Session",
+      "source": "Benzinga",
+      "url": "https://finnhub.io/api/news?id=7aeef91669afb2d4cb52007b5539b3cd83d011b665b6ed8ad29bec775939a086",
+      "sentiment": 0.0,
+      "published": "2026-06-19T13:35:22+00:00",
+      "publishedRelative": "17h ago"
     },
     {
-      "title": "Path partners with Microsoft on copilots",
-      "source": "MarketWatch",
-      "url": "#",
-      "sentiment": 0.55,
-      "published": "2026-06-19T23:41:41Z",
-      "publishedRelative": "6h ago"
+      "title": "Trupeer AI Appoints Former UiPath APAC President & CEO Raghu Subramanian to Accelerate UK Enterprise Growth",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=5f7224c3c045efe8a14b2c22837be3a8de870d938228469e9ae15db2f0d676c7",
+      "sentiment": 0.382,
+      "published": "2026-06-19T08:00:00+00:00",
+      "publishedRelative": "23h ago"
     },
     {
-      "title": "AI agent hype fails to lift RPA stocks",
-      "source": "Reuters",
-      "url": "#",
-      "sentiment": -0.42,
-      "published": "2026-06-19T21:41:41Z",
-      "publishedRelative": "9h ago"
+      "title": "Trupeer AI Appoints Former UiPath APAC President & CEO Raghu Subramanian to Accelerate Australian Enterprise Growth",
+      "source": "Yahoo",
+      "url": "https://finnhub.io/api/news?id=6551b4e299caa8bdccd1323cd837a11e92ac4926d43fae9fba9a91ea3a7c556d",
+      "sentiment": 0.382,
+      "published": "2026-06-18T23:00:00+00:00",
+      "publishedRelative": "1d ago"
     }
   ],
-  "sparkline": [
-    0.07,
-    0.02,
-    0.1,
-    0.3,
-    0.28,
-    -0.01,
-    0.32
-  ],
-  "dataSource": "Sample data for UI demo"
+  "dataSource": "Finnhub News + VADER"
 }
