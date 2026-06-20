@@ -1,17 +1,32 @@
 #!/usr/bin/env python3
 """Ensure the nginx server block for stonkbot.ai sends no-cache headers for HTML."""
-import glob, os, datetime, subprocess, shutil, sys, json
+import glob
+import os
+import re
+import datetime
+import shutil
+import subprocess
+import sys
+import json
 
 SITE_PATH = "/var/www/hedge-fund-website"
 STATUS_FILE = "/var/www/hedge-fund-website/.nginx-cache-status.json"
 
+NO_CACHE_BLOCK = """
+        # Aggressive no-cache for HTML deploys
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        add_header Pragma "no-cache" always;
+        add_header Expires "0" always;
+""".strip("\n")
 
-def write_status(conf, headers_added, note=None, error=None, snippet=None):
+
+def write_status(conf, headers_added, note=None, error=None, snippet=None, headers_found=None):
     status = {
         "checked_at": datetime.datetime.now().isoformat(),
         "site_path": SITE_PATH,
         "conf": conf,
         "headers_added": headers_added,
+        "headers_found": headers_found,
         "note": note,
         "error": error,
         "snippet": snippet,
@@ -35,9 +50,10 @@ text = ""
 for p in paths:
     if os.path.exists(p):
         with open(p) as f:
-            text = f.read()
-        if SITE_PATH in text:
+            t = f.read()
+        if SITE_PATH in t:
             conf = p
+            text = t
             break
 
 if not conf:
@@ -46,26 +62,17 @@ if not conf:
     print(msg, file=sys.stderr)
     sys.exit(0)
 
-if "Cache-Control" in text and "no-store" in text:
-    msg = "Cache headers already present in {}".format(conf)
-    snippet = server_text[:800]
-    write_status(conf, True, note=msg, snippet=snippet)
-    print(msg)
-    sys.exit(0)
-
-# Backup
-bak = "{}.bak.{}".format(conf, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
-shutil.copy(conf, bak)
-print("Backed up {} to {}".format(conf, bak))
+print("Found nginx config: {}".format(conf))
 
 
 def find_server_block(s, marker):
     idx = s.find(marker)
     if idx == -1:
-        return None
+        return None, None
+    # Find the "server {" that contains this marker.
     start = s.rfind("server {", 0, idx)
     if start == -1:
-        return None
+        return None, None
     brace = s.find("{", start)
     depth = 0
     i = brace
@@ -75,47 +82,91 @@ def find_server_block(s, marker):
         elif s[i] == "}":
             depth -= 1
             if depth == 0:
-                return (start, i + 1)
+                return start, i + 1
         i += 1
-    return None
+    return None, None
 
 
-if not block:
-    msg = "Could not locate server block for {}".format(SITE_PATH)
+block_start, block_end = find_server_block(text, SITE_PATH)
+if block_start is None:
+    msg = "Could not locate server block for {} in {}".format(SITE_PATH, conf)
     write_status(conf, False, error=msg)
     print(msg, file=sys.stderr)
     sys.exit(1)
 
-s_start, s_end = block
-server_text = text[s_start:s_end]
+server_text = text[block_start:block_end]
 
-# Insert headers right after the opening brace of the first location / block,
-# or after the server block opening brace if there is no location /.
-loc = server_text.find("location / {")
-server_level = False
-if loc != -1:
-    insert_at = server_text.find("{", loc) + 1
+# Determine where to insert: inside "location / {" if present, else server level.
+loc_match = re.search(r"location\s+/\s*\{", server_text)
+if loc_match:
+    insert_at = server_text.find("{", loc_match.start()) + 1
+    level = "location /"
 else:
     insert_at = server_text.find("{") + 1
-    server_level = True
+    level = "server"
 
-headers = (
-    "\n\t\t# Cache-busting headers for HTML deploys"
-    "\n\t\tadd_header Cache-Control \"no-cache, no-store, must-revalidate\" always;"
-    "\n\t\tadd_header Pragma \"no-cache\" always;"
-    "\n\t\tadd_header Expires \"0\" always;"
-)
+# Check if the target block already has the no-cache headers.
+target_block = server_text[insert_at:block_end if loc_match is None else None]
+# Recompute target block cleanly.
+if loc_match:
+    loc_open = server_text.find("{", loc_match.start())
+    loc_close = None
+    depth = 0
+    i = loc_open
+    while i < len(server_text):
+        if server_text[i] == "{":
+            depth += 1
+        elif server_text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                loc_close = i + 1
+                break
+        i += 1
+    target_block = server_text[loc_open:loc_close]
+else:
+    target_block = server_text
 
-new_server = server_text[:insert_at] + headers + server_text[insert_at:]
-new_text = text[:s_start] + new_server + text[s_end:]
+headers_found = "Cache-Control" in target_block and "no-store" in target_block
+
+if headers_found:
+    msg = "No-cache headers already present in {} block of {}".format(level, conf)
+    write_status(conf, True, note=msg, headers_found=True, snippet=target_block[:600])
+    print(msg)
+    # Even if headers are present, ensure nginx is reloaded so they take effect.
+    try:
+        subprocess.run(["nginx", "-t"], check=True)
+        subprocess.run(["nginx", "-s", "reload"], check=True)
+        print("nginx reloaded successfully")
+    except subprocess.CalledProcessError as e:
+        print("nginx reload failed: {}".format(e), file=sys.stderr)
+        sys.exit(1)
+    sys.exit(0)
+
+# Backup before editing.
+bak = "{}.bak.{}".format(conf, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+shutil.copy(conf, bak)
+print("Backed up {} to {}".format(conf, bak))
+
+# Insert headers.
+indent = "\t" if level == "server" else "\t\t"
+new_server = server_text[:insert_at] + "\n" + NO_CACHE_BLOCK.replace("        ", indent) + "\n" + server_text[insert_at:]
+new_text = text[:block_start] + new_server + text[block_end:]
 
 with open(conf, "w") as f:
     f.write(new_text)
 
-snippet = new_server[:800]
-msg = "Updated {} (server_level={})".format(conf, server_level)
-write_status(conf, True, note=msg, snippet=snippet)
+snippet = new_server[:900]
+msg = "Added no-cache headers to {} block of {}".format(level, conf)
+write_status(conf, True, note=msg, headers_found=False, snippet=snippet)
 print(msg)
-subprocess.run(["nginx", "-t"], check=True)
-subprocess.run(["nginx", "-s", "reload"], check=True)
-print("nginx reloaded successfully")
+print(snippet)
+
+try:
+    subprocess.run(["nginx", "-t"], check=True)
+    subprocess.run(["nginx", "-s", "reload"], check=True)
+    print("nginx reloaded successfully")
+except subprocess.CalledProcessError as e:
+    error = "nginx reload failed: {}".format(e)
+    write_status(conf, False, error=error, snippet=snippet)
+    print(error, file=sys.stderr)
+    sys.exit(1)
