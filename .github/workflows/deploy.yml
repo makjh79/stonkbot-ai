@@ -63,10 +63,10 @@ jobs:
         # Test SSH connection
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected'" || echo "SSH connection failed"
         
-        # Deploy + ensure nginx sends no-cache headers for HTML
+        # Deploy + attempt to set nginx no-cache headers (non-fatal)
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
           "cd /root/.openclaw/workspace && \
            git pull origin master && \
            cp website/index.html /var/www/hedge-fund-website/index.html && \
-           python3 scripts/patch_nginx_cache_headers.py && \
+           (python3 scripts/patch_nginx_cache_headers.py 2>&1 || echo 'nginx header patch skipped/failed') && \
            echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"
