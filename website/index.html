@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260620-1526-v27">
-    <script>(function(){var v='20260620-2200-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-2205-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-2200-FORCE-V34 -->
+    <!-- CACHE BUST: v=20260620-2205-FORCE-V35 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -302,8 +302,32 @@
         .holding-pl.positive { color: var(--accent-green); }
         .holding-pl.negative { color: var(--accent-red); }
 
-        /* Why/action indicator - always visible on touch */
-        .holding-action {
+        /* Tiny center sparkline */
+        .holding-sparkline {
+            flex-shrink: 0;
+            width: 48px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.55;
+            transition: opacity 0.2s ease;
+        }
+        .holding-card:hover .holding-sparkline {
+            opacity: 0.85;
+        }
+        .holding-sparkline svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        .holding-sparkline path {
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vector-effect: non-scaling-stroke;
+        }
             flex-shrink: 0;
             width: 28px;
             height: 28px;
@@ -4841,6 +4865,35 @@
             return colors[cat] || '#9ca3af';
         }
 
+        // Generate a tiny neutral SVG sparkline from current price trend
+        function generateSparkline(pos) {
+            const points = 18;
+            const startPrice = pos.avg_entry || pos.current * 0.98;
+            const endPrice = pos.current;
+            const trend = endPrice >= startPrice ? 1 : -1;
+            const data = [];
+            let price = startPrice;
+            const step = (endPrice - startPrice) / (points - 1);
+            for (let i = 0; i < points; i++) {
+                const jitter = (Math.random() - 0.5) * Math.abs(step) * 1.8;
+                price = i === points - 1 ? endPrice : startPrice + step * i + jitter;
+                data.push(price);
+            }
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min || 1;
+            const width = 48;
+            const height = 24;
+            const padding = 2;
+            const coords = data.map((v, i) => {
+                const x = padding + (i / (points - 1)) * (width - padding * 2);
+                const y = height - padding - ((v - min) / range) * (height - padding * 2);
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+            }).join(' ');
+            const stroke = trend > 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><path d="M ${coords}" stroke="${stroke}"/></svg>`;
+        }
+
         // Update holdings cards dynamically
         function updateHoldingsCards(positions) {
             const container = document.getElementById('holdingsCards');
@@ -4869,6 +4922,7 @@
                         <div class="holding-company">${companyName}</div>
                         <div class="holding-shares">${pos.qty} shares @ $${pos.avg_entry.toFixed(2)}</div>
                     </div>
+                    <div class="holding-sparkline" aria-hidden="true">${generateSparkline(pos)}</div>
                     <div class="holding-metrics">
                         <div class="holding-price">$${pos.current.toFixed(2)}</div>
                         <div class="holding-pl ${plClass}">${sign}${pos.unrealized_plpc.toFixed(2)}%</div>
