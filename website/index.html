@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260620-1526-v27">
-    <script>(function(){var v='20260620-2215-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-2218-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-2215-FORCE-V37 -->
+    <!-- CACHE BUST: v=20260620-2218-FORCE-V38 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -248,7 +248,7 @@
 
         /* Left side - Symbol, company, shares */
         .holding-main {
-            flex: 1;
+            flex: 0 0 96px;
             min-width: 0;
             display: flex;
             flex-direction: column;
@@ -273,17 +273,18 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 160px;
+            max-width: 96px;
         }
 
         /* Right side - Price and P&L */
         .holding-metrics {
+            flex: 0 0 96px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             gap: 0.2rem;
             text-align: right;
-            min-width: 64px;
+            min-width: 0;
         }
         .holding-price {
             font-family: 'JetBrains Mono', 'SF Mono', monospace;
@@ -306,7 +307,7 @@
         /* Center sparkline */
         .holding-sparkline {
             flex: 0 0 auto;
-            width: 72px;
+            width: 96px;
             height: 28px;
             display: flex;
             align-items: center;
@@ -4892,7 +4893,7 @@
             const min = Math.min(...data);
             const max = Math.max(...data);
             const range = max - min || 1;
-            const width = 72;
+            const width = 96;
             const height = 28;
             const paddingX = 2;
             const paddingY = 3;
