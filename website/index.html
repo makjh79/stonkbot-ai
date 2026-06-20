@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260620-1526-v27">
-    <script>(function(){var v='20260620-2220-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-2225-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-2220-FORCE-V39 -->
+    <!-- CACHE BUST: v=20260620-2225-FORCE-V40 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -3998,6 +3998,36 @@
 
         // Auto-refresh interval (30 seconds)
         let portfolioRefreshInterval = null;
+        let priceHistory = {}; // Cached 30-day price history for sparklines
+        
+        // Load 30-day price history JSON files for sparklines
+        async function loadPriceHistory() {
+            try {
+                const res = await fetch('./history/manifest.json?t=' + Date.now());
+                if (!res.ok) return;
+                const manifest = await res.json();
+                const tickers = manifest.tickers || [];
+                const entries = await Promise.all(
+                    tickers.map(async (ticker) => {
+                        try {
+                            const r = await fetch(`./history/${ticker}.json?t=` + Date.now());
+                            if (!r.ok) return null;
+                            return { ticker, data: await r.json() };
+                        } catch (e) {
+                            return null;
+                        }
+                    })
+                );
+                entries.forEach(entry => {
+                    if (entry && entry.data && entry.data.history && entry.data.history.length > 1) {
+                        priceHistory[entry.ticker] = entry.data.history.map(h => h.close);
+                    }
+                });
+                console.log('Price history loaded:', Object.keys(priceHistory).length, 'tickers');
+            } catch (e) {
+                console.log('Price history load failed:', e);
+            }
+        }
         
         // Simple data loading with XMLHttpRequest fallback
         function loadPortfolioData() {
@@ -4021,6 +4051,10 @@
                         updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                         // Also fetch popup content for holdings
                         fetchPopupContent().catch(e => console.log('Popup content fetch failed:', e));
+                        // Load real price history for sparklines
+                        loadPriceHistory().then(() => {
+                            updateHoldingsCards(data.positions);
+                        }).catch(e => console.log('Price history load failed:', e));
                     })
                     .catch(err => {
                         console.error('Fetch failed:', err);
@@ -4542,6 +4576,9 @@
                             updateHoldingsCards(data.positions);
                             updateSectorHeatmap(data.positions, data.account?.portfolio_value || 0);
                             updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
+                            loadPriceHistory().then(() => {
+                                updateHoldingsCards(data.positions);
+                            }).catch(e => console.log('Price history load failed:', e));
                         } catch (e) {
                             showError('Parse error: ' + e.message);
                         }
@@ -4868,26 +4905,33 @@
             return colors[cat] || '#9ca3af';
         }
 
-        // Generate a wider, smoother SVG sparkline with more historical-looking data
+        // Generate a wider, smoother SVG sparkline; prefers real 30-day history
         function generateSparkline(pos) {
-            const points = 40;
-            const startPrice = pos.avg_entry || pos.current * 0.98;
-            const endPrice = pos.current;
-            const totalChange = endPrice - startPrice;
-            const trend = totalChange >= 0 ? 1 : -1;
-            const data = [];
-            let price = startPrice;
-            const baseStep = totalChange / (points - 1);
-            const volatility = Math.abs(totalChange) * 0.12 + pos.current * 0.015;
+            const ticker = pos.symbol;
+            let data = [];
+            let isReal = false;
 
-            for (let i = 0; i < points; i++) {
-                const progress = i / (points - 1);
-                const trendComponent = baseStep * i;
-                const wave = Math.sin(progress * Math.PI * 2.5) * volatility * 0.35;
-                const noise = (Math.random() - 0.5) * volatility;
-                price = startPrice + trendComponent + wave + noise;
-                if (i === points - 1) price = endPrice;
-                data.push(price);
+            if (priceHistory[ticker] && priceHistory[ticker].length > 1) {
+                data = priceHistory[ticker];
+                isReal = true;
+            } else {
+                // Fallback synthetic data from avg_entry to current
+                const points = 40;
+                const startPrice = pos.avg_entry || pos.current * 0.98;
+                const endPrice = pos.current;
+                const totalChange = endPrice - startPrice;
+                const baseStep = totalChange / (points - 1);
+                const volatility = Math.abs(totalChange) * 0.12 + pos.current * 0.015;
+
+                for (let i = 0; i < points; i++) {
+                    const progress = i / (points - 1);
+                    const trendComponent = baseStep * i;
+                    const wave = Math.sin(progress * Math.PI * 2.5) * volatility * 0.35;
+                    const noise = (Math.random() - 0.5) * volatility;
+                    let price = startPrice + trendComponent + wave + noise;
+                    if (i === points - 1) price = endPrice;
+                    data.push(price);
+                }
             }
 
             const min = Math.min(...data);
@@ -4899,12 +4943,17 @@
             const paddingY = 3;
             let path = '';
             data.forEach((v, i) => {
-                const x = paddingX + (i / (points - 1)) * (width - paddingX * 2);
+                const x = paddingX + (i / (data.length - 1)) * (width - paddingX * 2);
                 const y = height - paddingY - ((v - min) / range) * (height - paddingY * 2);
                 path += (i === 0 ? 'M' : 'L') + ` ${x.toFixed(1)},${y.toFixed(1)}`;
             });
-            const stroke = trend > 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-            return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><path d="${path}" stroke="${stroke}"/></svg>`;
+
+            const endPrice = pos.current || data[data.length - 1];
+            const startPrice = pos.avg_entry || data[0];
+            const trend = endPrice >= startPrice ? 1 : -1;
+            const stroke = isReal ? 'var(--text-secondary)' : (trend > 0 ? 'var(--accent-green)' : 'var(--accent-red)');
+            const opacity = isReal ? 0.75 : 0.55;
+            return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" style="opacity:${opacity}"><path d="${path}" stroke="${stroke}"/></svg>`;
         }
 
         // Update holdings cards dynamically
