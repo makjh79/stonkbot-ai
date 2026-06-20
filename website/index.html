@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260620-1526-v27">
-    <script>(function(){var v='20260620-2250-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-2300-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-2250-FORCE-V43 -->
+    <!-- CACHE BUST: v=20260620-2300-FORCE-V44 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -574,12 +574,14 @@
         }
 
         .section-title {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 800;
             display: flex;
             align-items: center;
             gap: 0.4rem;
             color: var(--accent-blue);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
         .ai-box {
@@ -1678,12 +1680,14 @@
         .faq-answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease, padding 0.3s ease;
+            opacity: 0;
+            transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, padding 0.3s ease;
         }
 
         .faq-item.expanded .faq-answer {
-            max-height: 600px;
+            max-height: 1200px;
             padding-bottom: 0.625rem;
+            opacity: 1;
         }
 
         .faq-answer-text {
