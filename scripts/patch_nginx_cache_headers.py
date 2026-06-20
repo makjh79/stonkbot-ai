@@ -20,6 +20,14 @@ NO_CACHE_HEADERS = (
     "\n"
 )
 
+HTTP_NO_CACHE_HEADERS = (
+    "\n\t# Global no-cache for HTML deploys (applies to all server blocks)"
+    "\n\tadd_header Cache-Control \"no-cache, no-store, must-revalidate\" always;"
+    "\n\tadd_header Pragma \"no-cache\" always;"
+    "\n\tadd_header Expires \"0\" always;"
+    "\n"
+)
+
 
 def write_status(conf, headers_added, note=None, error=None, snippet=None, headers_found=None, diagnostics=None):
     status = {
@@ -205,3 +213,51 @@ except subprocess.CalledProcessError as e:
     write_status(conf, False, error=error, snippet=snippet, diagnostics=diag)
     print(error, file=sys.stderr)
     sys.exit(1)
+
+# Also add headers at the global http level in nginx.conf as a safety net for any
+# server block not covered by the file we edited (e.g. HTTPS configs in other files).
+nginx_conf_paths = ["/etc/nginx/nginx.conf", "/usr/local/nginx/conf/nginx.conf"]
+nginx_conf = None
+for p in nginx_conf_paths:
+    if os.path.exists(p):
+        nginx_conf = p
+        break
+
+if nginx_conf:
+    with open(nginx_conf) as f:
+        nc_text = f.read()
+    http_match = re.search(r"http\s*\{", nc_text)
+    if http_match:
+        http_open = nc_text.find("{", http_match.start())
+        # Slice from inside http block up to the first nested server block.
+        first_server = re.search(r"\n\s*server\s*\{", nc_text[http_open:])
+        http_prefix_end = http_open + (first_server.start() if first_server else 200)
+        http_prefix = nc_text[http_open:http_prefix_end]
+        if not re.search(
+            r"add_header\s+Cache-Control\s+\"no-cache,\s*no-store,\s*must-revalidate\"\s+always",
+            http_prefix,
+            re.IGNORECASE,
+        ):
+            nc_bak = os.path.join(
+                backup_dir,
+                "{}-bak-{}".format(os.path.basename(nginx_conf), datetime.datetime.now().strftime("%Y%m%d-%H%M%S")),
+            )
+            shutil.copy(nginx_conf, nc_bak)
+            insert_at = http_open + 1
+            new_nc_text = nc_text[:insert_at] + HTTP_NO_CACHE_HEADERS + nc_text[insert_at:]
+            with open(nginx_conf, "w") as f:
+                f.write(new_nc_text)
+            print("Added global no-cache headers to {}".format(nginx_conf))
+            try:
+                subprocess.run(["nginx", "-t"], check=True)
+                subprocess.run(["nginx", "-s", "reload"], check=True)
+                print("nginx reloaded successfully after global header update")
+            except subprocess.CalledProcessError as e:
+                print("nginx reload failed after global header update: {}".format(e), file=sys.stderr)
+                sys.exit(1)
+        else:
+            print("Global no-cache headers already present in {}".format(nginx_conf))
+    else:
+        print("No http block found in {}".format(nginx_conf))
+else:
+    print("No nginx.conf found for global header update")
