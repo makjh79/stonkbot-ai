@@ -6,10 +6,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <script>(function(){var v='20260620-1137';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260620-1141';var k='stonkbot_v';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-1137-CACHE-BUST-V17 -->
+    <!-- CACHE BUST: v=20260620-1141-CACHE-BUST-V18 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1358,27 +1358,58 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .holdings-section-header {
-            align-items: flex-start;
+        .site-header {
+            padding: 1.25rem 1rem 0.5rem;
+            text-align: center;
+        }
+
+        .site-header-inner {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             margin-bottom: 0.5rem;
         }
 
-        .holdings-updated {
-            font-size: 0.55rem;
-            color: rgba(139, 146, 168, 0.65);
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
+        .site-logo-emoji {
+            font-size: 1.5rem;
         }
 
-        .holdings-updated .live-dot {
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: var(--accent-green);
-            box-shadow: 0 0 3px var(--accent-green);
+        .site-logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .site-tagline {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0;
+            text-transform: none;
+            margin: 0;
+            max-width: 320px;
+            line-height: 1.4;
+        }
+
+        @media (min-width: 769px) {
+            .site-header {
+                text-align: left;
+                padding: 1.5rem 1.5rem 0.75rem;
+            }
+            .site-header-inner {
+                margin-bottom: 0.35rem;
+            }
+            .site-logo-emoji {
+                font-size: 1.75rem;
+            }
+            .site-logo-text {
+                font-size: 1.75rem;
+            }
+            .site-tagline {
+                font-size: 0.85rem;
+                max-width: none;
+            }
         }
 
         .holdings-filter-btn {
@@ -2495,14 +2526,14 @@
 
     <div class="container">
         <!-- NEW WORLD-CLASS HEADER -->
-        <header style="padding: 1.25rem 1rem 0.5rem; text-align: center;">
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                <span style="font-size: 1.5rem;">🤖</span>
-                <h1 style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin: 0;">
+        <header class="site-header">
+            <div class="site-header-inner">
+                <span class="site-logo-emoji">🤖</span>
+                <h1 class="site-logo-text">
                     <span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan); font-weight: 900;">BOT.AI</span>
                 </h1>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.75rem; font-weight: 500; letter-spacing: 0; text-transform: none; margin: 0; max-width: 320px; line-height: 1.4;">$100K AI trading experiment</p>
+            <p class="site-tagline">$100K AI trading experiment</p>
         </header>
 
         <!-- WORLD-CLASS HERO CARD -->
