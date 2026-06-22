@@ -20,8 +20,23 @@ REQUIRED_PROCESSES = {
     'trading_bot.py': {'name': 'StonkBOT Trading', 'critical': True},
     'fetch_data_simple.py': {'name': 'Data Fetcher', 'critical': True},
     'fetch_ai_watchlist.py': {'name': 'AI Watchlist', 'critical': False},
-    'fetch_crowd_sentiment.py': {'name': 'Crowd Sentiment', 'critical': False},
 }
+
+CROWD_SENTIMENT_FILE = f'{WEB_DIR}/crowd_sentiment.json'
+CROWD_SENTIMENT_MAX_AGE = 3600  # 1 hour (cron runs every 15 min)
+
+def check_crowd_sentiment_freshness():
+    """Check crowd sentiment output file freshness instead of daemon process."""
+    if not os.path.exists(CROWD_SENTIMENT_FILE):
+        return f"Crowd sentiment: {CROWD_SENTIMENT_FILE} missing"
+    try:
+        mtime = os.path.getmtime(CROWD_SENTIMENT_FILE)
+        age_seconds = (datetime.now() - datetime.fromtimestamp(mtime)).total_seconds()
+        if age_seconds > CROWD_SENTIMENT_MAX_AGE:
+            return f"Crowd sentiment: crowd_sentiment.json is stale ({age_seconds/3600:.1f}h old, max 1h)"
+    except Exception as e:
+        return f"Crowd sentiment: error checking freshness: {e}"
+    return None
 
 def find_process_by_script(script_name):
     """Find process by script name (not hardcoded PID)"""
@@ -295,6 +310,11 @@ def generate_report():
     if sentiment_issues:
         report['status'] = 'DEGRADED'
         report['issues'].extend(sentiment_issues)
+    
+    # Check crowd sentiment output freshness (non-critical)
+    crowd_issue = check_crowd_sentiment_freshness()
+    if crowd_issue:
+        report['issues'].append(crowd_issue)
     
     return report
 
