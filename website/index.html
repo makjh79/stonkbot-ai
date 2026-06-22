@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260622-1450-v30">
-    <script>(function(){var v='20260622-1450-v30';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260622-1525-v31">
+    <script>(function(){var v='20260622-1525-v31';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260622-1450-FORCE-V45 -->
+    <!-- CACHE BUST: v=20260622-1525-FORCE-V46 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -4517,9 +4517,17 @@
             const el = document.getElementById('data-freshness');
             if (!el) return;
 
-            const then = timestamp ? new Date(timestamp) : new Date();
+            // Ensure timestamp is treated as UTC by adding Z if missing
+            let ts = timestamp;
+            if (ts && !ts.endsWith('Z') && !ts.match(/[+-]\d{2}:\d{2}$/)) {
+                ts = ts + 'Z';
+            }
+            const then = ts ? new Date(ts) : new Date();
             const now = new Date();
             const seconds = Math.floor((now - then) / 1000);
+            
+            // Debug logging
+            console.log('Freshness check:', { timestamp, parsed: then.toISOString(), now: now.toISOString(), seconds });
 
             let text;
             let dotColor = 'var(--text-muted)';
