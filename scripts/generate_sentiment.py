@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Fetch Finnhub company news and score sentiment with a built-in lexicon.
+"""Fetch company news from multiple sources and score sentiment.
 
-Zero external dependencies beyond Python stdlib + requests (already on server).
+Sources: Finnhub News + Alpaca News API.
+Zero external dependencies beyond Python stdlib + requests.
 Outputs match the frontend contract used by loadStockSentiment().
 """
 
 import json
 import os
-import sys
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -18,7 +18,8 @@ import requests
 # Config
 # ---------------------------------------------------------------------------
 SECRETS_DIR = Path("/root/.openclaw/workspace/.secrets")
-API_KEY_PATH = SECRETS_DIR / "finnhub.key"
+FINNHUB_KEY_PATH = SECRETS_DIR / "finnhub.key"
+ALPACA_CONFIG_PATH = Path("/opt/stonk-ai/alpaca_config.json")
 
 WATCHLIST_TICKERS = [
     "COIN", "NET", "PATH", "SHOP", "SQ", "NIO", "GM", "ORCL",
@@ -28,6 +29,104 @@ WATCHLIST_TICKERS = [
 OUTPUT_DIR = Path(os.environ.get("SENTIMENT_OUTPUT_DIR", "/var/www/hedge-fund-website/sentiment"))
 SLEEP_SECONDS = 1.2
 DAYS_BACK = 7
+
+# ---------------------------------------------------------------------------
+# API keys
+# ---------------------------------------------------------------------------
+
+def load_finnhub_key() -> str:
+    if not FINNHUB_KEY_PATH.exists():
+        raise FileNotFoundError(f"Finnhub API key not found at {FINNHUB_KEY_PATH}")
+    return FINNHUB_KEY_PATH.read_text().strip()
+
+
+def load_alpaca_config() -> dict:
+    if not ALPACA_CONFIG_PATH.exists():
+        return {}
+    with open(ALPACA_CONFIG_PATH, "r") as f:
+        return json.load(f)
+
+
+# ---------------------------------------------------------------------------
+# News fetchers
+# ---------------------------------------------------------------------------
+
+def finnhub_news(symbol: str, api_key: str, from_date: str, to_date: str):
+    url = "https://finnhub.io/api/v1/company-news"
+    params = {"symbol": symbol, "from": from_date, "to": to_date, "token": api_key}
+    resp = requests.get(url, params=params, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    out = []
+    for art in data:
+        ts = art.get("datetime")
+        if not ts:
+            continue
+        out.append({
+            "headline": art.get("headline", ""),
+            "source": art.get("source", "Finnhub"),
+            "url": art.get("url", ""),
+            "datetime": int(ts),
+        })
+    return out
+
+
+def alpaca_news(symbol: str, config: dict, from_date: str, to_date: str):
+    """Fetch news from Alpaca News API."""
+    key_id = config.get("api_key")
+    secret = config.get("api_secret")
+    if not key_id or not secret:
+        return []
+    url = (
+        f"https://data.alpaca.markets/v1beta1/news"
+        f"?symbols={symbol}"
+        f"&start={from_date}T00:00:00Z"
+        f"&end={to_date}T23:59:59Z"
+        f"&limit=50"
+    )
+    headers = {
+        "APCA-API-KEY-ID": key_id,
+        "APCA-API-SECRET-KEY": secret,
+        "accept": "application/json",
+    }
+    try:
+        resp = requests.get(url, headers=headers, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        out = []
+        for art in data.get("news", []):
+            ts = art.get("created_at")
+            if not ts:
+                continue
+            dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            out.append({
+                "headline": art.get("headline", ""),
+                "source": art.get("source", "Alpaca"),
+                "url": art.get("url", ""),
+                "datetime": int(dt.timestamp()),
+            })
+        return out
+    except Exception as e:
+        print(f"  Alpaca news error for {symbol}: {e}")
+        return []
+
+
+def merge_articles(articles_list):
+    """Merge articles from multiple sources, dedupe by headline (case-insensitive)."""
+    seen = set()
+    merged = []
+    for articles in articles_list:
+        for art in articles:
+            title = (art.get("headline") or "").strip()
+            if not title:
+                continue
+            key = title.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(art)
+    return merged
+
 
 # ---------------------------------------------------------------------------
 # Lightweight sentiment lexicon (AFINN-style, no external deps)
@@ -71,20 +170,6 @@ NEGATORS = {"not", "no", "never", "neither", "nor", "without", "lack", "lacks", 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-def load_api_key() -> str:
-    if not API_KEY_PATH.exists():
-        raise FileNotFoundError(f"Finnhub API key not found at {API_KEY_PATH}")
-    return API_KEY_PATH.read_text().strip()
-
-
-def finnhub_news(symbol: str, api_key: str, from_date: str, to_date: str):
-    url = "https://finnhub.io/api/v1/company-news"
-    params = {"symbol": symbol, "from": from_date, "to": to_date, "token": api_key}
-    resp = requests.get(url, params=params, timeout=30)
-    resp.raise_for_status()
-    return resp.json()
-
 
 def relative_time(dt: datetime) -> str:
     now = datetime.now(timezone.utc)
@@ -143,7 +228,7 @@ def build_sentiment(symbol: str, articles: list):
         title = (art.get("headline") or "").strip()
         if not title:
             continue
-        source = art.get("source", "Finnhub")
+        source = art.get("source", "News")
         url = art.get("url", "#")
         ts_epoch = art.get("datetime")
         if not ts_epoch:
@@ -187,7 +272,7 @@ def build_sentiment(symbol: str, articles: list):
         "mentionCount24h": mention_count_24h,
         "sparkline": sparkline,
         "headlines": top_headlines,
-        "dataSource": "Finnhub News + VADER",
+        "dataSource": "Finnhub + Alpaca News",
     }
 
 
@@ -204,7 +289,8 @@ def write_json(symbol: str, payload: dict):
 # ---------------------------------------------------------------------------
 
 def main():
-    api_key = load_api_key()
+    finnhub_key = load_finnhub_key()
+    alpaca_config = load_alpaca_config()
 
     to_date = datetime.now(timezone.utc).date()
     from_date = to_date - timedelta(days=DAYS_BACK)
@@ -212,10 +298,13 @@ def main():
     failed = []
     for symbol in WATCHLIST_TICKERS:
         try:
-            articles = finnhub_news(symbol, api_key, str(from_date), str(to_date))
+            fh_articles = finnhub_news(symbol, finnhub_key, str(from_date), str(to_date))
+            alp_articles = alpaca_news(symbol, alpaca_config, str(from_date), str(to_date))
+            articles = merge_articles([fh_articles, alp_articles])
             payload = build_sentiment(symbol, articles)
             if payload:
                 write_json(symbol, payload)
+                print(f"  {symbol}: {len(articles)} articles ({len(fh_articles)} Finnhub + {len(alp_articles)} Alpaca)")
             else:
                 fallback = {
                     "symbol": symbol,
@@ -225,7 +314,7 @@ def main():
                     "mentionCount24h": 0,
                     "sparkline": [0.0] * DAYS_BACK,
                     "headlines": [],
-                    "dataSource": "Finnhub News + VADER — no recent coverage",
+                    "dataSource": "Finnhub + Alpaca News — no recent coverage",
                 }
                 write_json(symbol, fallback)
                 failed.append(f"{symbol}: no articles (wrote fallback)")
