@@ -175,7 +175,7 @@ def check_sentiment_freshness():
         'AAPL', 'TSLA', 'NVDA', 'META', 'GOOGL', 'TWLO', 'ASAN',
     ]
 
-    max_age_seconds = 7200  # 2 hours (cron runs hourly)
+    max_age_seconds = 7200  # 2 hours (cron runs every 15 min)
     issues = []
     now = datetime.now()
 
@@ -185,8 +185,27 @@ def check_sentiment_freshness():
             issues.append(f"News sentiment: missing {ticker}.json")
             continue
 
-        mtime = os.path.getmtime(filepath)
-        age_seconds = (now - datetime.fromtimestamp(mtime)).total_seconds()
+        # Prefer JSON updated_at/timestamp, fall back to file mtime
+        json_updated_at = None
+        try:
+            with open(filepath, 'r') as f:
+                payload = json.load(f)
+                ts_str = payload.get('updated_at') or payload.get('timestamp')
+                if ts_str:
+                    # Handle ISO timestamps with timezone
+                    ts_str = ts_str.replace('Z', '+00:00')
+                    json_updated_at = datetime.fromisoformat(ts_str)
+                    if json_updated_at.tzinfo:
+                        json_updated_at = json_updated_at.replace(tzinfo=None)
+        except Exception:
+            pass
+
+        if json_updated_at:
+            age_seconds = (now - json_updated_at).total_seconds()
+        else:
+            mtime = os.path.getmtime(filepath)
+            age_seconds = (now - datetime.fromtimestamp(mtime)).total_seconds()
+
         if age_seconds > max_age_seconds:
             issues.append(
                 f"News sentiment: {ticker}.json is stale ({age_seconds/3600:.1f}h old, max 2h)"

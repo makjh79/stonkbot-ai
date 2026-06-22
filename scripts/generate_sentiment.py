@@ -266,6 +266,7 @@ def build_sentiment(symbol: str, articles: list):
 
     return {
         "symbol": symbol,
+        "updated_at": now.isoformat(),
         "timestamp": now.isoformat(),
         "tone": tone,
         "toneScore": round(avg_score, 3),
