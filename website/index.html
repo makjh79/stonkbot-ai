@@ -4531,8 +4531,17 @@
             let text;
             let dotColor = 'var(--text-muted)';
 
+            // Check US market hours (Mon-Fri, 09:30-16:00 ET)
+            const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+            const day = nyTime.getDay();
+            const hour = nyTime.getHours();
+            const minute = nyTime.getMinutes();
+            const marketOpen = day >= 1 && day <= 5 && (
+                (hour === 9 && minute >= 30) || (hour >= 10 && hour < 16)
+            );
+
             if (seconds < 60) {
-                text = 'Live';
+                text = marketOpen ? 'Live' : 'Recent';
             } else if (seconds < 3600) {
                 const mins = Math.floor(seconds / 60);
                 text = `Updated ${mins}m ago`;
