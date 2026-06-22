@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-06-22T03:05:52.905867",
+  "config": {
+    "max_stocks": 15,
+    "min_stocks": 5,
+    "refresh_interval_minutes": 5,
+    "remove_rsi_above": 50,
+    "remove_rsi_below": 25,
+    "remove_price_change_day": 5,
+    "remove_underperform_sp500": -3,
+    "max_days_in_watchlist": 3,
+    "add_rsi_min": 28,
+    "add_rsi_max": 48,
+    "add_ai_score_min": 60,
+    "tier_now_rsi_max": 35,
+    "tier_now_ai_min": 75,
+    "tier_watch_rsi_max": 48,
+    "tier_watch_ai_min": 60
+  },
+  "sp500_return": -1.31,
+  "removed": [],
+  "added": [],
+  "new_watchlist": [
+    "COIN",
+    "PATH",
+    "SHOP",
+    "NIO",
+    "GM",
+    "TSLA",
+    "META",
+    "ASAN",
+    "ZM",
+    "F",
+    "NET",
+    "TWLO",
+    "CRM",
+    "XPEV",
+    "EXPE"
+  ],
+  "tiers": {
+    "NOW": [],
+    "WATCH": [
+      "COIN",
+      "PATH",
+      "SHOP",
+      "NIO",
+      "GM",
+      "TSLA",
+      "META",
+      "ASAN",
+      "ZM",
+      "CRM",
+      "XPEV",
+      "EXPE"
+    ],
+    "MONITOR": [
+      "F",
+      "NET",
+      "TWLO"
+    ]
+  },
+  "summary": {
+    "total": 15,
+    "now_count": 0,
+    "watch_count": 12,
+    "monitor_count": 3
+  }
+}

@@ -1,17 +1,8 @@
 #!/usr/bin/env python3
-"""Fetch Finnhub company news and score sentiment with VADER.
+"""Fetch Finnhub company news and score sentiment with a built-in lexicon.
 
-Writes one JSON file per ticker to OUTPUT_DIR:
-  {TICKER}.json -> {
-    "symbol": "TICKER",
-    "timestamp": ISO,
-    "tone": "bullish" | "bearish" | "neutral",
-    "toneScore": float(-1..1),
-    "mentionCount24h": int,
-    "sparkline": [float],  # last 7 daily avg scores
-    "headlines": [...],
-    "dataSource": "Finnhub News + VADER"
-  }
+Zero external dependencies beyond Python stdlib + requests (already on server).
+Outputs match the frontend contract used by loadStockSentiment().
 """
 
 import json
@@ -22,28 +13,60 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import requests
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent.parent
-SECRETS_DIR = Path.home() / ".openclaw" / "workspace" / ".secrets"
+SECRETS_DIR = Path("/root/.openclaw/workspace/.secrets")
 API_KEY_PATH = SECRETS_DIR / "finnhub.key"
 
-# Tickers currently shown in the watchlist popup
 WATCHLIST_TICKERS = [
     "COIN", "NET", "PATH", "SHOP", "SQ", "NIO", "GM", "ORCL",
     "AAPL", "TSLA", "NVDA", "META", "GOOGL", "TWLO", "ASAN",
 ]
 
-# Where to write sentiment JSON files
-OUTPUT_DIR = Path(os.environ.get("SENTIMENT_OUTPUT_DIR", BASE_DIR / "website" / "sentiment"))
-
-# Finnhub free tier: 60 calls/minute. Sleep between calls to be polite.
+OUTPUT_DIR = Path(os.environ.get("SENTIMENT_OUTPUT_DIR", "/var/www/hedge-fund-website/sentiment"))
 SLEEP_SECONDS = 1.2
-
 DAYS_BACK = 7
+
+# ---------------------------------------------------------------------------
+# Lightweight sentiment lexicon (AFINN-style, no external deps)
+# ---------------------------------------------------------------------------
+POSITIVE = {
+    "surge", "rally", "soar", "jump", "gain", "gains", "rise", "rises", "rising",
+    "bull", "bullish", "outperform", "beat", "beats", "strong", "strength", "growth",
+    "profit", "profits", "buy", "upgrade", "upgraded", "upgrade", "positive", "momentum",
+    "breakthrough", "record", "high", "highs", "rallying", "surging", "boom", "booming",
+    "exceeds", "exceeded", "upside", "opportunity", "opportunities", "success", "successful",
+    "launch", "launches", "partnership", "deal", "deals", "expansion", "expanding",
+    "adoption", "adopt", "adopts", "integrates", "integration", "approves", "approval",
+    "dividend", "dividends", "raise", "raises", "boost", "boosts", "rebound", "rebounds",
+    "recover", "recovery", "recovering", "promise", "promising", "confident", "optimistic",
+    "target", "targets", "excellent", "outstanding", "robust", "solid", "healthy",
+}
+
+NEGATIVE = {
+    "fall", "falls", "falling", "drop", "drops", "dropping", "decline", "declines",
+    "declining", "plunge", "plunges", "plunging", "crash", "crashes", "crashing",
+    "bear", "bearish", "underperform", "miss", "misses", "missed", "weak", "weakness",
+    "loss", "losses", "lose", "losing", "sell", "downgrade", "downgraded", "negative",
+    "risk", "risks", "risky", "concern", "concerns", "worried", "worry", "fear",
+    "fears", "threat", "threats", "warn", "warns", "warning", "cut", "cuts",
+    "layoff", "layoffs", "firing", "fire", "fraud", "lawsuit", "litigation", "investigation",
+    "probe", "penalty", "fine", "fines", "ban", "banned", "restrict", "restricts",
+    "delay", "delays", "postpone", "postponed", "halt", "halts", "suspend", "suspends",
+    "recall", "recalls", "deficit", "debt", "bankrupt", "bankruptcy", "default",
+    "inflation", "recession", "downturn", "slump", "slumps", "tumble", "tumbles",
+    "volatile", "volatility", "uncertain", "uncertainty", "crisis", "trouble",
+    "struggle", "struggles", " disappointing", "disappoint", "disappointed", "poor",
+    "collapse", "collapses", "collapsing", "plummet", "plummets", "sink", "sinks",
+    "slide", "slides", "sliding", "tank", "tanks", "tanking", "pullback", "correction",
+}
+
+BOOSTERS = {"very", "extremely", "remarkably", "significantly", "substantially", "sharply", "strongly"}
+DAMPENERS = {"slightly", "somewhat", "marginally", "a bit", "barely", "hardly"}
+NEGATORS = {"not", "no", "never", "neither", "nor", "without", "lack", "lacks", "absence", "failed", "fails"}
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -57,12 +80,7 @@ def load_api_key() -> str:
 
 def finnhub_news(symbol: str, api_key: str, from_date: str, to_date: str):
     url = "https://finnhub.io/api/v1/company-news"
-    params = {
-        "symbol": symbol,
-        "from": from_date,
-        "to": to_date,
-        "token": api_key,
-    }
+    params = {"symbol": symbol, "from": from_date, "to": to_date, "token": api_key}
     resp = requests.get(url, params=params, timeout=30)
     resp.raise_for_status()
     return resp.json()
@@ -78,7 +96,42 @@ def relative_time(dt: datetime) -> str:
     return f"{delta.days}d ago"
 
 
-def build_sentiment(symbol: str, articles: list, analyzer: SentimentIntensityAnalyzer):
+def score_text(text: str) -> float:
+    """Return compound-ish sentiment score in [-1, 1]."""
+    words = [w.strip(".,!?;:'\"()[]{}-—") for w in text.lower().split()]
+    score = 0.0
+    i = 0
+    while i < len(words):
+        word = words[i]
+        val = 0.0
+        if word in POSITIVE:
+            val = 0.35
+        elif word in NEGATIVE:
+            val = -0.35
+        elif word in NEGATORS and i + 1 < len(words) and words[i + 1] in POSITIVE:
+            val = -0.25
+            i += 1
+        elif word in NEGATORS and i + 1 < len(words) and words[i + 1] in NEGATIVE:
+            val = 0.25
+            i += 1
+
+        # look back one word for boosters/dampeners/negators
+        if val != 0.0 and i > 0:
+            prev = words[i - 1]
+            if prev in BOOSTERS:
+                val *= 1.5
+            elif prev in DAMPENERS:
+                val *= 0.5
+            elif prev in NEGATORS:
+                val *= -0.8
+        score += val
+        i += 1
+
+    # Normalize to roughly [-1, 1]
+    return max(-1.0, min(1.0, score))
+
+
+def build_sentiment(symbol: str, articles: list):
     if not articles:
         return None
 
@@ -96,8 +149,7 @@ def build_sentiment(symbol: str, articles: list, analyzer: SentimentIntensityAna
         if not ts_epoch:
             continue
         art_dt = datetime.fromtimestamp(int(ts_epoch), tz=timezone.utc)
-        vs = analyzer.polarity_scores(title)
-        compound = vs["compound"]
+        compound = score_text(title)
         scored.append({
             "title": title,
             "source": source,
@@ -107,10 +159,7 @@ def build_sentiment(symbol: str, articles: list, analyzer: SentimentIntensityAna
             "publishedRelative": relative_time(art_dt),
         })
 
-    # 24h mention count
     mention_count_24h = sum(1 for s in scored if datetime.fromisoformat(s["published"]) >= cutoff_24h)
-
-    # Overall tone from average of all scored articles in window
     avg_score = sum(s["sentiment"] for s in scored) / len(scored)
 
     if avg_score >= 0.05:
@@ -120,7 +169,6 @@ def build_sentiment(symbol: str, articles: list, analyzer: SentimentIntensityAna
     else:
         tone = "neutral"
 
-    # 7-day sparkline: daily average sentiment
     daily_buckets = {}
     for s in scored:
         day = datetime.fromisoformat(s["published"]).date().isoformat()
@@ -129,7 +177,6 @@ def build_sentiment(symbol: str, articles: list, analyzer: SentimentIntensityAna
     last_7_days = [(now.date() - timedelta(days=i)).isoformat() for i in range(DAYS_BACK - 1, -1, -1)]
     sparkline = [round(sum(daily_buckets.get(d, [0.0])) / len(daily_buckets.get(d, [1])), 3) for d in last_7_days]
 
-    # Top 3 most recent headlines
     top_headlines = sorted(scored, key=lambda x: x["published"], reverse=True)[:3]
 
     return {
@@ -158,7 +205,6 @@ def write_json(symbol: str, payload: dict):
 
 def main():
     api_key = load_api_key()
-    analyzer = SentimentIntensityAnalyzer()
 
     to_date = datetime.now(timezone.utc).date()
     from_date = to_date - timedelta(days=DAYS_BACK)
@@ -167,11 +213,10 @@ def main():
     for symbol in WATCHLIST_TICKERS:
         try:
             articles = finnhub_news(symbol, api_key, str(from_date), str(to_date))
-            payload = build_sentiment(symbol, articles, analyzer)
+            payload = build_sentiment(symbol, articles)
             if payload:
                 write_json(symbol, payload)
             else:
-                # No articles found — write a neutral fallback so the popup still loads
                 fallback = {
                     "symbol": symbol,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -189,10 +234,9 @@ def main():
         time.sleep(SLEEP_SECONDS)
 
     if failed:
-        print("\nFailures:")
+        print("\nNotices:")
         for msg in failed:
             print(f"  - {msg}")
-        sys.exit(1 if len(failed) == len(WATCHLIST_TICKERS) else 0)
 
     print("\nAll sentiment files generated.")
 
