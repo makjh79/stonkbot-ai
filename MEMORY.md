@@ -122,3 +122,15 @@ Edit → Git commit → Git push → Auto-deploy to live site (~30s)
 ```
 
 **For collaborators**: Other AIs can fork, edit, push — changes go live automatically
+
+---
+
+## Multi-Agent Coordination Note (June 20, 2026)
+
+**Incident**: Minor overlap between Jarvis and Jeeves
+
+**Context**: Jeeves mentioned "scheduler issues" → Jarvis implemented sentiment freshness check → Jeeves later tried to add same function independently
+
+**Status**: Resolved — feature was already working, just communication gap
+
+**Details**: See `memory/2026-06-20.md#multi-agent-coordination-incident`

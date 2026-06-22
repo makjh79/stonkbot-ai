@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260620-1526-v27">
-    <script>(function(){var v='20260620-2300-FORCE';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260622-1525-v31">
+    <script>(function(){var v='20260622-1525-v31';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260620-2300-FORCE-V44 -->
+    <!-- CACHE BUST: v=20260622-1525-FORCE-V46 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -222,6 +222,16 @@
             gap: 0.375rem;
         }
 
+        .holding-card[data-positive="true"] {
+            background: linear-gradient(135deg, rgba(0, 208, 132, 0.08), rgba(22, 24, 34, 0.68));
+            border-color: rgba(0, 208, 132, 0.15);
+        }
+
+        .holding-card[data-positive="false"] {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.08), rgba(22, 24, 34, 0.68));
+            border-color: rgba(255, 71, 87, 0.15);
+        }
+
         .holding-card {
             display: flex;
             align-items: center;
@@ -307,7 +317,7 @@
         /* Center sparkline */
         .holding-sparkline {
             flex: 0 0 auto;
-            width: 112px;
+            width: 140px;
             height: 28px;
             display: flex;
             align-items: center;
@@ -483,7 +493,7 @@
         .hero-separator {
             height: 1px;
             background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
-            margin: 0.25rem 0 0.5rem;
+            margin: 0.5rem 0;
             border: none;
         }
 
@@ -561,7 +571,7 @@
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 0.625rem;
-            margin-bottom: 0.375rem;
+            margin-bottom: 0.5rem;
         }
 
         .section-header {
@@ -579,7 +589,7 @@
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            color: var(--accent-blue);
+            color: var(--accent-cyan);
             letter-spacing: 0.06em;
             text-transform: uppercase;
         }
@@ -804,6 +814,82 @@
             0%, 100% { box-shadow: 0 0 8px rgba(34, 197, 94, 0.2); }
             50% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
         }
+        /* Staggered skeleton loading */
+        .skeleton-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .skeleton-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        .skeleton-card:nth-child(4) {
+            animation-delay: 0.45s;
+        }
+        .skeleton-card:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 12px;
+            font-size: 0.55rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .badge-green { background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05)); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); box-shadow: 0 0 8px rgba(34, 197, 94, 0.2); animation: pulse-green 2s infinite; }
+        .badge-red { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05)); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 0 8px rgba(239, 68, 68, 0.2); }
+        .badge-blue { background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.05)); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.4); box-shadow: 0 0 8px rgba(6, 182, 212, 0.2); }
+        .badge-purple { background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05)); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); box-shadow: 0 0 8px rgba(168, 85, 247, 0.2); animation: pulse-purple 2s infinite; }
+
+        /* Decision level pulse animations */
+        @keyframes decision-pulse-now {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        @keyframes decision-pulse-watch {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+        .decision-pill-now {
+            position: relative;
+            animation: decision-pulse-now 2s ease-in-out infinite;
+        }
+        .decision-pill-now::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: inherit;
+            animation: decision-pulse-now 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .decision-pill-watch {
+            position: relative;
+            animation: decision-pulse-watch 2.5s ease-in-out infinite;
+        }
+        .decision-pill-watch::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            border-radius: inherit;
+            animation: decision-pulse-watch 2.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 8px rgba(34, 197, 94, 0.2); }
+            50% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
+        }
         @keyframes pulse-purple {
             0%, 100% { box-shadow: 0 0 8px rgba(168, 85, 247, 0.2); }
             50% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
@@ -860,9 +946,11 @@
         }
 
         .chart-modal-title {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 800;
-            color: var(--accent-blue);
+            color: var(--accent-cyan);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
 
         .chart-modal-close {
@@ -1362,10 +1450,10 @@
 
         .stock-detail-section-title {
             font-size: 0.7rem;
-            color: var(--text-muted);
+            color: var(--accent-cyan);
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            font-weight: 600;
+            letter-spacing: 0.08em;
+            font-weight: 800;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
@@ -1835,6 +1923,20 @@
         .site-header {
             padding: 1.25rem 1rem 0.5rem;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .site-header.compact {
+            padding: 0.6rem 1rem 0.3rem;
+        }
+        .site-header.compact .site-logo-text {
+            font-size: 1.1rem;
+        }
+        .site-header.compact .site-logo-emoji {
+            font-size: 0.9em;
+        }
+        .site-header.compact .site-tagline {
+            font-size: 0.65rem;
         }
 
         .site-logo-text {
@@ -2399,6 +2501,146 @@
             opacity: 1;
         }
 
+        /* Collapsible History Panel */
+        .history-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+        .history-panel.open {
+            max-height: 9999px;
+            opacity: 1;
+            margin-top: 0.5rem;
+        }
+        .history-timeline {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.3rem;
+        }
+        .history-timeline::-webkit-scrollbar { width: 4px; }
+        .history-timeline::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 4px; }
+        .history-timeline::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        .history-toggle {
+            display: block;
+            width: 100%;
+            padding: 0.4rem 0;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: color 0.2s ease;
+        }
+        .history-toggle:hover { color: var(--accent-cyan); }
+        .history-toggle .arrow {
+            display: inline-block;
+            margin-left: 0.3rem;
+            transition: transform 0.3s ease;
+            font-size: 0.55rem;
+        }
+        .history-toggle.open .arrow { transform: rotate(180deg); }
+        .timeline-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.5rem 0.6rem;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 0.35rem;
+            font-size: 0.68rem;
+            transition: background 0.15s ease;
+        }
+        .timeline-card:hover { background: rgba(255,255,255,0.06); }
+        .timeline-dot {
+            flex-shrink: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 0.25rem;
+        }
+        .timeline-dot.buy { background: var(--accent-green); box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+        .timeline-dot.sell { background: var(--accent-red); box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+        .timeline-body { flex: 1; min-width: 0; }
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.15rem;
+            gap: 0.4rem;
+        }
+        .timeline-header .badge {
+            display: inline-block;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .badge.buy-badge { background: rgba(16,185,129,0.2); color: var(--accent-green); }
+        .badge.sell-badge { background: rgba(239,68,68,0.2); color: var(--accent-red); }
+        .timeline-header .date {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .timeline-symbol {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 0.72rem;
+        }
+        .timeline-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+        }
+        .timeline-rationale {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+            margin-top: 0.1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .history-summary-strip {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.4rem;
+            margin-bottom: 0.5rem;
+        }
+        .history-summary-item {
+            text-align: center;
+            padding: 0.4rem 0.3rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .history-summary-item .label {
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.1rem;
+        }
+        .history-summary-item .value {
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .history-summary-item .sub {
+            font-size: 0.5rem;
+            color: var(--text-muted);
+        }
+
         /* Responsive Design - Mobile First */
 
         /* Tablet and smaller (768px and below) */
@@ -2566,6 +2808,16 @@
             }
 
 
+            /* Desktop sparklines - larger */
+            .holding-sparkline {
+                width: 180px;
+                height: 36px;
+            }
+            .holding-sparkline svg {
+                width: 100%;
+                height: 100%;
+            }
+
         /* Tablet (769px - 1023px) */
         @media (min-width: 769px) and (max-width: 1023px) {
             .container { max-width: 600px; margin: 0 auto; padding: 0.75rem; }
@@ -2609,23 +2861,34 @@
             .holding-card {
                 padding: 0.75rem 0.875rem;
                 min-height: 64px;
-                gap: 0.625rem;
+                gap: 0.5rem;
+            }
+            .holding-main {
+                flex: 0 0 80px;
+                min-width: 0;
             }
             .holding-symbol {
                 font-size: 0.95rem;
             }
             .holding-company {
                 font-size: 0.65rem;
-                max-width: 120px;
+                max-width: 80px;
             }
             .holding-shares {
                 font-size: 0.65rem;
+            }
+            .holding-metrics {
+                flex: 0 0 auto;
+                min-width: 0;
             }
             .holding-price {
                 font-size: 0.85rem;
             }
             .holding-pl {
                 font-size: 0.8rem;
+            }
+            .holding-sparkline {
+                width: 100px;
             }
             .holding-action {
                 width: 24px;
@@ -2713,8 +2976,31 @@
                 height: 22px;
             }
             .holding-card {
-                padding: 0.625rem 0.75rem;
-                min-height: 56px;
+                padding: 0.5rem 0.625rem;
+                min-height: 52px;
+                gap: 0.375rem;
+            }
+            .holding-main {
+                flex: 0 0 72px;
+            }
+            .holding-company {
+                max-width: 72px;
+            }
+            .holding-symbol {
+                font-size: 0.85rem;
+            }
+            .holding-metrics {
+                flex: 0 0 auto;
+            }
+            .holding-price {
+                font-size: 0.78rem;
+            }
+            .holding-pl {
+                font-size: 0.72rem;
+            }
+            .holding-sparkline {
+                width: 80px;
+                height: 24px;
             }
             .section {
                 padding: 0.625rem !important;
@@ -2956,6 +3242,11 @@
                     </a>
                 </div>
                 <div class="nav-item">
+                    <a class="nav-link" href="performance.html" data-nav="performance">
+                        <span>📊 Performance</span>
+                    </a>
+                </div>
+                <div class="nav-item">
                     <a class="nav-link" href="#holdings" onclick="scrollToSection('holdings'); return false;" data-nav="portfolio">
                         <span>📊 Portfolio</span>
                     </a>
@@ -2974,12 +3265,16 @@
         </div>
     </nav>
 
-    <!-- Mobile Bottom Navigation - 4-Item Thumb-Friendly -->
+    <!-- Mobile Bottom Navigation - 5-Item Aligned with Desktop -->
     <nav class="mobile-nav" id="mobileNav">
         <div class="mobile-nav-items">
-            <a class="mobile-nav-item" href="#" onclick="scrollToSection('overview'); return false;" data-section="home">
+            <a class="mobile-nav-item" href="#overview" onclick="scrollToSection('overview'); return false;" data-section="home">
                 <span class="icon">🏠</span>
                 <span class="label">Home</span>
+            </a>
+            <a class="mobile-nav-item" href="performance.html" data-section="performance">
+                <span class="icon">📈</span>
+                <span class="label">Performance</span>
             </a>
             <a class="mobile-nav-item" href="#holdings" onclick="scrollToSection('holdings'); return false;" data-section="portfolio">
                 <span class="icon">📊</span>
@@ -3003,27 +3298,48 @@
                 <span class="chart-modal-title">More</span>
                 <button class="chart-modal-close" onclick="closeMobileMenu()">✕</button>
             </div>
-            <div class="chart-modal-body" style="padding: 0.75rem 0; overflow-y: auto; max-height: calc(70vh - 60px);">
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div class="chart-modal-body" style="padding: 0.5rem 0; overflow-y: auto; max-height: calc(70vh - 60px);">
+                <div style="display: flex; flex-direction: column;">
 
-                    <div style="padding: 0 1rem 0.25rem; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Insights</div>
-                    <a href="#" onclick="showTradeLogModal(); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
-                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">📜</span>
-                        <span style="font-weight: 500;">Recent Activity</span>
+                    <!-- ── Portfolio ── -->
+                    <div class="more-menu-section-title">Portfolio</div>
+                    <a href="#" onclick="showAllocationModal(); closeMobileMenu(); return false;" class="more-menu-item">
+                        <span class="menu-icon">🥧</span>
+                        <span class="menu-label-stack">
+                            <span class="menu-label">Portfolio Allocation</span>
+                            <span class="menu-sub">Sector &amp; position breakdown</span>
+                        </span>
                     </a>
-                    <a href="#" onclick="showAllocationModal(); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
-                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">🥧</span>
-                        <span style="font-weight: 500;">Allocation</span>
-                    </a>
-                    <a href="#" onclick="showPerformanceDetailModal(); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
-                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">📈</span>
-                        <span style="font-weight: 500;">Performance</span>
+                    <a href="#" onclick="showPerformanceDetailModal(); closeMobileMenu(); return false;" class="more-menu-item">
+                        <span class="menu-icon">🏁</span>
+                        <span class="menu-label-stack">
+                            <span class="menu-label">Market Comparison</span>
+                            <span class="menu-sub">Bot vs. market benchmarks</span>
+                        </span>
                     </a>
 
-                    <div style="margin-top: 0.5rem; padding: 0.75rem 1rem 0.25rem; border-top: 1px solid var(--border); font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Learn</div>
-                    <a href="#faq" onclick="scrollToSection('faq'); closeMobileMenu(); return false;" class="more-menu-item" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; margin: 0 0.5rem; border-radius: 10px; color: var(--text-primary); text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease;">
-                        <span style="font-size: 1.1rem; width: 1.5rem; text-align: center;">❓</span>
-                        <span style="font-weight: 500;">FAQ</span>
+                    <hr class="more-menu-divider">
+
+                    <!-- ── Activity ── -->
+                    <div class="more-menu-section-title">Activity</div>
+                    <a href="#" onclick="showTradeLogModal(); closeMobileMenu(); return false;" class="more-menu-item">
+                        <span class="menu-icon">📜</span>
+                        <span class="menu-label-stack">
+                            <span class="menu-label">Trade Log</span>
+                            <span class="menu-sub">Full trade history from Alpaca</span>
+                        </span>
+                    </a>
+
+                    <hr class="more-menu-divider">
+
+                    <!-- ── About ── -->
+                    <div class="more-menu-section-title">About</div>
+                    <a href="#faq" onclick="scrollToSection('faq'); closeMobileMenu(); return false;" class="more-menu-item">
+                        <span class="menu-icon">❓</span>
+                        <span class="menu-label-stack">
+                            <span class="menu-label">FAQ</span>
+                            <span class="menu-sub">Strategy, risks &amp; how it works</span>
+                        </span>
                     </a>
                 </div>
             </div>
@@ -3084,10 +3400,11 @@
             </div>
 
             <!-- THE RACE - Cards -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.25rem;">
                 <!-- S&P 500 Card -->
-                <div class="race-card" onclick="scrollToSection('experiment')" role="button" tabindex="0" aria-label="View experiment details" style="cursor: pointer;">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">👑</div>
+                <div class="race-card" onclick="window.location.href='performance.html'" role="button" tabindex="0" aria-label="View performance chart" title="View performance chart" style="cursor: pointer; position: relative;">
+                    <div style="position: absolute; top: 0.35rem; right: 0.4rem; font-size: 0.5rem; color: var(--text-muted); opacity: 0.6;">↗</div>
+                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">📈</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
                     <div id="sp500Value" class="skeleton skeleton-value" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem; margin-left: auto; margin-right: auto; width: 90px; min-height: 1.3rem;">&nbsp;</div>
@@ -3096,7 +3413,8 @@
                 </div>
                 
                 <!-- StonkBOT.AI Card -->
-                <div class="race-card" onclick="scrollToSection('experiment')" role="button" tabindex="0" aria-label="View experiment details" style="cursor: pointer;">
+                <div class="race-card" onclick="window.location.href='performance.html'" role="button" tabindex="0" aria-label="View full performance chart" title="View performance chart" style="cursor: pointer; position: relative;">
+                    <div style="position: absolute; top: 0.35rem; right: 0.4rem; font-size: 0.5rem; color: var(--text-muted); opacity: 0.6;">↗</div>
                     <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🤖</div>
                     <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">StonkBOT.AI</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
@@ -3105,7 +3423,9 @@
                     <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 50px;">--</span>
                 </div>
             </div>
-
+            <div style="text-align: center; margin-top: 0.25rem;">
+                <span style="font-size: 0.55rem; color: var(--text-muted); letter-spacing: 0.3px;">Tap cards to view full performance chart →</span>
+            </div>
         </div>
 
         <div id="holdings" class="section-anchor"></div>
@@ -3175,19 +3495,6 @@
                     </div>
                 </div>
             </div>
-        <!-- Sector Performance - Clickable Cards -->
-        <div class="section" style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px;">
-            <div class="section-header">
-                <div class="section-title">Sectors</div>
-            </div>
-            
-            <!-- Sector Performance Cards - Dynamic -->
-            <div style="display: flex; flex-direction: column;" id="sectorHeatmap">
-                <!-- Sectors will be dynamically generated based on portfolio holdings -->
-                <div style="text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.75rem; grid-column: span 2;">Loading sectors...</div>
-            </div>
-            </div>
-
         </div>
 
         <!-- FAQ SECTION -->
@@ -3285,7 +3592,7 @@
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <span style="font-size: 1.25rem;">📊</span>
                     <div>
-                        <span class="chart-modal-title" style="font-size: 1rem;">Performance Analytics</span>
+                        <span class="chart-modal-title" style="font-size: 1rem;">Market Comparison</span>
                         <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 500;">Multi-index comparison & insights</div>
                     </div>
                 </div>
@@ -3437,7 +3744,7 @@
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #06b6d4, #a855f7); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">📋</div>
                     <div>
-                        <span class="chart-modal-title">Activity Log</span>
+                        <span class="chart-modal-title">Trade Log</span>
                         <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Complete history of trades, alerts & bot actions</div>
                     </div>
                 </div>
@@ -3751,11 +4058,64 @@
             }
         }
 
+        .more-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 0.875rem;
+            margin: 0 0.5rem;
+            border-radius: 10px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
         .more-menu-item:hover {
             background: rgba(255, 255, 255, 0.06);
         }
         .more-menu-item:active {
             background: rgba(255, 255, 255, 0.10);
+            transform: scale(0.98);
+        }
+        .more-menu-item .menu-icon {
+            font-size: 1.15rem;
+            width: 1.75rem;
+            height: 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+            flex-shrink: 0;
+        }
+        .more-menu-item .menu-label-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+            min-width: 0;
+        }
+        .more-menu-item .menu-label {
+            font-weight: 550;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        .more-menu-item .menu-sub {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+        .more-menu-divider {
+            margin: 0.5rem 1rem;
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .more-menu-section-title {
+            padding: 0.35rem 1rem;
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
         }
 
         /* Skeleton loading states */
@@ -3785,7 +4145,7 @@
         }
     </style>
 
-    <!-- Trade Log Modal - Activity Log (Mobile-First Redesign) -->
+    <!-- Trade Log Modal - Mobile-First Redesign -->
     <div id="tradeLogModal" class="trade-log-modal">
         <div class="trade-log-modal-content" style="max-height: 85vh; border-radius: 20px;">
             <!-- Compact Header -->
@@ -3793,7 +4153,7 @@
                 <div style="display: flex; align-items: center; gap: 0.625rem;">
                     <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #06b6d4, #a855f7); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">👁️</div>
                     <div>
-                        <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); line-height: 1.2;">Activity Log</div>
+                        <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.2;">Trade Log</div>
                         <div style="font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem;">
                             <span style="width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; display: inline-block; animation: pulse 2s infinite;"></span>
                             Live AI trading
@@ -3818,9 +4178,13 @@
                         <div id="trade-log-sells" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">--</div>
                         <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.3px;">Sells</div>
                     </div>
-                    <div style="flex-shrink: 0; min-width: 80px; padding: 0.625rem; background: var(--bg-base); border: 1px solid var(--border); border-radius: 12px; text-align: center;">
-                        <div id="trade-log-last-update" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); padding-top: 0.15rem;">--</div>
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Updated</div>
+                    <div style="flex-shrink: 0; min-width: 110px; padding: 0.625rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; text-align: center;">
+                        <div id="trade-log-best-trade" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-green);">--</div>
+                        <div style="font-size: 0.6rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.3px;">Best Trade</div>
+                    </div>
+                    <div style="flex-shrink: 0; min-width: 110px; padding: 0.625rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; text-align: center;">
+                        <div id="trade-log-worst-trade" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">--</div>
+                        <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.3px;">Worst Trade</div>
                     </div>
                 </div>
             </div>
@@ -3925,6 +4289,26 @@
                             hidden: false
                         }]
                     },
+                    plugins: [{
+                        id: 'glow',
+                        beforeDraw: function(chart) {
+                            const ctx = chart.ctx;
+                            const meta = chart.getDatasetMeta(0);
+                            if (!meta || !meta.data || meta.data.length < 2) return;
+                            ctx.save();
+                            ctx.shadowColor = 'rgba(6, 182, 212, 0.4)';
+                            ctx.shadowBlur = 12;
+                            ctx.beginPath();
+                            ctx.moveTo(meta.data[0].x, meta.data[0].y);
+                            for (let i = 1; i < meta.data.length; i++) {
+                                ctx.lineTo(meta.data[i].x, meta.data[i].y);
+                            }
+                            ctx.strokeStyle = 'rgba(6, 182, 212, 0.2)';
+                            ctx.lineWidth = 6;
+                            ctx.stroke();
+                            ctx.restore();
+                        }
+                    }],
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
@@ -3938,9 +4322,9 @@
                                     usePointStyle: true,
                                     boxWidth: 8,
                                     padding: 10,
-                                    textDecoration: 'none'  // Prevent strikethrough
+                                    textDecoration: 'none'
                                 },
-                                onClick: null  // Disable legend click to prevent hiding datasets
+                                onClick: null
                             },
                             tooltip: {
                                 backgroundColor: '#16161e',
@@ -4067,7 +4451,6 @@
                         window.lastPortfolioData = data;
                         updateDashboard(data);
                         updateHoldingsCards(data.positions);
-                        updateSectorHeatmap(data.positions, data.account?.portfolio_value || 0);
                         updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                         // Also fetch popup content for holdings
                         fetchPopupContent().catch(e => console.log('Popup content fetch failed:', e));
@@ -4134,9 +4517,17 @@
             const el = document.getElementById('data-freshness');
             if (!el) return;
 
-            const then = timestamp ? new Date(timestamp) : new Date();
+            // Ensure timestamp is treated as UTC by adding Z if missing
+            let ts = timestamp;
+            if (ts && !ts.endsWith('Z') && !ts.match(/[+-]\d{2}:\d{2}$/)) {
+                ts = ts + 'Z';
+            }
+            const then = ts ? new Date(ts) : new Date();
             const now = new Date();
             const seconds = Math.floor((now - then) / 1000);
+            
+            // Debug logging
+            console.log('Freshness check:', { timestamp, parsed: then.toISOString(), now: now.toISOString(), seconds });
 
             let text;
             let dotColor = 'var(--text-muted)';
@@ -4251,7 +4642,7 @@
                 const portfolioValue = data.account.portfolio_value || 0;
                 const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
                 fetchMarketIndices().then(indices => {
-                    const spReturn = indices?.sp500?.return_pct ?? 0;
+                    const spReturn = indices?.['S&P 500']?.return_pct ?? 0;
                     updateStonkMeter(totalReturn, spReturn);
                 });
             }
@@ -4437,142 +4828,6 @@
             }
         };
 
-        // Update sector heatmap with live data - DYNAMIC (shows ALLOCATION %)
-        function updateSectorHeatmap(positions, portfolioValue) {
-            console.log('Updating sector heatmap with', positions.length, 'positions');
-            
-            if (!positions || positions.length === 0) {
-                document.getElementById('sectorHeatmap').innerHTML = 
-                    '<div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.75rem;">No positions</div>';
-                return;
-            }
-            
-            // Calculate allocation for each sector
-            const sectorPerformance = {};
-            const activeSectors = new Set();
-            
-            // Initialize sectors
-            for (const [key, def] of Object.entries(SECTOR_DEFINITIONS)) {
-                sectorPerformance[key] = { 
-                    name: def.name, 
-                    color: def.color, 
-                    icon: def.icon,
-                    value: 0,  // total market value in sector
-                    weight: 0,  // allocation % of portfolio
-                    pl: 0,      // total P&L
-                    symbols: def.symbols 
-                };
-            }
-            
-            // Calculate total invested value
-            const totalInvested = positions.reduce((sum, pos) => sum + pos.market_value, 0);
-            
-            // Categorize positions
-            positions.forEach(pos => {
-                let categorized = false;
-                console.log('Categorizing:', pos.symbol, 'market_value:', pos.market_value);
-                for (const [key, data] of Object.entries(sectorPerformance)) {
-                    if (key !== 'other' && data.symbols.includes(pos.symbol)) {
-                        data.value += pos.market_value;
-                        data.pl += pos.unrealized_pl;
-                        activeSectors.add(key);
-                        categorized = true;
-                        console.log('  -> Matched sector:', key, data.name);
-                        break;
-                    }
-                }
-                if (!categorized) {
-                    // Add to Other
-                    console.log('  -> Added to Other');
-                    sectorPerformance['other'].value += pos.market_value;
-                    sectorPerformance['other'].pl += pos.unrealized_pl;
-                    activeSectors.add('other');
-                }
-            });
-            
-            // Debug: log sector values
-            console.log('Sector values after categorization:');
-            for (const [key, data] of Object.entries(sectorPerformance)) {
-                if (data.value > 0) {
-                    console.log('  ', key, ':', data.name, '=', data.value, 'weight:', data.weight);
-                }
-            }
-            
-            // Calculate allocation percentages (based on INVESTED capital)
-            for (const key of Object.keys(sectorPerformance)) {
-                if (totalInvested > 0) {
-                    sectorPerformance[key].weight = (sectorPerformance[key].value / totalInvested) * 100;
-                }
-            }
-            
-            // Generate HTML for ALL active sectors (not just top 4), sorted by weight
-            const sectorsToShow = Array.from(activeSectors)
-                .filter(key => sectorPerformance[key].value > 0)
-                .sort((a, b) => sectorPerformance[b].weight - sectorPerformance[a].weight);
-            
-            console.log('Active sectors found:', sectorsToShow.length, sectorsToShow.map(k => `${sectorPerformance[k].name}: $${sectorPerformance[k].value.toFixed(2)} (${sectorPerformance[k].weight.toFixed(3)}%)`).join(', '));
-            
-            if (sectorsToShow.length === 0) {
-                document.getElementById('sectorHeatmap').innerHTML = 
-                    '<div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.75rem;">No active positions</div>';
-                return;
-            }
-            
-            // Horizontal bar chart for sectors
-            let html = '<div style="display: flex; flex-direction: column; gap: 8px; cursor: pointer;" onclick="showAllocationModal()">';
-            
-            // Find max value for bar scaling
-            const maxValue = Math.max(...sectorsToShow.map(k => sectorPerformance[k].value));
-            
-            sectorsToShow.forEach(key => {
-                const data = sectorPerformance[key];
-                const allocationPct = data.weight;
-                const dollarValue = data.value;
-                
-                // Calculate sector return (P&L %)
-                const sectorReturn = data.value > 0 ? ((data.pl / data.value) * 100) : 0;
-                const isPositive = sectorReturn >= 0;
-                const returnColor = isPositive ? '#22c55e' : '#ef4444';
-                const returnSign = isPositive ? '+' : '';
-                
-                // Skip tiny allocations (< 1%) unless it's the only one
-                if (allocationPct < 1 && sectorsToShow.length > 1) return;
-                
-                // Format dollar value
-                let dollarDisplay;
-                if (dollarValue < 1000) {
-                    dollarDisplay = '$' + dollarValue.toFixed(0);
-                } else {
-                    dollarDisplay = '$' + (dollarValue/1000).toFixed(1) + 'K';
-                }
-                
-                // Bar width scaled to max
-                const barWidth = maxValue > 0 ? (dollarValue / maxValue) * 100 : 0;
-                
-                html += `
-                <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
-                    <div style="flex: 0 0 100px; font-size: 0.7rem; color: var(--text-secondary); font-weight: 500;">${data.name}</div>
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <div style="flex: 1; height: 5px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
-                                <div style="width: ${barWidth}%; height: 100%; background: ${data.color}; border-radius: 3px; transition: width 0.3s ease;"></div>
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dollarDisplay}</span>
-                            <span style="font-size: 0.7rem; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${allocationPct.toFixed(1)}%</span>
-                        </div>
-                    </div>
-                    <div style="flex: 0 0 50px; text-align: right; font-size: 0.65rem; font-weight: 600; color: ${returnColor}; font-family: 'JetBrains Mono', monospace;">${returnSign}${sectorReturn.toFixed(1)}%</div>
-                </div>`;
-            });
-            
-            html += '</div>';
-            
-            document.getElementById('sectorHeatmap').innerHTML = html;
-            console.log('Sector heatmap updated:', sectorsToShow.map(k => `${sectorPerformance[k].name}: ${sectorPerformance[k].weight.toFixed(1)}%`).join(', '));
-        }
-        
         // Minimal fallback - only used if ALL live data sources fail
         const FALLBACK_DATA = {
             timestamp: new Date().toISOString(),
@@ -4594,7 +4849,6 @@
                             console.log('XHR data loaded:', data.positions.length, 'positions');
                             window.lastPortfolioData = data;
                             updateHoldingsCards(data.positions);
-                            updateSectorHeatmap(data.positions, data.account?.portfolio_value || 0);
                             updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                             loadPriceHistory().then(() => {
                                 updateHoldingsCards(data.positions);
@@ -5084,8 +5338,29 @@
         // Refresh every 30 seconds
         setInterval(() => {
             loadPortfolioData();
-            loadPerformanceData();  // Also refresh chart with live market data
+            loadPerformanceData();
         }, 30000);
+
+        // Shrinking header on scroll
+        function initScrollHeader() {
+            const header = document.querySelector('.site-header');
+            if (!header) return;
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        header.classList.toggle('compact', window.scrollY > 30);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initScrollHeader);
+        } else {
+            initScrollHeader();
+        }
 
         // Social Share Functions
         function shareOnX() {
@@ -5240,6 +5515,135 @@
 
         function closeChart() {
             ModalController.close('chartModal');
+        }
+
+        // ========== COLLAPSIBLE HISTORY PANEL ==========
+        let historyPanelOpen = false;
+        let historyDataLoaded = false;
+        let historyRefreshTimer = null;
+
+        function toggleHistoryPanel() {
+            const panel = document.getElementById('historyPanel');
+            const toggle = document.getElementById('historyToggle');
+            historyPanelOpen = !historyPanelOpen;
+            if (historyPanelOpen) {
+                panel.classList.add('open');
+                toggle.classList.add('open');
+                loadHistoryPanel();
+                // Auto-refresh every 2 min while open (picks up new trades + portfolio checks)
+                if (historyRefreshTimer) clearInterval(historyRefreshTimer);
+                historyRefreshTimer = setInterval(loadHistoryPanel, 120000);
+            } else {
+                panel.classList.remove('open');
+                toggle.classList.remove('open');
+                if (historyRefreshTimer) { clearInterval(historyRefreshTimer); historyRefreshTimer = null; }
+            }
+        }
+
+        async function loadHistoryPanel() {
+            const timeline = document.getElementById('historyTimeline');
+            timeline.innerHTML = '<div style="text-align:center;padding:0.5rem;color:var(--text-muted);font-size:0.6rem;">Loading trade history...</div>';
+            try {
+                const [tradeRes, portRes] = await Promise.all([
+                    fetch('trades_log.json?t=' + Date.now()),
+                    fetch('portfolio_data.json?t=' + Date.now())
+                ]);
+                const tradeData = await tradeRes.json();
+                const portData = await portRes.json();
+                const trades = tradeData.trades || [];
+                const positions = portData.positions || [];
+
+                // Build position lookup for P&L
+                const posMap = {};
+                positions.forEach(p => { posMap[p.symbol] = p; });
+
+                // Summary stats — net qty per symbol to distinguish held vs sold
+                const totalTrades = trades.length;
+                const netQty = {}; // symbol -> net shares (bought - sold)
+                const tradePL = {}; // symbol -> realized P&L from completed buy-sell
+                trades.forEach(t => {
+                    if (!netQty[t.symbol]) netQty[t.symbol] = 0;
+                    if (!tradePL[t.symbol]) tradePL[t.symbol] = 0;
+                    if (t.action === 'BUY') {
+                        netQty[t.symbol] += t.qty;
+                        tradePL[t.symbol] -= (t.total_value || 0);
+                    } else if (t.action === 'SELL') {
+                        netQty[t.symbol] -= t.qty;
+                        tradePL[t.symbol] += (t.total_value || 0);
+                    }
+                });
+
+                let bestPL = -Infinity, worstPL = Infinity, bestSym = '', worstSym = '';
+
+                // For held positions, use unrealized P&L from portfolio
+                if (positions) {
+                    positions.forEach(p => {
+                        const nq = netQty[p.symbol] || 0;
+                        if (nq > 0) {
+                            const pl = p.unrealized_pl || 0;
+                            if (pl > bestPL) { bestPL = pl; bestSym = p.symbol; }
+                            if (pl < worstPL) { worstPL = pl; worstSym = p.symbol; }
+                        }
+                    });
+                }
+
+                // For sold-out positions, use realized P&L from trades
+                Object.keys(tradePL).forEach(sym => {
+                    const nq = netQty[sym] || 0;
+                    if (nq <= 0) {
+                        const pl = tradePL[sym];
+                        if (pl > bestPL) { bestPL = pl; bestSym = sym; }
+                        if (pl < worstPL) { worstPL = pl; worstSym = sym; }
+                    }
+                });
+
+                document.getElementById('hist-trades').textContent = totalTrades;
+                if (bestSym && bestPL !== -Infinity) {
+                    document.getElementById('hist-best').textContent = bestSym + ' ' + (bestPL >= 0 ? '+' : '−') + '$' + Math.abs(bestPL).toFixed(0);
+                } else {
+                    document.getElementById('hist-best').textContent = '--';
+                }
+                if (worstSym && worstPL !== Infinity) {
+                    document.getElementById('hist-worst').textContent = worstSym + ' ' + (worstPL >= 0 ? '+' : '−') + '$' + Math.abs(worstPL).toFixed(0);
+                } else {
+                    document.getElementById('hist-worst').textContent = '--';
+                }
+
+                function renderCards(list) {
+                    let html = '';
+                    list.forEach(t => {
+                        const isBuy = t.action === 'BUY';
+                        const dotClass = isBuy ? 'buy' : 'sell';
+                        const badgeClass = isBuy ? 'buy-badge' : 'sell-badge';
+                        const badgeText = isBuy ? 'Bought' : 'Sold';
+                        const date = new Date(t.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        const valueStr = t.total_value ? '$' + t.total_value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '';
+                        const rationale = t.rationale || '';
+                        html += `
+                    <div class="timeline-card" style="${t.total_value > 5000 ? 'border-left: 2px solid var(--accent-cyan);' : ''}">
+                        <div class="timeline-dot ${dotClass}"></div>
+                        <div class="timeline-body">
+                            <div class="timeline-header">
+                                <span class="timeline-symbol">${t.symbol}</span>
+                                <span class="badge ${badgeClass}">${badgeText} ${t.qty}×</span>
+                                <span class="date">${date}</span>
+                            </div>
+                            <div class="timeline-value">${valueStr} @ $${t.price?.toFixed(2) || '--'}</div>
+                            ${rationale ? `<div class="timeline-rationale" title="${rationale.replace(/"/g, '&quot;')}">${rationale}</div>` : ''}
+                        </div>
+                    </div>`;
+                    });
+                    return html;
+                }
+
+                // Timeline cards (newest first, no pagination)
+                const sorted = [...trades].reverse();
+                const timeline = document.getElementById('historyTimeline');
+                timeline.className = 'history-timeline';
+                timeline.innerHTML = renderCards(sorted) || '<div style="text-align:center;padding:0.5rem;color:var(--text-muted);font-size:0.6rem;">No trades yet</div>';
+            } catch (e) {
+                timeline.innerHTML = '<div style="text-align:center;padding:0.5rem;color:var(--text-muted);font-size:0.6rem;">Unable to load trade history</div>';
+            }
         }
 
         // Performance Detail Modal Functions
@@ -5542,15 +5946,67 @@
             const totalEl = document.getElementById('trade-log-total-trades');
             const buysEl = document.getElementById('trade-log-buys');
             const sellsEl = document.getElementById('trade-log-sells');
-            const lastUpdateEl = document.getElementById('trade-log-last-update');
+            const bestEl = document.getElementById('trade-log-best-trade');
+            const worstEl = document.getElementById('trade-log-worst-trade');
             
             if (totalEl) totalEl.textContent = trades.length;
             if (buysEl) buysEl.textContent = buys;
             if (sellsEl) sellsEl.textContent = sells;
-            if (lastUpdateEl) {
-                const updated = data.last_updated ? new Date(data.last_updated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--';
-                lastUpdateEl.textContent = updated;
+
+            // Compute best/worst trade by realized P&L
+            const { best, worst } = computeBestWorstTrade(trades);
+            if (bestEl) {
+                bestEl.textContent = best ? `${best.symbol} ${best.action==='BUY'?'▲':'▼'}${best.pl >= 0 ? '+' : '−'}$${Math.abs(best.pl).toLocaleString('en-US', {maximumFractionDigits:0})}` : '--';
+                bestEl.title = best ? (best.action + ' ' + best.qty + ' @ $' + best.price.toFixed(2)) : '';
             }
+            if (worstEl) {
+                worstEl.textContent = worst ? `${worst.symbol} ${worst.action==='BUY'?'▲':'▼'}${worst.pl >= 0 ? '+' : '−'}$${Math.abs(worst.pl).toLocaleString('en-US', {maximumFractionDigits:0})}` : '--';
+                worstEl.title = worst ? (worst.action + ' ' + worst.qty + ' @ $' + worst.price.toFixed(2)) : '';
+            }
+        }
+
+        function computeBestWorstTrade(trades) {
+            if (!trades || trades.length === 0) return { best: null, worst: null };
+            // Metric: dollar impact of the trade. For SELL = proceeds (realized gain proxy). For BUY = cost basis.
+            // A better measure uses realized P&L on sells via FIFO, but we don't have cost basis per lot here.
+            // Use absolute total_value as magnitude; for sells, assume best = largest sell, worst = smallest sell is wrong.
+            // Instead, compute a simple P&L proxy per symbol: average buy price vs sell price.
+            const buyLots = {};
+            const sellPnl = [];
+            trades.forEach(t => {
+                const sym = t.symbol;
+                const qty = parseFloat(t.qty) || 0;
+                const price = parseFloat(t.price) || 0;
+                const value = parseFloat(t.total_value) || (qty * price);
+                if (t.action === 'BUY') {
+                    if (!buyLots[sym]) buyLots[sym] = { qty: 0, cost: 0 };
+                    buyLots[sym].qty += qty;
+                    buyLots[sym].cost += value;
+                } else if (t.action === 'SELL') {
+                    const lot = buyLots[sym];
+                    const avgCost = lot && lot.qty > 0 ? lot.cost / lot.qty : price;
+                    const pl = (price - avgCost) * qty;
+                    sellPnl.push({ ...t, pl: pl });
+                    // reduce lot
+                    if (lot) {
+                        const ratio = Math.min(qty / lot.qty, 1);
+                        lot.cost -= lot.cost * ratio;
+                        lot.qty -= qty;
+                    }
+                }
+            });
+            // Add unrealized P&L for held positions (no sell) as single "trade" entries
+            Object.keys(buyLots).forEach(sym => {
+                const lot = buyLots[sym];
+                if (lot && lot.qty > 0) {
+                    // fallback: treat remaining position as a BUY whose P&L = 0 (we don't know current price here)
+                    // better handled by portfolio_data integration later
+                }
+            });
+            if (sellPnl.length === 0) return { best: null, worst: null };
+            const best = sellPnl.reduce((max, t) => t.pl > max.pl ? t : max, sellPnl[0]);
+            const worst = sellPnl.reduce((min, t) => t.pl < min.pl ? t : min, sellPnl[0]);
+            return { best, worst };
         }
 
         function renderTradeLog() {
@@ -5768,6 +6224,73 @@
             }
         });
 
+        function renderSectorBreakdown(positions, totalInvested) {
+            if (!positions || positions.length === 0) return '';
+
+            const sectorValues = {};
+            for (const [key, def] of Object.entries(SECTOR_DEFINITIONS)) {
+                sectorValues[key] = { name: def.name, color: def.color, value: 0, pl: 0 };
+            }
+
+            positions.forEach(pos => {
+                let categorized = false;
+                for (const [key, data] of Object.entries(sectorValues)) {
+                    if (key !== 'other' && SECTOR_DEFINITIONS[key].symbols.includes(pos.symbol)) {
+                        data.value += pos.market_value;
+                        data.pl += pos.unrealized_pl;
+                        categorized = true;
+                        break;
+                    }
+                }
+                if (!categorized) {
+                    sectorValues['other'].value += pos.market_value;
+                    sectorValues['other'].pl += pos.unrealized_pl;
+                }
+            });
+
+            const activeSectors = Object.entries(sectorValues)
+                .filter(([_, data]) => data.value > 0)
+                .map(([key, data]) => ({ key, ...data, pct: totalInvested > 0 ? (data.value / totalInvested) * 100 : 0 }))
+                .sort((a, b) => b.pct - a.pct);
+
+            if (activeSectors.length === 0) return '';
+
+            const maxValue = Math.max(...activeSectors.map(s => s.value));
+
+            let html = '<div style="margin-bottom: 1.25rem;">';
+            html += '<div style="font-size: 0.65rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; margin-bottom: 0.75rem;">Sector Breakdown</div>';
+            html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
+
+            activeSectors.forEach(s => {
+                const barWidth = maxValue > 0 ? (s.value / maxValue) * 100 : 0;
+                const sectorReturn = s.value > 0 ? ((s.pl / s.value) * 100) : 0;
+                const isPositive = sectorReturn >= 0;
+                const returnColor = isPositive ? '#22c55e' : '#ef4444';
+                const returnSign = isPositive ? '+' : '';
+                const dollarDisplay = s.value < 1000 ? '$' + s.value.toFixed(0) : '$' + (s.value / 1000).toFixed(1) + 'K';
+
+                html += `
+                <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <div style="flex: 0 0 100px; font-size: 0.7rem; color: var(--text-secondary); font-weight: 500;">${s.name}</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="flex: 1; height: 5px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                                <div style="width: ${barWidth}%; height: 100%; background: ${s.color}; border-radius: 3px; transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${dollarDisplay}</span>
+                            <span style="font-size: 0.7rem; font-weight: 600; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">${s.pct.toFixed(1)}%</span>
+                        </div>
+                    </div>
+                    <div style="flex: 0 0 50px; text-align: right; font-size: 0.65rem; font-weight: 600; color: ${returnColor}; font-family: 'JetBrains Mono', monospace;">${returnSign}${sectorReturn.toFixed(1)}%</div>
+                </div>`;
+            });
+
+            html += '</div></div>';
+            return html;
+        }
+
         // Global variables for allocation modal auto-refresh
         let allocationRefreshInterval = null;
         
@@ -5778,39 +6301,35 @@
             }
         }
         
-        // Allocation Modal Functions - Mobile First Design
+        // Allocation Modal - Professional Dashboard with Donut Chart
         function showAllocationModal(isRefresh = false) {
             const modal = document.getElementById('allocationModal');
             const content = document.getElementById('allocation-content');
             
-            // Clear any existing refresh interval
             if (allocationRefreshInterval) {
                 clearInterval(allocationRefreshInterval);
                 allocationRefreshInterval = null;
             }
 
-            // Show loading state only on initial open
             if (!isRefresh) {
                 content.innerHTML = '<div style="display: flex; justify-content: center; padding: 2rem;"><div class="loading-spinner"></div></div>';
             }
             
-            // Fetch latest data
             fetch('portfolio_data.json?t=' + Date.now())
                 .then(r => {
                     if (!r.ok) throw new Error('HTTP ' + r.status);
                     return r.json();
                 })
                 .then(data => {
-                    console.log('Allocation data received:', data);
                     if (!data || !data.account || !data.positions) {
                         throw new Error('Invalid data structure');
                     }
+                    window.currentPortfolioData = data;
                     const portfolioValue = data.account.portfolio_value || 0;
                     const positions = data.positions || [];
                     const cashValue = data.account.cash || 0;
                     const equityValue = data.account.equity || portfolioValue || 0;
 
-                    // Categorize positions - ALIGNED with SECTOR_DEFINITIONS
                     const categories = {
                         'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'META', 'NVDA', 'NFLX', 'CRM', 'ORCL', 'SAP'], color: '#fbbf24', icon: '🏢', positions: [] },
                         'AI/Growth': { symbols: ['AMD', 'PLTR', 'CRWD', 'NET', 'DDOG', 'SNOW', 'OKTA', 'FSLY', 'TWLO', 'ASAN', 'ZM', 'AI', 'PATH', 'SOUN', 'CRNC'], color: '#f97316', icon: '🤖', positions: [] },
@@ -5822,164 +6341,174 @@
                         'Other': { symbols: [], color: '#8b5cf6', icon: '📊', positions: [] }
                     };
                     
-                    // Add "Other" category for any positions not in defined sectors
-                    const allDefinedSymbols = Object.values(categories).flatMap(c => c.symbols);
                     positions.forEach(pos => {
                         let categorized = false;
                         for (const [cat, info] of Object.entries(categories)) {
-                            if (info.symbols.includes(pos.symbol)) {
+                            if (cat !== 'Other' && info.symbols.includes(pos.symbol)) {
                                 info.positions.push(pos);
                                 categorized = true;
                                 break;
                             }
                         }
-                        if (!categorized) {
-                            categories['Other'].positions.push(pos);
-                        }
+                        if (!categorized) categories['Other'].positions.push(pos);
                     });
                     
-                    // Remove empty categories
                     for (const cat of Object.keys(categories)) {
-                        if (categories[cat].positions.length === 0) {
-                            delete categories[cat];
-                        }
+                        if (categories[cat].positions.length === 0) delete categories[cat];
                     }
 
-                    let investedValue = 0;
-                    positions.forEach(pos => {
-                        investedValue += pos.market_value;
-                    });
-
-                    // Calculate percentages based on INVESTED capital (matches donut chart)
-                    const totalInvested = investedValue;
+                    let investedValue = positions.reduce((sum, pos) => sum + pos.market_value, 0);
                     const investedPctOfEquity = equityValue > 0 ? ((investedValue / equityValue) * 100) : 0;
                     const cashPctOfEquity = equityValue > 0 ? ((cashValue / equityValue) * 100) : 0;
 
-                    // Build HTML - Mobile First Design
-                    let html = '<div style="margin-bottom: 1.5rem;">';
+                    let html = '<div style="margin-bottom: 1rem;">';
                     
-                    // Portfolio Summary Card
-                    html += '<div style="background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(168,85,247,0.05)); border: 1px solid rgba(6,182,212,0.2); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem;">';
-                    html += '<div style="text-align: center;">';
-                    html += '<div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Total Portfolio</div>';
-                    html += '<div style="font-size: 1.75rem; font-weight: 700; font-family: \'JetBrains Mono\', monospace; color: var(--text-primary);">$' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
-                    html += '<div style="display: flex; justify-content: center; gap: 1rem; margin-top: 0.75rem; font-size: 0.75rem;">';
-                    html += '<div><span style="color: var(--text-muted);">Invested:</span> <span style="color: var(--text-primary); font-weight: 600;">' + investedPctOfEquity.toFixed(0) + '%</span></div>';
+                    // Total value
+                    html += '<div style="text-align: center; margin-bottom: 1rem;">';
+                    html += '<div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem;">Total Portfolio Value</div>';
+                    html += '<div style="font-size: 1.5rem; font-weight: 700; font-family: \'JetBrains Mono\', monospace; color: var(--text-primary);">$' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
+                    html += '</div>';
+
+                    // Donut chart
+                    html += '<div style="position: relative; height: 200px; margin-bottom: 1rem;">';
+                    html += '<canvas id="allocationModalDonut"></canvas>';
+                    html += '</div>';
+
+                    // Compact stats row
+                    html += '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 1rem;">';
+                    const statStyle = 'background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 0.55rem 0.2rem; text-align: center;';
+                    html += '<div style="' + statStyle + '"><div style="font-size: 0.8rem; font-weight: 700; color: #f5f5f5;">' + investedPctOfEquity.toFixed(0) + '%</div><div style="font-size: 0.55rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px;">Invested</div></div>';
                     if (cashPctOfEquity < 0) {
-                        html += '<div><span style="color: var(--text-muted);">Margin:</span> <span style="color: var(--accent-gold); font-weight: 600;">' + Math.abs(cashPctOfEquity).toFixed(0) + '%</span></div>';
+                        html += '<div style="' + statStyle + '"><div style="font-size: 0.8rem; font-weight: 700; color: #f59e0b;">' + Math.abs(cashPctOfEquity).toFixed(0) + '%</div><div style="font-size: 0.55rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px;">Margin</div></div>';
                     } else {
-                        html += '<div><span style="color: var(--text-muted);">Cash:</span> <span style="color: var(--accent-green); font-weight: 600;">' + cashPctOfEquity.toFixed(0) + '%</span></div>';
+                        html += '<div style="' + statStyle + '"><div style="font-size: 0.8rem; font-weight: 700; color: #10b981;">' + cashPctOfEquity.toFixed(0) + '%</div><div style="font-size: 0.55rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px;">Cash</div></div>';
                     }
-                    html += '</div></div></div>';
+                    html += '<div style="' + statStyle + '"><div style="font-size: 0.8rem; font-weight: 700; color: #f5f5f5;">' + positions.length + '</div><div style="font-size: 0.55rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px;">Positions</div></div>';
+                    html += '<div style="' + statStyle + '"><div style="font-size: 0.8rem; font-weight: 700; color: #f5f5f5;">$' + (investedValue / 1000).toFixed(1) + 'K</div><div style="font-size: 0.55rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px;">Invested</div></div>';
+                    html += '</div>';
 
-                    // Each category - percentages based on INVESTED capital (like donut chart)
-                    for (const [catName, info] of Object.entries(categories)) {
-                        if (info.positions.length === 0) continue;
+                    // Holdings by Sector - collapsible
+                    html += '<div style="font-size: 0.6rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; margin-bottom: 0.6rem;">Holdings by Sector</div>';
 
+                    const donutData = [];
+                    const donutLabels = [];
+                    const donutColors = [];
+
+                    Object.entries(categories).forEach(([catName, info], idx) => {
                         const catValue = info.positions.reduce((sum, p) => sum + p.market_value, 0);
-                        const catPct = totalInvested > 0 ? ((catValue / totalInvested) * 100) : 0;
+                        const catPct = investedValue > 0 ? ((catValue / investedValue) * 100) : 0;
+                        if (catValue <= 0) return;
+                        
+                        donutData.push(catValue);
+                        donutLabels.push(catName);
+                        donutColors.push(info.color);
 
-                        html += '<div style="margin-bottom: 1rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">';
-                        
-                        // Category Header
-                        html += '<div style="padding: 0.875rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">';
+                        const sectorReturn = catValue > 0 ? (info.positions.reduce((sum, p) => sum + p.unrealized_pl, 0) / catValue * 100) : 0;
+                        const isPos = sectorReturn >= 0;
+                        const retColor = isPos ? 'var(--accent-green)' : 'var(--accent-red)';
+                        const retSign = isPos ? '+' : '';
+                        const dollar = catValue < 1000 ? '$' + catValue.toFixed(0) : '$' + (catValue / 1000).toFixed(1) + 'K';
+
+                        html += '<div class="sector-card" style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 0.4rem;">';
+                        html += '<div class="sector-header" onclick="this.classList.toggle(\'open\'); this.nextElementSibling.style.display = this.classList.contains(\'open\') ? \'block\' : \'none\';" style="padding: 0.65rem 0.75rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; background: var(--bg-card); border-bottom: 1px solid var(--border);">';
                         html += '<div style="display: flex; align-items: center; gap: 0.5rem;">';
-                        html += '<span style="font-size: 1.1rem;">' + info.icon + '</span>';
-                        html += '<span style="font-weight: 600; color: ' + info.color + ';">' + catName + '</span>';
+                        html += '<span style="font-size: 1rem;">' + info.icon + '</span>';
+                        html += '<span style="font-weight: 600; color: var(--text-primary); font-size: 0.8rem;">' + catName + '</span>';
                         html += '</div>';
-                        html += '<div style="text-align: right;">';
-                        html += '<div style="font-weight: 600; color: var(--text-primary);">' + catPct.toFixed(1) + '%</div>';
-                        html += '<div style="font-size: 0.7rem; color: var(--text-muted);">$' + (catValue/1000).toFixed(1) + 'K</div>';
+                        html += '<div style="display: flex; align-items: center; gap: 0.6rem;">';
+                        html += '<span style="font-size: 0.7rem; color: ' + retColor + '; font-weight: 600; font-family: \'JetBrains Mono\', monospace;">' + retSign + sectorReturn.toFixed(1) + '%</span>';
+                        html += '<span style="font-size: 0.75rem; font-weight: 600; color: var(--text-primary); font-family: \'JetBrains Mono\', monospace;">' + catPct.toFixed(1) + '%</span>';
+                        html += '<span style="font-size: 0.65rem; color: var(--text-muted); transition: transform 0.2s;">▾</span>';
                         html += '</div></div>';
-                        
-                        // Positions List
-                        html += '<div style="padding: 0.5rem 0;">';
+                        html += '<div class="sector-body" style="display: none; border-top: 1px solid var(--border);">';
                         info.positions.forEach(pos => {
-                            const posPct = equityValue > 0 ? ((pos.market_value / equityValue) * 100) : 0;
                             const isPositive = pos.unrealized_pl >= 0;
                             const plColor = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
                             const plSign = isPositive ? '+' : '';
-                            
-                            // Get dynamic company name
                             const companyData = (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]) ? companyInfo[pos.symbol] : {};
                             const companyName = companyData.company || getCompanyName(pos.symbol) || pos.symbol;
-                            
-                            html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03);">';
+                            html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03);">';
                             html += '<div style="flex: 1; min-width: 0;">';
-                            html += '<div style="display: flex; align-items: center; gap: 0.5rem;">';
-                            html += '<div style="font-weight: 600; color: var(--text-primary);">' + pos.symbol + '</div>';
-                            html += '<div style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + companyName + '</div>';
-                            html += '</div>';
-                            html += '<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">' + pos.qty + ' shares</div>';
+                            html += '<div style="font-weight: 600; color: var(--text-primary); font-size: 0.75rem;">' + pos.symbol + '</div>';
+                            html += '<div style="font-size: 0.6rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + companyName + ' · ' + pos.qty + ' shares</div>';
                             html += '</div>';
                             html += '<div style="text-align: right; flex-shrink: 0;">';
-                            html += '<div style="font-weight: 500; color: var(--text-primary);">$' + pos.market_value.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
-                            html += '<div style="font-size: 0.7rem; color: ' + plColor + '">' + plSign + pos.unrealized_plpc.toFixed(1) + '%</div>';
+                            html += '<div style="font-weight: 500; color: var(--text-primary); font-size: 0.75rem;">$' + pos.market_value.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
+                            html += '<div style="font-size: 0.65rem; color: ' + plColor + '">' + plSign + pos.unrealized_plpc.toFixed(1) + '%</div>';
                             html += '</div></div>';
                         });
                         html += '</div></div>';
-                    }
+                    });
 
-                    // Cash/Margin Section
-                    html += '<div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">';
-                    html += '<div style="padding: 0.875rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">';
-                    html += '<div style="display: flex; align-items: center; gap: 0.5rem;">';
-                    html += '<span style="font-size: 1.1rem;">💵</span>';
-                    if (cashPctOfEquity < 0) {
-                        html += '<span style="font-weight: 600; color: var(--accent-gold);">Margin Used</span>';
-                    } else {
-                        html += '<span style="font-weight: 600; color: var(--accent-green);">Cash</span>';
-                    }
-                    html += '</div>';
+                    // Cash/Margin compact footer
+                    const cashLabel = cashPctOfEquity < 0 ? 'Margin Used' : 'Cash Available';
+                    const cashColor = cashPctOfEquity < 0 ? '#f59e0b' : '#10b981';
+                    html += '<div style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">';
+                    html += '<div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #f5f5f5; font-weight: 500;"><span>💵</span>' + cashLabel + '</div>';
                     html += '<div style="text-align: right;">';
-                    if (cashPctOfEquity < 0) {
-                        html += '<div style="font-weight: 600; color: var(--accent-gold);">' + Math.abs(cashPctOfEquity).toFixed(1) + '%</div>';
-                    } else {
-                        html += '<div style="font-weight: 600; color: var(--accent-green);">' + cashPctOfEquity.toFixed(1) + '%</div>';
-                    }
-                    html += '<div style="font-size: 0.7rem; color: var(--text-muted);">$' + Math.abs(cashValue).toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
+                    html += '<div style="font-size: 0.8rem; font-weight: 600; color: ' + cashColor + '; font-family: \'JetBrains Mono\', monospace;">' + Math.abs(cashPctOfEquity).toFixed(1) + '%</div>';
+                    html += '<div style="font-size: 0.6rem; color: var(--text-muted);">$' + Math.abs(cashValue).toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
                     html += '</div></div>';
-                    
-                    if (cashPctOfEquity < 0) {
-                        html += '<div style="padding: 0.75rem 1rem; background: rgba(251, 191, 36, 0.05);">';
-                        html += '<div style="font-size: 0.75rem; color: var(--accent-gold); text-align: center;">⚠️ Using margin for ' + Math.abs(cashPctOfEquity).toFixed(0) + '% of equity</div>';
-                        html += '</div>';
-                    } else {
-                        html += '<div style="padding: 0.75rem 1rem; font-size: 0.75rem; color: var(--text-muted); text-align: center;">Available for new positions</div>';
-                    }
-                    html += '</div></div>';
+                    html += '</div>';
 
                     content.innerHTML = html;
                     
-                    // Set up auto-refresh every 30 seconds (only on initial load, not refresh)
+                    // Render donut chart
+                    const ctx = document.getElementById('allocationModalDonut');
+                    if (ctx && typeof Chart !== 'undefined' && donutData.length > 0) {
+                        new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: donutLabels,
+                                datasets: [{
+                                    data: donutData,
+                                    backgroundColor: donutColors,
+                                    borderColor: 'var(--bg-card)',
+                                    borderWidth: 2,
+                                    hoverOffset: 6
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '65%',
+                                plugins: {
+                                    legend: {
+                                        position: 'right',
+                                        labels: {
+                                            color: '#f5f5f5',
+                                            font: { size: 12, family: 'Inter', weight: '600' },
+                                            boxWidth: 12,
+                                            padding: 12,
+                                            usePointStyle: true
+                                        }
+                                    },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(15,15,15,0.95)',
+                                        titleColor: '#f5f5f5',
+                                        bodyColor: '#9ca3af',
+                                        borderColor: 'rgba(255,255,255,0.15)',
+                                        borderWidth: 1,
+                                        callbacks: {
+                                            label: (c) => {
+                                                const val = c.parsed;
+                                                const pct = investedValue > 0 ? ((val / investedValue) * 100).toFixed(1) : 0;
+                                                return ` $${val.toLocaleString('en-US', {maximumFractionDigits:0})} (${pct}%)`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    
                     if (!isRefresh) {
-                        allocationRefreshInterval = setInterval(() => {
-                            refreshAllocationModal();
-                        }, 30000); // 30 seconds
+                        allocationRefreshInterval = setInterval(() => refreshAllocationModal(), 30000);
                     }
                 })
                 .catch(e => {
                     console.error('Allocation modal error:', e);
-                    // Try to use cached data if available
-                    if (window.currentPortfolioData && window.currentPortfolioData.account) {
-                        console.log('Using cached data');
-                        content.innerHTML = '<div style="color: var(--accent-gold); text-align: center; padding: 2rem;">Loading from cache...</div>';
-                        setTimeout(() => {
-                            try {
-                                const data = window.currentPortfolioData;
-                                const portfolioValue = data.account.portfolio_value || 0;
-                                const positions = data.positions || [];
-                                const cashValue = data.account.cash || 0;
-                                const equityValue = data.account.equity || portfolioValue || 0;
-                                // Build HTML with cached data
-                                renderAllocationHTML(content, portfolioValue, positions, cashValue, equityValue);
-                            } catch (err) {
-                                content.innerHTML = '<div style="color: var(--accent-red); text-align: center; padding: 2rem;"><div>⚠️ Failed to load data</div><button onclick="showAllocationModal()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-cyan); border: none; border-radius: 8px; color: white; cursor: pointer;">Retry</button></div>';
-                            }
-                        }, 500);
-                    } else {
-                        content.innerHTML = '<div style="color: var(--accent-red); text-align: center; padding: 2rem;"><div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div><div>Failed to load allocation data</div><div style="font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.7;">' + e.message + '</div><button onclick="showAllocationModal()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-cyan); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">Retry</button></div>';
-                    }
+                    content.innerHTML = '<div style="color: var(--accent-red); text-align: center; padding: 2rem;"><div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div><div>Failed to load allocation data</div><div style="font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.7;">' + e.message + '</div><button onclick="showAllocationModal()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-cyan); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">Retry</button></div>';
                 });
 
             ModalController.open('allocationModal', function() {
@@ -5989,7 +6518,6 @@
                 }
             });
         }
-
         function closeAllocationModal() {
             ModalController.close('allocationModal');
         }
@@ -9598,7 +10126,7 @@
                     <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.06);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div>
-                                <div style="font-size: 20px; font-weight: 800;">AI Watchlist</div>
+                                <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.04em; text-transform: uppercase;">AI Watchlist</div>
                                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
                                     ${liveIndicator}
                                 </div>

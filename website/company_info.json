@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-18T18:40:26.553931",
+  "timestamp": "2026-06-22T01:00:00",
   "version": "1.0",
   "stocks": {
     "COIN": {
@@ -7,12 +7,6 @@
       "strategy": "Crypto infrastructure",
       "catalyst": "Bitcoin ETF + institutional adoption",
       "risk": "Crypto volatility"
-    },
-    "NET": {
-      "company": "Cloudflare Inc.",
-      "strategy": "Edge computing + security",
-      "catalyst": "AI edge demand + zero trust",
-      "risk": "Extended valuation"
     },
     "PATH": {
       "company": "UiPath Inc.",
@@ -26,18 +20,6 @@
       "catalyst": "AI tools + logistics network",
       "risk": "Amazon competition"
     },
-    "SQ": {
-      "company": "Block Inc.",
-      "strategy": "Fintech ecosystem",
-      "catalyst": "Cash App + Square integration",
-      "risk": "Consumer spending"
-    },
-    "LCID": {
-      "company": "Lucid Group",
-      "strategy": "Speculative EV recovery play. Saudi PIF backing provides floor\u2014strategic value if technology acquired.",
-      "catalyst": "Gravity SUV launch + Saudi production facility + potential strategic buyer (Apple, Saudi fund) at distressed levels.",
-      "risk": "Cash burn critical\u2014may need dilutive raise. Production hell continues. $5B+ cumulative losses. Only speculate small size."
-    },
     "NIO": {
       "company": "NIO Inc.",
       "strategy": "Chinese EV turnaround with unique battery-swap moat. Trading near cash value\u2014optionality on China stimulus.",
@@ -50,44 +32,62 @@
       "catalyst": "Ultium EV platform scaling + Cruise robotaxi restart + dividend reinstatement potential + $16B cash cushion.",
       "risk": "UAW strike overhang. EV transition capital intensity. ICE decline accelerating faster than EV grows."
     },
-    "ORCL": {
-      "company": "Oracle Corp.",
-      "strategy": "Dynamic watchlist addition",
-      "catalyst": "AI-identified opportunity",
-      "risk": "Market volatility"
-    },
-    "AAPL": {
-      "company": "Apple Inc.",
-      "strategy": "Dynamic watchlist addition",
-      "catalyst": "AI-identified opportunity",
-      "risk": "Market volatility"
-    },
     "TSLA": {
       "company": "Tesla Inc.",
       "strategy": "Dynamic watchlist addition",
       "catalyst": "AI-identified opportunity",
       "risk": "Market volatility"
     },
-    "MSFT": {
-      "company": "Microsoft Corp.",
-      "strategy": "Dynamic watchlist addition",
-      "catalyst": "AI-identified opportunity",
-      "risk": "Market volatility"
-    },
-    "NVDA": {
-      "company": "NVIDIA Corp.",
-      "strategy": "Dynamic watchlist addition",
-      "catalyst": "AI-identified opportunity",
-      "risk": "Market volatility"
-    },
-    "AMD": {
-      "company": "Advanced Micro Devices",
-      "strategy": "Dynamic watchlist addition",
-      "catalyst": "AI-identified opportunity",
-      "risk": "Market volatility"
-    },
     "META": {
-      "company": "META",
+      "company": "Meta Platforms",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "ASAN": {
+      "company": "Asana Inc.",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "ZM": {
+      "company": "Zoom Video Communications",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "F": {
+      "company": "Ford Motor Company",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "NET": {
+      "company": "Cloudflare Inc.",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "TWLO": {
+      "company": "Twilio Inc.",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "CRM": {
+      "company": "Salesforce Inc.",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "XPEV": {
+      "company": "XPeng Inc.",
+      "strategy": "Dynamic watchlist addition",
+      "catalyst": "AI-identified opportunity",
+      "risk": "Market volatility"
+    },
+    "EXPE": {
+      "company": "Expedia Group",
       "strategy": "Dynamic watchlist addition",
       "catalyst": "AI-identified opportunity",
       "risk": "Market volatility"
