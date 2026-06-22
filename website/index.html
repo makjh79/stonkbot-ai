@@ -6508,7 +6508,7 @@
                 })
                 .catch(e => {
                     console.error('Allocation modal error:', e);
-                    content.innerHTML = '<div style="color: var(--accent-red); text-align: center; padding: 2rem;"><div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div><div>Failed to load allocation data</div><div style="font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.7;">' + e.message + '</div><button onclick="showAllocationModal()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-cyan); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">Retry</button></div>';
+                    content.innerHTML = '<div style="color: var(--accent-red); text-align: center; padding: 2rem;"><div style="font-size: 1.5rem; margin-bottom: 0.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><div>Failed to load allocation data</div><div style="font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.7;">' + e.message + '</div><button onclick="showAllocationModal()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-cyan); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">Retry</button></div>';
                 });
 
             ModalController.open('allocationModal', function() {
