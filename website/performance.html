@@ -287,31 +287,58 @@
             const daysEl = document.getElementById('statDaysActive');
             daysEl.textContent = `Since ${snapshots[0].date} • ${daysActive} days`;
 
-            // Card 2: The Race (vs S&P 500)
-            const benchStart = snapshots[0].benchmark;
-            const benchLatest = snapshots[snapshots.length - 1].benchmark;
+            // Card 2: The Race (vs S&P 500) - Use live market_indices.json for current SPY data
             const vsEl = document.getElementById('statVs');
             const botDetail = document.getElementById('statBotDetail');
             const marketDetail = document.getElementById('statMarketDetail');
             
-            if (benchStart && benchLatest) {
-                const benchRet = benchLatest - benchStart;
-                const benchPct = (benchRet / benchStart) * 100;
-                const diffPct = pct - benchPct;
-                const isWinning = diffPct >= 0;
-                
-                vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
-                vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
-                
-                botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
-                botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}%`;
-                marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-            } else {
-                vsEl.textContent = '--';
-                botDetail.textContent = 'Bot: --';
-                marketDetail.textContent = 'S&P 500: --';
-            }
+            // Fetch live SPY data from market_indices.json
+            fetch('./market_indices.json?t=' + Date.now())
+                .then(r => r.json())
+                .then(marketData => {
+                    const sp500 = marketData?.indices?.['S&P 500'];
+                    if (sp500 && sp500.current_value && sp500.start_price) {
+                        const benchLatest = sp500.current_value;
+                        const benchStart = (sp500.start_price / sp500.current_price) * sp500.current_value; // Normalize to $100K base
+                        const benchPct = sp500.return_pct;
+                        const diffPct = pct - benchPct;
+                        const isWinning = diffPct >= 0;
+                        
+                        vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
+                        vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
+                        
+                        botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                        botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                        marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}%`;
+                        marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    } else {
+                        throw new Error('No SPY data');
+                    }
+                })
+                .catch(err => {
+                    // Fallback to portfolio_history benchmark if market_indices fails
+                    const benchStart = snapshots[0].benchmark;
+                    const benchLatest = snapshots[snapshots.length - 1].benchmark;
+                    
+                    if (benchStart && benchLatest) {
+                        const benchRet = benchLatest - benchStart;
+                        const benchPct = (benchRet / benchStart) * 100;
+                        const diffPct = pct - benchPct;
+                        const isWinning = diffPct >= 0;
+                        
+                        vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
+                        vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
+                        
+                        botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                        botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                        marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}% (stale)`;
+                        marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    } else {
+                        vsEl.textContent = '--';
+                        botDetail.textContent = 'Bot: --';
+                        marketDetail.textContent = 'S&P 500: --';
+                    }
+                });
         }
 
         function buildTradePoints(visible, trades) {

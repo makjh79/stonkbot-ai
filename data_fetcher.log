@@ -1,0 +1,20 @@
+2026-06-22 15:32:53,210 - INFO - STONK.AI Data Fetcher Starting
+2026-06-22 15:32:54,309 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:32:54,630 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:33:54,934 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:34:55,271 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:35:55,603 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:36:56,246 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:38:07,799 - INFO - STONK.AI Data Fetcher Starting
+2026-06-22 15:38:08,893 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:38:09,213 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:39:09,570 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:40:09,884 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:41:10,214 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:42:10,565 - ERROR - Error: type object 'datetime.datetime' has no attribute 'timezone'
+2026-06-22 15:43:35,191 - INFO - STONK.AI Data Fetcher Starting
+2026-06-22 15:43:36,247 - INFO - Updated: $99,849.76 (+0.75%)
+2026-06-22 15:43:36,839 - INFO - Updated: $99,849.48 (+0.75%)
+2026-06-22 15:44:37,409 - INFO - Updated: $99,913.30 (+0.82%)
+2026-06-22 15:45:38,034 - INFO - Updated: $99,957.24 (+0.86%)
+2026-06-22 15:46:38,662 - INFO - Updated: $100,037.36 (+0.94%)
