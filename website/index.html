@@ -6921,10 +6921,20 @@
         }
 
         // Cache for race values to prevent flicker - uses localStorage to persist across reloads
+        // Only uses cache if less than 5 minutes old to avoid stale data flipping
+        const RACE_CACHE_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
+        
         function getRaceCache() {
             try {
                 const cached = localStorage.getItem('raceValuesCache');
-                return cached ? JSON.parse(cached) : null;
+                if (!cached) return null;
+                const parsed = JSON.parse(cached);
+                // Reject stale cache to prevent value flipping on refresh
+                if (!parsed.timestamp || (Date.now() - parsed.timestamp) > RACE_CACHE_MAX_AGE_MS) {
+                    console.log('Race cache stale or missing timestamp, ignoring');
+                    return null;
+                }
+                return parsed;
             } catch (e) {
                 return null;
             }
@@ -6932,6 +6942,7 @@
         
         function setRaceCache(cache) {
             try {
+                cache.timestamp = Date.now();
                 localStorage.setItem('raceValuesCache', JSON.stringify(cache));
             } catch (e) {
                 console.log('Could not cache race values');
