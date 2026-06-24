@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260624-0450-v33">
-    <script>(function(){var v='20260624-0450-v33';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var u=window.location.href.split('?')[0]+'?v='+v+'&_='+Date.now();if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260624-0500-v86">
+    <script>(function(){var v='20260624-0500-v86';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Your AI Trading Council</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260624-0450-v33 -->
+    <!-- CACHE BUST: v=20260623-0214-FORCE-V47 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -585,13 +585,13 @@
         }
 
         .section-title {
-            font-size: 0.75rem;
-            font-weight: 800;
+            font-size: 0.7rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            color: var(--accent-cyan);
-            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
             text-transform: uppercase;
         }
 
@@ -1921,8 +1921,75 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        /* Unified Header Bar */
+        .site-header-bar {
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            background: rgba(13, 15, 22, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 0.75rem 0 0.25rem;
+            margin: 0 -1rem;
+        }
+        .site-header-inner {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .site-header-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        @media (min-width: 768px) {
+            .site-header-logo { font-size: 1.7rem; }
+        }
+        .site-header-logo:hover { opacity: 0.8; }
+        .site-header-logo-stonk { color: var(--text-primary); }
+        .site-header-logo-bot { color: var(--accent-cyan); }
+        .site-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .site-header-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 9px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .site-header-action svg {
+            width: 17px;
+            height: 17px;
+        }
+        .site-header-action:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            border-color: rgba(255,255,255,0.15);
+        }
+        @media (min-width: 769px) {
+            .site-header-bar { margin: 0 -1.5rem; }
+            .site-header-inner { max-width: 720px; padding: 0 1.5rem; }
+        }
+
         .site-header {
-            padding: 1.25rem 1rem 0.5rem;
+            padding: 0.75rem 1rem 0.5rem;
             text-align: center;
             transition: all 0.3s ease;
         }
@@ -1944,7 +2011,7 @@
             font-size: 1.5rem;
             font-weight: 800;
             letter-spacing: -0.02em;
-            margin: 0 0 0.5rem 0;
+            margin: 0 0 0.25rem 0;
             line-height: 1.2;
         }
 
@@ -3204,6 +3271,78 @@
             display: inline-flex;
             align-items: center;
         }
+
+        /* Sticky section tabs - iOS segmented control */
+        .section-tabs {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0.375rem 0.75rem 0.25rem;
+        }
+        .section-tabs .tab-btn {
+            padding: 0.375rem 0.625rem;
+            font-size: 0.75rem;
+        }
+        .section-tabs-inner {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.25rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .section-tabs-inner::-webkit-scrollbar { display: none; }
+        .section-tab {
+            flex: 1;
+            min-width: 68px;
+            min-height: 34px;
+            padding: 0.45rem 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .section-tab.active {
+            background: rgba(255,255,255,0.12);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 480px) {
+            .section-tab {
+                min-height: 32px;
+                font-size: 0.72rem;
+                padding: 0.4rem 0.5rem;
+            }
+        }
+        /* Hide old navigation - new header bar replaces it */
+        .desktop-nav, .mobile-nav, .site-header {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -3232,12 +3371,12 @@
     <!-- Desktop Navigation - Simplified -->
     <nav class="desktop-nav" id="desktopNav">
         <div class="desktop-nav-container">
-            <div class="nav-logo" onclick="scrollToSection('top')">
-                <div class="nav-logo-text"><span style="color: #ffffff;">Stonk</span><span style="color: #00d9ff;">BOT.AI</span><span style="display: inline-block; width: 5px; height: 5px; background: #00d9ff; border-radius: 50%; margin-left: 2px; vertical-align: top;"></span></div>
+            <div class="nav-logo" onclick="switchTab('overview')">
+                <div class="nav-logo-text"><span style="color: #ffffff;">Stonk</span><span style="color: #00d9ff;">BOT.AI</span></div>
             </div>
             <div class="nav-links">
                 <div class="nav-item">
-                    <a class="nav-link" href="#" onclick="scrollToSection('overview'); return false;" data-nav="home">
+                    <a class="nav-link" href="#overview" onclick="switchTab('overview'); return false;" data-nav="home">
                         <span>Home</span>
                     </a>
                 </div>
@@ -3247,12 +3386,12 @@
                     </a>
                 </div>
                 <div class="nav-item">
-                    <a class="nav-link" href="#holdings" onclick="scrollToSection('holdings'); return false;" data-nav="portfolio">
-                        <span>Portfolio</span>
+                    <a class="nav-link" href="#holdings" onclick="switchTab('holdings'); return false;" data-nav="holdings">
+                        <span>Holdings</span>
                     </a>
                 </div>
                 <div class="nav-item">
-                    <a class="nav-link" href="#" onclick="showAIWatchlist(); return false;" data-nav="watchlist">
+                    <a class="nav-link" href="#watchlist" onclick="switchTab('watchlist'); return false;" data-nav="watchlist">
                         <span>Watchlist</span>
                     </a>
                 </div>
@@ -3268,7 +3407,7 @@
     <!-- Mobile Bottom Navigation - 5-Item Aligned with Desktop -->
     <nav class="mobile-nav" id="mobileNav">
         <div class="mobile-nav-items">
-            <a class="mobile-nav-item" href="#overview" onclick="scrollToSection('overview'); return false;" data-section="home">
+            <a class="mobile-nav-item" href="#overview" onclick="switchTab('overview'); return false;" data-section="home">
                 <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>
                 <span class="label">Home</span>
             </a>
@@ -3276,11 +3415,11 @@
                 <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
                 <span class="label">Performance</span>
             </a>
-            <a class="mobile-nav-item" href="#holdings" onclick="scrollToSection('holdings'); return false;" data-section="portfolio">
+            <a class="mobile-nav-item" href="#holdings" onclick="switchTab('holdings'); return false;" data-section="holdings">
                 <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg></span>
-                <span class="label">Portfolio</span>
+                <span class="label">Holdings</span>
             </a>
-            <a class="mobile-nav-item" href="#" onclick="showAIWatchlist(); return false;" data-section="watchlist">
+            <a class="mobile-nav-item" href="#watchlist" onclick="switchTab('watchlist'); return false;" data-section="watchlist">
                 <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                 <span class="label">Watchlist</span>
             </a>
@@ -3301,15 +3440,20 @@
             <div class="chart-modal-body" style="padding: 0.5rem 0; overflow-y: auto; max-height: calc(70vh - 60px);">
                 <div style="display: flex; flex-direction: column;">
 
-                    <!-- ── Portfolio ── -->
-                    <div class="more-menu-section-title">Portfolio</div>
+                    <!-- ── Holdings ── -->
+                    <div class="more-menu-section-title">Holdings</div>
                     <a href="#" onclick="showAllocationModal(); closeMobileMenu(); return false;" class="more-menu-item">
                         <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg></span>
                         <span class="menu-label-stack">
-                            <span class="menu-label">Portfolio Allocation</span>
+                            <span class="menu-label">Allocation</span>
                             <span class="menu-sub">Sector &amp; position breakdown</span>
                         </span>
                     </a>
+
+                    <hr class="more-menu-divider">
+
+                    <!-- ── Performance ── -->
+                    <div class="more-menu-section-title">Performance</div>
                     <a href="#" onclick="showPerformanceDetailModal(); closeMobileMenu(); return false;" class="more-menu-item">
                         <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
                         <span class="menu-label-stack">
@@ -3323,22 +3467,10 @@
                     <!-- ── Activity ── -->
                     <div class="more-menu-section-title">Activity</div>
                     <a href="#" onclick="showTradeLogModal(); closeMobileMenu(); return false;" class="more-menu-item">
-                        <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><line x1="9" y1="12" x2="15" y2="12"></line><line x1="9" y1="16" x2="15" y2="16"></line></svg></span>
+                        <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg></span>
                         <span class="menu-label-stack">
                             <span class="menu-label">Trade Log</span>
                             <span class="menu-sub">Full trade history from Alpaca</span>
-                        </span>
-                    </a>
-
-                    <hr class="more-menu-divider">
-
-                    <!-- ── About ── -->
-                    <div class="more-menu-section-title">About</div>
-                    <a href="#faq" onclick="scrollToSection('faq'); closeMobileMenu(); return false;" class="more-menu-item">
-                        <span class="menu-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
-                        <span class="menu-label-stack">
-                            <span class="menu-label">FAQ</span>
-                            <span class="menu-sub">Strategy, risks &amp; how it works</span>
                         </span>
                     </a>
                 </div>
@@ -3346,95 +3478,91 @@
         </div>
     </div>
 
-    <div class="container">
-        <!-- NEW WORLD-CLASS HEADER -->
-        <header class="site-header">
-            <h1 class="site-logo-text">
-                <span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span><span style="display: inline-block; width: 6px; height: 6px; background: var(--accent-cyan); border-radius: 50%; margin-left: 3px; vertical-align: super;"></span>
-            </h1>
-            <p class="site-tagline">$100K AI trading experiment</p>
+    <header class="site-header-bar" id="siteHeaderBar">
+        <div class="site-header-inner">
+            <div class="site-header-logo" onclick="switchTab('overview')">
+                <span class="site-header-logo-stonk">Stonk</span><span class="site-header-logo-bot">BOT.AI</span>
+            </div>
+            <div class="site-header-actions">
+                <button class="site-header-action" onclick="toggleMobileMenu();" title="More">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+            <!-- STICKY SECTION TABS -->
+        <nav class="section-tabs">
+            <div class="section-tabs-inner">
+                <button class="section-tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
+                <button class="section-tab" data-tab="holdings" onclick="switchTab('holdings')">Holdings</button>
+                <button class="section-tab" data-tab="watchlist" onclick="switchTab('watchlist')">Watchlist</button>
+                <button class="section-tab" data-tab="about" onclick="switchTab('about')">About</button>
+            </div>
+        </nav>
+
         </header>
 
-        <!-- WORLD-CLASS HERO CARD -->
+    <div class="container">
+
+        <!-- TAB PANEL: Overview -->
+        <div id="tab-overview" class="tab-panel active">
+        <!-- WORLD-CLASS HERO CARD / UNIFIED OVERVIEW -->
         <div id="overview" class="section-anchor"></div>
-        <div class="hero-card" style="background: rgba(22, 24, 34, 0.72); border-radius: 20px; padding: 1.5rem 1.25rem 1rem; text-align: center; border: 1px solid rgba(255,255,255,0.12); margin-bottom: 0.625rem; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);">
-            <!-- Portfolio Value - BIG -->
-            <div id="portfolio-value" class="skeleton skeleton-value" style="font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -2px; margin-bottom: 0.75rem; text-shadow: 0 2px 20px rgba(0,0,0,0.5); min-height: 3rem; margin-left: auto; margin-right: auto; width: 220px;">Loading...</div>
+        <div class="hero-card" style="background: rgba(22, 24, 34, 0.72); border-radius: 20px; padding: 1.5rem 1.25rem 1rem; text-align: center; border: 1px solid rgba(255,255,255,0.12); margin-bottom: 0.75rem; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);">
+            <!-- Account Value - BIG -->
+            <div id="portfolio-value" class="skeleton skeleton-value" style="font-size: 2.6rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -1.5px; margin-bottom: 0.5rem; min-height: 2.6rem; margin-left: auto; margin-right: auto; width: 200px;">Loading...</div>
 
-            <!-- Return Badge - Clean -->
-            <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,82,82,0.15); border: 1px solid rgba(255,82,82,0.3); border-radius: 12px; font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">
-                <span id="portfolio-return" class="skeleton skeleton-badge" style="min-width: 70px;">--</span>
-                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.875rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 60px;">--</span>)</span>
-            </div>
-
-            <!-- Data Freshness Indicator -->
-            <div id="data-freshness" class="skeleton skeleton-text" style="margin-top: 0.5rem; font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 0.35rem; min-width: 120px; margin-left: auto; margin-right: auto; width: 140px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); display: inline-block;"></span>
-                <span>Waiting for data...</span>
+            <!-- Return Badge -->
+            <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(255,82,82,0.12); border: 1px solid rgba(255,82,82,0.25); border-radius: 10px; font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red); margin-bottom: 1rem;">
+                <span id="portfolio-return" class="skeleton skeleton-badge" style="min-width: 60px;">--</span>
+                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.8rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 50px;">--</span>)</span>
             </div>
 
             <!-- Quick Stats Row -->
-            <div class="hero-stats" style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <div class="hero-stats" style="display: flex; justify-content: center; gap: 1.75rem; padding-top: 0.875rem; border-top: 1px solid var(--border); margin-bottom: 1rem;">
                 <div style="text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Day</div>
-                    <div id="day-counter" class="skeleton skeleton-text" style="font-weight: 700; min-width: 40px; margin: 0 auto;">--</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; font-weight: 500;">Day</div>
+                    <div id="day-counter" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 35px; margin: 0 auto;">--</div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Positions</div>
-                    <div id="position-count" class="skeleton skeleton-text" style="font-weight: 700; min-width: 40px; margin: 0 auto;">--</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; font-weight: 500;">Positions</div>
+                    <div id="position-count" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 35px; margin: 0 auto;">--</div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Cash</div>
-                    <div id="cash-available" class="skeleton skeleton-text" style="font-weight: 700; min-width: 70px; margin: 0 auto;">--</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; font-weight: 500;">Cash</div>
+                    <div id="cash-available" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 60px; margin: 0 auto;">--</div>
                 </div>
+            </div>
+
+            <!-- Bot vs Market comparison -->
+            <div style="text-align: left; margin-bottom: 0.4rem;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Bot vs. Market</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; cursor: pointer; text-align: center;" onclick="window.location.href='performance.html'">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">S&P 500</div>
+                    <div id="sp500Value" class="skeleton skeleton-value" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; width: 85px; margin: 0 auto 0.2rem;">&nbsp;</div>
+                    <div id="sp500Return" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); min-height: 0.9rem; width: 70px; margin: 0 auto 0.35rem;">&nbsp;</div>
+                    <span id="sp500Status" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">--</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; cursor: pointer; text-align: center;" onclick="window.location.href='performance.html'">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">Bot</div>
+                    <div id="stonkAiValue" class="skeleton skeleton-value" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; width: 85px; margin: 0 auto 0.2rem;">&nbsp;</div>
+                    <div id="stonkAiReturn" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); min-height: 0.9rem; width: 70px; margin: 0 auto 0.35rem;">&nbsp;</div>
+                    <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">--</span>
+                </div>
+            </div>
+            <div id="race-comparison" style="margin-top: 0.625rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
+                <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500: </span>
+                <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
         </div>
 
-        <hr class="hero-separator">
-
-        <!-- THE EXPERIMENT - Enhanced Timeline -->
-        <div id="experiment" class="section-anchor"></div>
-        <div class="section section-featured" style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
-            <div class="section-header" style="border-bottom: none; margin-bottom: 0.5rem;">
-                <div class="section-title">Bot vs. Market</div>
-            </div>
-
-            <!-- THE RACE - Cards -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.25rem;">
-                <!-- S&P 500 Card -->
-                <div class="race-card" onclick="window.location.href='performance.html'" role="button" tabindex="0" aria-label="View performance chart" title="View performance chart" style="cursor: pointer; position: relative;">
-                    <div style="position: absolute; top: 0.35rem; right: 0.4rem; font-size: 0.5rem; color: var(--text-muted); opacity: 0.6;">↗</div>
-                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></div>
-                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">S&P 500</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Benchmark</div>
-                    <div id="sp500Value" class="skeleton skeleton-value" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem; margin-left: auto; margin-right: auto; width: 90px; min-height: 1.3rem;">&nbsp;</div>
-                    <div id="sp500Return" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; margin-left: auto; margin-right: auto; width: 80px; min-height: 0.8rem;">&nbsp;</div>
-                    <span id="sp500Status" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 50px;">--</span>
-                </div>
-                
-                <!-- StonkBOT.AI Card -->
-                <div class="race-card" onclick="window.location.href='performance.html'" role="button" tabindex="0" aria-label="View full performance chart" title="View performance chart" style="cursor: pointer; position: relative;">
-                    <div style="position: absolute; top: 0.35rem; right: 0.4rem; font-size: 0.5rem; color: var(--text-muted); opacity: 0.6;">↗</div>
-                    <div style="font-size: 1.5rem; margin-bottom: 0.25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="2" ry="2"></rect><circle cx="9" cy="12" r="1" fill="currentColor"></circle><circle cx="15" cy="12" r="1" fill="currentColor"></circle><line x1="8" y1="7" x2="8" y2="5"></line><line x1="16" y1="7" x2="16" y2="5"></line><line x1="12" y1="19" x2="12" y2="21"></line></svg></div>
-                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;"><span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span><span style="display: inline-block; width: 5px; height: 5px; background: var(--accent-cyan); border-radius: 50%; margin-left: 2px; vertical-align: top;"></span></div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Bot Performance</div>
-                    <div id="stonkAiValue" class="skeleton skeleton-value" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.25rem; margin-left: auto; margin-right: auto; width: 90px; min-height: 1.3rem;">&nbsp;</div>
-                    <div id="stonkAiReturn" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; margin-left: auto; margin-right: auto; width: 80px; min-height: 0.8rem;">&nbsp;</div>
-                    <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.25rem 0.6rem; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 50px;">--</span>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 0.25rem;">
-                <span style="font-size: 0.55rem; color: var(--text-muted); letter-spacing: 0.3px;">Tap cards to view full performance chart →</span>
-            </div>
         </div>
 
+        <!-- TAB PANEL: Holdings -->
+        <div id="tab-holdings" class="tab-panel">
         <div id="holdings" class="section-anchor"></div>
         <div class="section">
-            <div class="section-header holdings-section-header">
-                <div>
-                    <div class="section-title">Current Holdings</div>
-                </div>
-            </div>
             <!-- Holdings Sort & Filter Controls -->
             <div class="holdings-controls">
                 <button class="holdings-filter-btn active" onclick="sortHoldings('pl')" data-sort="pl">
@@ -3496,13 +3624,29 @@
                 </div>
             </div>
         </div>
+        </div>
 
-        <!-- FAQ SECTION -->
+        <!-- TAB PANEL: Watchlist -->
+        <div id="tab-watchlist" class="tab-panel">
+        <div id="watchlist" class="section-anchor"></div>
+        <div class="section">
+            <div id="watchlist-tab-content" style="min-height: 200px;">
+                <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                    <div style="font-size: 32px; margin-bottom: 16px; animation: pulse 1.5s infinite;">📊</div>
+                    <div style="font-size: 14px; margin-bottom: 8px;">Loading watchlist...</div>
+                    <div style="font-size: 12px; opacity: 0.7;">Fetching live prices from Alpaca</div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- TAB PANEL: About -->
+        <div id="tab-about" class="tab-panel">
         <div id="faq" class="section-anchor"></div>
         <div class="section">
-            <div class="section-header">
-                <div class="section-title">FAQ</div>
-            </div>
+            <p style="margin: -0.25rem 0 0.75rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
+                A real $100K portfolio run by an AI trading bot for 6 months, benchmarked against the S&P 500. Full transparency on every trade, win, and loss.
+            </p>
             <div class="faq-section">
                 <div class="faq-item" id="faq1">
                     <div class="faq-question" onclick="toggleFaq('faq1')">
@@ -3528,33 +3672,54 @@
                         <span class="faq-chevron">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <div class="faq-answer-text"><strong>Autonomous Trading System:</strong><br><br><strong>Protect:</strong> Hard stops at -15% on all positions<br><strong>Profit Taking:</strong> Trim 25% at +25%, full exit at +50%<br> <strong>Capital Recycling:</strong> Trim 25% when RSI > 75 (euphoria) to fund new entries<br> <strong>Auto-Entry:</strong> Buys when RSI ≤ 35 AND AI Score ≥ 60 with 1.5x volume<br><br><strong>3-Tier Watchlist System:</strong> Dynamic 15-stock list updates every 5 minutes<br> <strong>NOW:</strong> RSI ≤ 35 + AI ≥ 75 — Highest conviction, bot auto-buys<br><strong>WATCH:</strong> RSI ≤ 48 + AI ≥ 60 — Bot buys if RSI drops below 35<br> <strong>MONITOR:</strong> All others — Waiting for setup<br><br><strong>Watchlist Entry Criteria:</strong><br>• RSI 28-48 (buy zone)<br>• AI Score ≥ 60 (quality)<br>• Positive momentum vs S&P 500<br><br><strong>Auto-Removal Rules:</strong><br>• RSI > 50 — moved past buy zone<br>• Up > 5% daily — entry missed<br>• 3 days without RSI < 40 — stale<br>• Lagging S&P by 3% — weak setup<br><br>Executes during market hours only. No emotions, no exceptions.</div>
+                        <div class="faq-answer-text" style="font-size: 0.75rem; line-height: 1.6; color: var(--text-secondary);">
+                            <p style="margin: 0 0 0.75rem 0;">A rules-based AI scans the market for oversold, high-quality stocks and executes trades through Alpaca during US market hours.</p>
+                            
+                            <div style="margin-bottom: 0.75rem;">
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Entry</div>
+                                <div style="padding: 0.5rem 0.625rem; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                                    <strong style="color: var(--text-primary);">RSI ≤ 35 + AI Score ≥ 60</strong> · Buys with 1.5× normal size
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 0.75rem;">
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Risk Management</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Hard stop at <strong>-15%</strong></div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trim 25% at <strong>+25%</strong></div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Full exit at <strong>+50%</strong></div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trim 25% if RSI > 75</div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 0.75rem;">
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Watchlist Tiers</div>
+                                <div style="display: flex; gap: 0.4rem;">
+                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(239,68,68,0.12); color: #ef4444; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(239,68,68,0.25);"> NOW</span>
+                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(251,191,36,0.12); color: #fbbf24; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(251,191,36,0.25);">WATCH</span>
+                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(255,255,255,0.05); color: var(--text-muted); border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);">MONITOR</span>
+                                </div>
+                            </div>
+
+                            <p style="margin: 0; font-size: 0.65rem; color: var(--text-muted);">Executes during market hours only. Not investment advice.</p>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </div>
+        </div>
 
         <!-- RISK DISCLAIMER -->
-        <div style="padding: 0.75rem 1rem; background: rgba(255, 193, 7, 0.05); border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 12px; margin-top: 0.75rem;">
-            <div style="font-size: 0.65rem; color: var(--text-muted); text-align: center; line-height: 1.45;">
-                <strong style="color: var(--accent-yellow);">Risk Disclosure:</strong> Past performance doesn't guarantee future results. This is an experiment, not investment advice. The AI can lose money. Always do your own research. Markets are volatile. Only invest what you can afford to lose.
+        <div style="padding: 0.5rem 0.75rem; background: rgba(255, 193, 7, 0.05); border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 10px; margin-top: 0.75rem; text-align: center;">
+            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.4;">
+                <strong style="color: var(--accent-yellow);">Risk:</strong> Experimental AI trading — not investment advice. The AI can lose money.
             </div>
         </div>
 
         <!-- FOOTER -->
-        <div style="text-align: center; padding: 1rem; margin-top: 0.75rem;">
-            <div style="margin-bottom: 0.5rem;">
-                <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">
-                    <span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span><span style="display: inline-block; width: 5px; height: 5px; background: var(--accent-cyan); border-radius: 50%; margin-left: 2px; vertical-align: top;"></span>
-                </div>
-            </div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem;">Real trades • Real transparency • 6 month experiment</div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <span>Data delayed 15 min</span>
-                <span>•</span>
-                <span>Not financial advice</span>
-            </div>
+        <div style="text-align: center; padding: 0.75rem 0; margin-top: 0.5rem;">
+            <div style="font-size: 0.65rem; color: var(--text-muted);">Live via Alpaca · 2-min updates</div>
         </div>
     </div>
 
@@ -3574,7 +3739,7 @@
     <div id="allocationModal" class="chart-modal">
         <div class="chart-modal-content" style="max-width: 600px;">
             <div class="chart-modal-header">
-                <span class="chart-modal-title">Portfolio Allocation</span>
+                <span class="chart-modal-title">Allocation</span>
                 <button class="chart-modal-close" onclick="closeAllocationModal()">✕</button>
             </div>
             <div class="chart-modal-body" style="padding: 1rem; overflow-y: auto;">
@@ -3599,9 +3764,9 @@
                 <button class="chart-modal-close" onclick="closePerformanceDetailModal()">✕</button>
             </div>
             <div class="chart-modal-body" style="padding: 1.25rem; overflow-y: auto; flex: 1;">
-                <!-- Portfolio Value Card -->
+                <!-- Account Value Card -->
                 <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(168, 85, 247, 0.05)); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: center;">
-                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Portfolio Value</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Account Value</div>
                     <div id="detail-portfolio-value" style="font-size: 2.25rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -1px;">$--</div>
                     <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem;">
                         <span id="detail-return-badge" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.75rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
@@ -3638,7 +3803,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
                                 <span style="font-size: 1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="2" ry="2"></rect><circle cx="9" cy="12" r="1" fill="currentColor"></circle><circle cx="15" cy="12" r="1" fill="currentColor"></circle><line x1="8" y1="7" x2="8" y2="5"></line><line x1="16" y1="7" x2="16" y2="5"></line><line x1="12" y1="19" x2="12" y2="21"></line></svg></span>
-                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);"><span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span><span style="display: inline-block; width: 5px; height: 5px; background: var(--accent-cyan); border-radius: 50%; margin-left: 2px; vertical-align: top;"></span></span>
+                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);"><span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span></span>
                             </div>
                             <span id="detail-stonk-pct" style="font-size: 0.9rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
                         </div>
@@ -3647,7 +3812,7 @@
                                 <div style="position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
                             </div>
                         </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">AI-managed portfolio</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">AI-managed holdings</div>
                     </div>
 
                     <!-- S&P 500 -->
@@ -4142,67 +4307,120 @@
         body.page-loaded {
             opacity: 1;
         }
+
+        /* Sticky section tabs - iOS segmented control */
+        .section-tabs {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0.375rem 0.75rem 0.25rem;
+        }
+        .section-tabs .tab-btn {
+            padding: 0.375rem 0.625rem;
+            font-size: 0.75rem;
+        }
+        .section-tabs-inner {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.25rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .section-tabs-inner::-webkit-scrollbar { display: none; }
+        .section-tab {
+            flex: 1;
+            min-width: 68px;
+            min-height: 34px;
+            padding: 0.45rem 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .section-tab.active {
+            background: rgba(255,255,255,0.12);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 480px) {
+            .section-tab {
+                min-height: 32px;
+                font-size: 0.72rem;
+                padding: 0.4rem 0.5rem;
+            }
+        }
+        /* Hide old navigation - new header bar replaces it */
+        .desktop-nav, .mobile-nav, .site-header {
+            display: none !important;
+        }
     </style>
 
     <!-- Trade Log Modal - Mobile-First Redesign -->
     <div id="tradeLogModal" class="trade-log-modal">
         <div class="trade-log-modal-content" style="max-height: 85vh; border-radius: 20px;">
-            <!-- Compact Header -->
-            <div style="padding: 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(6,182,212,0.05), rgba(168,85,247,0.05));">
+            <!-- Clean Header -->
+            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface);">
                 <div style="display: flex; align-items: center; gap: 0.625rem;">
-                    <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #06b6d4, #a855f7); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">👁️</div>
+                    <div style="width: 32px; height: 32px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--accent-cyan);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg></div>
                     <div>
-                        <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.2;">Trade Log</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem;">
-                            <span style="width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; display: inline-block; animation: pulse 2s infinite;"></span>
-                            Live AI trading
-                        </div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); letter-spacing: 0.04em;">Activity</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">AI trading history</div>
                     </div>
                 </div>
-                <button class="chart-modal-close" onclick="closeTradeLogModal()" style="width: 32px; height: 32px; border-radius: 8px;">✕</button>
+                <button class="chart-modal-close" onclick="closeTradeLogModal()" style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
             </div>
             
-            <!-- Stats Row - Horizontal Scroll Cards -->
-            <div style="padding: 0.875rem 1rem; background: var(--bg-surface); border-bottom: 1px solid var(--border);">
-                <div style="display: flex; gap: 0.625rem; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 2px;">
-                    <div style="flex-shrink: 0; min-width: 80px; padding: 0.625rem; background: var(--bg-base); border: 1px solid var(--border); border-radius: 12px; text-align: center;">
-                        <div id="trade-log-total-trades" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Trades</div>
+            <!-- Stats Row -->
+            <div style="padding: 0.75rem 1rem; background: var(--bg-base); border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <div style="display: flex; gap: 0.5rem;">
+                    <div style="flex: 1; padding: 0.625rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
+                        <div id="trade-log-total-trades" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Trades</div>
                     </div>
-                    <div style="flex-shrink: 0; min-width: 80px; padding: 0.625rem; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 12px; text-align: center;">
-                        <div id="trade-log-buys" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-green);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.3px;">Buys</div>
+                    <div style="flex: 1; padding: 0.625rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12); border-radius: 10px; text-align: center;">
+                        <div id="trade-log-buys" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-green);">--</div>
+                        <div style="font-size: 0.6rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Buys</div>
                     </div>
-                    <div style="flex-shrink: 0; min-width: 80px; padding: 0.625rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; text-align: center;">
-                        <div id="trade-log-sells" style="font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.3px;">Sells</div>
-                    </div>
-                    <div style="flex-shrink: 0; min-width: 110px; padding: 0.625rem; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; text-align: center;">
-                        <div id="trade-log-best-trade" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-green);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.3px;">Best Trade</div>
-                    </div>
-                    <div style="flex-shrink: 0; min-width: 110px; padding: 0.625rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; text-align: center;">
-                        <div id="trade-log-worst-trade" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.3px;">Worst Trade</div>
+                    <div style="flex: 1; padding: 0.625rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 10px; text-align: center;">
+                        <div id="trade-log-sells" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">--</div>
+                        <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Sells</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Segmented Control - iOS Style -->
-            <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); background: var(--bg-base);">
-                <div style="display: flex; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 3px; gap: 3px;">
-                    <button class="trade-log-segment active" onclick="setTradeLogFilter('all')" data-filter="all" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: var(--bg-elevated); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.3);">
-                        All
-                    </button>
-                    <button class="trade-log-segment" onclick="setTradeLogFilter('trades')" data-filter="trades" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
-                        Trades
-                    </button>
-                    <button class="trade-log-segment" onclick="setTradeLogFilter('alerts')" data-filter="alerts" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
-                        Alerts
-                    </button>
-                    <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
-                        Bot
-                    </button>
+            <!-- Segmented Control -->
+            <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: var(--bg-base);">
+                <div style="display: flex; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 3px; gap: 3px;">
+                    <button class="trade-log-segment active" onclick="setTradeLogFilter('all')" data-filter="all" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.08); color: var(--text-primary);">All</button>
+                    <button class="trade-log-segment" onclick="setTradeLogFilter('trades')" data-filter="trades" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Trades</button>
+                    <button class="trade-log-segment" onclick="setTradeLogFilter('alerts')" data-filter="alerts" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Alerts</button>
+                    <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Bot</button>
                 </div>
             </div>
             
@@ -4216,15 +4434,9 @@
                 </div>
             </div>
             
-            <!-- Bottom Action Bar -->
-            <div style="padding: 0.875rem 1rem; background: var(--bg-surface); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.375rem;">
-                    <span style="font-size: 0.9rem;">🤖</span>
-                    <span>Auto-refresh every 30s</span>
-                </div>
-                <button onclick="refreshTradeLog()" style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.875rem; background: linear-gradient(135deg, #06b6d4, #a855f7); border: none; border-radius: 8px; font-size: 0.75rem; font-weight: 600; color: white; cursor: pointer; box-shadow: 0 2px 8px rgba(6,182,212,0.3);">
-                    <span>🔄</span> Refresh
-                </button>
+            <!-- Refresh hint -->
+            <div style="padding: 0.5rem 1rem; background: var(--bg-base); border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
+                <span style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Auto-refreshes every 30s</span>
             </div>
         </div>
     </div>
@@ -4512,49 +4724,42 @@
         
         // Update dashboard with fresh data
         // Helper to format relative freshness time
-        function updateDataFreshness(timestamp) {
-            const el = document.getElementById('data-freshness');
-            if (!el) return;
 
-            // Ensure timestamp is treated as UTC by adding Z if missing
-            let ts = timestamp;
-            if (ts && !ts.endsWith('Z') && !ts.match(/[+-]\d{2}:\d{2}$/)) {
-                ts = ts + 'Z';
-            }
-            const then = ts ? new Date(ts) : new Date();
-            const now = new Date();
-            const seconds = Math.floor((now - then) / 1000);
+        function switchTab(tabName, pushState = true) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.querySelector('.section-tab[data-tab="' + tabName + '"]').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Debug logging
-            console.log('Freshness check:', { timestamp, parsed: then.toISOString(), now: now.toISOString(), seconds });
-
-            let text;
-            let dotColor = 'var(--text-muted)';
-
-            // Check US market hours (Mon-Fri, 09:30-16:00 ET)
-            const nyTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-            const day = nyTime.getDay();
-            const hour = nyTime.getHours();
-            const minute = nyTime.getMinutes();
-            const marketOpen = day >= 1 && day <= 5 && (
-                (hour === 9 && minute >= 30) || (hour >= 10 && hour < 16)
-            );
-
-            if (seconds < 60) {
-                text = marketOpen ? 'Live' : 'Recent';
-            } else if (seconds < 3600) {
-                const mins = Math.floor(seconds / 60);
-                text = `Updated ${mins}m ago`;
-            } else if (seconds < 86400) {
-                const hours = Math.floor(seconds / 3600);
-                text = `Updated ${hours}h ago`;
-            } else {
-                const days = Math.floor(seconds / 86400);
-                text = days === 1 ? 'Updated 1d ago' : `Updated ${days}d ago`;
+            // Persist active tab in URL hash
+            if (pushState) {
+                history.replaceState(null, null, '#' + tabName);
             }
+            
+            // Render watchlist content when tab becomes active
+            if (tabName === 'watchlist') {
+                renderWatchlistInline();
+            }
+        }
 
-            el.classList.remove('skeleton', 'skeleton-text');
-            el.innerHTML = `<span style="width: 5px; height: 5px; border-radius: 50%; background: ${dotColor}; display: inline-block; opacity: 0.6;"></span><span>${text}</span>`;
+        function renderWatchlistInline() {
+            const container = document.getElementById('watchlist-tab-content');
+            if (!container || container.dataset.rendered === 'true') return;
+            
+            // Temporarily redirect renderWatchlistContent output to this container
+            const originalContent = document.getElementById('watchlist-content');
+            const tempDiv = document.createElement('div');
+            tempDiv.id = 'watchlist-content';
+            container.innerHTML = '';
+            container.appendChild(tempDiv);
+            
+            // Fetch prices then render
+            fetchWatchlistPrices().then(() => {
+                aiWatchlist = getWatchlistWithLivePrices();
+                renderWatchlistContent();
+                container.dataset.rendered = 'true';
+            });
         }
 
         function updateDashboard(data) {
@@ -4640,9 +4845,6 @@
                 const now = new Date();
                 lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()} • <span style="color: var(--accent-green);">Live Data</span>`;
             }
-
-            // Update visible data freshness indicator
-            updateDataFreshness(data?.timestamp || new Date().toISOString());
 
             // Update stonk meter if available (using $100K baseline)
             if (data.account) {
@@ -4985,7 +5187,7 @@
 
                 if (marketStatusText) {
                     const statusPrefix = isMarketOpen ? 'MARKET OPEN' : 'PRE-MARKET';
-                    marketStatusText.textContent = statusPrefix + ' - Portfolio Value $' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + ' (' + (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toLocaleString('en-US', {maximumFractionDigits: 0}) + ')';
+                    marketStatusText.textContent = statusPrefix + ' - Account Value $' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + ' (' + (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toLocaleString('en-US', {maximumFractionDigits: 0}) + ')';
                 }
 
                 // Update sector heatmap performance
@@ -5903,11 +6105,11 @@
                                 subtype: day.maxPL < -3 ? 'critical' : 'warning',
                                 timestamp: day.timestamp,
                                 icon: day.maxPL < 0 ? '↓' : '↑',
-                                title: day.maxPL < -3 ? 'Portfolio Alert' : 'Daily Movement',
-                                description: `Portfolio ${day.maxPL >= 0 ? 'up' : 'down'} ${Math.abs(day.maxPL).toFixed(2)}%`,
+                                title: day.maxPL < -3 ? 'Holdings Alert' : 'Daily Movement',
+                                description: `Holdings ${day.maxPL >= 0 ? 'up' : 'down'} ${Math.abs(day.maxPL).toFixed(2)}%`,
                                 badge: day.maxPL < -3 ? 'Alert' : 'Movement',
                                 badgeClass: day.maxPL < -3 ? 'alert' : 'warning',
-                                rationale: `Portfolio movement of ${Math.abs(day.maxPL).toFixed(2)}% detected.`,
+                                rationale: `Holdings movement of ${Math.abs(day.maxPL).toFixed(2)}% detected.`,
                                 value: day.maxPL
                             });
                         }
@@ -6061,11 +6263,9 @@
                     });
                     const yearLabel = new Date(item.timestamp).getFullYear();
                     html += `
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0 0.5rem 0; padding: 0.5rem; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 8px;">
-                            <div style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">${dateLabel}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">${yearLabel}</div>
-                            <div style="flex: 1;"></div>
-                            <div style="font-size: 0.65rem; color: var(--accent-gold);">● Trading Day</div>
+                        <div style="display: flex; align-items: baseline; gap: 0.4rem; margin: 1.25rem 0 0.5rem 0; padding: 0 0.25rem;">
+                            <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.08em;">${dateLabel}</div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted);">${yearLabel}</div>
                         </div>
                     `;
                 }
@@ -6373,7 +6573,7 @@
                     
                     // Total value
                     html += '<div style="text-align: center; margin-bottom: 1rem;">';
-                    html += '<div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem;">Total Portfolio Value</div>';
+                    html += '<div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem;">Total Account Value</div>';
                     html += '<div style="font-size: 1.5rem; font-weight: 700; font-family: \'JetBrains Mono\', monospace; color: var(--text-primary);">$' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
                     html += '</div>';
 
@@ -6580,7 +6780,7 @@
             // Portfolio Summary Card
             html += '<div style="background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(168,85,247,0.05)); border: 1px solid rgba(6,182,212,0.2); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem;">';
             html += '<div style="text-align: center;">';
-            html += '<div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Total Portfolio</div>';
+            html += '<div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Total Holdings</div>';
             html += '<div style="font-size: 1.75rem; font-weight: 700; font-family: \'JetBrains Mono\', monospace; color: var(--text-primary);">$' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
             html += '<div style="display: flex; justify-content: center; gap: 1rem; margin-top: 0.75rem; font-size: 0.75rem;">';
             html += '<div><span style="color: var(--text-muted);">Invested:</span> <span style="color: var(--text-primary); font-weight: 600;">' + investedPctOfEquity.toFixed(0) + '%</span></div>';
@@ -7083,6 +7283,17 @@
                     stonkStatus.classList.remove('skeleton', 'skeleton-badge');
                 }
                 
+                // Update race comparison spread
+                const raceSpread = document.getElementById('race-spread');
+                if (raceSpread && typeof stonkReturn === 'number' && typeof spReturn === 'number') {
+                    const spread = stonkReturn - spReturn;
+                    const spreadPct = spread.toFixed(2);
+                    const spreadText = spread >= 0 ? `▲ +${spreadPct}% ahead` : `▼ ${spreadPct}% behind`;
+                    const spreadColor = spread >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    raceSpread.textContent = spreadText;
+                    raceSpread.style.color = spreadColor;
+                }
+                
                 console.log('updateRaceValues: Updated display successfully');
 
                 // Update visible data freshness indicator
@@ -7161,14 +7372,20 @@
         // Handle hash on page load
         function handleInitialHash() {
             const hash = window.location.hash.replace('#', '');
-            if (hash) {
-                // Find section ID from hash
-                const sectionId = Object.keys(sectionHashes).find(key => sectionHashes[key] === hash);
-                if (sectionId) {
-                    setTimeout(() => {
-                        scrollToSection(sectionId);
-                    }, 100);
-                }
+            if (!hash) return;
+            
+            const validTabs = ['overview', 'holdings', 'watchlist', 'about'];
+            if (validTabs.includes(hash) && document.getElementById('tab-' + hash)) {
+                switchTab(hash, false);
+                return;
+            }
+            
+            // Find section ID from hash
+            const sectionId = Object.keys(sectionHashes).find(key => sectionHashes[key] === hash);
+            if (sectionId) {
+                setTimeout(() => {
+                    scrollToSection(sectionId);
+                }, 100);
             }
         }
 
@@ -7527,6 +7744,11 @@
         // Handle hash changes (back/forward buttons)
         window.addEventListener('hashchange', function() {
             const hash = window.location.hash.replace('#', '');
+            const validTabs = ['overview', 'holdings', 'watchlist', 'about'];
+            if (validTabs.includes(hash) && document.getElementById('tab-' + hash)) {
+                switchTab(hash, false);
+                return;
+            }
             const sectionId = Object.keys(sectionHashes).find(key => sectionHashes[key] === hash);
             if (sectionId) {
                 scrollToSection(sectionId);
@@ -7541,10 +7763,14 @@
         // Always start at top of page on load (ignore hash)
         window.addEventListener('DOMContentLoaded', function() {
             window.scrollTo({ top: 0, behavior: 'instant' });
-            // Clear hash from URL without scrolling
-            if (window.location.hash) {
+            // Preserve tab hashes, clear legacy section hashes
+            const hash = window.location.hash.replace('#', '');
+            const validTabs = ['overview', 'holdings', 'watchlist', 'about'];
+            if (hash && !validTabs.includes(hash)) {
                 history.replaceState(null, null, window.location.pathname + window.location.search);
             }
+            // Restore active tab or scroll to section from hash
+            handleInitialHash();
         });
         
         // Also scroll to top on beforeunload to reset position
@@ -8750,13 +8976,13 @@
                                 type: 'alert',
                                 subtype: severity,
                                 icon: day.maxPL < 0 ? '↓' : '↑',
-                                title: day.maxPL < -3 ? 'Portfolio Alert' : day.maxPL < -1 ? 'Market Movement' : 'Daily Update',
-                                description: `Portfolio ${day.maxPL >= 0 ? 'up' : 'down'} ${Math.abs(day.maxPL).toFixed(2)}% ($${Math.abs(change).toFixed(0)})`,
+                                title: day.maxPL < -3 ? 'Holdings Alert' : day.maxPL < -1 ? 'Market Movement' : 'Daily Update',
+                                description: `Holdings ${day.maxPL >= 0 ? 'up' : 'down'} ${Math.abs(day.maxPL).toFixed(2)}% ($${Math.abs(change).toFixed(0)})`,
                                 timestamp: day.date,
                                 value: day.maxPL,
                                 badge: day.maxPL < -3 ? 'Alert' : day.maxPL < -1 ? 'Watch' : 'Update',
                                 badgeClass: day.maxPL < -3 ? 'alert' : 'info',
-                                rationale: `Portfolio movement of ${Math.abs(day.maxPL).toFixed(2)}% detected. ${day.maxPL < -2 ? 'This is a significant move requiring close monitoring.' : day.maxPL < -1 ? 'This is above normal daily volatility range.' : 'Normal market fluctuation within expected range.'} All positions remain above stop-loss thresholds.`,
+                                rationale: `Holdings movement of ${Math.abs(day.maxPL).toFixed(2)}% detected. ${day.maxPL < -2 ? 'This is a significant move requiring close monitoring.' : day.maxPL < -1 ? 'This is above normal daily volatility range.' : 'Normal market fluctuation within expected range.'} All positions remain above stop-loss thresholds.`,
                                 botResponse: severity === 'critical' ? 'System monitoring for continuation. No automatic action triggered. Will alert if losses exceed -5% or any position approaches -15% stop loss.' : severity === 'warning' ? 'System tracking momentum. Current allocation maintained.' : 'Market noise filtered. No action required.',
                                 recommendation: day.maxPL < 0 ? 'Consider deploying dry powder if thesis remains intact. Review individual positions for stop-loss proximity.' : 'Monitor for profit-taking opportunities at +25% targets.'
                             });
@@ -8894,12 +9120,12 @@
                         type: 'alert',
                         subtype: 'critical',
                         icon: '',
-                        title: 'Portfolio Alert',
-                        description: 'Portfolio down -4.26% from $100K start • Monitoring for recovery',
+                        title: 'Holdings Alert',
+                        description: 'Holdings down -4.26% from $100K start • Monitoring for recovery',
                         timestamp: new Date('2026-06-06T15:50:00Z'),
                         badge: 'Alert',
                         badgeClass: 'alert',
-                        rationale: 'Portfolio declined -4.26% since inception. This is within expected Day 1 volatility range for a high-growth tech portfolio. No stop losses triggered (all positions above -15%). Bot is monitoring for any positions approaching exit thresholds.',
+                        rationale: 'Holdings declined -4.26% since inception. This is within expected Day 1 volatility range for a high-growth tech portfolio. No stop losses triggered (all positions above -15%). Bot is monitoring for any positions approaching exit thresholds.',
                         botResponse: 'System continuing to monitor all positions. No automatic sell triggers activated. Maintaining current allocation. Will alert if any position reaches -15% stop loss.',
                         recommendation: 'Hold current positions. Thesis intact for AI infrastructure plays. Consider deploying additional cash on further weakness. Review stop loss levels on individual names.'
                     }
@@ -9200,12 +9426,12 @@
                         type: 'alert',
                         subtype: 'critical',
                         icon: '',
-                        title: 'Portfolio Alert',
-                        description: 'Portfolio down -4.26% from $100K start',
+                        title: 'Holdings Alert',
+                        description: 'Holdings down -4.26% from $100K start',
                         timestamp: new Date('2026-06-06T15:50:00Z'),
                         badge: 'Alert',
                         badgeClass: 'alert',
-                        rationale: 'Portfolio declined -4.26% since inception. This is within expected Day 1 volatility range for a high-growth tech portfolio. No stop losses triggered (all positions above -15%).',
+                        rationale: 'Holdings declined -4.26% since inception. This is within expected Day 1 volatility range for a high-growth tech portfolio. No stop losses triggered (all positions above -15%).',
                         botResponse: 'System monitoring for continuation. No automatic sell triggers activated. Will alert if any position reaches -15% stop loss.',
                         recommendation: 'Hold current positions. Thesis intact for AI infrastructure plays. Consider deploying additional cash on further weakness.'
                     }
@@ -9475,7 +9701,7 @@
             if (e.target === document.getElementById('activityLogModal')) closeActivityLog();
         });
 
-        // AI Watchlist Data - Base research list with live price overlay
+        // Watchlist Data - Base research list with live price overlay
         // Prices auto-refresh every 30 seconds from Alpaca
         let aiWatchlistPrices = {}; // Live prices fetched from API
         let lastWatchlistUpdate = null;
@@ -10083,18 +10309,10 @@
         // Load changes on init
         fetchWatchlistChanges();
         
-        // Simple AI Watchlist function
+        // Simple Watchlist function
         async function showAIWatchlist() {
             // Fetch latest prices before showing
             await fetchWatchlistPrices();
-            
-            // Reset filter state when opening fresh
-            if (showingSavedOnly && originalWatchlistData) {
-                aiWatchlistBase.length = 0;
-                originalWatchlistData.forEach(s => aiWatchlistBase.push(s));
-                showingSavedOnly = false;
-                originalWatchlistData = null;
-            }
             
             const modal = document.createElement('div');
             modal.id = 'watchlist-modal';
@@ -10104,14 +10322,8 @@
             // Refresh live prices and initialize watchlist
             aiWatchlist = getWatchlistWithLivePrices();
             
-            // Get saved watchlist for star display
-            const savedWatchlist = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
-            
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-            
-            // Get saved watchlist from localStorage for header
-            const headerSavedWatchlist = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
             
             // Format last update time
             const updateTime = lastWatchlistUpdate 
@@ -10145,7 +10357,7 @@
                     <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.06);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div>
-                                <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.04em; text-transform: uppercase;">AI Watchlist</div>
+                                <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.04em; text-transform: uppercase;">Watchlist</div>
                                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
                                     ${liveIndicator}
                                 </div>
@@ -10168,9 +10380,6 @@
                                 <option value="change">📈 Gainers</option>
                                 <option value="alpha">🔤 A-Z</option>
                             </select>
-                            <button onclick="showSavedOnly()" id="saved-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; color: var(--text-secondary); font-size: 13px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-                                Saved (${headerSavedWatchlist.length})
-                            </button>
                         </div>
                     </div>
                     <div id="watchlist-content" style="padding: 16px;"></div>
@@ -10255,58 +10464,11 @@
             renderWatchlistContent();
         }
 
-        // Toggle save/watch stock
-        function toggleWatchStock(symbol) {
-            let saved = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
-            const index = saved.indexOf(symbol);
-            const wasSaved = index > -1;
-            
-            if (wasSaved) {
-                saved.splice(index, 1);
-            } else {
-                saved.push(symbol);
-            }
-            
-            localStorage.setItem('aiWatchlistSaved', JSON.stringify(saved));
-            
-            // Re-render to show updated state
-            renderWatchlistContent();
-            
-            // Update saved button count
-            const savedBtn = document.getElementById('saved-btn');
-            if (savedBtn && !showingSavedOnly) {
-                savedBtn.innerHTML = `Saved (${saved.length})`;
-            }
-        }
-
-        // Show only saved stocks - simpler approach
-        let showingSavedOnly = false;
-        
-        function showSavedOnly() {
-            showingSavedOnly = !showingSavedOnly;
-            const savedBtn = document.getElementById('saved-btn');
-            
-            if (savedBtn) {
-                if (showingSavedOnly) {
-                    savedBtn.style.background = 'rgba(251, 191, 36, 0.2)';
-                    savedBtn.innerHTML = '<span class="saved-star"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span> Show All';
-                } else {
-                    savedBtn.style.background = 'rgba(255,255,255,0.05)';
-                    const saved = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
-                    savedBtn.innerHTML = `Saved (${saved.length})`;
-                }
-            }
-            
-            // Re-render with filter applied
-            renderWatchlistContent();
-        }
-        
         // Render watchlist content - Clean Table Layout (mobile-first)
         function renderWatchlistContent() {
             const container = document.getElementById('watchlist-content');
             if (!container) return;
             
-            const saved = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
             aiWatchlist = getWatchlistWithLivePrices();
             
             // Assign tiers based on RSI and AI Score (matching bot criteria)
@@ -10348,32 +10510,24 @@
                 }
             });
             
-            let stocksToShow = showingSavedOnly 
-                ? watchlistWithTiers.filter(s => saved.includes(s.symbol))
-                : watchlistWithTiers;
-            
-            if (showingSavedOnly && stocksToShow.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);"><div style="font-size: 48px; margin-bottom: 16px;"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div><div style="font-size: 16px; margin-bottom: 8px;">No saved stocks yet</div><div style="font-size: 13px;">Click the star on any stock to save it here</div></div>';
-                return;
-            }
+            let stocksToShow = watchlistWithTiers;
             
             // Build tier summary
             const nowCount = watchlistWithTiers.filter(s => s.tier === 'NOW').length;
             const watchCount = watchlistWithTiers.filter(s => s.tier === 'WATCH').length;
             const monitorCount = watchlistWithTiers.filter(s => s.tier === 'MONITOR').length;
             
-            let html = '<div style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; align-items: center;">';
+            let html = '<div style="margin-bottom: 0.75rem; padding: 0.625rem; background: rgba(255,255,255,0.03); border-radius: 8px; display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.7rem; align-items: center;">';
             html += '<span style="color: #ef4444; font-weight: 700;"> NOW: ' + nowCount + '</span>';
             html += '<span style="color: #fbbf24; font-weight: 700;">WATCH: ' + watchCount + '</span>';
             html += '<span style="color: var(--text-muted);"> MONITOR: ' + monitorCount + '</span>';
-            html += '<span style="margin-left: auto; cursor: pointer; color: var(--text-muted); font-size: 14px;" onclick="showTierExplainer(event)" title="What do these tiers mean?">ⓘ</span>';
+            html += '<span style="margin-left: auto; cursor: pointer; color: var(--text-muted); font-size: 0.875rem;" onclick="showTierExplainer(event)" title="What do these tiers mean?">ⓘ</span>';
             html += '</div>';
             
             // Build clean table with tier column
-            html += '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;"><table style="width: 100%; border-collapse: collapse; font-size: 13px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">Tier</th><th style="text-align: left; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">Stock</th><th style="text-align: right; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">Price</th><th style="text-align: center; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">Chg</th><th style="text-align: center; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">AI</th><th style="text-align: center; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">RSI</th><th style="text-align: center; padding: 10px 6px; color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">Save</th></tr></thead><tbody>';
+            html += '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;"><table style="width: 100%; border-collapse: collapse; font-size: 13px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Tier</th><th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Stock</th><th style="text-align: right; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Price</th><th style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Chg</th><th style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">AI</th><th style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">RSI</th></tr></thead><tbody>';
             
             stocksToShow.forEach(function(stock) {
-                const isSaved = saved.includes(stock.symbol);
                 const aiScoreColor = stock.aiScore >= 90 ? '#22c55e' : stock.aiScore >= 75 ? '#eab308' : '#06b6d4';
                 const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
                 const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
@@ -10390,7 +10544,7 @@
                 // Row highlight for NOW tier
                 const rowBg = stock.tier === 'NOW' ? 'rgba(239,68,68,0.05)' : 'transparent';
                 
-                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; background: ' + rowBg + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 10px 4px;"><span style="background: ' + tierStyle.bg + '; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.color + '30;">' + tierStyle.label + '</span></td><td style="padding: 10px 4px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 14px; font-weight: 700;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;">' + stock.company + '</div></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 14px; font-weight: 700;">$' + stock.price.toFixed(2) + '</td><td style="padding: 10px 4px; text-align: center;"><span style="color: ' + changeColor + '; font-weight: 600; font-size: 11px;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span></td><td style="padding: 10px 4px; text-align: center;"><span style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px; border: 1px solid ' + aiScoreColor + '40;">' + stock.aiScore + '</span></td><td style="padding: 10px 4px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600; color: ' + (isOversold ? '#ef4444' : 'var(--text-muted)') + ';">' + stock.rsi.toFixed(1) + (isOversold ? ' ⚠️' : '') + '</td><td style="padding: 10px 4px; text-align: center;" onclick="event.stopPropagation();"><button onclick="toggleWatchStock(\'' + stock.symbol + '\')" style="background: none; border: none; font-size: 14px; cursor: pointer; color: ' + (isSaved ? '\'#fbbf24\'' : 'var(--text-muted)') + '; padding: 2px;">' + (isSaved ? '<span style="color:#fbbf24">Saved</span>' : 'Save') + '</button></td></tr>';
+                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; background: ' + rowBg + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 10px 4px;"><span style="background: ' + tierStyle.bg + '; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.color + '30;">' + tierStyle.label + '</span></td><td style="padding: 10px 4px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 14px; font-weight: 700;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;">' + stock.company + '</div></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 14px; font-weight: 700;">$' + stock.price.toFixed(2) + '</td><td style="padding: 10px 4px; text-align: center;"><span style="color: ' + changeColor + '; font-weight: 600; font-size: 11px;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span></td><td style="padding: 10px 4px; text-align: center;"><span style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px; border: 1px solid ' + aiScoreColor + '40;">' + stock.aiScore + '</span></td><td style="padding: 10px 4px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600; color: ' + (isOversold ? '#ef4444' : 'var(--text-muted)') + ';">' + stock.rsi.toFixed(1) + (isOversold ? ' ⚠️' : '') + '</td><td style="padding: 10px 4px; text-align: center;"></tr>';
             });
             
             html += '</tbody></table></div>';
@@ -10638,12 +10792,9 @@
                     </div>
                     
                     <!-- Buttons -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <button onclick="toggleWatchStock('${stock.symbol}'); closeStockChart(); showAIWatchlist();" style="padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                            <span></svg></span> Save
-                        </button>
-                        <button onclick="closeStockChart(); showAIWatchlist();" style="padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer;">
-                            ← Back
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <button onclick="closeStockChart(); switchTab('watchlist');" style="padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer;">
+                            ← Back to Watchlist
                         </button>
                     </div>
                 </div>
@@ -10719,9 +10870,6 @@
                 const isUp = i > 0 && price >= chartData.prices[i-1];
                 return `<div class="stock-detail-chart-bar" style="height: ${height}%; background: ${isUp ? 'var(--accent-green)' : 'var(--accent-red)'};"></div>`;
             }).join('');
-
-            const saved = JSON.parse(localStorage.getItem('aiWatchlistSaved') || '[]');
-            const isSaved = saved.includes(stock.symbol);
 
             const bodyHtml = `
                 <div class="stock-detail-sheet">
@@ -10808,10 +10956,7 @@
                         </div>
 
                         <div class="stock-detail-actions">
-                            <button class="stock-detail-btn" onclick="toggleWatchStock('${stock.symbol}'); closeStockDetail(); showAIWatchlist();">
-                                <span>${isSaved ? '<span style=\"color:#fbbf24\">Saved</span>' : 'Save'}</span> ${isSaved ? 'Saved' : 'Save'}
-                            </button>
-                            <button class="stock-detail-btn" onclick="closeStockDetail(); showAIWatchlist();">← Back</button>
+                            <button class="stock-detail-btn" onclick="closeStockDetail(); switchTab('watchlist');">← Back to Watchlist</button>
                         </div>
                     </div>
                 </div>
@@ -11132,33 +11277,6 @@
         }
     </script>
 
-    <!-- BOTTOM NAVIGATION - Mobile Only -->
-    <nav class="bottom-nav-mobile" id="bottomNav" style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(20, 21, 31, 0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 0.5rem 0 0.625rem; z-index: 100; max-width: 480px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.08);">
-        <div style="display: flex; justify-content: space-around; align-items: center; position: relative;">
-            <a href="#overview" onclick="scrollToSection('overview'); return false;" class="bottom-nav-link active" data-target="overview" style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem; text-decoration: none; color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 0.25rem 0.75rem; position: relative; transition: color 0.2s;">
-                <span style="font-size: 1.25rem;">🏠</span>
-                <span>Home</span>
-                <span class="bottom-nav-dot" style="position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) scale(1); width: 4px; height: 4px; background: var(--accent-cyan); border-radius: 50%; transition: transform 0.2s, background 0.2s;"></span>
-            </a>
-            <a href="#holdings" onclick="scrollToSection('holdings'); return false;" class="bottom-nav-link" data-target="holdings" style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem; text-decoration: none; color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 0.25rem 0.75rem; position: relative; transition: color 0.2s;">
-                <span style="font-size: 1.25rem;">📊</span>
-                <span>Portfolio</span>
-                <span class="bottom-nav-dot" style="position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) scale(0); width: 4px; height: 4px; background: var(--accent-cyan); border-radius: 50%; transition: transform 0.2s, background 0.2s;"></span>
-            </a>
-            <a href="#experiment" onclick="scrollToSection('experiment'); return false;" class="bottom-nav-link" data-target="experiment" style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem; text-decoration: none; color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 0.25rem 0.75rem; position: relative; transition: color 0.2s;">
-                <span style="font-size: 1.25rem;">📈</span>
-                <span>Performance</span>
-                <span class="bottom-nav-dot" style="position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) scale(0); width: 4px; height: 4px; background: var(--accent-cyan); border-radius: 50%; transition: transform 0.2s, background 0.2s;"></span>
-            </a>
-            <a href="#" onclick="showTradeLogModal(); return false;" class="bottom-nav-link" data-target="activity" style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem; text-decoration: none; color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 0.25rem 0.75rem; position: relative; transition: color 0.2s;">
-                <span style="font-size: 1.25rem;">🤖</span>
-                <span>Activity</span>
-                <span class="bottom-nav-dot" style="position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) scale(0); width: 4px; height: 4px; background: var(--accent-cyan); border-radius: 50%; transition: transform 0.2s, background 0.2s;"></span>
-            </a>
-        </div>
-    </nav>
-    
-    <!-- Spacer for bottom nav (mobile only) -->
-    <div class="bottom-nav-spacer" style="height: 80px;"></div>
+
 </body>
 </html>
