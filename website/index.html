@@ -23,7 +23,7 @@
         }
     })();
     </script>
-    <title>StonkBOT.AI | Your AI Trading Council</title>
+    <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
     <!-- CACHE BUST: v=20260623-0214-FORCE-V47 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
@@ -9229,19 +9229,11 @@
                         : firstSentence;
                 }
                 
-                // Source badge for Council trades
+                // Source badge for AI trades
                 let sourceBadge = '';
-                if (activity.marketContext && activity.marketContext.includes('Council')) {
-                    const councilName = activity.marketContext.match(/(SOROS|JONES|PAULSON|WOOD)/)?.[0] || 'Council';
-                    const councilColors = {
-                        'SOROS': '#f97316',  // Orange - Macro/Ops
-                        'JONES': '#22c55e',  // Green - Risk/Commodities
-                        'PAULSON': '#06b6d4', // Cyan - Credit/Banks
-                        'WOOD': '#a855f7',    // Purple - Tech/Growth
-                        'Council': '#fbbf24'  // Gold
-                    };
-                    const color = councilColors[councilName] || councilColors['Council'];
-                    sourceBadge = `<span style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.35rem; background: ${color}15; border: 1px solid ${color}40; border-radius: 4px; font-size: 0.6rem; font-weight: 600; color: ${color}; text-transform: uppercase; letter-spacing: 0.3px;">${councilName}</span>`;
+                if (activity.marketContext && activity.marketContext.includes('AI')) {
+                    const color = '#06b6d4';  // Cyan
+                    sourceBadge = `<span style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.35rem; background: ${color}15; border: 1px solid ${color}40; border-radius: 4px; font-size: 0.6rem; font-weight: 600; color: ${color}; text-transform: uppercase; letter-spacing: 0.3px;">AI</span>`;
                 } else if (activity.details?.order_id) {
                     sourceBadge = `<span style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.35rem; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); border-radius: 4px; font-size: 0.6rem; font-weight: 600; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.3px;">Alpaca</span>`;
                 }
@@ -10255,7 +10247,7 @@
                     profit25: targets.profit_25,
                     profit50: targets.profit_50,
                     signal: targets.signal,
-                    councilNote: targets.council_note
+                    aiNote: targets.council_note || targets.ai_note
                 });
             }
             
@@ -10904,7 +10896,7 @@
                             <div class="stock-detail-signal-value" style="color: ${signalColor};">${signal}</div>
                             <div>
                                 <div class="stock-detail-signal-label" style="color: ${signalColor};">Signal</div>
-                                <div class="stock-detail-signal-note">${stock.councilNote || (isOversold ? 'RSI oversold — entry zone' : stock.rsi <= 45 ? 'Approaching oversold' : 'Hold — wait for dip')}</div>
+                                <div class="stock-detail-signal-note">${stock.aiNote || (isOversold ? 'RSI oversold — entry zone' : stock.rsi <= 45 ? 'Approaching oversold' : 'Hold — wait for dip')}</div>
                             </div>
                         </div>
 
