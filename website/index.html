@@ -10945,7 +10945,7 @@
                 document.body.style.overflow = 'hidden';
             }
 
-            loadStockSentiment(symbol);
+            loadStockSentiment(symbol, stock);
 
             if (!isRefresh) {
                 watchlistPopupRefreshInterval = setInterval(() => {
@@ -10968,19 +10968,19 @@
             </svg>`;
         }
 
-        async function loadStockSentiment(symbol) {
+        async function loadStockSentiment(symbol, stockData) {
             const container = document.getElementById('sentiment-content');
             if (!container) return;
 
-            // First try to use cached sentiment data from aiWatchlistPrices
-            const cachedData = aiWatchlistPrices[symbol];
-            const cachedSentiment = cachedData?.sentiment;
-            const cachedLabel = cachedData?.sentiment_label || 'Neutral';
+            // Use provided stockData first, then fall back to aiWatchlistPrices
+            const cachedData = aiWatchlistPrices && aiWatchlistPrices[symbol];
+            const sentimentScore = stockData?.sentiment?.bullish ?? cachedData?.sentiment ?? 50;
+            const sentimentLabel = cachedData?.sentiment_label || (sentimentScore >= 60 ? 'Bullish' : sentimentScore <= 40 ? 'Bearish' : 'Neutral');
 
             // Map sentiment score to tone
             let tone = 'neutral';
-            if (cachedSentiment >= 60) tone = 'bullish';
-            else if (cachedSentiment <= 40) tone = 'bearish';
+            if (sentimentScore >= 60) tone = 'bullish';
+            else if (sentimentScore <= 40) tone = 'bearish';
 
             const toneColor = tone === 'bullish' ? 'var(--accent-green)' : tone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
             const toneIcon = tone === 'bullish' ? '▲' : tone === 'bearish' ? '▼' : '—';
@@ -11017,16 +11017,14 @@
                 `;
             } catch (e) {
                 // Fallback to cached data from ai_watchlist_live.json
-                const sentimentLabel = cachedLabel || (cachedSentiment >= 60 ? 'Bullish' : cachedSentiment <= 40 ? 'Bearish' : 'Neutral');
-
                 container.innerHTML = `
                     <div class="sentiment-header">
                         <span class="sentiment-tone ${tone}">${toneIcon} ${sentimentLabel}</span>
-                        <span class="sentiment-mentions">Score: <strong>${cachedSentiment || 50}</strong>/100</span>
+                        <span class="sentiment-mentions">Score: <strong>${sentimentScore}</strong>/100</span>
                     </div>
                     <div style="margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
                         <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
-                            Sentiment data is updated periodically from news analysis. 
+                            Sentiment data is updated periodically from news analysis.
                             Current reading: <strong style="color: ${toneColor};">${sentimentLabel}</strong>
                         </div>
                     </div>
