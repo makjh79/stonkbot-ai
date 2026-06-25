@@ -9787,8 +9787,7 @@
                 const data = await response.json();
                 aiWatchlistPrices = data.prices || {};
                 lastWatchlistUpdate = data.timestamp;
-                // Recalculate AI scores with fresh prices
-                recalculateAIScoresWithLivePrices();
+                // Server-side AI scores used directly (no client-side recalculation)
                 return true;
             } catch (e) {
                 console.log('Watchlist prices not available yet:', e);
