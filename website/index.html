@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260624-0525-v87">
-    <script>(function(){var v='20260624-0525-v87';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260625-0010-v88">
+    <script>(function(){var v='20260625-0010-v88';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -10478,10 +10478,11 @@
             
             aiWatchlist = getWatchlistWithLivePrices();
             
-            // Assign tiers based on RSI and AI Score (matching bot criteria)
+            // Use server's signal tier (calculated by AI scoring system)
             const watchlistWithTiers = aiWatchlist.map(stock => {
-                const tier = stock.rsi <= 35 && stock.aiScore >= 75 ? 'NOW' :
-                             stock.rsi <= 48 && stock.aiScore >= 60 ? 'WATCH' : 'MONITOR';
+                // Map server signal to tier, fallback to calculated if not available
+                const tier = stock.signal === 'NOW' ? 'NOW' :
+                             stock.signal === 'WATCH' ? 'WATCH' : 'MONITOR';
                 return {...stock, tier};
             });
             
@@ -10859,9 +10860,11 @@
             modal.className = 'stock-detail-overlay';
 
             const chartData = generateDynamicChartData(stock);
-            const signal = stock.rsi <= 35 ? 'BUY' : stock.rsi <= 45 ? 'WATCH' : 'WAIT';
-            const signalColor = stock.rsi <= 35 ? 'var(--accent-green)' : stock.rsi <= 45 ? 'var(--accent-gold)' : 'var(--accent-red)';
-            const signalBg = stock.rsi <= 35 ? 'rgba(34,197,94,0.12)' : stock.rsi <= 45 ? 'rgba(251,191,36,0.12)' : 'rgba(239,68,68,0.12)';
+            // Use server's signal from AI scoring system
+            const serverSignal = stock.signal || 'WAIT';
+            const signal = serverSignal === 'NOW' ? 'NOW' : serverSignal === 'WATCH' ? 'WATCH' : 'WAIT';
+            const signalColor = signal === 'NOW' ? 'var(--accent-green)' : signal === 'WATCH' ? 'var(--accent-gold)' : 'var(--accent-red)';
+            const signalBg = signal === 'NOW' ? 'rgba(34,197,94,0.12)' : signal === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(239,68,68,0.12)';
             const aiScoreColor = stock.aiScore >= 90 ? 'var(--accent-green)' : stock.aiScore >= 75 ? 'var(--accent-gold)' : 'var(--accent-blue)';
             const isOversold = stock.rsi <= 35;
             const changeColor = stock.changePct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
@@ -10901,7 +10904,7 @@
                             <div class="stock-detail-signal-value" style="color: ${signalColor};">${signal}</div>
                             <div>
                                 <div class="stock-detail-signal-label" style="color: ${signalColor};">Signal</div>
-                                <div class="stock-detail-signal-note">${isOversold ? 'RSI oversold — entry zone' : stock.rsi <= 45 ? 'Approaching oversold' : 'Hold — wait for dip'}</div>
+                                <div class="stock-detail-signal-note">${stock.councilNote || (isOversold ? 'RSI oversold — entry zone' : stock.rsi <= 45 ? 'Approaching oversold' : 'Hold — wait for dip')}</div>
                             </div>
                         </div>
 
