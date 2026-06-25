@@ -10167,26 +10167,18 @@
                 const changePct = data.change_pct || 0;
                 const changeAmount = data.change_amount || 0;
                 const rsi = data.rsi || 50;
-                const baseScore = data.ai_score || 50;
+                // Use server-side AI score directly (no client-side recalculation)
+                const aiScore = data.ai_score || Math.round(data.total_score) || 50;
                 const sentiment = data.sentiment || 50;
                 const sentimentLabel = data.sentiment_label || 'Neutral';
                 
-                // Calculate buy urgency based on RSI proximity to 35
-                let buyUrgency = 0;
-                if (rsi <= 35) buyUrgency = 100;
-                else if (rsi >= 60) buyUrgency = 0;
-                else buyUrgency = Math.round(((60 - rsi) / 25) * 100);
-                
-                // AI Score: 50% base + 50% buy urgency
-                const enhancedScore = Math.round((baseScore * 0.5) + (buyUrgency * 0.5));
-                
-                // Simple readiness indicator - aligned with RSI signal
+                // Readiness indicator based on server signal tier
                 let readinessTag = '';
-                if (rsi <= 35) readinessTag = 'READY';
-                else if (rsi <= 45) readinessTag = 'CLOSE';
+                if (data.signal_tier === 'NOW') readinessTag = 'READY';
+                else if (data.signal_tier === 'WATCH') readinessTag = 'CLOSE';
                 
                 // Generate dynamic descriptions
-                const dynamicStrategy = generateDynamicStrategy(symbol, rsi, changePct, enhancedScore, info.company);
+                const dynamicStrategy = generateDynamicStrategy(symbol, rsi, changePct, aiScore, info.company);
                 const dynamicCatalyst = generateDynamicCatalyst(symbol, changePct, rsi, sentiment, sentimentLabel);
                 const dynamicRisk = generateDynamicRisk(symbol, rsi, price, targets.stop_loss, changePct);
                 
@@ -10204,7 +10196,7 @@
                         ? (data.volume / data.avg_volume).toFixed(1) + 'x'
                         : '-',
                     sentiment: { bullish: sentiment, bearish: 100 - sentiment },
-                    aiScore: enhancedScore,
+                    aiScore: aiScore,
                     readinessTag: readinessTag,
                     strategy: dynamicStrategy,
                     catalyst: dynamicCatalyst,
