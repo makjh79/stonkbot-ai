@@ -5464,9 +5464,8 @@
                 const plClass = isPositive ? 'positive' : 'negative';
                 const sign = isPositive ? '+' : '';
 
-                // Get company name from dynamic companyInfo if available
-                const companyData = (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]) ? companyInfo[pos.symbol] : {};
-                const companyName = companyData.company || getCompanyName(pos.symbol) || pos.symbol;
+                // Get company name from portfolio data first, then fall back to companyInfo
+                const companyName = pos.name || (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]?.company) || getCompanyName(pos.symbol) || pos.symbol;
 
                 return `
                 <div onclick="showTradeDetails('${pos.symbol}')" data-positive="${isPositive}" class="holding-card" role="button" tabindex="0" aria-label="View details for ${pos.symbol}">
@@ -8600,9 +8599,8 @@
             `;
             
             // Build unified popup content using pre-generated + live data
-            // Get company info
-            const companyDataLocal = (typeof companyInfo !== 'undefined' ? companyInfo[symbol] : {}) || {};
-            const companyName = companyDataLocal.company || getCompanyName(symbol) || symbol;
+            // Get company info from portfolio data first, then fall back to companyInfo
+            const companyName = position?.name || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
             
             // Use pre-generated content if available, otherwise fall back to dynamic generation
             const livePrice = liveData.price || (position ? position.current : 0) || preGenerated.price || 0;
