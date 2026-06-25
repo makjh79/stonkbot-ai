@@ -10161,7 +10161,8 @@
             for (const [symbol, data] of Object.entries(aiWatchlistPrices)) {
                 const targets = data.targets || {};
                 const price = data.price || 0;
-                const info = companyInfo[symbol] || { company: symbol };
+                // Use company name from ai_watchlist_live.json first, then fall back to companyInfo
+                const info = { company: data.company || companyInfo[symbol]?.company || symbol };
                 
                 // Get actual change % from data
                 const changePct = data.change_pct || 0;
@@ -10970,13 +10971,30 @@
         async function loadStockSentiment(symbol) {
             const container = document.getElementById('sentiment-content');
             if (!container) return;
+
+            // First try to use cached sentiment data from aiWatchlistPrices
+            const cachedData = aiWatchlistPrices[symbol];
+            const cachedSentiment = cachedData?.sentiment;
+            const cachedLabel = cachedData?.sentiment_label || 'Neutral';
+
+            // Map sentiment score to tone
+            let tone = 'neutral';
+            if (cachedSentiment >= 60) tone = 'bullish';
+            else if (cachedSentiment <= 40) tone = 'bearish';
+
+            const toneColor = tone === 'bullish' ? 'var(--accent-green)' : tone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
+            const toneIcon = tone === 'bullish' ? '▲' : tone === 'bearish' ? '▼' : '—';
+
             try {
+                // Try to fetch detailed sentiment data
                 const res = await fetch(`./sentiment/${symbol}.json?t=${Date.now()}`);
                 if (!res.ok) throw new Error('No sentiment data');
                 const data = await res.json();
 
-                const toneColor = data.tone === 'bullish' ? 'var(--accent-green)' : data.tone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
-                const toneIcon = data.tone === 'bullish' ? '▲' : data.tone === 'bearish' ? '▼' : '—';
+                // Use fetched data if available
+                const fetchedTone = data.tone || tone;
+                const fetchedToneColor = fetchedTone === 'bullish' ? 'var(--accent-green)' : fetchedTone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
+                const fetchedToneIcon = fetchedTone === 'bullish' ? '▲' : fetchedTone === 'bearish' ? '▼' : '—';
 
                 const headlines = (data.headlines || []).slice(0, 3).map(h => `
                     <div class="sentiment-headline">
@@ -10990,19 +11008,29 @@
 
                 container.innerHTML = `
                     <div class="sentiment-header">
-                        <span class="sentiment-tone ${data.tone}">${toneIcon} ${data.tone}</span>
-                        <span class="sentiment-mentions"><strong>${data.mentionCount24h}</strong> news mentions · 24h</span>
+                        <span class="sentiment-tone ${fetchedTone}">${fetchedToneIcon} ${fetchedTone}</span>
+                        <span class="sentiment-mentions"><strong>${data.mentionCount24h || 0}</strong> news mentions · 24h</span>
                     </div>
-                    <div class="sentiment-sparkline">${renderSentimentSparkline(data.sparkline, toneColor)}</div>
+                    <div class="sentiment-sparkline">${renderSentimentSparkline(data.sparkline, fetchedToneColor)}</div>
                     <div class="sentiment-headlines">${headlines}</div>
                     <div class="sentiment-disclaimer">${data.dataSource || 'News sentiment is a secondary indicator, not a trading signal.'}</div>
                 `;
             } catch (e) {
+                // Fallback to cached data from ai_watchlist_live.json
+                const sentimentLabel = cachedLabel || (cachedSentiment >= 60 ? 'Bullish' : cachedSentiment <= 40 ? 'Bearish' : 'Neutral');
+
                 container.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.8rem;">
-                        <span>📰</span>
-                        <span>News sentiment data unavailable for ${symbol}.</span>
+                    <div class="sentiment-header">
+                        <span class="sentiment-tone ${tone}">${toneIcon} ${sentimentLabel}</span>
+                        <span class="sentiment-mentions">Score: <strong>${cachedSentiment || 50}</strong>/100</span>
                     </div>
+                    <div style="margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
+                            Sentiment data is updated periodically from news analysis. 
+                            Current reading: <strong style="color: ${toneColor};">${sentimentLabel}</strong>
+                        </div>
+                    </div>
+                    <div class="sentiment-disclaimer">News sentiment is a secondary indicator, not a trading signal.</div>
                 `;
             }
         }
