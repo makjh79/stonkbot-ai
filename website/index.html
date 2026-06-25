@@ -9011,14 +9011,14 @@
                             subtype: trade.action?.toLowerCase() || 'buy',
                             icon: trade.action === 'SELL' ? '' : '',
                             title: `${trade.action === 'SELL' ? 'Sold' : 'Bought'} ${trade.symbol}`,
-                            description: `${trade.quantity} shares @ $${parseFloat(trade.price).toFixed(2)}${trade.source ? ` • ${trade.source}` : ''}`,
+                            description: `${trade.qty} shares @ $${parseFloat(trade.price).toFixed(2)}${trade.source ? ` • ${trade.source}` : ''}`,
                             timestamp: new Date(trade.timestamp || trade.filled_at),
                             badge: trade.action || 'Buy',
                             badgeClass: trade.action?.toLowerCase() || 'buy',
                             details: { 
-                                quantity: trade.quantity, 
+                                quantity: trade.qty, 
                                 price: parseFloat(trade.price).toFixed(2), 
-                                total: (trade.quantity * parseFloat(trade.price)).toFixed(2),
+                                total: (trade.qty * parseFloat(trade.price)).toFixed(2),
                                 order_id: trade.order_id 
                             },
                             rationale: trade.rationale || `Trade executed via Alpaca API${trade.source ? ` (${trade.source})` : ''}`,
