@@ -10493,8 +10493,8 @@
                 const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
                 const isOversold = stock.rsi <= 35;
                 
-                // Check if this is a tracking stock (no real signal yet)
-                const isTracking = !stock.isLive || stock.price === 0 || stock.aiScore <= 40;
+                // Check if this is a tracking stock (no real data yet)
+                const isTracking = !stock.isLive || stock.price === 0;
                 
                 // Tier badge styling
                 const tierColors = {
