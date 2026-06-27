@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-1900-news-fix">
-    <script>(function(){var v='20260627-1900-news-fix';var k='stonkbot_v104';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-2030-no-badge">
+    <script>(function(){var v='20260627-2030-no-badge';var k='stonkbot_v104';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -9144,11 +9144,8 @@ function updateDashboard(data) {
                         <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Latest news</div>
                         <a href="${preGenerated.alpacaNewsUrl || '#'}" ${preGenerated.alpacaNewsUrl ? 'target="_blank" rel="noopener noreferrer"' : ''} style="text-decoration: none; color: inherit; display: block;">
                             <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;${preGenerated.alpacaNewsUrl ? ' cursor: pointer;' : ''}">
-                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                                    <span class="sentiment-tone ${(preGenerated.alpacaNewsSentiment || '').toLowerCase()}" style="font-size: 0.65rem; padding: 3px 6px;">${preGenerated.alpacaNewsSentiment === 'bullish' ? '▲' : preGenerated.alpacaNewsSentiment === 'bearish' ? '▼' : '—'} ${(preGenerated.alpacaNewsSentiment || 'neutral').charAt(0).toUpperCase() + (preGenerated.alpacaNewsSentiment || 'neutral').slice(1)}</span>
-                                    <span style="font-size: 0.6rem; color: var(--text-muted);">Alpaca</span>
-                                </div>
-                                <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${preGenerated.alpacaNewsHeadline}${preGenerated.alpacaNewsUrl ? ' <span style="font-size: 0.6rem; color: var(--text-muted);">↗</span>' : ''}</div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); margin-bottom: 6px;">${preGenerated.alpacaNewsSource || 'Alpaca'}</div>
+                            <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${preGenerated.alpacaNewsHeadline}${preGenerated.alpacaNewsUrl ? ' <span style="font-size: 0.6rem; color: var(--text-muted);">↗</span>' : ''}</div>
                             </div>
                         </a>
                     </div>
@@ -11578,25 +11575,13 @@ function updateDashboard(data) {
             const enriched = signalEnrichmentCache[symbol];
             const cachedData = aiWatchlistPrices && aiWatchlistPrices[symbol];
 
-            // Determine sentiment tone from enrichment data
-            let sentimentLabel = 'Neutral';
-            let tone = 'neutral';
-            let toneIcon = '—';
-
-            if (enriched && enriched.news) {
-                const alpacaSent = enriched.news.alpaca_sentiment || enriched.news.sentiment_label;
-                if (alpacaSent === 'bullish') { sentimentLabel = 'Bullish'; tone = 'bullish'; toneIcon = '▲'; }
-                else if (alpacaSent === 'bearish') { sentimentLabel = 'Bearish'; tone = 'bearish'; toneIcon = '▼'; }
-                else if (alpacaSent) { sentimentLabel = alpacaSent.charAt(0).toUpperCase() + alpacaSent.slice(1); }
-            }
-
-            // Get headlines: prefer Alpaca, fall back to Finnhub
+            // Get headline + URL from enrichment data
             let headline = null;
             let headlineSource = null;
             let headlineUrl = null;
             if (enriched && enriched.news) {
                 headline = enriched.news.alpaca_headline || enriched.news.sample_headline || (enriched.news.headlines && enriched.news.headlines[0]);
-                headlineSource = enriched.news.alpaca_headline ? 'Alpaca' : 'Finnhub';
+                headlineSource = enriched.news.alpaca_headline ? (enriched.news.alpaca_source || 'Alpaca') : 'Finnhub';
                 headlineUrl = enriched.news.alpaca_url || '';
             }
 
@@ -11604,12 +11589,9 @@ function updateDashboard(data) {
             const preGen = (typeof popupContentCache !== 'undefined' && popupContentCache[symbol]) || {};
             if (!headline && preGen.alpacaNewsHeadline) {
                 headline = preGen.alpacaNewsHeadline;
-                headlineSource = 'Alpaca';
+                headlineSource = preGen.alpacaNewsSource || 'Alpaca';
                 headlineUrl = preGen.alpacaNewsUrl || '';
             }
-
-            // Build sentiment badge
-            const toneColor = tone === 'bullish' ? 'var(--accent-green)' : tone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
 
             // Render
             if (headline) {
@@ -11617,27 +11599,16 @@ function updateDashboard(data) {
                 const linkAttr = headlineUrl ? `a href="${headlineUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;"` : 'div';
                 const closeTag = headlineUrl ? 'a' : 'div';
                 container.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <span class="sentiment-tone ${tone}" style="font-size: 0.7rem; padding: 4px 8px;">${toneIcon} ${sentimentLabel}</span>
-                        ${headlineSource ? `<span style="font-size: 0.6rem; color: var(--text-muted);">${headlineSource}</span>` : ''}
-                    </div>
+                    ${headlineSource ? `<div style="font-size: 0.6rem; color: var(--text-muted); margin-bottom: 6px;">${headlineSource}</div>` : ''}
                     <${linkAttr}>
                         <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;${headlineUrl ? ' cursor: pointer;' : ''}">
                             <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${headline}${headlineUrl ? ' <span style="font-size: 0.6rem; color: var(--text-muted);">↗</span>' : ''}</div>
                         </div>
                     </${closeTag}>
                 `;
-            } else if (cachedData && cachedData.sentiment != null) {
-                // Fall back to watchlist sentiment score
-                const score = cachedData.sentiment;
-                if (score >= 60) { sentimentLabel = 'Bullish'; tone = 'bullish'; toneIcon = '▲'; }
-                else if (score <= 40) { sentimentLabel = 'Bearish'; tone = 'bearish'; toneIcon = '▼'; }
+            } else if (cachedData) {
                 container.innerHTML = `
-                    <div class="sentiment-header">
-                        <span class="sentiment-tone ${tone}">${toneIcon} ${sentimentLabel}</span>
-                        <span class="sentiment-mentions">Score: <strong>${score}</strong>/100</span>
-                    </div>
-                    <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted);">No recent news headlines available.</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">No recent news headlines available.</div>
                 `;
             } else {
                 container.innerHTML = `
