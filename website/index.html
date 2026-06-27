@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-0855-v103-tooltips-strong">
-    <script>(function(){var v='20260627-0855-v103-tooltips-strong';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-1900-news-fix">
+    <script>(function(){var v='20260627-1900-news-fix';var k='stonkbot_v104';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -9062,8 +9062,8 @@ function updateDashboard(data) {
             const content = `
                 <div style="padding: 1.25rem;">
 
-                    <!-- Header -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
+                    <!-- Header: symbol + close -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">${symbol}</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${companyName}</div>
@@ -9072,58 +9072,88 @@ function updateDashboard(data) {
                     </div>
 
                     ${position ? `
-                    <!-- P&L Hero -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <!-- Price + P&L in one clean row -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.9rem;">
                         <div>
-                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">P&L</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: ${plColor};">${plSign}${plValue}%</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${plSign}$${Math.abs(plDollar).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: var(--text-primary);">$${livePrice.toFixed(2)}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${position.qty} shares · $${position.market_value.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Value</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">$${position.market_value.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${position.qty} shares · $${livePrice.toFixed(2)}</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: ${plColor};">${plSign}${plValue}%</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${plSign}$${Math.abs(plDollar).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
                         </div>
                     </div>
                     ` : ''}
 
-                    <!-- Status line -->
-                    <div style="background: ${status.color === '#22c55e' ? 'rgba(34,197,94,0.1)' : status.color === '#ef4444' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)'}; border: 1px solid ${status.color}33; border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <!-- Status pill -->
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.9rem;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${status.color}; flex-shrink: 0;"></span>
                         <span style="font-size: 0.8rem; font-weight: 600; color: ${status.color};">${status.text}</span>
                     </div>
 
+                    <!-- Metrics grid: 3-up, consistent -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.9rem;">
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Readiness</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${readiness.toFixed(0)}</div>
+                            <div style="font-size: 0.55rem; color: ${tierColor}; font-weight: 600; text-transform: uppercase;">${tier === 'STRONG_NOW' ? '🚀 STRONG' : tier}</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">RSI</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${(liveData.rsi || 50).toFixed(0)}</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted);">${(liveData.rsi || 50) <= 35 ? 'OVERSOLD' : (liveData.rsi || 50) >= 70 ? 'OVERBOUGHT' : 'NEUTRAL'}</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? 'IV' : 'VWAP'}</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? (preGenerated.optionsImpliedVol * 100).toFixed(0) + '%' : preGenerated.dailyVwap ? '$' + preGenerated.dailyVwap.toFixed(0) : '—'}</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted);">${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? 'implied vol' : preGenerated.dailyVwap ? 'vs $' + livePrice.toFixed(0) : 'no data'}</div>
+                        </div>
+                    </div>
+
+                    <!-- Key levels: always both, same layout -->
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.9rem;">
+                        <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 10px;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🛑 Stop</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ef4444; font-weight: 700;">$${currentStop.toFixed(2)}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">${stopDist}% below</div>
+                        </div>
+                        <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12); border-radius: 10px;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🎯 Target</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">$${profitTarget.toFixed(2)}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">+${targetDist}% upside</div>
+                        </div>
+                    </div>
+
+                    <!-- VWAP stop (only if losing and available) -->
+                    ${parseFloat(plValue) < -5 && preGenerated.vwapStop ? `
+                    <div style="padding: 0.4rem 0.7rem; background: rgba(239,68,68,0.03); border: 1px solid rgba(239,68,68,0.08); border-radius: 8px; margin-bottom: 0.9rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.65rem; color: var(--text-muted);">📊 VWAP stop</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; opacity: 0.8;">$${preGenerated.vwapStop.toFixed(2)}</span>
+                    </div>
+                    ` : ''}
+
                     <!-- Why we own it -->
-                    <div style="margin-bottom: 1rem;">
+                    <div style="margin-bottom: 0.9rem;">
                         <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why we own it</div>
-                        <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">${thesisShort}</div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6;">${thesisShort}</div>
                     </div>
 
-                    <!-- What to watch -->
-                    <div style="margin-bottom: 1rem;">
-                        <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">What to watch</div>
-                        ${exitHtml}
-                    </div>
-
-                    <!-- VWAP row (from Alpaca paid data) -->
-                    ${preGenerated.dailyVwap ? `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; margin-bottom: 1rem;">
-                        <span style="font-size: 0.7rem; color: var(--text-muted);">VWAP</span>
-                        <div style="text-align: right;">
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">$${preGenerated.dailyVwap.toFixed(2)}</span>
-                            ${preGenerated.vwapDeviation != null ? `<span style="font-size: 0.65rem; color: ${preGenerated.vwapDeviation >= 0 ? '#22c55e' : '#ef4444'}; margin-left: 6px;">${preGenerated.vwapDeviation >= 0 ? '+' : ''}${preGenerated.vwapDeviation.toFixed(1)}%</span>` : ''}
+                    <!-- Latest news -->
+                    ${preGenerated.alpacaNewsHeadline ? `
+                    <div style="margin-bottom: 0.9rem;">
+                        <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Latest news</div>
+                        <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;">
+                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                <span class="sentiment-tone ${(preGenerated.alpacaNewsSentiment || '').toLowerCase()}" style="font-size: 0.65rem; padding: 3px 6px;">${preGenerated.alpacaNewsSentiment === 'bullish' ? '▲' : preGenerated.alpacaNewsSentiment === 'bearish' ? '▼' : '—'} ${(preGenerated.alpacaNewsSentiment || 'neutral').charAt(0).toUpperCase() + (preGenerated.alpacaNewsSentiment || 'neutral').slice(1)}</span>
+                                <span style="font-size: 0.6rem; color: var(--text-muted);">Alpaca</span>
+                            </div>
+                            <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${preGenerated.alpacaNewsHeadline}</div>
                         </div>
                     </div>
                     ` : ''}
 
-                    <!-- Signal chip -->
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                        <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; ${tier === 'STRONG_NOW' ? 'box-shadow: 0 0 8px rgba(6,182,212,0.4);' : ''}">${tier === 'STRONG_NOW' ? '🚀 STRONG NOW' : tier}</span>
-                        <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
-                        ${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? `<span style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.6rem; font-weight: 500; padding: 3px 8px; border-radius: 20px;">IV ${(preGenerated.optionsImpliedVol * 100).toFixed(0)}%</span>` : ''}
-                    </div>
-
                 </div>
-            `;
+`;
 
             const modal = document.createElement('div');
             modal.id = 'trade-modal';
@@ -10170,6 +10200,8 @@ function updateDashboard(data) {
         // Watchlist Data - Base research list with live price overlay
         // Prices auto-refresh every 30 seconds from Alpaca
         let aiWatchlistPrices = {}; // Live prices fetched from API
+        let signalEnrichmentCache = {}; // News + sentiment from Alpaca
+        let signalEnrichmentLastFetch = 0;
         let lastWatchlistUpdate = null;
         
         // Base research data - will be populated dynamically from ai_watchlist_live.json
@@ -10553,6 +10585,7 @@ function updateDashboard(data) {
         
         // Init immediately
         initCrowdSentiment();
+        fetchSignalEnrichment(); // Load Alpaca news + sentiment
         fetchEarningsData();
         fetchSignalAccuracy(); // Load signal accuracy data
         fetchTrendingSentiment(); // Load trending sentiment data
@@ -11417,64 +11450,63 @@ function updateDashboard(data) {
                     <div class="stock-detail-body" style="padding: 0 1.25rem 1.5rem;">
 
                         <!-- Price + change -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 1rem 0 0.9rem;">
                             <div>
-                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Price</div>
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">$${stock.price.toFixed(2)}</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: var(--text-primary);">$${stock.price.toFixed(2)}</div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Today</div>
                                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: ${changeColor};">${stock.changePct >= 0 ? '▲' : '▼'} ${Math.abs(stock.changePct).toFixed(2)}%</div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">today</div>
                             </div>
                         </div>
 
-                        <!-- Status line -->
-                        <div style="background: ${status.color === '#22c55e' ? 'rgba(34,197,94,0.1)' : status.color === '#fbbf24' ? 'rgba(251,191,36,0.1)' : status.color === '#06b6d4' ? 'rgba(6,182,212,0.1)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${status.color}33; border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                        <!-- Status pill -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.9rem;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: ${status.color}; flex-shrink: 0;"></span>
                             <span style="font-size: 0.8rem; font-weight: 600; color: ${status.color};">${status.text}</span>
                         </div>
 
+                        <!-- Metrics grid: 3-up, consistent -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.9rem;">
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Readiness</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${readiness.toFixed(0)}</div>
+                                <div style="font-size: 0.55rem; color: ${tierColor}; font-weight: 600; text-transform: uppercase;">${tier === 'STRONG_NOW' ? '🚀 STRONG' : tier}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">RSI</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${rsi.toFixed(0)}</div>
+                                <div style="font-size: 0.55rem; color: var(--text-muted);">${rsi <= 35 ? 'OVERSOLD' : rsi >= 70 ? 'OVERBOUGHT' : 'NEUTRAL'}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">${wlOptionsIV && wlOptionsIV > 0 ? 'IV' : 'VWAP'}</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${wlOptionsIV && wlOptionsIV > 0 ? (wlOptionsIV * 100).toFixed(0) + '%' : stock.daily_vwap ? '$' + stock.daily_vwap.toFixed(0) : '—'}</div>
+                                <div style="font-size: 0.55rem; color: var(--text-muted);">${wlOptionsIV && wlOptionsIV > 0 ? 'implied vol' : stock.daily_vwap ? 'vs $' + stock.price.toFixed(0) : 'no data'}</div>
+                            </div>
+                        </div>
+
+                        <!-- Key levels: always both -->
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.9rem;">
+                            <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 10px;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🛑 Stop</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ef4444; font-weight: 700;">$${stopPrice.toFixed(2)}</div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">${stopDist}% below</div>
+                            </div>
+                            <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12); border-radius: 10px;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🎯 Target</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">$${targetPrice.toFixed(2)}</div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">+${targetDist}% upside</div>
+                            </div>
+                        </div>
+
                         <!-- Why this stock -->
-                        <div style="margin-bottom: 1rem;">
+                        <div style="margin-bottom: 0.9rem;">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why this stock?</div>
-                            <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">${strategyShort}</div>
+                            <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6;">${strategyShort}</div>
                         </div>
 
-                        <!-- Entry/exit levels -->
-                        <div style="margin-bottom: 1rem;">
-                            <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Key levels</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px;">
-                                    <span style="font-size: 0.7rem; color: var(--text-secondary);">Stop</span>
-                                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; font-weight: 600;">$${stopPrice.toFixed(0)} <span style="font-size: 0.65rem; opacity: 0.7;">(${stopDist}%)</span></span>
-                                </div>
-                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); border-radius: 8px;">
-                                    <span style="font-size: 0.7rem; color: var(--text-secondary);">Target</span>
-                                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #22c55e; font-weight: 600;">$${targetPrice.toFixed(0)} <span style="font-size: 0.65rem; opacity: 0.7;">(+${targetDist}%)</span></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- VWAP row (from Alpaca data) -->
-                        ${stock.daily_vwap ? `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; margin-bottom: 1rem;">
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">VWAP</span>
-                            <div style="text-align: right;">
-                                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">$${stock.daily_vwap.toFixed(2)}</span>
-                                ${stock.prev_close ? `<span style="font-size: 0.65rem; color: ${stock.price >= stock.prev_close ? '#22c55e' : '#ef4444'}; margin-left: 6px;">${stock.price >= stock.prev_close ? '+' : ''}${((stock.price - stock.prev_close) / stock.prev_close * 100).toFixed(1)}%</span>` : ''}
-                            </div>
-                        </div>
-                        ` : ''}
-
-                        <!-- Signal chips -->
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                            <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
-                            <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
-                        ${wlOptionsIV && wlOptionsIV > 0 ? `<span style="background: rgba(6,182,212,0.1); color: #06b6d4; font-size: 0.6rem; font-weight: 600; padding: 3px 8px; border-radius: 20px;">IV ${(wlOptionsIV * 100).toFixed(0)}%</span>` : '<span style="background: rgba(255,255,255,0.03); color: var(--text-muted); font-size: 0.6rem; font-weight: 500; padding: 3px 8px; border-radius: 20px; opacity: 0.5;">IV —</span>'}
-                            <span style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;">RSI ${rsi.toFixed(0)}</span>
-                        </div>
-
-                        <!-- News sentiment (compact, 1 headline max) -->
-                        <div id="sentiment-section" style="margin-bottom: 0.5rem;">
+                        <!-- News: compact -->
+                        <div id="sentiment-section">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Latest news</div>
                             <div id="sentiment-content">
                                 <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.75rem;">
@@ -11485,7 +11517,7 @@ function updateDashboard(data) {
 
                     </div>
                 </div>
-            `;
+`;
 
             modal.innerHTML = bodyHtml;
             document.body.appendChild(modal);
@@ -11516,65 +11548,92 @@ function updateDashboard(data) {
             </svg>`;
         }
 
+        async function fetchSignalEnrichment() {
+            if (Date.now() - signalEnrichmentLastFetch < 60000) return signalEnrichmentCache;
+            try {
+                const res = await fetch('./signal_enrichment.json?t=' + Date.now());
+                if (!res.ok) return signalEnrichmentCache;
+                const data = await res.json();
+                signalEnrichmentCache = data.data || {};
+                signalEnrichmentLastFetch = Date.now();
+                console.log('[Enrichment] Loaded news for', Object.keys(signalEnrichmentCache).length, 'symbols');
+                return signalEnrichmentCache;
+            } catch (e) {
+                console.log('[Enrichment] Not available yet:', e.message);
+                return signalEnrichmentCache;
+            }
+        }
+
         async function loadStockSentiment(symbol, stockData) {
             const container = document.getElementById('sentiment-content');
             if (!container) return;
 
-            // Use provided stockData first, then fall back to aiWatchlistPrices
+            // Ensure enrichment data is loaded
+            if (Object.keys(signalEnrichmentCache).length === 0) {
+                await fetchSignalEnrichment();
+            }
+
+            const enriched = signalEnrichmentCache[symbol];
             const cachedData = aiWatchlistPrices && aiWatchlistPrices[symbol];
-            const sentimentScore = stockData?.sentiment?.bullish ?? cachedData?.sentiment ?? 50;
-            const sentimentLabel = cachedData?.sentiment_label || (sentimentScore >= 60 ? 'Bullish' : sentimentScore <= 40 ? 'Bearish' : 'Neutral');
 
-            // Map sentiment score to tone
+            // Determine sentiment tone from enrichment data
+            let sentimentLabel = 'Neutral';
             let tone = 'neutral';
-            if (sentimentScore >= 60) tone = 'bullish';
-            else if (sentimentScore <= 40) tone = 'bearish';
+            let toneIcon = '—';
 
+            if (enriched && enriched.news) {
+                const alpacaSent = enriched.news.alpaca_sentiment || enriched.news.sentiment_label;
+                if (alpacaSent === 'bullish') { sentimentLabel = 'Bullish'; tone = 'bullish'; toneIcon = '▲'; }
+                else if (alpacaSent === 'bearish') { sentimentLabel = 'Bearish'; tone = 'bearish'; toneIcon = '▼'; }
+                else if (alpacaSent) { sentimentLabel = alpacaSent.charAt(0).toUpperCase() + alpacaSent.slice(1); }
+            }
+
+            // Get headlines: prefer Alpaca, fall back to Finnhub
+            let headline = null;
+            let headlineSource = null;
+            if (enriched && enriched.news) {
+                headline = enriched.news.alpaca_headline || enriched.news.sample_headline || (enriched.news.headlines && enriched.news.headlines[0]);
+                headlineSource = enriched.news.alpaca_headline ? 'Alpaca' : 'Finnhub';
+            }
+
+            // Also check preGenerated (holdings popup data) for Alpaca news
+            const preGen = (typeof popupContentCache !== 'undefined' && popupContentCache[symbol]) || {};
+            if (!headline && preGen.alpacaNewsHeadline) {
+                headline = preGen.alpacaNewsHeadline;
+                headlineSource = 'Alpaca';
+            }
+
+            // Build sentiment badge
             const toneColor = tone === 'bullish' ? 'var(--accent-green)' : tone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
-            const toneIcon = tone === 'bullish' ? '▲' : tone === 'bearish' ? '▼' : '—';
 
-            try {
-                // Try to fetch detailed sentiment data
-                const res = await fetch(`./sentiment/${symbol}.json?t=${Date.now()}`);
-                if (!res.ok) throw new Error('No sentiment data');
-                const data = await res.json();
-
-                // Use fetched data if available
-                const fetchedTone = data.tone || tone;
-                const fetchedToneColor = fetchedTone === 'bullish' ? 'var(--accent-green)' : fetchedTone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
-                const fetchedToneIcon = fetchedTone === 'bullish' ? '▲' : fetchedTone === 'bearish' ? '▼' : '—';
-
-                const headlines = (data.headlines || []).slice(0, 1).map(h => `
-                    <a href="${h.url || '#'}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; color: inherit; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;">
-                        <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4; margin-bottom: 4px;">${h.title}</div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; color: var(--text-muted);">
-                            <span style="font-weight: 600;">${h.source}</span>
-                            <span>${h.publishedRelative || ''} ↗</span>
-                        </div>
-                    </a>
-                `).join('');
-
+            // Render
+            if (headline) {
                 container.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: ${headlines ? '10px' : '0'};">
-                        <span class="sentiment-tone ${fetchedTone}" style="font-size: 0.7rem; padding: 4px 8px;">${fetchedToneIcon} ${fetchedTone}</span>
-                        <span style="font-size: 0.7rem; color: var(--text-muted);">${data.mentionCount24h || 0} mentions · 24h</span>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span class="sentiment-tone ${tone}" style="font-size: 0.7rem; padding: 4px 8px;">${toneIcon} ${sentimentLabel}</span>
+                        ${headlineSource ? `<span style="font-size: 0.6rem; color: var(--text-muted);">${headlineSource}</span>` : ''}
                     </div>
-                    ${headlines}
+                    <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;">
+                        <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${headline}</div>
+                    </div>
                 `;
-            } catch (e) {
-                // Fallback to cached data from ai_watchlist_live.json
+            } else if (cachedData && cachedData.sentiment != null) {
+                // Fall back to watchlist sentiment score
+                const score = cachedData.sentiment;
+                if (score >= 60) { sentimentLabel = 'Bullish'; tone = 'bullish'; toneIcon = '▲'; }
+                else if (score <= 40) { sentimentLabel = 'Bearish'; tone = 'bearish'; toneIcon = '▼'; }
                 container.innerHTML = `
                     <div class="sentiment-header">
                         <span class="sentiment-tone ${tone}">${toneIcon} ${sentimentLabel}</span>
-                        <span class="sentiment-mentions">Score: <strong>${sentimentScore}</strong>/100</span>
+                        <span class="sentiment-mentions">Score: <strong>${score}</strong>/100</span>
                     </div>
-                    <div style="margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
-                            Sentiment data is updated periodically from news analysis.
-                            Current reading: <strong style="color: ${toneColor};">${sentimentLabel}</strong>
-                        </div>
+                    <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted);">No recent news headlines available.</div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div style="padding: 0.8rem; text-align: center; color: var(--text-muted); font-size: 0.75rem;">
+                        No news data available for ${symbol}.
                     </div>
-                    <div class="sentiment-disclaimer">News sentiment is a secondary indicator, not a trading signal.</div>
                 `;
             }
         }
