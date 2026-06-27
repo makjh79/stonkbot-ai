@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260627-2110-factor-tooltips">
-    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v112';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v113';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -4087,7 +4087,7 @@
                     </div>
                     
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.75rem; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px; text-align: center;">
-                        All market indices update live from Yahoo Finance every 30 seconds
+                        All market indices update live from Alpaca every 30 seconds
                     </div>
                 </div>
 
@@ -6363,8 +6363,8 @@ function updateDashboard(data) {
                     sp500PctEl.textContent = (sp500Num >= 0 ? '+' : '') + sp500Num.toFixed(2) + '%';
                     sp500PctEl.style.color = sp500Num < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
                 }
-                if (dowPctEl) dowPctEl.textContent = (dowNum >= 0 ? '+' : '') + dowNum.toFixed(2) + '%';
-                if (nasdaqPctEl) nasdaqPctEl.textContent = (nasdaqNum >= 0 ? '+' : '') + nasdaqNum.toFixed(2) + '%';
+                if (dowPctEl) { dowPctEl.textContent = (dowNum >= 0 ? '+' : '') + dowNum.toFixed(2) + '%'; dowPctEl.style.color = dowNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)'; }
+                if (nasdaqPctEl) { nasdaqPctEl.textContent = (nasdaqNum >= 0 ? '+' : '') + nasdaqNum.toFixed(2) + '%'; nasdaqPctEl.style.color = nasdaqNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)'; }
 
                 // Update progress bars
                 const stonkBar = document.getElementById('detail-stonk-bar');
@@ -6384,7 +6384,18 @@ function updateDashboard(data) {
                         ? 'var(--accent-red)'
                         : 'var(--accent-green)';
                 }
-                
+                const dowBar = document.getElementById('detail-dow-bar');
+                if (dowBar) {
+                    const dowWidth = Math.max(10, Math.min(90, 50 + (dowNum * 5)));
+                    dowBar.style.width = dowWidth + '%';
+                    dowBar.style.background = dowNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                }
+                const nasdaqBar = document.getElementById('detail-nasdaq-bar');
+                if (nasdaqBar) {
+                    const nasdaqWidth = Math.max(10, Math.min(90, 50 + (nasdaqNum * 5)));
+                    nasdaqBar.style.width = nasdaqWidth + '%';
+                    nasdaqBar.style.background = nasdaqNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                }
 
         }
 
