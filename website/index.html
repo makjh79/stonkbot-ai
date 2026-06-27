@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260627-2110-factor-tooltips">
-    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v116';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v117';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -257,6 +257,50 @@
             font-weight: 500;
         }
         .market-banner.show { display: flex; }
+        /* Regime status banner */
+        .regime-banner {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .regime-banner.show { display: flex; }
+        .regime-banner.risk-on {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: var(--accent-green);
+        }
+        .regime-banner.risk-off {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+        .regime-banner.crisis {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+        .regime-banner .regime-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .regime-banner.risk-on .regime-dot { background: var(--accent-green); }
+        .regime-banner.risk-off .regime-dot { background: #fbbf24; }
+        .regime-banner.crisis .regime-dot { background: var(--accent-red); }
+        .regime-meta {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.6rem;
+        }
+
         .market-banner-close {
             background: none;
             border: none;
@@ -3706,6 +3750,7 @@
 
         <!-- TAB PANEL: Holdings -->
         <div id="tab-holdings" class="tab-panel">
+                    <div id="regime-banner" class="regime-banner"></div>
                     <div id="market-banner" class="market-banner">
                 <span id="market-banner-text">Market closed</span>
                 <button class="market-banner-close" onclick="document.getElementById('market-banner').classList.remove('show');">&times;</button>
@@ -5993,6 +6038,54 @@ function updateDashboard(data) {
         // Update market status on load and every minute
         updateMarketStatus();
         setInterval(updateMarketStatus, 30000); // Refresh every 30 seconds
+
+        // Regime status banner
+        async function updateRegimeBanner() {
+            try {
+                const res = await fetch('./regime_status.json?t=' + Date.now());
+                if (!res.ok) return;
+                const data = await res.json();
+                const banner = document.getElementById('regime-banner');
+                if (!banner) return;
+
+                const regime = data.regime || 'RISK_ON';
+                const label = data.regime_label || 'Normal';
+                const triggers = data.triggers || [];
+                const params = data.params || {};
+
+                // Set class
+                banner.className = 'regime-banner show ' + regime.toLowerCase().replace('_', '-');
+
+                // Build content
+                let html = '<span class="regime-dot"></span> ';
+                if (regime === 'RISK_ON') {
+                    html += 'Normal Mode';
+                } else if (regime === 'RISK_OFF') {
+                    html += 'Defensive Mode';
+                } else {
+                    html += 'Crisis Mode';
+                }
+
+                // Add params
+                if (params.max_position_pct) {
+                    html += ' <span class="regime-meta">· max ' + params.max_position_pct + '% per position';
+                    if (params.cash_floor_pct) html += ' · ' + params.cash_floor_pct + '% cash floor';
+                    if (params.min_tier_for_entry) html += ' · ' + params.min_tier_for_entry + ' entries only';
+                    html += '</span>';
+                }
+
+                // Add trigger if present
+                if (triggers.length > 0) {
+                    html += ' <span class="regime-meta">· ' + triggers[0] + '</span>';
+                }
+
+                banner.innerHTML = html;
+            } catch (e) {
+                // Silently fail — don't break the page
+            }
+        }
+        updateRegimeBanner();
+        setInterval(updateRegimeBanner, 30000);
 
         // ============================================
         // UNIFIED MODAL CONTROLLER
