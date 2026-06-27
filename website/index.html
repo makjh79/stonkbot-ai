@@ -3851,7 +3851,7 @@
                                     <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(255,255,255,0.05); color: var(--text-muted); border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);">MONITOR</span>
                                 </div>
                                 <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.5;">
-                                    <strong style="color: #ef4444;">NOW</strong> (readiness &ge;70, entry-eligible) &middot; <strong style="color: #fbbf24;">WATCH</strong> (50-69, monitoring for confirmations) &middot; <strong style="color: var(--text-muted);">MONITOR</strong> (&lt;50, watching for thesis development). Tiers auto-promote/demote as conditions change.
+                                    <strong style="color: #06b6d4;">STRONG NOW</strong> (readiness &ge;80, highest conviction, 2x sizing) &middot; <strong style="color: #ef4444;">NOW</strong> (readiness &ge;72, entry-eligible) &middot; <strong style="color: #fbbf24;">WATCH</strong> (55-71, monitoring for confirmations) &middot; <strong style="color: var(--text-muted);">MONITOR</strong> (&lt;55, watching for thesis development). Tiers auto-promote/demote as conditions change.
                                 </div>
                             </div>
 
@@ -6483,7 +6483,7 @@ function updateDashboard(data) {
                         description: 'Autonomous trading system active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K initial capital. Strategy: Readiness score entry (≥70 + confirmations), -10% stop loss, trailing stop (ATR), +25% trim, +50% exit, thesis-based exits (recycles capital).'
+                        rationale: 'AI trading bot started with $100K initial capital. Strategy: Readiness score entry (≥72 + 3+ confirmations), -10% stop loss, trailing stop (ATR), +25% trim, +50% exit, thesis-based exits (recycles capital).'
                     }
                 ];
                 
@@ -7342,7 +7342,7 @@ function updateDashboard(data) {
             maxPositionSize: 0.08,      // Max 8% per new entry
             minPositionSize: 0.05,      // Min 5% per entry
             maxDailyEntries: 10,        // Max 10 new positions/day (effectively unlimited)
-            rsiThreshold: 50,           // Readiness score >= 70 with confirmations
+            rsiThreshold: 50,           // Readiness score >= 72 with confirmations
             volumeMultiplier: 1.5,      // 1.5x average volume
             convictionThreshold: 70,    // 70% AI confidence
             sectorLimit: 0.35           // No sector above 35%
