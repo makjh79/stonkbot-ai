@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260627-2110-factor-tooltips">
-    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v108';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v109';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -9007,7 +9007,7 @@ function updateDashboard(data) {
             }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">\u00b7</span>');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="Conviction model: 8 factors scored per stock. Green = factor confirmed, gray = not met, red = bearish signal. Hover each chip for details.">Factors ℹ️ <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="Conviction model: 8 factors scored per stock. Green = factor confirmed, gray = not met, red = bearish signal. Hover each chip for details.">Factors <span class="info-icon" style="font-size: 10px; width: 14px; height: 14px; margin-left: 2px;" onclick="showInfoTooltip(event, '<strong>Factors:</strong> 8-factor conviction model scoring each stock.<br><br>Green = factor confirmed, gray = not met, red = bearish signal.<br><br><strong>Factor criteria:</strong><br>• MOM: 20-day momentum score ≥ 50 (0-100)<br>• RSI: 14-day RSI bullish (>70) or oversold (<30)<br>• VOL: above-average volume on rising prices<br>• MACD: moving average convergence/divergence turning bullish<br>• EMA: price above 20-day exponential moving average<br>• SEC: stock sector outperforming the broader market<br>• INT: positive 15-min bar momentum during market hours<br>• OPT: implied volatility suggests bullish positioning<br><br>Hover individual chips for each factor criteria.')">ⓘ</span> <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
                 </div>
             `;
