@@ -9007,7 +9007,7 @@ function updateDashboard(data) {
             }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">·</span>');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="7-factor conviction model: Momentum, RSI, Volume, MACD, EMA, Sector, Intraday, Options. Green = confirmed, gray = not confirmed, red = bearish signal.">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
                 </div>
             `;
@@ -9035,7 +9035,7 @@ function updateDashboard(data) {
             }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">·</span>');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="7-factor conviction model: Momentum, RSI, Volume, MACD, EMA, Sector, Intraday, Options. Green = confirmed, gray = not confirmed, red = bearish signal.">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
                 </div>
             `;
@@ -11528,7 +11528,7 @@ function updateDashboard(data) {
                         </div>
 
                         <!-- Factor breakdown -->
-                        ${buildWatchlistFactors(stock.confirmation_count || 0, stock.tier_reason || '')}
+                        ${buildFactorChips(stock.confirmations || {}, stock.confirmation_count || 0)}
 
                         <!-- Why this stock -->
                         <div style="margin-bottom: 0.9rem;">
