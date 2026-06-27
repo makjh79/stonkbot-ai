@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-2105-fix-confirmations">
-    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v106';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-2110-factor-tooltips">
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v107';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -237,7 +237,7 @@
             color: var(--text-primary);
             pointer-events: none;
             z-index: 1000;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             display: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
@@ -381,7 +381,7 @@
             font-size: 0.7rem;
             color: var(--text-muted);
             font-weight: 500;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 96px;
@@ -854,7 +854,7 @@
             border-radius: 6px;
             font-size: 0.6rem;
             color: var(--text-secondary);
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             opacity: 0;
             visibility: hidden;
             transition: all 0.2s;
@@ -1421,7 +1421,7 @@
             font-size: 0.75rem;
             color: var(--text-muted);
             max-width: 240px;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -2154,7 +2154,7 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
         }
 
         .holdings-filter-btn:hover {
@@ -2306,7 +2306,7 @@
             border-radius: 8px;
             transition: all 0.2s ease;
             cursor: pointer;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
         }
 
         .nav-link:hover {
@@ -2779,7 +2779,7 @@
             margin-top: 0.1rem;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
         }
         .history-summary-strip {
             display: grid;
@@ -3412,7 +3412,7 @@
             text-transform: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -4375,7 +4375,7 @@
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             flex-shrink: 0;
         }
         .trade-log-filter:hover {
@@ -4576,7 +4576,7 @@
             text-transform: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -5842,7 +5842,7 @@ function updateDashboard(data) {
                     <div class="activity-item" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem; background: rgba(255,255,255,0.02); border-radius: 10px;">
                         <div class="activity-icon" style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; background: rgba(6, 182, 212, 0.15); flex-shrink: 0;">🔄</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div class="activity-title" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Data Refreshed</div>
+                            <div class="activity-title" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); white-space: normal; max-width: 220px; overflow: hidden; text-overflow: ellipsis;">Data Refreshed</div>
                             <div class="activity-desc" style="font-size: 0.7rem; color: var(--text-secondary);">Live portfolio sync complete</div>
                         </div>
                         <div class="activity-time" style="font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; flex-shrink: 0;">${timeStr}</div>
@@ -6993,7 +6993,7 @@ function updateDashboard(data) {
                             html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03);">';
                             html += '<div style="flex: 1; min-width: 0;">';
                             html += '<div style="font-weight: 600; color: var(--text-primary); font-size: 0.75rem;">' + pos.symbol + '</div>';
-                            html += '<div style="font-size: 0.6rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + companyName + ' · ' + pos.qty + ' shares</div>';
+                            html += '<div style="font-size: 0.6rem; color: var(--text-muted); white-space: normal; max-width: 220px; overflow: hidden; text-overflow: ellipsis;">' + companyName + ' · ' + pos.qty + ' shares</div>';
                             html += '</div>';
                             html += '<div style="text-align: right; flex-shrink: 0;">';
                             html += '<div style="font-weight: 500; color: var(--text-primary); font-size: 0.75rem;">$' + pos.market_value.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
@@ -8988,26 +8988,26 @@ function updateDashboard(data) {
 
         function buildFactorChips(conf, count) {
             const factors = [
-                { name: 'MOM', label: 'Momentum', val: conf.momentum_score != null ? conf.momentum_score.toFixed(0) : null, ok: conf.momentum_score != null && conf.momentum_score >= 50 },
-                { name: 'RSI', label: 'RSI', val: conf.rsi_signal || null, ok: conf.rsi_signal === 'bullish', warn: conf.rsi_signal === 'bearish' },
-                { name: 'VOL', label: 'Volume', val: conf.volume_confirmed, ok: conf.volume_confirmed === true },
-                { name: 'MACD', label: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true },
-                { name: 'EMA', label: 'EMA', val: conf.above_ema, ok: conf.above_ema === true },
-                { name: 'SEC', label: 'Sector', val: conf.sector_strong, ok: conf.sector_strong === true },
-                { name: 'INT', label: 'Intraday', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true },
-                { name: 'OPT', label: 'Options', val: conf.options_confirmed, ok: conf.options_confirmed === true },
+                { name: 'MOM', val: conf.momentum_score != null ? conf.momentum_score.toFixed(0) : null, ok: conf.momentum_score != null && conf.momentum_score >= 50, tip: 'Momentum: 20-day price momentum score \u2265 50 (0-100 scale)' },
+                { name: 'RSI', val: conf.rsi_signal || null, ok: conf.rsi_signal === 'bullish', warn: conf.rsi_signal === 'bearish', tip: 'RSI: 14-day Relative Strength Index \u2014 bullish (>70) or oversold (<30)' },
+                { name: 'VOL', val: conf.volume_confirmed, ok: conf.volume_confirmed === true, tip: 'Volume: above-average volume on rising prices (buying pressure)' },
+                { name: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true, tip: 'MACD: moving average convergence/divergence turning bullish' },
+                { name: 'EMA', val: conf.above_ema, ok: conf.above_ema === true, tip: 'EMA: price above 20-day exponential moving average' },
+                { name: 'SEC', val: conf.sector_strong, ok: conf.sector_strong === true, tip: 'Sector: stock\'s sector outperforming the broader market' },
+                { name: 'INT', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true, tip: 'Intraday: positive 15-min bar momentum during market hours' },
+                { name: 'OPT', val: conf.options_confirmed, ok: conf.options_confirmed === true, tip: 'Options: implied volatility suggests bullish options positioning' },
             ];
             const chips = factors.map(f => {
                 const color = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'rgba(255,255,255,0.15)';
                 const textColor = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'var(--text-muted)';
                 const dot = f.val != null && (f.ok || f.warn || f.val === true)
-                    ? `<span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;"></span>`
-                    : `<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);display:inline-block;"></span>`;
-                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};">${dot}${f.name}</span>`;
-            }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">·</span>');
+                    ? `<span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0;"></span>`
+                    : `<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);display:inline-block;flex-shrink:0;"></span>`;
+                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};cursor:help;" data-tooltip="${f.tip}">${dot}${f.name}</span>`;
+            }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">\u00b7</span>');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="7-factor conviction model: Momentum, RSI, Volume, MACD, EMA, Sector, Intraday, Options. Green = confirmed, gray = not confirmed, red = bearish signal.">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="Conviction model: 8 factors scored per stock. Green = factor confirmed, gray = not met, red = bearish signal. Hover each chip for details.">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
                 </div>
             `;
@@ -11070,7 +11070,7 @@ function updateDashboard(data) {
                 const scoreDisplay = isTracking ? '<span style="color: var(--text-muted); font-size: 11px;">—</span>' : '<span style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px; border: 1px solid ' + aiScoreColor + '40;">' + stock.aiScore + '</span>';
                 const rsiDisplay = isTracking ? '<span style="color: var(--text-muted);">—</span>' : stock.rsi.toFixed(1) + (isOversold ? ' ⚠️' : '');
                 
-                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 10px 4px;"><span style="background: ' + tierStyle.bg + '; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.color + '30;">' + tierStyle.label + '</span></td><td style="padding: 10px 4px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 14px; font-weight: 700;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;">' + stock.company + '</div></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 14px; font-weight: 700;">' + priceDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + changeDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + scoreDisplay + '</td><td style="padding: 10px 4px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 10px 4px; text-align: center;"></tr>';
+                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 10px 4px;"><span style="background: ' + tierStyle.bg + '; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; white-space: normal; max-width: 220px; border: 1px solid ' + tierStyle.color + '30;">' + tierStyle.label + '</span></td><td style="padding: 10px 4px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 14px; font-weight: 700;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;">' + stock.company + '</div></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 14px; font-weight: 700;">' + priceDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + changeDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + scoreDisplay + '</td><td style="padding: 10px 4px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 10px 4px; text-align: center;"></tr>';
             });
             
             html += '</tbody></table></div>';
