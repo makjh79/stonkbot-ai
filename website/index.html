@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260627-2110-factor-tooltips">
-    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v120';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v121';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3845,9 +3845,6 @@
         <div id="tab-about" class="tab-panel">
         <div id="faq" class="section-anchor"></div>
         <div class="section">
-            <p style="margin: -0.25rem 0 0.75rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
-                A real $100K AI trading experiment bot for 6 months, benchmarked against the S&P 500. Full transparency on every trade, win, and loss.
-            </p>
             <div class="faq-section">
                 <div class="faq-item" id="faq1">
                     <div class="faq-question" onclick="toggleFaq('faq1')">
@@ -9028,7 +9025,7 @@ function updateDashboard(data) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.78rem;">Readiness ${score.toFixed(0)}/100 — ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 7 factors: momentum, RSI, volume, MACD, EMA, sector strength, intraday momentum & options IV.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 9 factors: momentum, RSI, volume, MACD, EMA, sector strength, intraday momentum & options IV.</div>
             `;
             
             document.body.appendChild(tooltip);
@@ -9090,6 +9087,7 @@ function updateDashboard(data) {
                 { name: 'SEC', val: conf.sector_strong, ok: conf.sector_strong === true, tip: 'Sector: stock\'s sector outperforming the broader market' },
                 { name: 'INT', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true, tip: 'Intraday: positive 15-min bar momentum during market hours' },
                 { name: 'OPT', val: conf.options_confirmed, ok: conf.options_confirmed === true, tip: 'Options: implied volatility suggests bullish options positioning' },
+                { name: 'PEAD', val: conf.earnings_confirmed, ok: conf.earnings_confirmed === true, tip: 'PEAD: Post-Earnings Announcement Drift \u2014 stock within 30 days of an earnings beat' },
             ];
             const chips = factors.map(f => {
                 const color = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'rgba(255,255,255,0.15)';
@@ -9101,7 +9099,7 @@ function updateDashboard(data) {
             }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">\u00b7</span>');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="Conviction model: 8 factors scored per stock. Green = factor confirmed, gray = not met, red = bearish signal. Hover each chip for details.">Factors <span class="info-icon" style="font-size: 10px; width: 14px; height: 14px; margin-left: 2px;" onclick="showInfoTooltip(event, '<strong>Factors:</strong> 8-factor conviction model scoring each stock.<br><br>Green = factor confirmed, gray = not met, red = bearish signal.<br><br><strong>Factor criteria:</strong><br>• MOM: 20-day momentum score ≥ 50 (0-100)<br>• RSI: 14-day RSI bullish (>70) or oversold (<30)<br>• VOL: above-average volume on rising prices<br>• MACD: moving average convergence/divergence turning bullish<br>• EMA: price above 20-day exponential moving average<br>• SEC: stock sector outperforming the broader market<br>• INT: positive 15-min bar momentum during market hours<br>• OPT: implied volatility suggests bullish positioning<br><br>Hover individual chips for each factor criteria.')">ⓘ</span> <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="Conviction model: 9 factors scored per stock. Green = factor confirmed, gray = not met, red = bearish signal. Hover each chip for details.">Factors <span class="info-icon" style="font-size: 10px; width: 14px; height: 14px; margin-left: 2px;" onclick="showInfoTooltip(event, '<strong>Factors:</strong> 9-factor conviction model scoring each stock.<br><br>Green = factor confirmed, gray = not met, red = bearish signal.<br><br><strong>Factor criteria:</strong><br>• MOM: 20-day momentum score ≥ 50 (0-100)<br>• RSI: 14-day RSI bullish (>70) or oversold (<30)<br>• VOL: above-average volume on rising prices<br>• MACD: moving average convergence/divergence turning bullish<br>• EMA: price above 20-day exponential moving average<br>• SEC: stock sector outperforming the broader market<br>• INT: positive 15-min bar momentum during market hours<br>• OPT: implied volatility suggests bullish positioning<br>• PEAD: within 30 days of an earnings beat (post-earnings drift)<br><br>Hover individual chips for each factor criteria.')">ⓘ</span> <span style="color: var(--text-muted); font-weight: 400;">${count}/9</span></div>
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
                 </div>
             `;
@@ -9112,7 +9110,7 @@ function updateDashboard(data) {
             const parts = cleanReason.split(/\+|,|\band\b/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 40);
             const factorMap = {
                 'volume': 'VOL', 'macd': 'MACD', 'ema': 'EMA', 'sector': 'SEC',
-                'intraday': 'INT', 'options': 'OPT', 'momentum': 'MOM', 'rsi': 'RSI'
+                'intraday': 'INT', 'options': 'OPT', 'momentum': 'MOM', 'rsi': 'RSI', 'earnings': 'PEAD', 'pead': 'PEAD'
             };
             const active = new Set();
             for (const part of parts) {
@@ -9120,7 +9118,7 @@ function updateDashboard(data) {
                     if (part.toLowerCase().includes(key)) active.add(label);
                 }
             }
-            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT'];
+            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT', 'PEAD'];
             const chips = allFactors.map(name => {
                 const ok = active.has(name);
                 const color = ok ? '#22c55e' : 'rgba(255,255,255,0.15)';
@@ -9129,7 +9127,7 @@ function updateDashboard(data) {
             }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">·</span>');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="7-factor conviction model: Momentum, RSI, Volume, MACD, EMA, Sector, Intraday, Options. Green = confirmed, gray = not confirmed, red = bearish signal.">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="9-factor conviction model: Momentum, RSI, Volume, MACD, EMA, Sector, Intraday, Options. Green = confirmed, gray = not confirmed, red = bearish signal.">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/9</span></div>
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
                 </div>
             `;
