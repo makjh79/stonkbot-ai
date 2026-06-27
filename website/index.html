@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-0830-v100-wl-popup">
-    <script>(function(){var v='20260627-0830-v100-wl-popup';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-0838-v101-wl-table-strong">
+    <script>(function(){var v='20260627-0838-v101-wl-table-strong';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -10984,6 +10984,7 @@ function updateDashboard(data) {
                 
                 // Tier badge styling
                 const tierColors = {
+                    'STRONG_NOW': { bg: 'rgba(6,182,212,0.2)', color: '#06b6d4', icon: '🚀', label: 'STRONG' },
                     'NOW': { bg: '#ef444420', color: '#ef4444', icon: '', label: 'NOW' },
                     'WATCH': { bg: '#fbbf2420', color: '#fbbf24', icon: '', label: 'WATCH' },
                     'MONITOR': { bg: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', icon: '', label: 'MONITOR' },
@@ -10993,7 +10994,7 @@ function updateDashboard(data) {
                 const tierStyle = tierColors[effectiveTier] || tierColors['MONITOR'];
                 
                 // Row styling - grey out tracking stocks
-                const rowBg = stock.tier === 'NOW' ? 'rgba(239,68,68,0.05)' : isTracking ? 'rgba(107,114,128,0.02)' : 'transparent';
+                const rowBg = stock.tier === 'STRONG_NOW' ? 'rgba(6,182,212,0.05)' : stock.tier === 'NOW' ? 'rgba(239,68,68,0.05)' : isTracking ? 'rgba(107,114,128,0.02)' : 'transparent';
                 const rowOpacity = isTracking ? '0.6' : '1';
                 
                 // Format values for display - tracking stocks show placeholder
