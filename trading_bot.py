@@ -912,7 +912,34 @@ class STONKAIBot:
                 logger.info(f"🔄 Exit signal: {sym} readiness dropped below 55 (held {_days} days, min hold {_min_hold_days})")
                 self._exit_position(sym, reason="readiness_below_55")
 
-        # 1c. Cash-raising: if cash is below the dynamic floor, trim weakest positions
+        # 1c. Flat exit: free dead money capital from positions going nowhere
+        # If held >= 10 days AND price within ±3% of entry AND readiness < 72, exit
+        if self._regime != "CRISIS":  # CRISIS already handles fast exits
+            for sym in list(self._positions.keys()):
+                pos = self._positions.get(sym, {})
+                _days = pos.get("_days_held", 0)
+                if _days < 10:
+                    continue
+
+                _entry = pos.get("avg_entry") or pos.get("cost_basis", 0)
+                if isinstance(_entry, (int, float)) and _entry > 0:
+                    # Get current price from portfolio data
+                    _current_price = next(
+                        (p.get("current_price") or (p.get("market_value", 0) / p.get("qty", 1)) for p in portfolio_data.get("positions", []) if p.get("symbol") == sym),
+                        0
+                    )
+                    if _current_price > 0:
+                        _move_pct = abs((_current_price - _entry) / _entry * 100)
+                        if _move_pct <= 3.0:  # Within ±3% = flat
+                            # Check readiness — if still strong, keep it
+                            _sig = next((s for s in self._signals if s.get("symbol") == sym), None)
+                            _readiness = _sig.get("readiness_score", 100) if _sig else 100
+                            if _readiness < 72:  # Not strong enough to justify holding dead money
+                                logger.info(f"💤 Flat exit: {sym} held {_days} days, moved only {_move_pct:.1f}%, readiness {_readiness:.0f}")
+                                self._exit_position(sym, reason="flat_dead_money")
+                                continue
+
+        # 1d. Cash-raising: if cash is below the dynamic floor, trim weakest positions
         cash_raise_trades = self.risk_engine.check_cash_raise(portfolio_data, self._signals)
         for trade in cash_raise_trades:
             self._execute_sell(trade, portfolio_data)
