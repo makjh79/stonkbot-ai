@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-2100-align-final">
-    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v105';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-2105-fix-confirmations">
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v106';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -10735,6 +10735,7 @@ function updateDashboard(data) {
                     readinessTag: readinessTag,
                     tierReason: data.tier_reason || '',
                     confirmationCount: data.confirmation_count || 0,
+                    confirmations: data.confirmations || {},
                     // Alpaca paid data fields — passed through to popup
                     tier: data.signal_tier || 'TRACKING',
                     signal_tier: data.signal_tier || 'TRACKING',
