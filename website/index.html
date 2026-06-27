@@ -3794,7 +3794,7 @@
         <div id="faq" class="section-anchor"></div>
         <div class="section">
             <p style="margin: -0.25rem 0 0.75rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
-                A real $100K portfolio run by an AI trading bot for 6 months, benchmarked against the S&P 500. Full transparency on every trade, win, and loss.
+                A real $100K AI trading experiment bot for 6 months, benchmarked against the S&P 500. Full transparency on every trade, win, and loss.
             </p>
             <div class="faq-section">
                 <div class="faq-item" id="faq1">
@@ -9116,6 +9116,7 @@ function updateDashboard(data) {
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
                         <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
                         <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
+                        ${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? `<span style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.6rem; font-weight: 500; padding: 3px 8px; border-radius: 20px;">IV ${(preGenerated.optionsImpliedVol * 100).toFixed(0)}%</span>` : ''}
                     </div>
 
                 </div>
@@ -10209,7 +10210,8 @@ function updateDashboard(data) {
         // Fetch company info dynamically from JSON
         async function fetchCompanyInfo() {
             try {
-                const response = await fetch('./company_info.json?t=' + Date.now());
+                // Company info now comes from portfolio_data.json name field
+                return null; // Superseded by Alpaca asset names in portfolio_data
                 if (!response.ok) throw new Error('Failed to fetch company info');
                 const data = await response.json();
                 if (data.stocks && Object.keys(data.stocks).length > 0) {
@@ -10265,7 +10267,8 @@ function updateDashboard(data) {
         // Fetch real crowd sentiment data
         async function fetchCrowdSentiment() {
             try {
-                const response = await fetch('./crowd_sentiment.json?t=' + Date.now());
+                // Crowd sentiment superseded by Alpaca news sentiment in signal_enrichment.json
+                return null; // Removed — using Alpaca paid news API
                 if (!response.ok) throw new Error('Failed to fetch');
                 const data = await response.json();
                 return data.data || {};
@@ -10284,7 +10287,8 @@ function updateDashboard(data) {
         // Fetch trending sentiment data for watchlist (no API registration needed)
         async function fetchTrendingSentiment() {
             try {
-                const response = await fetch('./trending_sentiment.json?t=' + Date.now());
+                // Trending sentiment superseded by Alpaca news
+                return null; // Removed — using Alpaca paid news API
                 if (!response.ok) throw new Error('Failed to fetch trending sentiment');
                 const data = await response.json();
                 trendingSentimentData = data.tickers || {};
@@ -10312,7 +10316,8 @@ function updateDashboard(data) {
         // Fetch earnings dates
         async function fetchEarningsData() {
             try {
-                const response = await fetch('./earnings_data.json?t=' + Date.now());
+                // Earnings data now in signal_enrichment.json from Alpaca
+                return null; // Removed — using Alpaca paid data
                 if (!response.ok) throw new Error('Failed to fetch earnings');
                 const data = await response.json();
                 earningsData = data.earnings || {};
@@ -10357,7 +10362,8 @@ function updateDashboard(data) {
         // Fetch earnings dates
         async function fetchEarningsData() {
             try {
-                const response = await fetch('./earnings_data.json?t=' + Date.now());
+                // Earnings data now in signal_enrichment.json from Alpaca
+                return null; // Removed — using Alpaca paid data
                 if (!response.ok) throw new Error('Failed to fetch earnings');
                 const data = await response.json();
                 earningsData = data.earnings || {};
@@ -11424,6 +11430,7 @@ function updateDashboard(data) {
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
                             <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
                             <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
+                        ${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? `<span style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.6rem; font-weight: 500; padding: 3px 8px; border-radius: 20px;">IV ${(preGenerated.optionsImpliedVol * 100).toFixed(0)}%</span>` : ''}
                             <span style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;">RSI ${rsi.toFixed(0)}</span>
                         </div>
 
