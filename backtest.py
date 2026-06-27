@@ -65,6 +65,8 @@ class BacktestEngine:
         self.dates: List[str] = []
         self.benchmark_symbol = benchmark
         self.universe = universe
+        self.high_water_mark: float = initial_cash  # Track peak portfolio value
+        self.drawdown_halt: bool = False  # Halt new entries when DD < -15%
 
         # Defaults from signal_engine if available
         try:
@@ -374,12 +376,30 @@ class BacktestEngine:
                     # Queue sell for tomorrow
                     pending_orders.append({"action": "SELL", "symbol": sym})
 
+            # --- Drawdown halt check ---
+            # Track high water mark and halt new entries if DD > -15%.
+            # Resume when DD improves above -15% (i.e. portfolio recovers).
+            # Do NOT reset HWM on trigger — keep original peak for DD calc.
+            pv_now = self._portfolio_value(current_prices)
+            if pv_now > self.high_water_mark:
+                self.high_water_mark = pv_now
+            dd_pct = (pv_now - self.high_water_mark) / self.high_water_mark if self.high_water_mark > 0 else 0.0
+            if dd_pct <= -0.15:
+                if not self.drawdown_halt:
+                    logger.info(f"⚠️ Drawdown halt triggered: DD={dd_pct:.1%} (HWM=${self.high_water_mark:,.0f})")
+                self.drawdown_halt = True
+            elif dd_pct > -0.15 and self.drawdown_halt:
+                # Resume entries as soon as DD improves above -15%
+                logger.info(f"✅ Drawdown halt lifted: DD={dd_pct:.1%}")
+                self.drawdown_halt = False
+
             # Queue buys for tomorrow at T+1 open (conviction-based sizing)
+            # Skip new entries if drawdown halt is active (only allow exits)
             available_cash = self.cash
             # Only deploy 90% of cash (keep 10% cash floor like live bot)
             deployable_cash = available_cash * 0.90
             target_symbols = [s for s in top_signals if s["symbol"] not in self.positions]
-            if target_symbols and deployable_cash > 0:
+            if target_symbols and deployable_cash > 0 and not self.drawdown_halt:
                 base_allocation = deployable_cash / len(target_symbols)
                 for sig in top_signals:
                     sym = sig["symbol"]
@@ -393,6 +413,8 @@ class BacktestEngine:
                         "multiplier": multiplier,
                         "tier": sig.get("tier", "NOW"),
                     })
+            elif self.drawdown_halt:
+                logger.debug(f"Drawdown halt active (DD={dd_pct:.1%}), skipping new entries")
 
             # Update entry_date_idx for held positions
             for sym in list(self.positions.keys()):
