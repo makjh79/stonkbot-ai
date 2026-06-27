@@ -11317,6 +11317,7 @@ function updateDashboard(data) {
         }
 
         function getWatchlistStatus(signal, readiness, rsi) {
+            if (signal === 'STRONG_NOW') return { text: '🚀 Strong conviction — maximum entry', color: '#06b6d4' };
             if (signal === 'NOW') return { text: '🟢 Entry signal — buy zone', color: '#22c55e' };
             if (signal === 'WATCH') return { text: '🟡 Approaching entry — watch closely', color: '#fbbf24' };
             if (rsi && rsi <= 35) return { text: '🔵 Oversold — potential bounce', color: '#06b6d4' };
@@ -11372,9 +11373,12 @@ function updateDashboard(data) {
             const targetDist = ((targetPrice - stock.price) / stock.price * 100).toFixed(1);
 
             // Tier chip
-            const tier = stock.tier || 'TRACKING';
-            const tierColor = tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
-            const tierBg = tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+            const tier = stock.tier || stock.signal_tier || 'TRACKING';
+            const tierColor = tier === 'STRONG_NOW' ? '#06b6d4' : tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
+            const tierBg = tier === 'STRONG_NOW' ? 'rgba(6,182,212,0.15)' : tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+
+            // Get options IV from watchlist data (not preGenerated which is holdings-only)
+            const wlOptionsIV = stock.options_implied_vol || null;
 
             const bodyHtml = `
                 <div class="stock-detail-sheet">
@@ -11426,11 +11430,22 @@ function updateDashboard(data) {
                             </div>
                         </div>
 
+                        <!-- VWAP row (from Alpaca data) -->
+                        ${stock.daily_vwap ? `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; margin-bottom: 1rem;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">VWAP</span>
+                            <div style="text-align: right;">
+                                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">$${stock.daily_vwap.toFixed(2)}</span>
+                                ${stock.prev_close ? `<span style="font-size: 0.65rem; color: ${stock.price >= stock.prev_close ? '#22c55e' : '#ef4444'}; margin-left: 6px;">${stock.price >= stock.prev_close ? '+' : ''}${((stock.price - stock.prev_close) / stock.prev_close * 100).toFixed(1)}%</span>` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+
                         <!-- Signal chips -->
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
                             <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
                             <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
-                        ${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? `<span style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.6rem; font-weight: 500; padding: 3px 8px; border-radius: 20px;">IV ${(preGenerated.optionsImpliedVol * 100).toFixed(0)}%</span>` : ''}
+                        ${wlOptionsIV && wlOptionsIV > 0 ? `<span style="background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.6rem; font-weight: 500; padding: 3px 8px; border-radius: 20px;">IV ${(wlOptionsIV * 100).toFixed(0)}%</span>` : ''}
                             <span style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;">RSI ${rsi.toFixed(0)}</span>
                         </div>
 
