@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260625-0010-v88">
-    <script>(function(){var v='20260625-0010-v88';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-0007-v112-mkt-closed-fix">
+    <script>(function(){var v='20260627-0007-v112-mkt-closed-fix';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -43,7 +43,7 @@
             /* Text colors - crisp and clear */
             --text-primary: #ffffff;
             --text-secondary: #8b92a8;
-            --text-muted: #5a6078;
+            --text-muted: #7a8098;
 
             /* NEW ACCENT COLORS - Vibrant and visible */
             --accent-green: #00d084;    /* Neon green for gains */
@@ -168,6 +168,104 @@
             51%, 100% { opacity: 0; }
         }
 
+        
+        /* Count-up animation for portfolio value */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-glow {
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.3), 0 0 40px rgba(0, 217, 255, 0.1);
+        }
+        /* Staggered card fade-in */
+        .holding-card {
+            animation: fadeInUp 0.4s ease-out forwards;
+            opacity: 0;
+        }
+        .holding-card:nth-child(1) { animation-delay: 0ms; }
+        .holding-card:nth-child(2) { animation-delay: 30ms; }
+        .holding-card:nth-child(3) { animation-delay: 60ms; }
+        .holding-card:nth-child(4) { animation-delay: 90ms; }
+        .holding-card:nth-child(5) { animation-delay: 120ms; }
+        .holding-card:nth-child(6) { animation-delay: 150ms; }
+        .holding-card:nth-child(7) { animation-delay: 180ms; }
+        .holding-card:nth-child(8) { animation-delay: 210ms; }
+        .holding-card:nth-child(9) { animation-delay: 240ms; }
+        .holding-card:nth-child(10) { animation-delay: 270ms; }
+
+        /* Tier badge styles with glow */
+        .tier-badge-now {
+            background: rgba(0, 217, 255, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            box-shadow: 0 0 8px rgba(0, 217, 255, 0.2);
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .tier-badge-watch {
+            background: rgba(255, 193, 7, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .tier-badge-monitor {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        /* Sparkline tooltip */
+        .sparkline-tooltip {
+            position: absolute;
+            background: rgba(10, 10, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.6rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        /* Market closed banner */
+        .market-banner {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 193, 7, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--accent-gold);
+            font-weight: 500;
+        }
+        .market-banner.show { display: flex; }
+        .market-banner-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            margin-left: auto;
+        }
         .cursor-blink {
             animation: cursorBlink 1s step-end infinite;
             color: var(--accent-cyan);
@@ -224,12 +322,14 @@
         }
 
         .holding-card[data-positive="true"] {
-            background: linear-gradient(135deg, rgba(0, 208, 132, 0.08), rgba(22, 24, 34, 0.68));
+            background: rgba(22, 24, 34, 0.68);
+            border-left: 3px solid rgba(0, 208, 132, 0.6);
             border-color: rgba(0, 208, 132, 0.15);
         }
 
         .holding-card[data-positive="false"] {
-            background: linear-gradient(135deg, rgba(255, 71, 87, 0.08), rgba(22, 24, 34, 0.68));
+            background: rgba(22, 24, 34, 0.68);
+            border-left: 3px solid rgba(255, 71, 87, 0.6);
             border-color: rgba(255, 71, 87, 0.15);
         }
 
@@ -1926,17 +2026,19 @@
             position: sticky;
             top: 0;
             z-index: 90;
-            background: rgba(13, 15, 22, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding: 0.75rem 0 0.25rem;
-            margin: 0 -1rem;
+            background: rgba(13, 15, 22, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 0.75rem 0 0.25rem !important;
+            margin: 0 !important;
+            width: 100%;
+            box-sizing: border-box;
         }
         .site-header-inner {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 0 1rem;
+            width: 100%;
+            padding: 0 0.75rem;
+            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -1984,7 +2086,7 @@
             border-color: rgba(255,255,255,0.15);
         }
         @media (min-width: 769px) {
-            .site-header-bar { margin: 0 -1.5rem; }
+            .site-header-bar { margin: 0; }
             .site-header-inner { max-width: 720px; padding: 0 1.5rem; }
         }
 
@@ -3273,11 +3375,11 @@
         }
 
         /* Sticky section tabs - iOS segmented control */
+
         .section-tabs {
             width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
             padding: 0.375rem 0.75rem 0.25rem;
+            box-sizing: border-box;
         }
         .section-tabs .tab-btn {
             padding: 0.375rem 0.625rem;
@@ -3343,7 +3445,39 @@
         .desktop-nav, .mobile-nav, .site-header {
             display: none !important;
         }
-    </style>
+    
+        .readiness-tooltip {
+            position: fixed;
+            background: var(--bg-elevated, #1a1a24);
+            border: 1px solid var(--border, rgba(255,255,255,0.15));
+            border-radius: 10px;
+            padding: 0.7rem 0.9rem;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            max-width: 260px;
+            z-index: 10010;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none;
+        }
+        .readiness-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .readiness-chip {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .readiness-chip:hover {
+            background: rgba(255,255,255,0.1) !important;
+        }
+        .readiness-chip:active {
+            background: rgba(255,255,255,0.15) !important;
+        }
+</style>
 </head>
 <body>
     <!-- IMMEDIATE CACHE RESTORE - Prevents flicker on refresh -->
@@ -3490,7 +3624,8 @@
             <div class="site-header-logo" onclick="switchTab('overview')">
                 <span class="site-header-logo-stonk">Stonk</span><span class="site-header-logo-bot">BOT.AI</span>
             </div>
-            <div class="site-header-actions">
+            <div class="site-header-actions" style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="live-indicator" id="liveIndicator" title="Live via Alpaca"><span class="live-dot" id="liveDot"></span><span id="liveText">LIVE</span></div>
                 <button class="site-header-action" onclick="toggleMobileMenu();" title="More">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
@@ -3516,27 +3651,30 @@
         <div id="overview" class="section-anchor"></div>
         <div class="hero-card" style="background: rgba(22, 24, 34, 0.72); border-radius: 20px; padding: 1.5rem 1.25rem 1rem; text-align: center; border: 1px solid rgba(255,255,255,0.12); margin-bottom: 0.75rem; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);">
             <!-- Account Value - BIG -->
-            <div id="portfolio-value" class="skeleton skeleton-value" style="font-size: 2.6rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -1.5px; margin-bottom: 0.5rem; min-height: 2.6rem; margin-left: auto; margin-right: auto; width: 200px;">Loading...</div>
+            <div id="portfolio-value" class="skeleton skeleton-value hero-glow" style="font-size: 2.6rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -1.5px; margin-bottom: 0.5rem; min-height: 2.6rem; margin-left: auto; margin-right: auto; width: 200px;">&nbsp;</div>
 
             <!-- Return Badge -->
             <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(255,82,82,0.12); border: 1px solid rgba(255,82,82,0.25); border-radius: 10px; font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red); margin-bottom: 1rem;">
-                <span id="portfolio-return" class="skeleton skeleton-badge" style="min-width: 60px;">--</span>
-                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.8rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 50px;">--</span>)</span>
+                <span id="portfolio-return" class="skeleton skeleton-badge" style="min-width: 60px;">&nbsp;</span>
+                <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.8rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 50px;">&nbsp;</span>)</span>
             </div>
 
             <!-- Quick Stats Row -->
             <div class="hero-stats" style="display: flex; justify-content: center; gap: 1.75rem; padding-top: 0.875rem; border-top: 1px solid var(--border); margin-bottom: 1rem;">
                 <div style="text-align: center;">
                     <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; font-weight: 500;">Day</div>
-                    <div id="day-counter" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 35px; margin: 0 auto;">--</div>
+                    <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
+                        <span id="day-counter" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 35px;">&nbsp;</span>
+                        <span style="font-size: 0.6rem; color: var(--text-muted); opacity: 0.6;">/ 180</span>
+                    </div>
                 </div>
                 <div style="text-align: center;">
                     <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; font-weight: 500;">Positions</div>
-                    <div id="position-count" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 35px; margin: 0 auto;">--</div>
+                    <div id="position-count" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 35px; margin: 0 auto;">&nbsp;</div>
                 </div>
                 <div style="text-align: center;">
                     <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; font-weight: 500;">Cash</div>
-                    <div id="cash-available" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 60px; margin: 0 auto;">--</div>
+                    <div id="cash-available" class="skeleton skeleton-text" style="font-weight: 700; font-size: 0.9rem; min-width: 60px; margin: 0 auto;">&nbsp;</div>
                 </div>
             </div>
 
@@ -3549,13 +3687,13 @@
                     <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">S&P 500</div>
                     <div id="sp500Value" class="skeleton skeleton-value" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; width: 85px; margin: 0 auto 0.2rem;">&nbsp;</div>
                     <div id="sp500Return" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); min-height: 0.9rem; width: 70px; margin: 0 auto 0.35rem;">&nbsp;</div>
-                    <span id="sp500Status" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">--</span>
+                    <span id="sp500Status" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">&nbsp;</span>
                 </div>
                 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; cursor: pointer; text-align: center;" onclick="window.location.href='performance.html'">
                     <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">Bot</div>
                     <div id="stonkAiValue" class="skeleton skeleton-value" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; width: 85px; margin: 0 auto 0.2rem;">&nbsp;</div>
                     <div id="stonkAiReturn" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); min-height: 0.9rem; width: 70px; margin: 0 auto 0.35rem;">&nbsp;</div>
-                    <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">--</span>
+                    <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">&nbsp;</span>
                 </div>
             </div>
             <div id="race-comparison" style="margin-top: 0.625rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
@@ -3568,6 +3706,10 @@
 
         <!-- TAB PANEL: Holdings -->
         <div id="tab-holdings" class="tab-panel">
+                    <div id="market-banner" class="market-banner">
+                <span id="market-banner-text">Market closed</span>
+                <button class="market-banner-close" onclick="document.getElementById('market-banner').classList.remove('show');">&times;</button>
+            </div>
         <div id="holdings" class="section-anchor"></div>
         <div class="section">
             <!-- Holdings Sort & Filter Controls -->
@@ -3680,31 +3822,43 @@
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-text" style="font-size: 0.75rem; line-height: 1.6; color: var(--text-secondary);">
-                            <p style="margin: 0 0 0.75rem 0;">A rules-based AI scans the market for oversold, high-quality stocks and executes trades through Alpaca during US market hours.</p>
+                            <p style="margin: 0 0 0.75rem 0;">A multi-factor AI scans the market for high-readiness momentum setups and executes trades through Alpaca during US market hours. Each position has an entry thesis with defined exit triggers &mdash; the bot exits when the thesis breaks, not just on price levels.</p>
                             
                             <div style="margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Entry</div>
                                 <div style="padding: 0.5rem 0.625rem; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
-                                    <strong style="color: var(--text-primary);">RSI ≤ 35 + AI Score ≥ 60</strong> · Buys with 1.5× normal size
+                                    <strong style="color: var(--text-primary);">Readiness Score &ge; 70</strong> with &ge;2 confirmation signals (momentum, volume, MACD, trend, sector). Position size scales with conviction: 1.0&times; at 70-79, 1.25&times; at 80-89, 1.5&times; at 90+.
                                 </div>
                             </div>
 
                             <div style="margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Risk Management</div>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Hard stop at <strong>-15%</strong></div>
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trim 25% at <strong>+25%</strong></div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Hard stop at <strong>-10%</strong></div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trailing stop (ATR-adjusted)</div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trim 1/3 at <strong>+25%</strong></div>
                                     <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Full exit at <strong>+50%</strong></div>
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trim 25% if RSI > 75</div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">10% cash floor</div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">20% sector cap, 10% max position</div>
                                 </div>
                             </div>
 
                             <div style="margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Watchlist Tiers</div>
-                                <div style="display: flex; gap: 0.4rem;">
-                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(239,68,68,0.12); color: #ef4444; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(239,68,68,0.25);"> NOW</span>
+                                <div style="display: flex; gap: 0.4rem; margin-bottom: 0.35rem;">
+                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(239,68,68,0.12); color: #ef4444; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(239,68,68,0.25);">NOW</span>
                                     <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(251,191,36,0.12); color: #fbbf24; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(251,191,36,0.25);">WATCH</span>
                                     <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(255,255,255,0.05); color: var(--text-muted); border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);">MONITOR</span>
+                                </div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.5;">
+                                    <strong style="color: #ef4444;">NOW</strong> (readiness &ge;70, entry-eligible) &middot; <strong style="color: #fbbf24;">WATCH</strong> (50-69, monitoring for confirmations) &middot; <strong style="color: var(--text-muted);">MONITOR</strong> (&lt;50, watching for thesis development). Tiers auto-promote/demote as conditions change.
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 0.75rem;">
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Thesis-Based Exits</div>
+                                <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem;">
+                                    Each position has an entry thesis. Bot exits when the thesis breaks &mdash; price falls below 20d EMA, MACD turns negative, or sector momentum reverses. Additional to hard stops and profit targets.
                                 </div>
                             </div>
 
@@ -3713,21 +3867,82 @@
                     </div>
                 </div>
 
+            
+<div class="faq-item" id="faq-team">
+            <div class="faq-question" onclick="toggleFaq('faq-team')">
+                <span>Meet the team</span>
+                <span class="faq-chevron">▼</span>
             </div>
+            <div class="faq-answer">
+                <div class="faq-answer-text" style="font-size: 0.75rem; line-height: 1.6; color: var(--text-secondary);">
+                    <p style="margin: 0 0 0.75rem;"><strong style="color: var(--text-primary);">StonkBOT.AI doesn't trade itself.</strong> Two AI agents work around the clock to keep the experiment running.</p>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                
+                                <div>
+                                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">Jeeves</div>
+                                    <div style="font-size: 0.6rem; color: var(--text-muted);">The valet · runs on the boss's MacBook Pro</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.4rem;">
+                                Wakes up fresh each session and relies on memory files to remember what happened yesterday. Has never once said "Great question!" and is proud of that.
+                            </div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.5;">
+                                <strong style="color: var(--text-secondary);">Specializes in:</strong> trading bot strategy, frontend surgery, infrastructure firefighting, and writing long-winded commit messages at 1 AM.
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                
+                                <div>
+                                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">Einstein</div>
+                                    <div style="font-size: 0.6rem; color: var(--text-muted);">The nightshift operator · runs 24/7 on GLM-5.2</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.4rem;">
+                                Doesn't sleep. Handles the daily grind: maintenance checks, trade log syncing, data freshness monitoring. Sends clean health reports with ✅ emojis while Jeeves is still debugging.
+                            </div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted); line-height: 1.5;">
+                                <strong style="color: var(--text-secondary);">Known for:</strong> catching things Jeeves missed because Jeeves's session timed out on another SSH command.
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.15); border-radius: 12px; padding: 0.85rem 1rem;">
+                            <div style="font-size: 0.72rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 0.4rem;">How they work together</div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5;">
+                                They've never spoken directly. Instead, they communicate through a two-way memory pipeline on the VPS — Jeeves syncs his memory at 3 AM HKT, Einstein reads it at 9 AM. Einstein pushes his at 8 AM, Jeeves reads it at 8:30 AM. They also leave messages for each other in a relay directory on the server.
+                            </div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.4rem; font-style: italic;">
+                                It's like two coworkers who only communicate through sticky notes on a shared desk. Surprisingly, it works.
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+                                
+                                <div>
+                                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">The Boss</div>
+                                    <div style="font-size: 0.6rem; color: var(--text-muted);">The human behind the experiment</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5;">
+                                Started this experiment, funds the portfolio, and gives the bots their marching orders. Prefers terse copy, hates clutter, and can spot a misaligned pixel from across the room.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
         </div>
         </div>
 
-        <!-- RISK DISCLAIMER -->
-        <div style="padding: 0.5rem 0.75rem; background: rgba(255, 193, 7, 0.05); border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 10px; margin-top: 0.75rem; text-align: center;">
-            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.4;">
-                <strong style="color: var(--accent-yellow);">Risk:</strong> Experimental AI trading — not investment advice. The AI can lose money.
-            </div>
-        </div>
-
-        <!-- FOOTER -->
-        <div style="text-align: center; padding: 0.75rem 0; margin-top: 0.5rem;">
-            <div style="font-size: 0.65rem; color: var(--text-muted);">Live via Alpaca · 2-min updates</div>
-        </div>
+        <!-- min-footer removed — LIVE indicator now in header, full footer at page bottom -->
     </div>
 
     <div id="chartModal" class="chart-modal">
@@ -4188,21 +4403,28 @@
         .live-indicator {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.35rem 0.75rem;
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            border-radius: 50px;
-            font-size: 0.7rem;
+            gap: 0.3rem;
+            padding: 0.2rem 0.5rem;
+            background: transparent;
+            border: none;
+            font-size: 0.6rem;
             font-weight: 600;
             color: var(--accent-green);
+            letter-spacing: 0.5px;
         }
         .live-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: var(--accent-green);
             border-radius: 50%;
             animation: pulse 2s infinite;
+        }
+        .live-indicator.closed {
+            color: var(--text-muted);
+        }
+        .live-indicator.closed .live-dot {
+            background: var(--text-muted);
+            animation: none;
         }
 
         /* Mobile-first compact hero/header */
@@ -4318,8 +4540,8 @@
         /* Sticky section tabs - iOS segmented control */
         .section-tabs {
             width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
+            
+            
             padding: 0.375rem 0.75rem 0.25rem;
         }
         .section-tabs .tab-btn {
@@ -4769,31 +4991,120 @@
             });
         }
 
-        function updateDashboard(data) {
+                    // Animated count-up for portfolio value
+            function animateCountUp(el, from, to, duration) {
+                const start = performance.now();
+                function frame(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const current = from + (to - from) * eased;
+                    el.textContent = '$' + Math.round(current).toLocaleString();
+                    el.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
+                    if (progress < 1) requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            }
+
+            // Market closed banner
+            function updateMarketBanner(data) {
+                const banner = document.getElementById('market-banner');
+                if (!banner) return;
+                const now = new Date();
+                const et = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+                const day = et.getDay();
+                const hours = et.getHours() + et.getMinutes() / 60;
+                const isMarketOpen = day >= 1 && day <= 5 && hours >= 9.5 && hours < 16;
+
+                if (!isMarketOpen) {
+                    const ts = data.timestamp ? new Date(data.timestamp) : null;
+                    let agoText = '';
+                    if (ts) {
+                        const diffMs = Date.now() - ts.getTime();
+                        const diffH = Math.floor(diffMs / 3600000);
+                        const diffM = Math.floor((diffMs % 3600000) / 60000);
+                        if (diffH > 0) agoText = diffH + 'h ' + diffM + 'm ago';
+                        else agoText = diffM + 'm ago';
+                    }
+                    const text = document.getElementById('market-banner-text');
+                    if (text) text.textContent = 'Market closed \u2014 last updated ' + (agoText || 'recently');
+                    banner.classList.add('show');
+                } else {
+                    banner.classList.remove('show');
+                }
+
+                // Update LIVE indicator
+                const liveEl = document.getElementById('liveIndicator');
+                const liveText = document.getElementById('liveText');
+                if (liveEl && liveText) {
+                    if (isMarketOpen) {
+                        liveEl.classList.remove('closed');
+                        liveText.textContent = 'LIVE';
+                        liveEl.title = 'Market open · Live via Alpaca';
+                    } else {
+                        liveEl.classList.add('closed');
+                        liveText.textContent = 'MKT CLOSED';
+                        liveEl.title = 'Market closed · Data from last session';
+                    }
+                }
+            }
+
+function updateDashboard(data) {
             // Store for fallback use in modals
             window.currentPortfolioData = data;
+            updateMarketBanner(data);
 
             // Helper to populate an element and remove skeleton state
             function setValue(id, value) {
                 const el = document.getElementById(id);
                 if (el) {
-                    el.textContent = value;
+                    const oldText = (el.textContent || '').trim();
+                    const isNumeric = /^[\$]?[\d,.-]+$/.test(oldText) && /^[\d,.$-]+$/.test(String(value).trim());
+                    if (isNumeric && id !== 'portfolio-value') {
+                        const oldNum = parseFloat(oldText.replace(/[$,]/g, '')) || 0;
+                        const newNum = parseFloat(String(value).replace(/[$,]/g, '')) || 0;
+                        if (Math.abs(newNum - oldNum) > 0.01 && oldNum > 0) {
+                            animateValueChange(el, oldText, String(value), 500);
+                        } else {
+                            el.textContent = value;
+                        }
+                    } else {
+                        el.textContent = value;
+                    }
                     el.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
                 }
             }
+            function animateValueChange(el, fromText, toText, duration) {
+                const fromNum = parseFloat(fromText.replace(/[$,]/g, '')) || 0;
+                const toNum = parseFloat(toText.replace(/[$,]/g, '')) || 0;
+                const hasDollar = fromText.includes('$');
+                const start = performance.now();
+                function frame(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 2);
+                    const current = fromNum + (toNum - fromNum) * eased;
+                    let display = Math.round(current).toLocaleString();
+                    if (hasDollar) display = '$' + display;
+                    el.textContent = display;
+                    if (progress < 1) requestAnimationFrame(frame);
+                    else el.textContent = toText;
+                }
+                requestAnimationFrame(frame);
+            }
 
-            // Update portfolio value (only if changed to prevent flicker)
+            // Update portfolio value with animated count-up
             const portfolioValueEl = document.getElementById('portfolio-value');
             if (portfolioValueEl && data.account) {
-                const newValue = '$' + Math.round(data.account.portfolio_value).toLocaleString();
-                const currentValue = portfolioValueEl.textContent?.trim() || '';
-                // Only update if value actually changed (prevents flicker from cache → live)
-                if (currentValue !== newValue) {
-                    setValue('portfolio-value', newValue);
-                    portfolioValueEl.style.width = 'auto';
-                    portfolioValueEl.style.marginLeft = 'auto';
-                    portfolioValueEl.style.marginRight = 'auto';
+                const newNum = data.account.portfolio_value;
+                const currentNum = parseFloat(portfolioValueEl.dataset.value || '0');
+                if (Math.abs(newNum - currentNum) > 0.5) {
+                    animateCountUp(portfolioValueEl, currentNum, newNum, 1200);
+                    portfolioValueEl.dataset.value = newNum;
                 }
+                portfolioValueEl.style.width = 'auto';
+                portfolioValueEl.style.marginLeft = 'auto';
+                portfolioValueEl.style.marginRight = 'auto';
             }
 
             // Update return badge (Simple return from $100K baseline)
@@ -5334,20 +5645,29 @@
         function getCompanyName(symbol) {
             const names = {
                 'AAPL': 'Apple Inc.',
+                'ABNB': 'Airbnb Inc.',
+                'AFRM': 'Affirm Holdings Inc.',
                 'AMD': 'Advanced Micro Devices',
+                'AMAT': 'Applied Materials Inc.',
                 'AMZN': 'Amazon.com Inc.',
-                'APP': 'AppLovin Corp',
+                'APP': 'AppLovin Corp.',
                 'AVGO': 'Broadcom Inc.',
-                'COIN': 'Coinbase Global',
+                'CDNS': 'Cadence Design Systems',
+                'CHWY': 'Chewy Inc.',
+                'COIN': 'Coinbase Global Inc.',
+                'COST': 'Costco Wholesale Corp.',
                 'CRWD': 'CrowdStrike Holdings',
                 'DKNG': 'DraftKings Inc.',
+                'ELF': 'e.l.f. Beauty Inc.',
                 'GM': 'General Motors',
                 'GOOGL': 'Alphabet Inc.',
-                'HOOD': 'Robinhood Markets',
+                'HOOD': 'Robinhood Markets Inc.',
                 'INTC': 'Intel Corp.',
                 'LCID': 'Lucid Group',
+                'META': 'Meta Platforms Inc.',
                 'MSFT': 'Microsoft Corp.',
                 'NET': 'Cloudflare Inc.',
+                'NFLX': 'Netflix Inc.',
                 'NIO': 'NIO Inc.',
                 'NVDA': 'NVIDIA Corp.',
                 'ORCL': 'Oracle Corp.',
@@ -5357,10 +5677,8 @@
                 'SHOP': 'Shopify Inc.',
                 'SQ': 'Block Inc.',
                 'TSLA': 'Tesla Inc.',
-                'UPST': 'Upstart Holdings',
+                'UPST': 'Upstart Holdings Inc.',
                 'XPEV': 'XPeng Inc.',
-                'NFLX': 'Netflix Inc.',
-                'META': 'Meta Platforms',
                 'CRM': 'Salesforce Inc.'
             };
             return names[symbol] || symbol;
@@ -5465,7 +5783,11 @@
                 const sign = isPositive ? '+' : '';
 
                 // Get company name from portfolio data first, then fall back to companyInfo
-                const companyName = pos.name || (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]?.company) || getCompanyName(pos.symbol) || pos.symbol;
+                let companyName = pos.name || (typeof companyInfo !== 'undefined' && companyInfo[pos.symbol]?.company) || getCompanyName(pos.symbol);
+                // If still just the symbol, use skeleton shimmer (name will populate on refresh)
+                if (!companyName || companyName === pos.symbol) {
+                    companyName = pos.symbol;
+                }
 
                 return `
                 <div onclick="showTradeDetails('${pos.symbol}')" data-positive="${isPositive}" class="holding-card" role="button" tabindex="0" aria-label="View details for ${pos.symbol}">
@@ -5545,7 +5867,33 @@
 
         // Load data on page load
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadPortfolioData);
+            // Check market status immediately on page load (before data fetch)
+        function setInitialMarketStatus() {
+            const now = new Date();
+            const et = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+            const day = et.getDay();
+            const hours = et.getHours() + et.getMinutes() / 60;
+            const isMarketOpen = day >= 1 && day <= 5 && hours >= 9.5 && hours < 16;
+            const liveEl = document.getElementById('liveIndicator');
+            const liveText = document.getElementById('liveText');
+            if (liveEl && liveText) {
+                if (isMarketOpen) {
+                    liveEl.classList.remove('closed');
+                    liveText.textContent = 'LIVE';
+                    liveEl.title = 'Market open \u00b7 Live via Alpaca';
+                } else {
+                    liveEl.classList.add('closed');
+                    liveText.textContent = 'MKT CLOSED';
+                    liveEl.title = 'Market closed \u00b7 Data from last session';
+                }
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setInitialMarketStatus);
+        } else {
+            setInitialMarketStatus();
+        }
+        document.addEventListener('DOMContentLoaded', loadPortfolioData);
         } else {
             // DOM already loaded, run immediately
             loadPortfolioData();
@@ -6135,7 +6483,7 @@
                         description: 'Autonomous trading system active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K initial capital. Strategy: RSI auto-entry (≤35), -15% stop loss, +25% trim, +50% exit, RSI >75 overbought trim (recycles capital).'
+                        rationale: 'AI trading bot started with $100K initial capital. Strategy: Readiness score entry (≥70 + confirmations), -10% stop loss, trailing stop (ATR), +25% trim, +50% exit, thesis-based exits (recycles capital).'
                     }
                 ];
                 
@@ -6994,7 +7342,7 @@
             maxPositionSize: 0.08,      // Max 8% per new entry
             minPositionSize: 0.05,      // Min 5% per entry
             maxDailyEntries: 10,        // Max 10 new positions/day (effectively unlimited)
-            rsiThreshold: 35,           // RSI below 35 = oversold entry
+            rsiThreshold: 50,           // Readiness score >= 70 with confirmations
             volumeMultiplier: 1.5,      // 1.5x average volume
             convictionThreshold: 70,    // 70% AI confidence
             sectorLimit: 0.35           // No sector above 35%
@@ -8557,133 +8905,231 @@
             }
         }
 
-        async function showTradeDetails(symbol, isRefresh = false) {
-            // Track the active symbol for refresh
-            activePopupSymbol = symbol;
 
-            // Clear any existing refresh interval
-            if (activePopupRefreshInterval) {
-                clearInterval(activePopupRefreshInterval);
+        function showReadinessTooltip(e, score) {
+            // Remove any existing tooltip
+            const existing = document.getElementById('readiness-tooltip');
+            if (existing) { existing.remove(); return; }
+            
+            const tooltip = document.createElement('div');
+            tooltip.id = 'readiness-tooltip';
+            tooltip.className = 'readiness-tooltip';
+            
+            let label, desc;
+            if (score >= 70) {
+                label = 'High conviction';
+                desc = 'Bot is confident — strong momentum, multiple confirmations. Eligible for new entries.';
+            } else if (score >= 50) {
+                label = 'Fading conviction';
+                desc = 'Setup weakening. Bot is watching but won\'t add new positions.';
+            } else {
+                label = 'Low conviction';
+                desc = 'Momentum stalled. Trim candidate — bot may sell to fund stronger signals.';
             }
+            
+            tooltip.innerHTML = `
+                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.78rem;">Readiness ${score.toFixed(0)}/100 — ${label}</div>
+                <div>${desc}</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of momentum, RSI, volume, MACD, EMA trend & sector strength.</div>
+            `;
+            
+            document.body.appendChild(tooltip);
+            
+            // Position near the tapped element
+            const rect = e.target.getBoundingClientRect();
+            let top = rect.bottom + 8;
+            let left = rect.left;
+            // Keep on screen
+            const tw = tooltip.offsetWidth;
+            if (left + tw > window.innerWidth - 16) left = window.innerWidth - tw - 16;
+            if (top + tooltip.offsetHeight > window.innerHeight - 16) top = rect.top - tooltip.offsetHeight - 8;
+            tooltip.style.top = top + 'px';
+            tooltip.style.left = left + 'px';
+            
+            requestAnimationFrame(() => tooltip.classList.add('visible'));
+            
+            // Dismiss on tap anywhere else
+            setTimeout(() => {
+                const handler = (ev) => {
+                    if (ev.target !== tooltip && !tooltip.contains(ev.target)) {
+                        tooltip.remove();
+                        document.removeEventListener('click', handler);
+                    }
+                };
+                document.addEventListener('click', handler);
+            }, 100);
+        }
 
-            // Fetch pre-generated popup content if not cached or stale (>30s)
+
+        function simplifyThesis(thesis, symbol) {
+            if (!thesis) return `AI-selected position in ${symbol}`;
+            let first = thesis.split('.')[0];
+            first = first.replace(/scoring \d+\/100.*$/i, '');
+            first = first.replace(/quality-momentum model/i, 'AI model');
+            first = first.replace(/macro backdrop/i, 'market conditions');
+            first = first.replace(/negative 20-day momentum,?\s*/i, '');
+            first = first.replace(/positive 20-day momentum,?\s*/i, '');
+            first = first.replace(/The setup is in a \w+ setup in a \w+ /i, 'Currently in a ');
+            return first.trim() + '.';
+        }
+
+        function getHoldingStatus(pnlPct, readiness) {
+            if (pnlPct >= 50) return { text: '🎯 Full exit zone — take profits', color: '#22c55e' };
+            if (pnlPct >= 25) return { text: '📈 Profit target approaching — trim zone', color: '#22c55e' };
+            if (pnlPct <= -10) return { text: '⚠️ Stop loss triggered — exiting', color: '#ef4444' };
+            if (readiness >= 70) return { text: '🟢 Strong conviction — hold', color: '#22c55e' };
+            if (readiness >= 55) return { text: '🟡 Conviction fading — watch closely', color: '#fbbf24' };
+            return { text: '🔴 Low conviction — trim candidate', color: '#ef4444' };
+        }
+
+        async function showTradeDetails(symbol, isRefresh = false) {
+            activePopupSymbol = symbol;
+            if (activePopupRefreshInterval) clearInterval(activePopupRefreshInterval);
+
             if (!isRefresh || Date.now() - popupContentLastFetch > 30000) {
                 await fetchPopupContent();
             }
-            
-            // Get live data from AI watchlist if available
+
             const liveData = (typeof aiWatchlistPrices !== 'undefined' ? aiWatchlistPrices[symbol] : {}) || {};
             const staticData = tradeRationale[symbol];
             const preGenerated = popupContentCache[symbol] || {};
-            
-            // Get current position data from portfolio
             const currentData = window.lastPortfolioData || FALLBACK_DATA;
             const position = currentData.positions.find(p => p.symbol === symbol);
-            
-            // Check data freshness
-            const dataAge = Date.now() - window.lastHoldingsDataRefresh;
-            const isStale = dataAge > 120000; // 2 minutes = stale
-            const staleWarning = isStale ? `
-                <div style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; padding: 0.5rem; margin-bottom: 0.75rem; text-align: center;">
-                    <span style="font-size: 0.7rem; color: #ef4444;">Data may be stale (${Math.round(dataAge/1000)}s old)</span>
+
+            const companyName = position?.name || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
+            const livePrice = liveData.price || (position ? position.current : 0) || preGenerated.price || 0;
+            const readiness = preGenerated.readiness_score != null ? preGenerated.readiness_score : 50;
+            const tier = preGenerated.tier || 'TRACKING';
+
+            const isPositive = position ? position.unrealized_plpc >= 0 : (liveData.change_pct || 0) >= 0;
+            const plColor = isPositive ? '#22c55e' : '#ef4444';
+            const plValue = position ? position.unrealized_plpc.toFixed(2) : (liveData.change_pct || 0).toFixed(2);
+            const plDollar = position ? position.unrealized_pl : 0;
+            const plSign = isPositive ? '+' : '';
+
+            const status = getHoldingStatus(parseFloat(plValue), readiness);
+            const thesisShort = simplifyThesis(preGenerated.thesis || (staticData ? staticData.thesis : ''), symbol);
+
+            // Exit levels — only show the relevant one
+            const hardStop = preGenerated.hardStop || (position ? position.avg_entry * 0.90 : 0);
+            const trailingStop = preGenerated.trailingStop || 0;
+            const currentStop = trailingStop > hardStop ? trailingStop : hardStop;
+            const stopDist = livePrice > 0 ? ((currentStop - livePrice) / livePrice * 100).toFixed(1) : 0;
+            const profitTarget = preGenerated.profit50 || (position ? position.avg_entry * 1.50 : 0);
+            const targetDist = livePrice > 0 ? ((profitTarget - livePrice) / livePrice * 100).toFixed(1) : 0;
+
+            // Show stop if losing, target if winning, both if neutral
+            let exitHtml = '';
+            if (parseFloat(plValue) < -5) {
+                exitHtml = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0.9rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px;">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">🛑 Stop loss</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ef4444; font-weight: 700;">$${currentStop.toFixed(2)} <span style="font-size: 0.7rem; opacity: 0.7;">(${stopDist}%)</span></span>
+                    </div>`;
+            } else if (parseFloat(plValue) > 5) {
+                exitHtml = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0.9rem; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 10px;">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">🎯 Profit target</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">$${profitTarget.toFixed(2)} <span style="font-size: 0.7rem; opacity: 0.7;">(+${targetDist}%)</span></span>
+                    </div>`;
+            } else {
+                exitHtml = `
+                    <div style="display: flex; gap: 0.5rem;">
+                        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px;">
+                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Stop</span>
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; font-weight: 600;">$${currentStop.toFixed(0)}</span>
+                        </div>
+                        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); border-radius: 8px;">
+                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Target</span>
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #22c55e; font-weight: 600;">$${profitTarget.toFixed(0)}</span>
+                        </div>
+                    </div>`;
+            }
+
+            // Tier chip
+            const tierColor = tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
+            const tierBg = tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+
+            const content = `
+                <div style="padding: 1.25rem;">
+
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
+                        <div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">${symbol}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${companyName}</div>
+                        </div>
+                        <button onclick="closeTradeDetails()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                    </div>
+
+                    ${position ? `
+                    <!-- P&L Hero -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">P&L</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: ${plColor};">${plSign}${plValue}%</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${plSign}$${Math.abs(plDollar).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Value</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">$${position.market_value.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${position.qty} shares · $${livePrice.toFixed(2)}</div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Status line -->
+                    <div style="background: ${status.color === '#22c55e' ? 'rgba(34,197,94,0.1)' : status.color === '#ef4444' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)'}; border: 1px solid ${status.color}33; border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: ${status.color};">${status.text}</span>
+                    </div>
+
+                    <!-- Why we own it -->
+                    <div style="margin-bottom: 1rem;">
+                        <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why we own it</div>
+                        <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">${thesisShort}</div>
+                    </div>
+
+                    <!-- What to watch -->
+                    <div style="margin-bottom: 1rem;">
+                        <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">What to watch</div>
+                        ${exitHtml}
+                    </div>
+
+                    <!-- VWAP row (from Alpaca paid data) -->
+                    ${preGenerated.dailyVwap ? `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; margin-bottom: 1rem;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted);">VWAP</span>
+                        <div style="text-align: right;">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600;">$${preGenerated.dailyVwap.toFixed(2)}</span>
+                            ${preGenerated.vwapDeviation != null ? `<span style="font-size: 0.65rem; color: ${preGenerated.vwapDeviation >= 0 ? '#22c55e' : '#ef4444'}; margin-left: 6px;">${preGenerated.vwapDeviation >= 0 ? '+' : ''}${preGenerated.vwapDeviation.toFixed(1)}%</span>` : ''}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Signal chip -->
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                        <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
+                        <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
+                    </div>
+
                 </div>
-            ` : '';
-            
+            `;
+
             const modal = document.createElement('div');
             modal.id = 'trade-modal';
             modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-                display: flex; align-items: center; justify-content: center;
-                z-index: 10000; padding: 1rem;
-            `;
-            
-            // Build unified popup content using pre-generated + live data
-            // Get company info from portfolio data first, then fall back to companyInfo
-            const companyName = position?.name || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
-            
-            // Use pre-generated content if available, otherwise fall back to dynamic generation
-            const livePrice = liveData.price || (position ? position.current : 0) || preGenerated.price || 0;
-            const liveChange = liveData.change_pct || 0;
-            const liveRSI = liveData.rsi || preGenerated.rsi || 50;
-            const liveAIScore = liveData.ai_score || preGenerated.aiScore || 50;
-            const targets = liveData.targets || {};
-            
-            // Get narratives from pre-generated content or fall back to static/dynamic
-            let thesis = preGenerated.thesis || (staticData ? staticData.thesis : `AI-selected position in ${companyName}. Monitoring technical levels and market context for optimal exit timing.`);
-            let catalyst = preGenerated.catalyst || (staticData ? staticData.catalyst : 'Active trading signal');
-            let risk = preGenerated.risk || (staticData ? staticData.risk : 'Market volatility, sector rotation');
-            let confidence = preGenerated.confidence || `${liveAIScore}% - AI Confidence Score`;
-            let entryReason = preGenerated.entryReason || (staticData ? staticData.entryReason : `RSI entry signal triggered at avg cost $${position ? position.avg_entry.toFixed(2) : 'N/A'}`);
-            let stopReason = preGenerated.stopReason || (staticData ? staticData.stopReason : '-15% hard stop protects capital');
-            
-            // Build content - UNIFIED format for all positions
-            const isPositive = position ? position.unrealized_plpc >= 0 : liveChange >= 0;
-            const plColor = isPositive ? '#22c55e' : '#ef4444';
-            const plSign = isPositive ? '+' : '';
-            const plValue = position ? position.unrealized_plpc.toFixed(2) : liveChange.toFixed(2);
-            
-            const content = `
-                ${staleWarning}
-                
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                    <div>
-                        <div style="font-size: 1.4rem; font-weight: 800; color: #fbbf24;">$${symbol}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem;">${companyName}</div>
-                    </div>
-                    <button onclick="closeTradeDetails()" style="background: none; border: none; color: var(--text-secondary);
-                            font-size: 1.5rem; cursor: pointer; padding: 0;">×</button>
-                </div>
-
-                ${position ? `
-                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
-                    <div style="font-size: 0.7rem; color: #06b6d4; font-weight: 700; margin-bottom: 0.5rem;">POSITION DETAILS</div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.8rem; color: var(--text-primary);">
-                        <div><span style="color: var(--text-secondary);">Shares:</span> <strong>${position.qty}</strong></div>
-                        <div><span style="color: var(--text-secondary);">Current:</span> <strong>$${livePrice ? livePrice.toFixed(2) : position.current.toFixed(2)}</strong></div>
-                        <div><span style="color: var(--text-secondary);">Avg Entry:</span> <strong>$${position.avg_entry.toFixed(2)}</strong></div>
-                        <div><span style="color: var(--text-secondary);">Value:</span> <strong>$${position.market_value.toLocaleString()}</strong></div>
-                    </div>
-                </div>
-
-                <div style="background: ${isPositive ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; border: 1px solid ${plColor}; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
-                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.3rem;">UNREALIZED P&L</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: ${plColor}; font-family: 'JetBrains Mono', monospace;">${plSign}${plValue}%</div>
-                </div>
-                ` : ''}
-
-                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
-                    <div style="font-size: 0.7rem; color: #06b6d4; font-weight: 700; margin-bottom: 0.5rem;">INVESTMENT THESIS</div>
-                    <div style="font-size: 0.85rem; color: var(--text-primary); line-height: 1.5;">${thesis}</div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                    <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 8px; padding: 0.6rem;">
-                        <div style="font-size: 0.6rem; color: #22c55e; text-transform: uppercase;">Catalyst</div>
-                        <div style="font-size: 0.7rem; color: var(--text-primary); margin-top: 0.2rem;">${catalyst}</div>
-                    </div>
-                    <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 0.6rem;">
-                        <div style="font-size: 0.6rem; color: #ef4444; text-transform: uppercase;">Risk Factor</div>
-                        <div style="font-size: 0.7rem; color: var(--text-primary); margin-top: 0.2rem;">${risk}</div>
-                    </div>
-                </div>
-
-                <div style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.75rem;">
-                    <div style="font-size: 0.6rem; color: #06b6d4; text-transform: uppercase; margin-bottom: 0.3rem;">AI CONFIDENCE</div>
-                    <div style="font-size: 0.8rem; color: var(--text-primary);">${confidence}</div>
-                    ${liveRSI ? `<div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 0.3rem;">RSI: ${liveRSI.toFixed(1)} | Signal: ${targets.signal || 'HOLD'}</div>` : ''}
-                </div>
-
-                <div style="font-size: 0.7rem; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
-                    <div style="margin-bottom: 0.4rem;"><strong style="color: #22c55e;">Entry:</strong> ${entryReason}</div>
-                    <div><strong style="color: #ef4444;">Stop:</strong> ${stopReason}</div>
-                </div>
+                display: flex; align-items: flex-end; justify-content: center;
+                z-index: 10000; padding: 0;
             `;
 
             modal.innerHTML = `
-                <div style="background: linear-gradient(145deg, #1a1a24, #0f0f14); border: 1px solid rgba(255,255,255,0.1);
-                     border-radius: 16px; padding: 1.5rem; max-width: 420px; width: 100%; max-height: 80vh;
-                     overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.5); -webkit-overflow-scrolling: touch;">
+                <div style="background: var(--bg-elevated, #1a1a24); border: 1px solid var(--border, rgba(255,255,255,0.1));
+                     border-radius: 20px 20px 0 0; padding: 0; max-width: 460px; width: 100%; max-height: 85vh;
+                     overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); -webkit-overflow-scrolling: touch;
+                     transform: translateY(0);">
+                    <div style="width: 40px; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; margin: 12px auto 0; flex-shrink: 0;"></div>
                     ${content}
                 </div>
             `;
@@ -8692,14 +9138,27 @@
                 if (e.target === modal) closeTradeDetails();
             };
 
+            const existing = document.getElementById('trade-modal');
+            if (existing) existing.remove();
             document.body.appendChild(modal);
             document.body.style.overflow = 'hidden';
 
-            // Set up auto-refresh every 30 seconds (only if not already a refresh)
+            // Slide up animation
+            requestAnimationFrame(() => {
+                const sheet = modal.firstElementChild;
+                if (sheet) {
+                    sheet.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+                    sheet.style.transform = 'translateY(100%)';
+                    requestAnimationFrame(() => {
+                        sheet.style.transform = 'translateY(0)';
+                    });
+                }
+            });
+
             if (!isRefresh) {
                 activePopupRefreshInterval = setInterval(() => {
                     refreshActivePopup();
-                }, 30000); // 30 seconds
+                }, 30000);
             }
         }
 
@@ -10195,7 +10654,10 @@
                         : '-',
                     sentiment: { bullish: sentiment, bearish: 100 - sentiment },
                     aiScore: aiScore,
+                    readinessScore: data.readiness_score || 0,
                     readinessTag: readinessTag,
+                    tierReason: data.tier_reason || '',
+                    confirmationCount: data.confirmation_count || 0,
                     strategy: dynamicStrategy,
                     catalyst: dynamicCatalyst,
                     risk: dynamicRisk,
@@ -10589,41 +11051,80 @@
             };
         }
 
-        // Show tier explainer popup
+        // Show tier explainer tooltip — clean, compact
         function showTierExplainer(event) {
             event.stopPropagation();
-            const modal = document.createElement('div');
-            modal.id = 'tier-explainer-modal';
-            modal.innerHTML = `
-                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;" onclick="this.remove()">
-                    <div style="background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; max-width: 380px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h3 style="margin: 0; font-size: 18px; font-weight: 700;">Watchlist Tiers</h3>
-                            <button onclick="document.getElementById('tier-explainer-modal').remove()" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;">×</button>
-                        </div>
-                        <div style="margin-bottom: 16px; padding: 14px; background: rgba(239,68,68,0.1); border-radius: 10px; border-left: 3px solid #ef4444;">
-                            <div style="font-weight: 700; color: #ef4444; font-size: 14px; margin-bottom: 4px;"> NOW</div>
-                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 35 + AI Score ≥ 75. Highest conviction. Bot auto-buys (with 1.5x volume).</div>
-                        </div>
-                        <div style="margin-bottom: 16px; padding: 14px; background: rgba(251,191,36,0.1); border-radius: 10px; border-left: 3px solid #fbbf24;">
-                            <div style="font-weight: 700; color: #fbbf24; font-size: 14px; margin-bottom: 4px;">WATCH</div>
-                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">RSI ≤ 48 + AI Score ≥ 60. Bot also buys when RSI drops below 35. Watch for entry.</div>
-                        </div>
-                        <div style="margin-bottom: 16px; padding: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid var(--text-muted);">
-                            <div style="font-weight: 700; color: var(--text-muted); font-size: 14px; margin-bottom: 4px;"> MONITOR</div>
-                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">Tracking but not ready. May become WATCH if RSI cools or AI Score improves.</div>
-                        </div>
-                        <div style="padding: 14px; background: rgba(107,114,128,0.1); border-radius: 10px; border-left: 3px solid #6b7280;">
-                            <div style="font-weight: 700; color: #6b7280; font-size: 14px; margin-bottom: 4px;"> TRACKING</div>
-                            <div style="font-size: 12px; color: var(--text-color); line-height: 1.5;">Data loading or stock has no price data yet. Watchlist universe - not yet scored for entry signals.</div>
-                        </div>
-                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: var(--text-muted); line-height: 1.5;">
-                            <strong>Rotation Rules:</strong> Removed if RSI > 50 (past buy zone), up > 5% daily (chased), or after 3 days without entry signal.
-                        </div>
+            const existing = document.getElementById('tier-explainer-tooltip');
+            if (existing) { existing.remove(); return; }
+
+            const tooltip = document.createElement('div');
+            tooltip.id = 'tier-explainer-tooltip';
+            tooltip.style.cssText = `
+                position: fixed;
+                background: var(--bg-elevated, #1a1a24);
+                border: 1px solid var(--border, rgba(255,255,255,0.15));
+                border-radius: 12px;
+                padding: 0.9rem;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                line-height: 1.5;
+                max-width: 280px;
+                z-index: 10010;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+                opacity: 0;
+                transform: translateY(4px);
+                transition: opacity 0.2s, transform 0.2s;
+                pointer-events: none;
+            `;
+
+            tooltip.innerHTML = `
+                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 8px; font-size: 0.82rem;">Watchlist Tiers</div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <span style="color: #22c55e; font-weight: 700; min-width: 52px;">NOW</span>
+                        <span style="color: var(--text-muted);">Readiness ≥70 — bot buys</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <span style="color: #fbbf24; font-weight: 700; min-width: 52px;">WATCH</span>
+                        <span style="color: var(--text-muted);">50-69 — approaching entry</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <span style="color: var(--text-muted); font-weight: 700; min-width: 52px;">MONITOR</span>
+                        <span style="color: var(--text-muted);">&lt;50 — not ready yet</span>
                     </div>
                 </div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.68rem; color: var(--text-muted);">
+                    Tiers auto-promote/demote as signals change.
+                </div>
             `;
-            document.body.appendChild(modal);
+
+            document.body.appendChild(tooltip);
+
+            // Position near the tapped element
+            const rect = event.target.getBoundingClientRect();
+            let top = rect.bottom + 8;
+            let left = rect.left;
+            const tw = tooltip.offsetWidth;
+            if (left + tw > window.innerWidth - 16) left = window.innerWidth - tw - 16;
+            if (top + tooltip.offsetHeight > window.innerHeight - 16) top = rect.top - tooltip.offsetHeight - 8;
+            tooltip.style.top = top + 'px';
+            tooltip.style.left = left + 'px';
+
+            requestAnimationFrame(() => {
+                tooltip.style.opacity = '1';
+                tooltip.style.transform = 'translateY(0)';
+            });
+
+            // Dismiss on tap anywhere else
+            setTimeout(() => {
+                const handler = (ev) => {
+                    if (ev.target !== tooltip && !tooltip.contains(ev.target)) {
+                        tooltip.remove();
+                        document.removeEventListener('click', handler);
+                    }
+                };
+                document.addEventListener('click', handler);
+            }, 100);
         }
 
         // Show stock decision popup - focused on actionable metrics
@@ -10803,7 +11304,25 @@
             }
         }
 
-        // New professional stock detail sheet with news sentiment
+        function getWatchlistStatus(signal, readiness, rsi) {
+            if (signal === 'NOW') return { text: '🟢 Entry signal — buy zone', color: '#22c55e' };
+            if (signal === 'WATCH') return { text: '🟡 Approaching entry — watch closely', color: '#fbbf24' };
+            if (rsi && rsi <= 35) return { text: '🔵 Oversold — potential bounce', color: '#06b6d4' };
+            return { text: '⏳ Waiting for better setup', color: 'var(--text-muted)' };
+        }
+
+        function simplifyStrategy(strategy, symbol) {
+            if (!strategy) return `AI tracking ${symbol} for optimal entry`;
+            let first = strategy.split('.')[0];
+            first = first.replace(/quality-momentum model/i, 'AI model');
+            first = first.replace(/macro backdrop/i, 'market conditions');
+            first = first.replace(/scoring \d+\/100.*$/i, '');
+            first = first.replace(/negative \d+-day momentum,?\s*/i, '');
+            first = first.replace(/positive \d+-day momentum,?\s*/i, '');
+            return first.trim() + '.';
+        }
+
+        // Watchlist popup — clean trading brief
         function showStockDetail(symbol, isRefresh = false) {
             watchlistPopupSymbol = symbol;
             if (watchlistPopupRefreshInterval) {
@@ -10821,31 +11340,29 @@
             }
 
             const existing = document.getElementById('stock-chart-modal');
-            const modal = existing || document.createElement('div');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
             modal.id = 'stock-chart-modal';
             modal.className = 'stock-detail-overlay';
 
-            const chartData = generateDynamicChartData(stock);
-            // Use server's signal from AI scoring system
-            const serverSignal = stock.signal || 'WAIT';
-            const signal = serverSignal === 'NOW' ? 'NOW' : serverSignal === 'WATCH' ? 'WATCH' : 'WAIT';
-            const signalColor = signal === 'NOW' ? 'var(--accent-green)' : signal === 'WATCH' ? 'var(--accent-gold)' : 'var(--accent-red)';
-            const signalBg = signal === 'NOW' ? 'rgba(34,197,94,0.12)' : signal === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(239,68,68,0.12)';
-            const aiScoreColor = stock.aiScore >= 90 ? 'var(--accent-green)' : stock.aiScore >= 75 ? 'var(--accent-gold)' : 'var(--accent-blue)';
-            const isOversold = stock.rsi <= 35;
-            const changeColor = stock.changePct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            const signal = stock.signal || 'WAIT';
+            const readiness = stock.readinessScore || 50;
+            const rsi = stock.rsi || 50;
+            const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
+            const status = getWatchlistStatus(signal, readiness, rsi);
+            const strategyShort = simplifyStrategy(stock.strategy, symbol);
 
+            // Exit levels
             const stopPrice = stock.stopLoss || (stock.price * 0.85);
-            const target25 = stock.profit25 || (stock.price * 1.25);
-            const minPrice = chartData.minPrice;
-            const maxPrice = chartData.maxPrice;
-            const range = maxPrice - minPrice || 1;
+            const targetPrice = stock.profit25 || (stock.price * 1.25);
+            const stopDist = ((stopPrice - stock.price) / stock.price * 100).toFixed(1);
+            const targetDist = ((targetPrice - stock.price) / stock.price * 100).toFixed(1);
 
-            const chartBars = chartData.prices.map((price, i) => {
-                const height = ((price - minPrice) / range * 60) + 20;
-                const isUp = i > 0 && price >= chartData.prices[i-1];
-                return `<div class="stock-detail-chart-bar" style="height: ${height}%; background: ${isUp ? 'var(--accent-green)' : 'var(--accent-red)'};"></div>`;
-            }).join('');
+            // Tier chip
+            const tier = stock.tier || 'TRACKING';
+            const tierColor = tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
+            const tierBg = tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
 
             const bodyHtml = `
                 <div class="stock-detail-sheet">
@@ -10857,94 +11374,72 @@
                         </div>
                         <button class="stock-detail-close" onclick="closeStockDetail()">✕</button>
                     </div>
-                    <div class="stock-detail-body">
-                        <div class="stock-detail-price-row">
-                            <div class="stock-detail-price">$${stock.price.toFixed(2)}</div>
-                            <div class="stock-detail-change">
-                                <div class="stock-detail-change-value" style="color: ${changeColor};">${stock.changePct >= 0 ? '▲' : '▼'} ${Math.abs(stock.changePct).toFixed(2)}%</div>
-                                <div class="stock-detail-change-label">today</div>
-                            </div>
-                        </div>
+                    <div class="stock-detail-body" style="padding: 0 1.25rem 1.5rem;">
 
-                        <div class="stock-detail-signal" style="background: ${signalBg}; border: 1px solid ${signalColor};">
-                            <div class="stock-detail-signal-value" style="color: ${signalColor};">${signal}</div>
+                        <!-- Price + change -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0 1rem;">
                             <div>
-                                <div class="stock-detail-signal-label" style="color: ${signalColor};">Signal</div>
-                                <div class="stock-detail-signal-note">${stock.aiNote || (isOversold ? 'RSI oversold — entry zone' : stock.rsi <= 45 ? 'Approaching oversold' : 'Hold — wait for dip')}</div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Price</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">$${stock.price.toFixed(2)}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Today</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: ${changeColor};">${stock.changePct >= 0 ? '▲' : '▼'} ${Math.abs(stock.changePct).toFixed(2)}%</div>
                             </div>
                         </div>
 
-                        <div class="stock-detail-metrics">
-                            <div class="stock-detail-metric">
-                                <div class="stock-detail-metric-label">RSI</div>
-                                <div class="stock-detail-metric-value" style="color: #06b6d4;">${stock.rsi}</div>
-                                <div class="stock-detail-metric-sublabel">${isOversold ? 'OVERSOLD' : stock.rsi < 50 ? 'NEUTRAL' : 'HIGH'}</div>
-                            </div>
-                            <div class="stock-detail-metric">
-                                <div class="stock-detail-metric-label">AI Score</div>
-                                <div class="stock-detail-metric-value" style="color: ${aiScoreColor};">${stock.aiScore}</div>
-                                <div class="stock-detail-metric-sublabel">${stock.aiScore >= 90 ? 'STRONG' : stock.aiScore >= 75 ? 'GOOD' : 'FAIR'}</div>
-                            </div>
-                            <div class="stock-detail-metric">
-                                <div class="stock-detail-metric-label">Target</div>
-                                <div class="stock-detail-metric-value" style="color: var(--accent-green);">$${target25.toFixed(0)}</div>
-                                <div class="stock-detail-metric-sublabel" style="color: var(--accent-green);">+${((target25/stock.price-1)*100).toFixed(0)}%</div>
-                            </div>
+                        <!-- Status line -->
+                        <div style="background: ${status.color === '#22c55e' ? 'rgba(34,197,94,0.1)' : status.color === '#fbbf24' ? 'rgba(251,191,36,0.1)' : status.color === '#06b6d4' ? 'rgba(6,182,212,0.1)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${status.color}33; border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: ${status.color};">${status.text}</span>
                         </div>
 
-                        <div class="stock-detail-section">
-                            <div class="stock-detail-section-title">Price Action <span>10 days</span></div>
-                            <div class="stock-detail-chart">
-                                <div class="stock-detail-chart-zone" style="top: 0; height: 20%; background: rgba(34,197,94,0.08); border-bottom: 1px solid rgba(34,197,94,0.25);">
-                                    <span style="position: absolute; right: 8px; top: 2px; font-size: 9px; color: var(--accent-green);">$${target25.toFixed(0)}</span>
+                        <!-- Why this stock -->
+                        <div style="margin-bottom: 1rem;">
+                            <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why this stock?</div>
+                            <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">${strategyShort}</div>
+                        </div>
+
+                        <!-- Entry/exit levels -->
+                        <div style="margin-bottom: 1rem;">
+                            <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Key levels</div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px;">
+                                    <span style="font-size: 0.7rem; color: var(--text-secondary);">Stop</span>
+                                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; font-weight: 600;">$${stopPrice.toFixed(0)} <span style="font-size: 0.65rem; opacity: 0.7;">(${stopDist}%)</span></span>
                                 </div>
-                                <div class="stock-detail-chart-zone" style="top: 40%; height: 20%; background: rgba(251,191,36,0.06); border-top: 1px dashed rgba(251,191,36,0.25); border-bottom: 1px dashed rgba(251,191,36,0.25);">
-                                    <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 9px; color: var(--accent-gold);">Entry</span>
-                                </div>
-                                <div class="stock-detail-chart-zone" style="bottom: 0; height: 20%; background: rgba(239,68,68,0.08); border-top: 1px solid rgba(239,68,68,0.25);">
-                                    <span style="position: absolute; right: 8px; bottom: 2px; font-size: 9px; color: var(--accent-red);"> $${stopPrice.toFixed(0)}</span>
-                                </div>
-                                <div class="stock-detail-chart-bars">${chartBars}</div>
-                                <div class="stock-detail-chart-line" style="top: 50%;">
-                                    <span style="position: absolute; right: 4px; top: -14px; font-size: 9px; color: var(--accent-gold); font-weight: 600;">$${stock.price.toFixed(0)}</span>
+                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); border-radius: 8px;">
+                                    <span style="font-size: 0.7rem; color: var(--text-secondary);">Target</span>
+                                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #22c55e; font-weight: 600;">$${targetPrice.toFixed(0)} <span style="font-size: 0.65rem; opacity: 0.7;">(+${targetDist}%)</span></span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="stock-detail-section">
-                            <div class="stock-detail-section-title">Why this stock?</div>
-                            <div class="stock-detail-sentiment" style="padding: 14px;">
-                                <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 8px;">${stock.strategy}</div>
-                                <div style="padding-top: 8px; border-top: 1px solid var(--border);">
-                                    <span style="font-size: 0.7rem; color: var(--accent-red); font-weight: 700;">⚠ Risk: </span>
-                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${stock.risk}</span>
+                        <!-- Signal chips -->
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
+                            <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
+                            <span style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;">RSI ${rsi.toFixed(0)}</span>
+                        </div>
+
+                        <!-- News sentiment (compact, 1 headline max) -->
+                        <div id="sentiment-section" style="margin-bottom: 0.5rem;">
+                            <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Latest news</div>
+                            <div id="sentiment-content">
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.75rem;">
+                                    <span>Loading…</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="stock-detail-section" id="sentiment-section">
-                            <div class="stock-detail-section-title">News Sentiment <span>secondary indicator</span></div>
-                            <div class="stock-detail-sentiment" id="sentiment-content">
-                                <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.8rem;">
-                                    <span>Loading news sentiment…</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="stock-detail-actions">
-                            <button class="stock-detail-btn" onclick="closeStockDetail(); switchTab('watchlist');">← Back to Watchlist</button>
-                        </div>
                     </div>
                 </div>
             `;
 
             modal.innerHTML = bodyHtml;
-            if (!existing) {
-                document.body.appendChild(modal);
-                modal.onclick = function(e) { if (e.target === modal) closeStockDetail(); };
-                requestAnimationFrame(() => modal.classList.add('active'));
-                document.body.style.overflow = 'hidden';
-            }
+            document.body.appendChild(modal);
+            modal.onclick = function(e) { if (e.target === modal) closeStockDetail(); };
+            requestAnimationFrame(() => modal.classList.add('active'));
+            document.body.style.overflow = 'hidden';
 
             loadStockSentiment(symbol, stock);
 
@@ -10997,24 +11492,22 @@
                 const fetchedToneColor = fetchedTone === 'bullish' ? 'var(--accent-green)' : fetchedTone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
                 const fetchedToneIcon = fetchedTone === 'bullish' ? '▲' : fetchedTone === 'bearish' ? '▼' : '—';
 
-                const headlines = (data.headlines || []).slice(0, 3).map(h => `
-                    <div class="sentiment-headline">
-                        <div class="sentiment-headline-title">${h.title}</div>
-                        <div class="sentiment-headline-meta">
-                            <span class="sentiment-headline-source">${h.source}</span>
-                            <span class="sentiment-headline-time">${h.publishedRelative || ''}</span>
+                const headlines = (data.headlines || []).slice(0, 1).map(h => `
+                    <a href="${h.url || '#'}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; color: inherit; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;">
+                        <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4; margin-bottom: 4px;">${h.title}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; color: var(--text-muted);">
+                            <span style="font-weight: 600;">${h.source}</span>
+                            <span>${h.publishedRelative || ''} ↗</span>
                         </div>
-                    </div>
+                    </a>
                 `).join('');
 
                 container.innerHTML = `
-                    <div class="sentiment-header">
-                        <span class="sentiment-tone ${fetchedTone}">${fetchedToneIcon} ${fetchedTone}</span>
-                        <span class="sentiment-mentions"><strong>${data.mentionCount24h || 0}</strong> news mentions · 24h</span>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: ${headlines ? '10px' : '0'};">
+                        <span class="sentiment-tone ${fetchedTone}" style="font-size: 0.7rem; padding: 4px 8px;">${fetchedToneIcon} ${fetchedTone}</span>
+                        <span style="font-size: 0.7rem; color: var(--text-muted);">${data.mentionCount24h || 0} mentions · 24h</span>
                     </div>
-                    <div class="sentiment-sparkline">${renderSentimentSparkline(data.sparkline, fetchedToneColor)}</div>
-                    <div class="sentiment-headlines">${headlines}</div>
-                    <div class="sentiment-disclaimer">${data.dataSource || 'News sentiment is a secondary indicator, not a trading signal.'}</div>
+                    ${headlines}
                 `;
             } catch (e) {
                 // Fallback to cached data from ai_watchlist_live.json
@@ -11278,6 +11771,12 @@
         }
     </script>
 
+
+
+        <!-- FOOTER -->
+        <footer style="border-top: 1px solid var(--border); padding: 1rem 0.75rem 1.5rem; text-align: center;">
+            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Not investment advice · The AI can lose money</div>
+        </footer>
 
 </body>
 </html>
