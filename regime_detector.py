@@ -95,7 +95,7 @@ def _compute_spy_ema50() -> Tuple[Optional[float], Optional[float]]:
     try:
         from alpaca_data import get_data_hub
         hub = get_data_hub()
-        bars = hub.get_daily_bars(["SPY"], days=EMA_PERIOD + 10)
+        bars = hub.get_daily_bars(["SPY"], days=EMA_PERIOD + 30)
         closes = bars.get("SPY", {}).get("closes", [])
         if len(closes) < EMA_PERIOD:
             logger.warning(f"Not enough SPY closes for EMA{EMA_PERIOD}: {len(closes)}")
