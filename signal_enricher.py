@@ -456,6 +456,16 @@ def main():
     logger.info(f"Universe: {len(universe)} symbols")
     enriched = enrich_universe_batched(universe, api_key, news_only=news_only, force=force, batch_range=batch_range)
     save_enrichment(enriched)
+
+    # Copy to web root for frontend access
+    import shutil
+    web_path = "/var/www/hedge-fund-website/signal_enrichment.json"
+    try:
+        shutil.copy2(str(ENRICHMENT_FILE), web_path)
+        os.chown(web_path, 1000, 1000)  # stonkai:stonkai
+        logger.info("Copied enrichment to web root")
+    except Exception as e:
+        logger.warning(f"Failed to copy enrichment to web root: {e}")
     logger.info(f"Done. Enriched {len(enriched)} symbols total.")
     return 0
 
