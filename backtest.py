@@ -243,7 +243,7 @@ class BacktestEngine:
                 equity += pos["qty"] * prices[sym]
         return equity
 
-    def run(self, max_positions: int = 20, verbose: bool = True):
+    def run(self, max_positions: int = 10, verbose: bool = True):
         """Run the backtest with T+1 execution (no lookahead bias).
 
         Signals are generated from day T's close.
@@ -296,11 +296,14 @@ class BacktestEngine:
                             break
 
                     if order["action"] == "BUY":
-                        qty = int(order["allocation"] / exec_price) if exec_price > 0 else 0
+                        # Conviction-based sizing: STRONG_NOW gets 1.5x, NOW gets 1.0x
+                        multiplier = order.get("multiplier", 1.0)
+                        allocation = order["allocation"] * multiplier
+                        qty = int(allocation / exec_price) if exec_price > 0 else 0
                         if qty > 0:
                             cost = qty * exec_price
                             self.cash -= cost
-                            self.positions[sym] = {"qty": qty, "cost_basis": cost, "entry_date_idx": 0}
+                            self.positions[sym] = {"qty": qty, "cost_basis": cost, "entry_date_idx": 0, "entry_price": exec_price}
                             self.trades.append({
                                 "date": date_str,
                                 "action": "BUY",
@@ -308,6 +311,7 @@ class BacktestEngine:
                                 "qty": qty,
                                 "price": exec_price,
                                 "execution": "T+1 open",
+                                "tier": order.get("tier", "NOW"),
                             })
                     elif order["action"] == "SELL":
                         pos = self.positions.pop(sym, None)
@@ -321,6 +325,7 @@ class BacktestEngine:
                                 "qty": pos["qty"],
                                 "price": exec_price,
                                 "execution": "T+1 open",
+                                "reason": order.get("reason", "tier_demotion"),
                             })
                 pending_orders = []
 
@@ -335,38 +340,59 @@ class BacktestEngine:
                 if sym not in sliced or not sliced[sym]:
                     continue
                 sig = self.generate_signal_for_symbol(sym, sliced[sym], sliced)
-                if sig and (sig.get("entry_eligible") or sig.get("readiness_score", 0) >= 55):
+                if sig and sig.get("entry_eligible"):
                     signals.append(sig)
 
             signals.sort(key=lambda s: s["readiness_score"], reverse=True)
             top_signals = signals[:max_positions]
             top_symbols = set(s["symbol"] for s in top_signals)
 
-            # Queue sells for tomorrow at T+1 open
+            # Check stop losses first (-10% hard stop)
             for sym in list(self.positions.keys()):
+                pos = self.positions.get(sym, {})
+                entry_price = pos.get("entry_price", 0)
+                if entry_price > 0 and sym in current_prices:
+                    loss_pct = (current_prices[sym] - entry_price) / entry_price
+                    if loss_pct <= -0.10:
+                        pending_orders.append({"action": "SELL", "symbol": sym, "reason": "stop_loss"})
+                        continue
+
+            # Queue sells for tomorrow at T+1 open (tier demotion)
+            for sym in list(self.positions.keys()):
+                if sym in [o["symbol"] for o in pending_orders if o["action"] == "SELL"]:
+                    continue  # Already queued for stop loss
                 if sym not in top_symbols:
                     pos = self.positions[sym]
                     days_held = pos.get("entry_date_idx", 0)
-                    if days_held < 10:
+                    if days_held < 20:
                         pos["entry_date_idx"] = days_held + 1
                         continue
                     sym_signal = next((s for s in signals if s["symbol"] == sym), None)
-                    if sym_signal and sym_signal["readiness_score"] >= 40:
+                    if sym_signal and sym_signal["readiness_score"] >= 55:
                         pos["entry_date_idx"] = days_held + 1
                         continue
                     # Queue sell for tomorrow
                     pending_orders.append({"action": "SELL", "symbol": sym})
 
-            # Queue buys for tomorrow at T+1 open
+            # Queue buys for tomorrow at T+1 open (conviction-based sizing)
             available_cash = self.cash
-            target_symbols = [s["symbol"] for s in top_signals if s["symbol"] not in self.positions]
-            if target_symbols and available_cash > 0:
-                allocation = available_cash / len(target_symbols)
+            # Only deploy 90% of cash (keep 10% cash floor like live bot)
+            deployable_cash = available_cash * 0.90
+            target_symbols = [s for s in top_signals if s["symbol"] not in self.positions]
+            if target_symbols and deployable_cash > 0:
+                base_allocation = deployable_cash / len(target_symbols)
                 for sig in top_signals:
                     sym = sig["symbol"]
                     if sym in self.positions or sym not in current_prices:
                         continue
-                    pending_orders.append({"action": "BUY", "symbol": sym, "allocation": allocation})
+                    multiplier = 1.5 if sig.get("tier") == "STRONG_NOW" else 1.0
+                    pending_orders.append({
+                        "action": "BUY",
+                        "symbol": sym,
+                        "allocation": base_allocation,
+                        "multiplier": multiplier,
+                        "tier": sig.get("tier", "NOW"),
+                    })
 
             # Update entry_date_idx for held positions
             for sym in list(self.positions.keys()):
@@ -461,7 +487,7 @@ def main():
     parser.add_argument("--start", default="2024-01-01")
     parser.add_argument("--end", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
     parser.add_argument("--cash", type=float, default=100_000.0)
-    parser.add_argument("--max-positions", type=int, default=20)
+    parser.add_argument("--max-positions", type=int, default=10)
     parser.add_argument("--benchmark", default="SPY")
     args = parser.parse_args()
 
