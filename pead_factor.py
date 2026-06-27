@@ -78,17 +78,18 @@ def _load_enrichment(path: Path = ENRICHMENT_PATH) -> Dict:
 
 
 def _days_since_period(period_str: str) -> Optional[int]:
-    """
-    Calculate days since the earnings period end date.
-    The 'period' field is the fiscal quarter end date (e.g., "2026-03-31").
-    Earnings are typically reported 4-6 weeks after quarter end.
-    We use period end as a proxy — actual report date would be better,
-    but this gives a reasonable approximation for the drift window.
+    """Estimate days since earnings announcement.
+
+    Finnhub provides fiscal quarter end date, not actual announcement date.
+    Most US companies report 30-45 days after quarter end.
+    We use period + 35 days as estimated announcement date.
     """
     try:
+        from datetime import timedelta as _td
         period_date = datetime.strptime(period_str, "%Y-%m-%d").date()
+        estimated_announcement = period_date + _td(days=35)
         today = date.today()
-        delta = (today - period_date).days
+        delta = (today - estimated_announcement).days
         return max(0, delta) if delta >= 0 else None
     except Exception:
         return None
