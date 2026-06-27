@@ -122,7 +122,7 @@ def _spy_vs_ema50() -> Tuple[str, Optional[float], Optional[float]]:
 def _regime_params(banner):
     """Map a regime name to risk parameters used by the trading loop."""
     return {
-        "RISK_ON":  {"max_position_pct": 8,  "cash_floor_pct": 5,  "min_tier_for_entry": "NOW",       "label": "Normal",    "description": "Full position sizes, normal entry"},
+        "RISK_ON":  {"max_position_pct": 8,  "cash_floor_pct": 10,  "min_tier_for_entry": "NOW",       "label": "Normal",    "description": "Full position sizes, normal entry"},
         "RISK_OFF": {"max_position_pct": 4,  "cash_floor_pct": 15, "min_tier_for_entry": "STRONG_NOW", "label": "Defensive", "description": "Reduced position sizes, STRONG_NOW entries only"},
         "CRISIS":   {"max_position_pct": 4,  "cash_floor_pct": 30, "min_tier_for_entry": None,          "label": "Crisis",    "description": "No new entries, high cash floor"},
     }[banner]

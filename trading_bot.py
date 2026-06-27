@@ -693,7 +693,7 @@ class STONKAIBot:
 
         # Regime detection state
         self._regime: str = "RISK_ON"
-        self._regime_params: Dict = {"max_position_pct": 8, "cash_floor_pct": 5, "min_tier_for_entry": "NOW"}
+        self._regime_params: Dict = {"max_position_pct": 8, "cash_floor_pct": 10, "min_tier_for_entry": "NOW"}
 
         if self._dry_run:
             logger.info("Bot is in DRY RUN mode — trades will be logged but not submitted.")
@@ -750,17 +750,12 @@ class STONKAIBot:
     @staticmethod
     def _readiness_sizing_multiplier(readiness: float) -> float:
         """Scale position size by readiness conviction.
-        v2.1: More aggressive scaling — the old multipliers never produced
-        meaningful size differences since readiness rarely exceeds 80."""
-        if readiness >= 85:
-            return 1.5
-        if readiness >= 75:
-            return 1.25
-        if readiness >= 70:
-            return 1.0
-        if readiness >= 65:
-            return 0.85
-        return 0.65  # below entry threshold but still considered
+        Aligned with backtest: 1.5x for STRONG_NOW (>=80), 1.0x for NOW (72-79)."""
+        if readiness >= 80:
+            return 1.5  # STRONG_NOW
+        if readiness >= 72:
+            return 1.0  # NOW
+        return 0.65  # below entry threshold
 
     @staticmethod
     def _strategy_sizing_cap(strategy_type: str) -> float:
@@ -808,7 +803,7 @@ class STONKAIBot:
         except Exception as e:
             logger.warning(f"Regime detection failed, defaulting to RISK_ON: {e}")
             self._regime = "RISK_ON"
-            self._regime_params = {"max_position_pct": 8, "cash_floor_pct": 5, "min_tier_for_entry": "NOW"}
+            self._regime_params = {"max_position_pct": 8, "cash_floor_pct": 10, "min_tier_for_entry": "NOW"}
 
         portfolio_data = self.data_store.fetch()
         if not portfolio_data:
@@ -841,7 +836,34 @@ class STONKAIBot:
             if not portfolio_data:
                 return
 
-        # 1b. Cash-raising: if cash is below the dynamic floor, trim weakest positions
+        # 1a. Minimum holding period: skip exit logic for positions held < 20 days
+        _today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        for sym in list(self._positions.keys()):
+            pos = self._positions[sym]
+            _entry_date = pos.get("entry_date", _today_str)
+            if isinstance(_entry_date, str):
+                try:
+                    _days_held = (datetime.now(timezone.utc) - datetime.fromisoformat(_entry_date.replace("Z", "+00:00"))).days
+                except Exception:
+                    _days_held = 999  # If we can't parse, assume old enough to sell
+            else:
+                _days_held = 999
+            pos["_days_held"] = _days_held
+
+        # 1b. Readiness-based exit: sell positions that dropped below WATCH tier (readiness < 55)
+        # Only after minimum holding period (20 days)
+        _low_readiness_symbols = set()
+        for sig in self._signals:
+            if sig.get("readiness_score", 100) < 55:
+                _low_readiness_symbols.add(sig["symbol"])
+
+        for sym in list(self._positions.keys()):
+            pos = self._positions[sym]
+            if pos.get("_days_held", 0) >= 20 and sym in _low_readiness_symbols:
+                logger.info(f"🔄 Exit signal: {sym} readiness dropped below 55 (held {pos[chr(95)+chr(100)+chr(97)+chr(121)+chr(115)+chr(95)+chr(104)+chr(101)+chr(108)+chr(100)]} days)")
+                self._exit_position(sym, reason="readiness_below_55")
+
+        # 1c. Cash-raising: if cash is below the dynamic floor, trim weakest positions
         cash_raise_trades = self.risk_engine.check_cash_raise(portfolio_data, self._signals)
         for trade in cash_raise_trades:
             self._execute_sell(trade, portfolio_data)
@@ -858,7 +880,7 @@ class STONKAIBot:
 
         # 1c. Rotation: trim overweight low-readiness positions to free capital for high-readiness entries
         # Pre-filter: check which top signal symbols are actually tradable before rotating
-        top_buy_candidates = [s for s in self._signals if s.get("entry_eligible", False) and s.get("readiness_score", 0) >= 70]
+        top_buy_candidates = [s for s in self._signals if s.get("entry_eligible", False) and s.get("readiness_score", 0) >= 72]
         for s in top_buy_candidates[:10]:
             sym = s.get("symbol")
             if sym not in self._failed_buy_symbols and not self.alpaca.is_tradable(sym):
@@ -1178,7 +1200,7 @@ class STONKAIBot:
         logger.info(f"Mode: {'PAPER (fake money)' if self.alpaca.is_paper() else 'LIVE (real money)'}")
         logger.info(f"Dry run: {self._dry_run}")
         logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
-        logger.info(f"Entry: readiness >= 70 AND >= 2 confirmations")
+        logger.info(f"Entry: readiness >= 72 AND >= 2 confirmations")
         logger.info(f"Max position size: {self.risk_engine.config.max_single_position_pct:.0%}")
         logger.info(f"Stop loss: {self.risk_engine.config.hard_stop_loss_pct:.0%}")
         logger.info(f"Drawdown halt: {self.risk_engine.config.new_entry_max_drawdown_pct:.0%}")
