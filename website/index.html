@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-0838-v101-wl-table-strong">
-    <script>(function(){var v='20260627-0838-v101-wl-table-strong';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-0845-v102-wl-tier-fix">
+    <script>(function(){var v='20260627-0845-v102-wl-tier-fix';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -10915,7 +10915,8 @@ function updateDashboard(data) {
             // Use server's signal tier (calculated by AI scoring system)
             const watchlistWithTiers = aiWatchlist.map(stock => {
                 // Map server signal to tier, fallback to calculated if not available
-                const tier = stock.signal === 'NOW' ? 'NOW' :
+                const tier = stock.signal === 'STRONG_NOW' ? 'STRONG_NOW' :
+                             stock.signal === 'NOW' ? 'NOW' :
                              stock.signal === 'WATCH' ? 'WATCH' : 'MONITOR';
                 return {...stock, tier};
             });
