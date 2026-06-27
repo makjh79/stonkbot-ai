@@ -36,6 +36,7 @@ from alpaca_data import get_data_hub
 import dynamic_watchlist_manager
 from intraday_confirm import should_execute_buy as check_intraday_buy
 from regime_detector import get_regime
+from mean_reversion_signal import compute_mean_reversion
 
 logging.basicConfig(
     level=logging.INFO,
@@ -825,6 +826,11 @@ class STONKAIBot:
             logger.info(f"{_regime_emoji.get(self._regime, '?')} Regime: {self._regime} \u2014 {_regime_desc.get(self._regime, '')}")
             if regime_result.get("triggers"):
                 logger.info(f"  Regime triggers: {'; '.join(regime_result['triggers'])}")
+            # Log active strategy
+            if self._regime == "RISK_ON":
+                logger.info("\U0001F4C8 Strategy: Momentum (RISK_ON)")
+            elif self._regime == "RISK_OFF":
+                logger.info("\U0001F504 Strategy: Mean Reversion (RISK_OFF)")
         except Exception as e:
             logger.warning(f"Regime detection failed, defaulting to RISK_ON: {e}")
             self._regime = "RISK_ON"
@@ -1011,112 +1017,214 @@ class STONKAIBot:
         signal_map = {s["symbol"]: s for s in top_signals}
 
         # 3a. Build ranked entry queue by readiness_score (highest first)
+        # Regime-adaptive strategy switching:
+        #   RISK_ON  -> momentum strategy (entry_eligible from momentum signals)
+        #   RISK_OFF -> mean reversion strategy (entry_eligible from MR signals + STRONG_NOW momentum)
+        #   CRISIS   -> no new entries (min_tier_for_entry = None)
         entry_candidates = []
-        for sig in top_signals:
-            symbol = sig["symbol"]
-            if symbol in current_symbols:
-                continue
-            # NEW: use entry_eligible instead of total_score >= 30
-            if not sig.get("entry_eligible", False):
-                continue
 
-            # Regime-based entry gate
-            _min_tier = self._regime_params.get("min_tier_for_entry")
-            if _min_tier is None:
-                # CRISIS: no new entries at all
-                logger.info(f"CRISIS regime: skipping new entry for {symbol}")
-                continue
-            _tier_rank = {"MONITOR": 0, "WATCH": 1, "NOW": 2, "STRONG_NOW": 3}
-            _sig_tier = _tier_rank.get(sig.get("tier", "MONITOR"), 0)
-            _min_tier_rank = _tier_rank.get(_min_tier, 0)
-            if _sig_tier < _min_tier_rank:
-                logger.debug(f"Regime {_min_tier} gate: {symbol} tier {sig.get('tier')} insufficient")
-                continue
+        if self._regime == "RISK_OFF":
+            # MEAN REVERSION MODE: find oversold quality stocks
+            logger.info("Searching for mean reversion entries (RISK_OFF mode)...")
+            for sig in top_signals:
+                symbol = sig["symbol"]
+                if symbol in current_symbols:
+                    continue
 
-            price = self.alpaca.get_latest_quote(symbol)
-            if price is None or price <= 0:
-                # Fallback: try hub snapshot
+                # In RISK_OFF, allow:
+                #   1. Mean reversion signals with entry_eligible (RSI < 35, volume capitulation)
+                #   2. STRONG_NOW momentum signals (high conviction even in defensive mode)
+                strategy_type = sig.get("strategy_type", "momentum")
+                if strategy_type == "mean_reversion":
+                    if not sig.get("entry_eligible", False):
+                        continue
+                else:
+                    # Momentum signal: require STRONG_NOW tier
+                    if sig.get("tier") != "STRONG_NOW":
+                        continue
+                    if not sig.get("entry_eligible", False):
+                        continue
+
+                # CRISIS check
+                _min_tier = self._regime_params.get("min_tier_for_entry")
+                if _min_tier is None:
+                    logger.info(f"CRISIS regime: skipping new entry for {symbol}")
+                    continue
+
+                price = self.alpaca.get_latest_quote(symbol)
+                if price is None or price <= 0:
+                    try:
+                        _hub = get_data_hub()
+                        _snap = _hub.get_snapshot(symbol)
+                        price = _snap.get("price") if _snap else None
+                    except Exception:
+                        pass
+                if price is None or price <= 0:
+                    logger.debug(f"No quote for {symbol}; skipping")
+                    continue
+
+                # Intraday pump check
                 try:
                     _hub = get_data_hub()
-                    _snap = _hub.get_snapshot(symbol)
-                    price = _snap.get("price") if _snap else None
+                    _intra = _hub.get_intraday_bars([symbol], bars_back=3)
+                    if symbol in _intra and len(_intra[symbol]) >= 2:
+                        _bars = _intra[symbol]
+                        _last_close = _bars[-1].get("c", 0)
+                        _prev_close = _bars[-2].get("c", 0) if len(_bars) >= 2 else _last_close
+                        if _prev_close > 0:
+                            _intraday_dev = (_last_close - _prev_close) / _prev_close
+                            if _intraday_dev > 0.03:
+                                logger.info(f"Skipping {symbol}: intraday pump {_intraday_dev:.1%} - entry too hot")
+                                continue
                 except Exception:
                     pass
-            if price is None or price <= 0:
-                logger.debug(f"No quote for {symbol}; skipping")
-                continue
 
-            # Intraday entry timing: check if we're buying at the top of a 15Min candle
-            _intraday_dev = 0.0
-            try:
-                _hub = get_data_hub()
-                _intra = _hub.get_intraday_bars([symbol], bars_back=3)
-                if symbol in _intra and len(_intra[symbol]) >= 2:
-                    _bars = _intra[symbol]
-                    _last_close = _bars[-1].get("c", 0)
-                    _prev_close = _bars[-2].get("c", 0) if len(_bars) >= 2 else _last_close
-                    if _prev_close > 0:
-                        _intraday_dev = (_last_close - _prev_close) / _prev_close
-                    # Skip if price has already pumped >3% in last 15 min → avoid buying top
-                    if _intraday_dev > 0.03:
-                        logger.info(f"Skipping {symbol}: intraday pump {_intraday_dev:.1%} — entry too hot")
-                        continue
-            except Exception:
-                pass
+                _iv = sig.get("options_implied_vol")
+                _iv_multiplier = 1.0
+                if _iv and _iv > 0:
+                    if _iv > 0.8:
+                        _iv_multiplier = 0.5
+                    elif _iv > 0.6:
+                        _iv_multiplier = 0.7
+                    elif _iv > 0.4:
+                        _iv_multiplier = 0.9
 
-            # Use options IV to adjust position size: high IV = smaller bet
-            _iv = sig.get("options_implied_vol")
-            _iv_multiplier = 1.0
-            if _iv and _iv > 0:
-                if _iv > 0.8:
-                    _iv_multiplier = 0.5   # extreme vol → half size
-                elif _iv > 0.6:
-                    _iv_multiplier = 0.7   # high vol → 70% size
-                elif _iv > 0.4:
-                    _iv_multiplier = 0.9   # elevated → 90%
-                # normal IV (<0.4) = full size
+                _tier = sig.get("tier", "NOW")
+                _tier_max_pct = self._tier_max_position_pct(_tier, self.risk_engine.config.max_single_position_pct)
+                sizing = self.risk_engine.size_buy(
+                    symbol=symbol,
+                    price=price,
+                    atr=sig.get("atr14", price * 0.02),
+                    portfolio_data=portfolio_data,
+                    current_positions=current_positions,
+                    signal_score=sig.get("total_score", 0),
+                    max_position_pct_override=_tier_max_pct,
+                )
 
-            _tier = sig.get("tier", "NOW")
-            _tier_max_pct = self._tier_max_position_pct(_tier, self.risk_engine.config.max_single_position_pct)
-            sizing = self.risk_engine.size_buy(
-                symbol=symbol,
-                price=price,
-                atr=sig.get("atr14", price * 0.02),
-                portfolio_data=portfolio_data,
-                current_positions=current_positions,
-                signal_score=sig.get("total_score", 0),
-                max_position_pct_override=_tier_max_pct,
-            )
+                if sizing.blocked:
+                    logger.debug(f"{symbol} new buy blocked: {sizing.block_reason}")
+                    continue
 
-            if sizing.blocked:
-                logger.debug(f"{symbol} new buy blocked: {sizing.block_reason}")
-                continue
+                readiness = sig.get("readiness_score", 0)
+                multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
+                multiplier *= self._strategy_sizing_cap(strategy_type)
+                adjusted_qty = max(1, int(sizing.qty * multiplier))
 
-            # Apply readiness-based sizing multiplier + IV adjustment
-            readiness = sig.get("readiness_score", 0)
-            multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
-            # Apply strategy-specific cap (mean reversion = 0.75x)
-            strategy_type = sig.get("strategy_type", "momentum")
-            multiplier *= self._strategy_sizing_cap(strategy_type)
-            adjusted_qty = max(1, int(sizing.qty * multiplier))
-
-            # Re-check cash after multiplier
-            cost = adjusted_qty * price
-            cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
-            if cost > (portfolio_data["account"]["cash"] - cash_floor):
-                adjusted_qty = max(1, int((portfolio_data["account"]["cash"] - cash_floor) / price))
                 cost = adjusted_qty * price
+                cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
+                if cost > (portfolio_data["account"]["cash"] - cash_floor):
+                    adjusted_qty = max(1, int((portfolio_data["account"]["cash"] - cash_floor) / price))
+                    cost = adjusted_qty * price
 
-            trade = {
-                "symbol": symbol,
-                "qty": adjusted_qty,
-                "action": "BUY",
-                "reason": f"Entry (readiness {readiness:.1f}, {sig.get('confirmation_count', 0)}/5 conf) — {sizing.reason}",
-                "intended_notional": cost,
-                "readiness_score": readiness,
-                "tier": sig.get("tier", "NOW"),
-            }
-            entry_candidates.append(trade)
+                trade = {
+                    "symbol": symbol,
+                    "qty": adjusted_qty,
+                    "action": "BUY",
+                    "reason": f"Entry ({strategy_type}, readiness {readiness:.1f}, {sig.get('confirmation_count', 0)}/9 conf) - {sizing.reason}",
+                    "intended_notional": cost,
+                    "readiness_score": readiness,
+                    "tier": _tier,
+                }
+                entry_candidates.append(trade)
+
+        else:
+            # RISK_ON: momentum strategy (default)
+            for sig in top_signals:
+                symbol = sig["symbol"]
+                if symbol in current_symbols:
+                    continue
+                if not sig.get("entry_eligible", False):
+                    continue
+
+                # Regime-based entry gate
+                _min_tier = self._regime_params.get("min_tier_for_entry")
+                if _min_tier is None:
+                    logger.info(f"CRISIS regime: skipping new entry for {symbol}")
+                    continue
+                _tier_rank = {"MONITOR": 0, "WATCH": 1, "NOW": 2, "STRONG_NOW": 3}
+                _sig_tier = _tier_rank.get(sig.get("tier", "MONITOR"), 0)
+                _min_tier_rank = _tier_rank.get(_min_tier, 0)
+                if _sig_tier < _min_tier_rank:
+                    logger.debug(f"Regime {_min_tier} gate: {symbol} tier {sig.get('tier')} insufficient")
+                    continue
+
+                price = self.alpaca.get_latest_quote(symbol)
+                if price is None or price <= 0:
+                    try:
+                        _hub = get_data_hub()
+                        _snap = _hub.get_snapshot(symbol)
+                        price = _snap.get("price") if _snap else None
+                    except Exception:
+                        pass
+                if price is None or price <= 0:
+                    logger.debug(f"No quote for {symbol}; skipping")
+                    continue
+
+                # Intraday entry timing
+                _intraday_dev = 0.0
+                try:
+                    _hub = get_data_hub()
+                    _intra = _hub.get_intraday_bars([symbol], bars_back=3)
+                    if symbol in _intra and len(_intra[symbol]) >= 2:
+                        _bars = _intra[symbol]
+                        _last_close = _bars[-1].get("c", 0)
+                        _prev_close = _bars[-2].get("c", 0) if len(_bars) >= 2 else _last_close
+                        if _prev_close > 0:
+                            _intraday_dev = (_last_close - _prev_close) / _prev_close
+                        if _intraday_dev > 0.03:
+                            logger.info(f"Skipping {symbol}: intraday pump {_intraday_dev:.1%} - entry too hot")
+                            continue
+                except Exception:
+                    pass
+
+                _iv = sig.get("options_implied_vol")
+                _iv_multiplier = 1.0
+                if _iv and _iv > 0:
+                    if _iv > 0.8:
+                        _iv_multiplier = 0.5
+                    elif _iv > 0.6:
+                        _iv_multiplier = 0.7
+                    elif _iv > 0.4:
+                        _iv_multiplier = 0.9
+
+                _tier = sig.get("tier", "NOW")
+                _tier_max_pct = self._tier_max_position_pct(_tier, self.risk_engine.config.max_single_position_pct)
+                sizing = self.risk_engine.size_buy(
+                    symbol=symbol,
+                    price=price,
+                    atr=sig.get("atr14", price * 0.02),
+                    portfolio_data=portfolio_data,
+                    current_positions=current_positions,
+                    signal_score=sig.get("total_score", 0),
+                    max_position_pct_override=_tier_max_pct,
+                )
+
+                if sizing.blocked:
+                    logger.debug(f"{symbol} new buy blocked: {sizing.block_reason}")
+                    continue
+
+                readiness = sig.get("readiness_score", 0)
+                multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
+                strategy_type = sig.get("strategy_type", "momentum")
+                multiplier *= self._strategy_sizing_cap(strategy_type)
+                adjusted_qty = max(1, int(sizing.qty * multiplier))
+
+                cost = adjusted_qty * price
+                cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
+                if cost > (portfolio_data["account"]["cash"] - cash_floor):
+                    adjusted_qty = max(1, int((portfolio_data["account"]["cash"] - cash_floor) / price))
+                    cost = adjusted_qty * price
+
+                trade = {
+                    "symbol": symbol,
+                    "qty": adjusted_qty,
+                    "action": "BUY",
+                    "reason": f"Entry (readiness {readiness:.1f}, {sig.get('confirmation_count', 0)}/9 conf) - {sizing.reason}",
+                    "intended_notional": cost,
+                    "readiness_score": readiness,
+                    "tier": sig.get("tier", "NOW"),
+                }
+                entry_candidates.append(trade)
 
         # Sort entry queue by readiness (highest first)
         entry_candidates.sort(key=lambda t: t.get("readiness_score", 0), reverse=True)
