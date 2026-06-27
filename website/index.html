@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster" content="20260627-2110-factor-tooltips">
-    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v111';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v112';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -8349,15 +8349,18 @@ function updateDashboard(data) {
             // Get current number of data points
             const numPoints = performanceChart.data.labels.length;
             
-            // Create arrays with 0 at start and current return at end
-            const sp500Data = Array(numPoints).fill(0);
-            sp500Data[numPoints - 1] = sp500Return;
-            
-            const dowData = Array(numPoints).fill(0);
-            dowData[numPoints - 1] = dowReturn;
-            
-            const nasdaqData = Array(numPoints).fill(0);
-            nasdaqData[numPoints - 1] = nasdaqReturn;
+            // Plot indices as straight lines from 0% to current return
+            // (linear interpolation — honest single-point comparison)
+            function linearRamp(numPoints, endValue) {
+                const data = [];
+                for (let i = 0; i < numPoints; i++) {
+                    data.push((endValue * i) / Math.max(numPoints - 1, 1));
+                }
+                return data;
+            }
+            const sp500Data = linearRamp(numPoints, sp500Return);
+            const dowData = linearRamp(numPoints, dowReturn);
+            const nasdaqData = linearRamp(numPoints, nasdaqReturn);
             
             // Update datasets
             performanceChart.data.datasets[1].data = sp500Data;  // S&P 500
