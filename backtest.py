@@ -67,6 +67,7 @@ class BacktestEngine:
         self.universe = universe
         self.high_water_mark: float = initial_cash  # Track peak portfolio value
         self.drawdown_halt: bool = False  # Halt new entries when DD < -15%
+        self._halt_cooldown: int = 0  # Cooldown days after halt triggers
 
         # Defaults from signal_engine if available
         try:
@@ -378,8 +379,8 @@ class BacktestEngine:
 
             # --- Drawdown halt check ---
             # Track high water mark and halt new entries if DD > -15%.
-            # Resume when DD improves above -15% (i.e. portfolio recovers).
-            # Do NOT reset HWM on trigger — keep original peak for DD calc.
+            # On halt: reset HWM to current PV and impose 3-day cooldown.
+            # After cooldown, resume entries normally (fresh HWM baseline).
             pv_now = self._portfolio_value(current_prices)
             if pv_now > self.high_water_mark:
                 self.high_water_mark = pv_now
@@ -388,9 +389,14 @@ class BacktestEngine:
                 if not self.drawdown_halt:
                     logger.info(f"⚠️ Drawdown halt triggered: DD={dd_pct:.1%} (HWM=${self.high_water_mark:,.0f})")
                 self.drawdown_halt = True
-            elif dd_pct > -0.15 and self.drawdown_halt:
-                # Resume entries as soon as DD improves above -15%
-                logger.info(f"✅ Drawdown halt lifted: DD={dd_pct:.1%}")
+                self._halt_cooldown = 3  # 3-day cooldown
+                self.high_water_mark = pv_now  # Reset HWM for fresh baseline
+            elif self._halt_cooldown > 0:
+                self._halt_cooldown -= 1
+                self.drawdown_halt = True  # Still in cooldown
+            else:
+                if self.drawdown_halt:
+                    logger.info(f"✅ Drawdown halt lifted: DD={dd_pct:.1%}")
                 self.drawdown_halt = False
 
             # Queue buys for tomorrow at T+1 open (conviction-based sizing)

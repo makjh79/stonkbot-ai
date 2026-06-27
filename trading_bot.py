@@ -428,15 +428,40 @@ class AlpacaClient:
                 logger.info(f"Filled at midpoint (passive): {symbol} {side} {qty} @ ${limit_price:.2f}")
                 return order_id
 
-            # Not filled — cancel and submit market order
-            logger.info(f"EXECUTION: {symbol} midpoint limit not filled in 5s, escalating to market")
+            # Not filled — cancel and escalate to marketable limit at ask + $0.01
+            logger.info(f"EXECUTION: {symbol} midpoint limit not filled in 5s, escalating to marketable limit")
             if self.cancel_order(order_id):
-                market_order_id = self.submit_market_order(symbol, qty, side)
-                if market_order_id:
-                    logger.info(f"Filled at market (escalated): {symbol} {side} {qty}")
-                    return market_order_id
+                # Re-fetch quote to get current ask
+                fresh_quote = self.get_latest_quote_full(symbol)
+                fresh_ask = fresh_quote.get("ask", 0) if fresh_quote else 0
+                if fresh_ask > 0:
+                    marketable_limit = round(fresh_ask + 0.01, 2)
+                    ml_payload = {
+                        "symbol": symbol, "qty": str(qty), "side": side,
+                        "type": "limit", "time_in_force": "day",
+                        "limit_price": str(marketable_limit),
+                    }
+                    try:
+                        r = self.session.post(f"{self.base_url}/v2/orders", json=ml_payload, timeout=15)
+                        r.raise_for_status()
+                        ml_order_id = r.json().get("id", "unknown")
+                        logger.info(f"Filled at marketable limit (escalated): {symbol} {side} {qty} @ ${marketable_limit:.2f}")
+                        return ml_order_id
+                    except Exception as e:
+                        logger.error(f"EXECUTION: {symbol} marketable limit escalation failed: {e}")
+                        # Final fallback to market
+                        market_order_id = self.submit_market_order(symbol, qty, side)
+                        if market_order_id:
+                            logger.info(f"Fallback to market (escalated): {symbol} {side} {qty}")
+                            return market_order_id
+                        return None
                 else:
-                    logger.error(f"EXECUTION: {symbol} market escalation failed")
+                    # No ask available — fall back to market
+                    market_order_id = self.submit_market_order(symbol, qty, side)
+                    if market_order_id:
+                        logger.info(f"No ask, filled at market (escalated): {symbol} {side} {qty}")
+                        return market_order_id
+                    logger.error(f"EXECUTION: {symbol} market fallback failed")
                     return None
             else:
                 # Cancel failed — maybe it filled in the meantime
@@ -850,17 +875,41 @@ class STONKAIBot:
                 _days_held = 999
             pos["_days_held"] = _days_held
 
-        # 1b. Readiness-based exit: sell positions that dropped below WATCH tier (readiness < 55)
-        # Only after minimum holding period (20 days)
+        # 1b. Readiness-based exit: sell positions that dropped below WATCH tier
+        # Regime-aware minimum holding period:
+        #   CRISIS    → no hold requirement, exit if readiness < 70
+        #   RISK_OFF  → 10-day min hold (instead of 20)
+        #   RISK_ON   → 20-day min hold (default)
         _low_readiness_symbols = set()
+        _crisis_exit_symbols = set()
         for sig in self._signals:
-            if sig.get("readiness_score", 100) < 55:
+            r_score = sig.get("readiness_score", 100)
+            if r_score < 55:
                 _low_readiness_symbols.add(sig["symbol"])
+            if r_score < 70:
+                _crisis_exit_symbols.add(sig["symbol"])
+
+        # Determine min hold days based on regime
+        if self._regime == "CRISIS":
+            _min_hold_days = 0
+        elif self._regime == "RISK_OFF":
+            _min_hold_days = 10
+        else:
+            _min_hold_days = 20
 
         for sym in list(self._positions.keys()):
             pos = self._positions[sym]
-            if pos.get("_days_held", 0) >= 20 and sym in _low_readiness_symbols:
-                logger.info(f"🔄 Exit signal: {sym} readiness dropped below 55 (held {pos[chr(95)+chr(100)+chr(97)+chr(121)+chr(115)+chr(95)+chr(104)+chr(101)+chr(108)+chr(100)]} days)")
+            _days = pos.get("_days_held", 0)
+
+            # CRISIS override: immediate exits for readiness < 70, regardless of hold period
+            if self._regime == "CRISIS" and sym in _crisis_exit_symbols:
+                logger.info(f"🚨 CRISIS exit: {sym} readiness < 70 (held {_days} days)")
+                self._exit_position(sym, reason="crisis_readiness_below_70")
+                continue
+
+            # Standard readiness-based exit (respecting regime-aware min hold)
+            if _days >= _min_hold_days and sym in _low_readiness_symbols:
+                logger.info(f"🔄 Exit signal: {sym} readiness dropped below 55 (held {_days} days, min hold {_min_hold_days})")
                 self._exit_position(sym, reason="readiness_below_55")
 
         # 1c. Cash-raising: if cash is below the dynamic floor, trim weakest positions
