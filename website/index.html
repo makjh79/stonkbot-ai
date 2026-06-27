@@ -9142,13 +9142,15 @@ function updateDashboard(data) {
                     ${preGenerated.alpacaNewsHeadline ? `
                     <div style="margin-bottom: 0.9rem;">
                         <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Latest news</div>
-                        <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;">
-                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                                <span class="sentiment-tone ${(preGenerated.alpacaNewsSentiment || '').toLowerCase()}" style="font-size: 0.65rem; padding: 3px 6px;">${preGenerated.alpacaNewsSentiment === 'bullish' ? '▲' : preGenerated.alpacaNewsSentiment === 'bearish' ? '▼' : '—'} ${(preGenerated.alpacaNewsSentiment || 'neutral').charAt(0).toUpperCase() + (preGenerated.alpacaNewsSentiment || 'neutral').slice(1)}</span>
-                                <span style="font-size: 0.6rem; color: var(--text-muted);">Alpaca</span>
+                        <a href="${preGenerated.alpacaNewsUrl || '#'}" ${preGenerated.alpacaNewsUrl ? 'target="_blank" rel="noopener noreferrer"' : ''} style="text-decoration: none; color: inherit; display: block;">
+                            <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;${preGenerated.alpacaNewsUrl ? ' cursor: pointer;' : ''}">
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                    <span class="sentiment-tone ${(preGenerated.alpacaNewsSentiment || '').toLowerCase()}" style="font-size: 0.65rem; padding: 3px 6px;">${preGenerated.alpacaNewsSentiment === 'bullish' ? '▲' : preGenerated.alpacaNewsSentiment === 'bearish' ? '▼' : '—'} ${(preGenerated.alpacaNewsSentiment || 'neutral').charAt(0).toUpperCase() + (preGenerated.alpacaNewsSentiment || 'neutral').slice(1)}</span>
+                                    <span style="font-size: 0.6rem; color: var(--text-muted);">Alpaca</span>
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${preGenerated.alpacaNewsHeadline}${preGenerated.alpacaNewsUrl ? ' <span style="font-size: 0.6rem; color: var(--text-muted);">↗</span>' : ''}</div>
                             </div>
-                            <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${preGenerated.alpacaNewsHeadline}</div>
-                        </div>
+                        </a>
                     </div>
                     ` : ''}
 
@@ -11591,9 +11593,11 @@ function updateDashboard(data) {
             // Get headlines: prefer Alpaca, fall back to Finnhub
             let headline = null;
             let headlineSource = null;
+            let headlineUrl = null;
             if (enriched && enriched.news) {
                 headline = enriched.news.alpaca_headline || enriched.news.sample_headline || (enriched.news.headlines && enriched.news.headlines[0]);
                 headlineSource = enriched.news.alpaca_headline ? 'Alpaca' : 'Finnhub';
+                headlineUrl = enriched.news.alpaca_url || '';
             }
 
             // Also check preGenerated (holdings popup data) for Alpaca news
@@ -11601,6 +11605,7 @@ function updateDashboard(data) {
             if (!headline && preGen.alpacaNewsHeadline) {
                 headline = preGen.alpacaNewsHeadline;
                 headlineSource = 'Alpaca';
+                headlineUrl = preGen.alpacaNewsUrl || '';
             }
 
             // Build sentiment badge
@@ -11608,14 +11613,19 @@ function updateDashboard(data) {
 
             // Render
             if (headline) {
+                const linkTag = headlineUrl ? 'a' : 'div';
+                const linkAttr = headlineUrl ? `a href="${headlineUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;"` : 'div';
+                const closeTag = headlineUrl ? '/a' : 'div';
                 container.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                         <span class="sentiment-tone ${tone}" style="font-size: 0.7rem; padding: 4px 8px;">${toneIcon} ${sentimentLabel}</span>
                         ${headlineSource ? `<span style="font-size: 0.6rem; color: var(--text-muted);">${headlineSource}</span>` : ''}
                     </div>
-                    <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;">
-                        <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${headline}</div>
-                    </div>
+                    <${linkAttr}>
+                        <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;${headlineUrl ? ' cursor: pointer;' : ''}">
+                            <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${headline}${headlineUrl ? ' <span style="font-size: 0.6rem; color: var(--text-muted);">↗</span>' : ''}</div>
+                        </div>
+                    </${closeTag}>
                 `;
             } else if (cachedData && cachedData.sentiment != null) {
                 // Fall back to watchlist sentiment score
