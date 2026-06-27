@@ -169,6 +169,65 @@ class AlpacaClient:
             logger.warning(f"Could not get quote for {symbol}: {e}")
             return None
 
+    def get_latest_quote_full(self, symbol: str) -> Optional[Dict]:
+        """Fetch latest bid/ask separately for tier-aware execution."""
+        try:
+            r = self.session.get(
+                f"{self.data_url}/v2/stocks/quotes/latest",
+                params={"symbols": symbol, "feed": "sip"},
+                timeout=15,
+            )
+            r.raise_for_status()
+            quote = r.json().get("quotes", {}).get(symbol, {})
+            bid = quote.get("bp") or 0
+            ask = quote.get("ap") or 0
+            mid = (bid + ask) / 2 if bid > 0 and ask > 0 else (quote.get("p") or 0)
+            return {"bid": bid, "ask": ask, "mid": mid}
+        except Exception as e:
+            logger.warning(f"Could not get full quote for {symbol}: {e}")
+            return None
+
+    def check_order_filled(self, order_id: str) -> bool:
+        """Check if a limit order has been filled."""
+        try:
+            r = self.session.get(f"{self.base_url}/v2/orders/{order_id}", timeout=10)
+            r.raise_for_status()
+            return r.json().get("status") == "filled"
+        except Exception as e:
+            logger.warning(f"Could not check order {order_id}: {e}")
+            return True  # assume filled if we cannot check
+
+    def cancel_order(self, order_id: str) -> bool:
+        """Cancel an open order."""
+        try:
+            r = self.session.delete(f"{self.base_url}/v2/orders/{order_id}", timeout=10)
+            return r.status_code in (200, 204)
+        except Exception as e:
+            logger.warning(f"Could not cancel order {order_id}: {e}")
+            return False
+
+    def submit_market_order(self, symbol: str, qty: int, side: str, dry_run: bool = False) -> Optional[str]:
+        """Submit a market order directly."""
+        if dry_run:
+            logger.info(f"DRY RUN MARKET {side.upper()} {qty} {symbol}")
+            return "dry-run"
+        if qty <= 0:
+            return None
+        payload = {
+            "symbol": symbol,
+            "qty": str(qty),
+            "side": side.lower(),
+            "type": "market",
+            "time_in_force": "day",
+        }
+        try:
+            r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+            r.raise_for_status()
+            return r.json().get("id", "unknown")
+        except Exception as e:
+            logger.error(f"Failed to submit market {side} order for {symbol}: {e}")
+            return None
+
     def get_asset(self, symbol: str) -> Optional[Dict]:
         """Get asset info from Alpaca. Returns None if not tradable."""
         try:
@@ -265,6 +324,127 @@ class AlpacaClient:
             "time_in_force": "day",
             "limit_price": str(limit_price),
         }
+
+    def submit_tiered_order(self, symbol: str, qty: int, side: str, tier: str = "NOW",
+                            dry_run: bool = False, twap_threshold: int = 100) -> Optional[str]:
+        """Submit order with tier-aware execution strategy.
+
+        STRONG_NOW: Aggressive — cross the spread, marketable limit at ask.
+        NOW: Passive — midpoint limit with 5-second fill timeout, then market.
+        """
+        if dry_run:
+            logger.info(f"DRY RUN {side.upper()} {qty} {symbol} (tier={tier})")
+            return "dry-run"
+        if qty <= 0:
+            return None
+
+        side_lower = side.lower()
+        order_ids = []
+
+        # TWAP split for large orders
+        if qty > twap_threshold:
+            chunks = self._twap_chunks(qty, twap_threshold)
+            logger.info(f"TWAP: splitting {side} {symbol} into {len(chunks)} chunks of ~{twap_threshold}")
+        else:
+            chunks = [qty]
+
+        for chunk in chunks:
+            order_id = self._submit_tiered_single(symbol, chunk, side_lower, tier)
+            if order_id:
+                order_ids.append(order_id)
+            # Brief pause between TWAP chunks
+            if len(chunks) > 1 and chunk != chunks[-1]:
+                import time as _time
+                _time.sleep(1)
+
+        return order_ids[0] if order_ids else None
+
+    def _submit_tiered_single(self, symbol: str, qty: int, side: str, tier: str) -> Optional[str]:
+        """Submit a single chunk with tier-aware execution."""
+        quote = self.get_latest_quote_full(symbol)
+
+        if quote is None or quote.get("mid", 0) <= 0:
+            # No quote available — fall back to market order
+            logger.info(f"No quote for {symbol}, submitting market order")
+            payload = {
+                "symbol": symbol, "qty": str(qty), "side": side,
+                "type": "market", "time_in_force": "day",
+            }
+            try:
+                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                r.raise_for_status()
+                return r.json().get("id", "unknown")
+            except Exception as e:
+                logger.error(f"Failed to submit market {side} for {symbol}: {e}")
+                return None
+
+        ask = quote.get("ask", 0)
+        bid = quote.get("bid", 0)
+        mid = quote.get("mid", 0)
+
+        if tier == "STRONG_NOW":
+            # Aggressive: marketable limit at ask (cross the spread)
+            if ask > 0:
+                limit_price = round(ask, 2)
+                payload = {
+                    "symbol": symbol, "qty": str(qty), "side": side,
+                    "type": "limit", "time_in_force": "day",
+                    "limit_price": str(limit_price),
+                }
+                try:
+                    r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                    r.raise_for_status()
+                    order_id = r.json().get("id", "unknown")
+                    logger.info(f"Filled at ask (aggressive): {symbol} {side} {qty} @ ${limit_price:.2f}")
+                    return order_id
+                except Exception as e:
+                    logger.error(f"Failed aggressive limit {side} for {symbol}: {e}")
+                    return None
+            else:
+                # No ask available — market order
+                return self.submit_market_order(symbol, qty, side)
+        else:
+            # NOW (passive): midpoint limit with 5-second fill timeout
+            limit_price = round(mid, 2)
+            payload = {
+                "symbol": symbol, "qty": str(qty), "side": side,
+                "type": "limit", "time_in_force": "day",
+                "limit_price": str(limit_price),
+            }
+            try:
+                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                r.raise_for_status()
+                order_id = r.json().get("id", "unknown")
+            except Exception as e:
+                logger.error(f"Failed passive limit {side} for {symbol}: {e}")
+                return None
+
+            # Wait 5 seconds for fill
+            import time as _time
+            _time.sleep(5)
+
+            # Check if filled
+            if self.check_order_filled(order_id):
+                logger.info(f"Filled at midpoint (passive): {symbol} {side} {qty} @ ${limit_price:.2f}")
+                return order_id
+
+            # Not filled — cancel and submit market order
+            logger.info(f"EXECUTION: {symbol} midpoint limit not filled in 5s, escalating to market")
+            if self.cancel_order(order_id):
+                market_order_id = self.submit_market_order(symbol, qty, side)
+                if market_order_id:
+                    logger.info(f"Filled at market (escalated): {symbol} {side} {qty}")
+                    return market_order_id
+                else:
+                    logger.error(f"EXECUTION: {symbol} market escalation failed")
+                    return None
+            else:
+                # Cancel failed — maybe it filled in the meantime
+                if self.check_order_filled(order_id):
+                    logger.info(f"Filled at midpoint (passive, late): {symbol} {side} {qty} @ ${limit_price:.2f}")
+                    return order_id
+                logger.error(f"EXECUTION: {symbol} could not cancel limit order {order_id}")
+                return order_id  # return the limit order ID, it might still fill
 
 
 class PortfolioDataStore:
@@ -573,14 +753,14 @@ class STONKAIBot:
         v2.1: More aggressive scaling — the old multipliers never produced
         meaningful size differences since readiness rarely exceeds 80."""
         if readiness >= 85:
-            return 2.0
-        if readiness >= 75:
             return 1.5
-        if readiness >= 70:
+        if readiness >= 75:
             return 1.25
-        if readiness >= 65:
+        if readiness >= 70:
             return 1.0
-        return 0.75  # below entry threshold but still considered
+        if readiness >= 65:
+            return 0.85
+        return 0.65  # below entry threshold but still considered
 
     @staticmethod
     def _strategy_sizing_cap(strategy_type: str) -> float:
@@ -588,6 +768,19 @@ class STONKAIBot:
         if strategy_type == "mean_reversion":
             return 0.75  # lower conviction, cap at 75% of normal size
         return 1.0  # momentum: no cap
+
+    @staticmethod
+    def _tier_max_position_pct(tier: str, base_max_pct: float) -> float:
+        """Return the max position % cap for a given signal tier.
+
+        STRONG_NOW gets a higher cap (12%) so that the 1.5x sizing multiplier
+        produces meaningfully larger positions than NOW (8% cap).
+        Without this, STRONG_NOW entries just hit the 8% cap and become
+        identical to NOW entries — making the tier distinction cosmetic.
+        """
+        if tier == "STRONG_NOW":
+            return max(0.12, base_max_pct)  # 12% cap for high-conviction
+        return base_max_pct  # 8% (or regime-adjusted) for NOW and below
 
     # ------------------------------------------------------------------
     # Main cycle
@@ -785,6 +978,8 @@ class STONKAIBot:
                     _iv_multiplier = 0.9   # elevated → 90%
                 # normal IV (<0.4) = full size
 
+            _tier = sig.get("tier", "NOW")
+            _tier_max_pct = self._tier_max_position_pct(_tier, self.risk_engine.config.max_single_position_pct)
             sizing = self.risk_engine.size_buy(
                 symbol=symbol,
                 price=price,
@@ -792,6 +987,7 @@ class STONKAIBot:
                 portfolio_data=portfolio_data,
                 current_positions=current_positions,
                 signal_score=sig.get("total_score", 0),
+                max_position_pct_override=_tier_max_pct,
             )
 
             if sizing.blocked:
@@ -820,6 +1016,7 @@ class STONKAIBot:
                 "reason": f"Entry (readiness {readiness:.1f}, {sig.get('confirmation_count', 0)}/5 conf) — {sizing.reason}",
                 "intended_notional": cost,
                 "readiness_score": readiness,
+                "tier": sig.get("tier", "NOW"),
             }
             entry_candidates.append(trade)
 
@@ -888,6 +1085,7 @@ class STONKAIBot:
                 "action": "BUY",
                 "reason": f"Avg-in on {symbol} (readiness {sig.get('readiness_score', 0):.1f}, {sizing.reason})",
                 "intended_notional": sizing.intended_notional,
+                "tier": sig.get("tier", "NOW"),
             }
             self._execute_buy(trade, portfolio_data, is_avg_in=True)
             self.risk_engine.record_average_in(symbol, sizing.intended_notional)
@@ -927,10 +1125,12 @@ class STONKAIBot:
                 trade["reason"] = trade["reason"] + f" | intraday: {intraday_reason}"
                 logger.info(f"INTRADAY REDUCE: {symbol} qty {original_qty} -> {qty} ({intraday_reason})")
 
+        # Tier-aware execution: STRONG_NOW = aggressive (ask), NOW = passive (midpoint + 5s timeout)
+        tier = trade.get("tier", "NOW")
         try:
-            order_id = self.alpaca.submit_order(symbol, qty, "buy", dry_run=self._dry_run)
+            order_id = self.alpaca.submit_tiered_order(symbol, qty, "buy", tier=tier, dry_run=self._dry_run)
             self._log_trade(trade, order_id, portfolio_data)
-            logger.info(f"EXECUTED BUY: {qty} {symbol} ({trade['reason']})")
+            logger.info(f"EXECUTED BUY: {qty} {symbol} tier={tier} ({trade['reason']})")
             # Clear any previous failure flag for this symbol
             self._failed_buy_symbols.discard(symbol)
         except Exception as e:
