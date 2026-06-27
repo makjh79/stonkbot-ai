@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-2030-no-badge">
-    <script>(function(){var v='20260627-2030-no-badge';var k='stonkbot_v104';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-2040-aligned">
+    <script>(function(){var v='20260627-2040-aligned';var k='stonkbot_v104';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -8985,6 +8985,61 @@ function updateDashboard(data) {
             return { text: '🔴 Low conviction — trim candidate', color: '#ef4444' };
         }
 
+        function buildFactorChips(conf, count) {
+            const factors = [
+                { name: 'MOM', label: 'Momentum', val: conf.momentum_score != null ? conf.momentum_score.toFixed(0) : null, ok: conf.momentum_score != null && conf.momentum_score >= 50 },
+                { name: 'RSI', label: 'RSI', val: conf.rsi_signal || null, ok: conf.rsi_signal === 'bullish', warn: conf.rsi_signal === 'bearish' },
+                { name: 'VOL', label: 'Volume', val: conf.volume_confirmed, ok: conf.volume_confirmed === true },
+                { name: 'MACD', label: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true },
+                { name: 'EMA', label: 'EMA', val: conf.above_ema, ok: conf.above_ema === true },
+                { name: 'SEC', label: 'Sector', val: conf.sector_strong, ok: conf.sector_strong === true },
+                { name: 'INT', label: 'Intraday', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true },
+                { name: 'OPT', label: 'Options', val: conf.options_confirmed, ok: conf.options_confirmed === true },
+            ];
+            const chips = factors.map(f => {
+                const color = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'rgba(255,255,255,0.15)';
+                const textColor = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'var(--text-muted)';
+                const dot = f.val != null && (f.ok || f.warn || f.val === true)
+                    ? `<span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;"></span>`
+                    : `<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);display:inline-block;"></span>`;
+                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};">${dot}${f.name}</span>`;
+            }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">·</span>');
+            return `
+                <div style="margin-bottom: 0.9rem;">
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
+                </div>
+            `;
+        }
+
+        function buildWatchlistFactors(count, tierReason) {
+            const cleanReason = (tierReason || '').replace(/^(STRONG NOW|NOW|WATCH|MONITOR):\s*/i, '').replace(/readiness \d+\.?\d*\.?\s*/i, '').trim();
+            const parts = cleanReason.split(/\+|,|\band\b/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 40);
+            const factorMap = {
+                'volume': 'VOL', 'macd': 'MACD', 'ema': 'EMA', 'sector': 'SEC',
+                'intraday': 'INT', 'options': 'OPT', 'momentum': 'MOM', 'rsi': 'RSI'
+            };
+            const active = new Set();
+            for (const part of parts) {
+                for (const [key, label] of Object.entries(factorMap)) {
+                    if (part.toLowerCase().includes(key)) active.add(label);
+                }
+            }
+            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT'];
+            const chips = allFactors.map(name => {
+                const ok = active.has(name);
+                const color = ok ? '#22c55e' : 'rgba(255,255,255,0.15)';
+                const textColor = ok ? '#22c55e' : 'var(--text-muted)';
+                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};"><span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;"></span>${name}</span>`;
+            }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">·</span>');
+            return `
+                <div style="margin-bottom: 0.9rem;">
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/8</span></div>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
+                </div>
+            `;
+        }
+
         async function showTradeDetails(symbol, isRefresh = false) {
             activePopupSymbol = symbol;
             if (activePopupRefreshInterval) clearInterval(activePopupRefreshInterval);
@@ -9021,43 +9076,13 @@ function updateDashboard(data) {
             const profitTarget = preGenerated.profit50 || (position ? position.avg_entry * 1.50 : 0);
             const targetDist = livePrice > 0 ? ((profitTarget - livePrice) / livePrice * 100).toFixed(1) : 0;
 
-            // Show stop if losing, target if winning, both if neutral
-            let exitHtml = '';
-            if (parseFloat(plValue) < -5) {
-                const vwapStop = preGenerated.vwapStop;
-                const vwapStopHtml = vwapStop ? `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.9rem; background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.1); border-radius: 8px; margin-top: 4px;">
-                        <span style="font-size: 0.7rem; color: var(--text-muted);">📊 VWAP stop</span>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #ef4444; opacity: 0.8;">$${vwapStop.toFixed(2)}</span>
-                    </div>` : '';
-                exitHtml = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0.9rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px;">
-                        <span style="font-size: 0.75rem; color: var(--text-secondary);">🛑 Stop loss</span>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ef4444; font-weight: 700;">$${currentStop.toFixed(2)} <span style="font-size: 0.7rem; opacity: 0.7;">(${stopDist}%)</span></span>
-                    </div>${vwapStopHtml}`;
-            } else if (parseFloat(plValue) > 5) {
-                exitHtml = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0.9rem; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 10px;">
-                        <span style="font-size: 0.75rem; color: var(--text-secondary);">🎯 Profit target</span>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">$${profitTarget.toFixed(2)} <span style="font-size: 0.7rem; opacity: 0.7;">(+${targetDist}%)</span></span>
-                    </div>`;
-            } else {
-                exitHtml = `
-                    <div style="display: flex; gap: 0.5rem;">
-                        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px;">
-                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Stop</span>
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; font-weight: 600;">$${currentStop.toFixed(0)}</span>
-                        </div>
-                        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); border-radius: 8px;">
-                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Target</span>
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #22c55e; font-weight: 600;">$${profitTarget.toFixed(0)}</span>
-                        </div>
-                    </div>`;
-            }
+            // Factor breakdown data for holdings
+            const conf = preGenerated.confirmations || {};
+            const factorChipsHtml = buildFactorChips(conf, preGenerated.confirmation_count || 0);
 
             // Tier chip
-            const tierColor = tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
-            const tierBg = tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+            const tierColor = tier === 'STRONG_NOW' ? '#06b6d4' : tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
+            const tierBg = tier === 'STRONG_NOW' ? 'rgba(6,182,212,0.15)' : tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
 
             const content = `
                 <div style="padding: 1.25rem;">
@@ -9076,7 +9101,7 @@ function updateDashboard(data) {
                     <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.9rem;">
                         <div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: var(--text-primary);">$${livePrice.toFixed(2)}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${position.qty} shares · $${position.market_value.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${position.qty} sh · $${position.market_value.toLocaleString(undefined, {maximumFractionDigits: 0})} · entry $${(preGenerated.avgEntry || position.avg_entry || 0).toFixed(2)}</div>
                         </div>
                         <div style="text-align: right;">
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: ${plColor};">${plSign}${plValue}%</div>
@@ -9132,6 +9157,9 @@ function updateDashboard(data) {
                     </div>
                     ` : ''}
 
+                    <!-- Factor breakdown -->
+                    ${factorChipsHtml}
+
                     <!-- Why we own it -->
                     <div style="margin-bottom: 0.9rem;">
                         <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why we own it</div>
@@ -9165,7 +9193,7 @@ function updateDashboard(data) {
 
             modal.innerHTML = `
                 <div style="background: var(--bg-elevated, #1a1a24); border: 1px solid var(--border, rgba(255,255,255,0.1));
-                     border-radius: 20px 20px 0 0; padding: 0; max-width: 460px; width: 100%; max-height: 85vh;
+                     border-radius: 24px 24px 0 0; padding: 0; max-width: 560px; width: 100%; max-height: 92vh;
                      overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); -webkit-overflow-scrolling: touch;
                      transform: translateY(0);">
                     <div style="width: 40px; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; margin: 12px auto 0; flex-shrink: 0;"></div>
@@ -11497,6 +11525,9 @@ function updateDashboard(data) {
                                 <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">+${targetDist}% upside</div>
                             </div>
                         </div>
+
+                        <!-- Factor breakdown -->
+                        ${buildWatchlistFactors(stock.confirmation_count || 0, stock.tier_reason || '')}
 
                         <!-- Why this stock -->
                         <div style="margin-bottom: 0.9rem;">
