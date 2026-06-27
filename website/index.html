@@ -11615,7 +11615,7 @@ function updateDashboard(data) {
             if (headline) {
                 const linkTag = headlineUrl ? 'a' : 'div';
                 const linkAttr = headlineUrl ? `a href="${headlineUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;"` : 'div';
-                const closeTag = headlineUrl ? '/a' : 'div';
+                const closeTag = headlineUrl ? 'a' : 'div';
                 container.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                         <span class="sentiment-tone ${tone}" style="font-size: 0.7rem; padding: 4px 8px;">${toneIcon} ${sentimentLabel}</span>
