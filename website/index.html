@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-0820-v98-wl-popup-fix">
-    <script>(function(){var v='20260627-0820-v98-wl-popup-fix';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-0825-v99-wl-popup-fix2">
+    <script>(function(){var v='20260627-0825-v99-wl-popup-fix2';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -10644,6 +10644,7 @@ function updateDashboard(data) {
                 // Readiness indicator based on server signal tier
                 let readinessTag = '';
                 if (data.signal_tier === 'STRONG_NOW') readinessTag = 'STRONG';
+                else if (data.signal_tier === 'STRONG_NOW') readinessTag = 'STRONG';
                 else if (data.signal_tier === 'NOW') readinessTag = 'READY';
                 else if (data.signal_tier === 'WATCH') readinessTag = 'CLOSE';
                 
@@ -10671,6 +10672,18 @@ function updateDashboard(data) {
                     readinessTag: readinessTag,
                     tierReason: data.tier_reason || '',
                     confirmationCount: data.confirmation_count || 0,
+                    // Alpaca paid data fields — passed through to popup
+                    tier: data.signal_tier || 'TRACKING',
+                    signal_tier: data.signal_tier || 'TRACKING',
+                    daily_vwap: data.daily_vwap || null,
+                    prev_close: data.prev_close || null,
+                    options_implied_vol: data.options_implied_vol || null,
+                    options_volume: data.options_volume || null,
+                    momentum_20d: data.momentum_20d || null,
+                    momentum_50d: data.momentum_50d || null,
+                    regime_score: data.regime_score || null,
+                    strategy_type: data.strategy_type || 'momentum',
+                    entry_eligible: data.entry_eligible || false,
                     strategy: dynamicStrategy,
                     catalyst: dynamicCatalyst,
                     risk: dynamicRisk,
