@@ -1,1488 +1,997 @@
 #!/usr/bin/env python3
 """
-STONK.AI Trading Bot v1.0
-Autonomous AI-managed trading system
-Implements the complete strategy from STRATEGY.md
+STONK.AI Trading Bot v2.1
+Systematic quality-momentum strategy with readiness-driven entry and thesis-based exits.
 
-Design Philosophy:
-- AI designed the strategy (STRATEGY.md)
-- Bot executes autonomously (zero AI cost during operation)
-- Human only intervenes for emergencies or scheduled reviews
+Design principles:
+- Signal-driven: `signals.json` is the single source of truth for what to buy.
+- Readiness-driven: entry_eligible (readiness >= 70 AND >= 2 confirmations) replaces hard score threshold.
+- Thesis-based: each position has an entry thesis with defined exit triggers.
+- Risk-first: position sizing, concentration limits, and drawdown brakes.
+- Anti-fragile: cash buffers, daily budgets, hard stops, profit trims.
+- Paper-safe: defaults to paper-only; live mode requires explicit config flag.
+
+v2.1 changes:
+  - Entry: uses entry_eligible instead of total_score >= 30
+  - Ranked entry queue by readiness_score (highest first)
+  - Position sizing scaled by readiness: 70-79=1.0x, 80-89=1.25x, 90+=1.5x
+  - Thesis-based exits (additional to risk engine exits)
+  - position_theses.json tracks entry thesis per position
 """
 
-import os
 import json
-import time
 import logging
-from datetime import datetime, timedelta
+import os
+import sys
+import time
+from datetime import date, datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass, asdict
+from typing import Dict, List, Optional
 
-# Try to import alpaca SDK, fall back to requests
-try:
-    import alpaca_trade_api as tradeapi
-    USE_SDK = True
-except ImportError:
-    import requests
-    USE_SDK = False
+import requests
 
-# Import trade logger
-from trade_logger import trade_logger, TradeEvent
-from signal_tracker import log_buy_signal, update_signal_performance
+from signal_engine import SignalEngine
+from risk_engine import RiskEngine, RiskConfig
+from alpaca_data import get_data_hub
+import dynamic_watchlist_manager
+from intraday_confirm import should_execute_buy as check_intraday_buy
+from regime_detector import get_regime
 
-# Setup logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler('trading_bot.log'),
-        logging.StreamHandler()
-    ]
+        logging.FileHandler("trading_bot.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
 )
 logger = logging.getLogger(__name__)
 
-# Alpaca Config - Use existing config file
-ALPACA_CONFIG_FILE = Path(__file__).parent / "alpaca_config.json"
 
-def load_alpaca_config():
-    """Load Alpaca API credentials from existing config"""
-    if ALPACA_CONFIG_FILE.exists():
-        with open(ALPACA_CONFIG_FILE, 'r') as f:
-            return json.load(f)
-    # Fallback to environment variables
-    return {
-        "api_key": os.getenv('ALPACA_API_KEY'),
-        "api_secret": os.getenv('ALPACA_SECRET_KEY'),
-        "base_url": os.getenv('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets')
-    }
+class TradingConfig:
+    """Bot-level configuration."""
 
+    # Safety: only set LIVE_MODE = True when you are ready to trade real money.
+    LIVE_MODE: bool = True
 
-@dataclass
-class StrategyConfig:
-    """Trading strategy configuration from STRATEGY.md"""
-    
-    # Portfolio Allocation Targets (% of invested capital)
-    ALLOCATION_TARGETS = {
-        'Tech Giants': 25.0,
-        'AI/Growth': 30.0,
-        'Fintech': 5.0,
-        'Defense/Income': 5.0,
-    }
-    
-    # THE COUNCIL'S AGGRESSIVE STRATEGY - MAX ALPHA
-    MAX_POSITION_SIZE = 0.25  # Max 25% in top conviction plays (more concentrated)
-    STOP_LOSS_PCT = -15.0  # -15% stop loss (hard stop, no exceptions)
-    TAKE_PROFIT_TRIM = 25.0  # Trim at +25% (sell 25% of position)
-    TAKE_PROFIT_FULL = 50.0  # Full exit at +50% (lock in profits)
-    MAX_SECTOR_DEVIATION = 20.0  # Allow more concentration in winners
-    MIN_CASH_ABSOLUTE = 500  # Keep $500 cash minimum (NO MARGIN), deploy rest
-    
-    # NO WHITELIST - Bot buys ANY watchlist signal
-    # Removed: ALLOWED_RSI_SYMBOLS whitelist
-    # Now uses full dynamic watchlist from watchlist_changes.json
-    
-    # Core positions for rebalancing focus (individual stocks only - NO ETFs)
-    # ETFs (SQQQ, TQQQ, etc.) are excluded from auto-trading due to leverage decay
-    CORE_POSITIONS = ['PLTR', 'AMD', 'CRWD', 'HOOD', 'AAPL', 'NVDA']
-    
-    # AGGRESSIVE target allocations - Higher conviction weights
-    TARGET_ALLOCATIONS = {
-        'AMD': 0.25,   # 25% - Highest conviction (max position)
-        'PLTR': 0.15,  # 15% - AI/Conviction play
-        'NVDA': 0.12,  # 12% - AI chip leader
-        'CRWD': 0.10,  # 10% - Cybersecurity
-        'HOOD': 0.08,  # 8% - Crypto/fintech
-        'AAPL': 0.08,  # 8% - Reduced safety anchor
-        'GOOGL': 0.05, # 5% - Search/AI
-    }
-    
-    # Trading Limits - UNLIMITED (The Council has full autonomy)
-    MAX_TRADES_PER_DAY = 999  # Unlimited daily trades
-    MAX_TRADES_PER_WEEK = 9999  # Unlimited weekly trades
-    REBALANCE_THRESHOLD = 0.03
-    
-    # Only buy Core positions
-    RSI_ENTRY_ENABLED = True  # ENABLED: Aggressive dip buying
-    RSI_ENTRY_THRESHOLD = 35.0  # NOW tier: RSI < 35 triggers immediate entry
-    RSI_ENTRY_AI_MIN = 60  # Minimum AI Score for auto-entry (WATCH tier or better)
-    RSI_ENTRY_POSITION_SIZE = 0.10  # 10% per dip buy (NOW tier only)
-    MAX_RSI_POSITIONS_PER_DAY = 2  # Allow 2 dip buys per day
-    # Dynamic watchlist - loaded from watchlist_changes.json
-    # Falls back to core positions if watchlist unavailable
-    @classmethod
-    def get_allowed_symbols(cls):
-        """Load symbols from watchlist rotation"""
-        try:
-            with open('/var/www/hedge-fund-website/watchlist_changes.json', 'r') as f:
-                data = json.load(f)
-                symbols = data.get('new_watchlist', [])
-                if len(symbols) >= 8:
-                    return symbols
-        except Exception as e:
-            logger.debug(f"Could not load watchlist: {e}")
-        # Fallback to core positions (individual stocks only, no ETFs)
-        return ['PLTR', 'AMD', 'CRWD', 'HOOD', 'NVDA', 'GOOGL', 'AAPL', 'MSFT', 'COIN', 'NET']
-    
-    ALLOWED_RSI_SYMBOLS = None  # Deprecated - use get_allowed_symbols() instead
-    VOLUME_MULTIPLIER = 0.5  # 0.5x average volume required (relaxed for more entries)
-    
-    # ENABLE momentum trading for alpha generation
-    DIP_BUY_ENABLED = True
-    MOMENTUM_ENABLED = True
-    MOMENTUM_POSITION_SIZE = 0.08  # 8% for momentum plays
-    MOMENTUM_THRESHOLD = 5.0  # Buy on +5% momentum days
-    SPECULATIVE_ENABLED = False
-    
-    # Sector Definitions
-    SECTORS = {
-        'Tech Giants': ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
-        'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
-        'Fintech': ['HOOD', 'SOFI'],
-        'Defense/Income': ['AVGO', 'SCHD', 'SGOV']
-    }
-    
-    # Special Rules
-    CORE_HOLDINGS = ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA']  # Long-term holds
-    TRIM_ON_GAIN = ['AMD', 'PLTR', 'APP', 'CRWD']  # Trim at +25%, full exit at +50%
+    # If True, log intended trades but do not submit orders.
+    DRY_RUN: bool = False
 
+    # How often the main loop runs during market hours.
+    CYCLE_INTERVAL_SECONDS: int = 300  # 5 minutes
 
-def is_market_open():
-    """Check if US stock market is currently open (NYSE/NASDAQ schedule)"""
-    now = datetime.now()
-    
-    # Check if weekend
-    if now.weekday() >= 5:  # Saturday=5, Sunday=6
-        return False
-    
-    # Check US market holidays for 2026
-    market_holidays_2026 = [
-        (1, 1),   # New Year's Day
-        (1, 19),  # Martin Luther King Jr. Day
-        (2, 16),  # Presidents' Day
-        (4, 3),   # Good Friday
-        (5, 25),  # Memorial Day
-        (6, 19),  # Juneteenth
-        (7, 4),   # Independence Day
-        (9, 7),   # Labor Day
-        (10, 12), # Columbus Day
-        (11, 11), # Veterans Day
-        (11, 26), # Thanksgiving
-        (12, 25), # Christmas
+    # How often signals are refreshed.
+    SIGNAL_REFRESH_INTERVAL_SECONDS: int = 900  # 15 minutes
+
+    # Path to Alpaca credentials.
+    ALPACA_CONFIG_PATHS: List[str] = [
+        str(Path(__file__).parent / "alpaca_config.json"),
+        "/opt/stonk-ai/alpaca_config.json",
+        "/var/www/hedge-fund-website/alpaca_config.json",
     ]
-    
-    today = (now.month, now.day)
-    if today in market_holidays_2026:
-        return False
-    
-    return True
+
+    # Files
+    SIGNALS_FILE: Path = Path(__file__).parent / "signals.json"
+    PORTFOLIO_DATA_FILE: Path = Path(__file__).parent / "portfolio_data.json"
+    WEB_PORTFOLIO_FILE: Path = Path("/var/www/hedge-fund-website/portfolio_data.json")
+    TRADES_LOG_FILE: Path = Path(__file__).parent / "TRADES_LOG.md"
+    THESES_FILE: Path = Path(__file__).parent / "position_theses.json"
+
+    # Initial capital for drawdown calculations
+    INITIAL_PORTFOLIO_VALUE: float = 100_000.0
+
+    # --- Regime detection state (updated each cycle) ---
+    # RISK_ON:  8% max / 5% cash  / NOW entries
+    # RISK_OFF: 4% max / 15% cash / STRONG_NOW entries only
+    # CRISIS:   4% max / 30% cash / no new entries
 
 
-class PortfolioState:
-    """Tracks portfolio state and trade history"""
-    
-    def __init__(self, state_file: Path = Path('portfolio_state.json')):
-        self.state_file = state_file
-        self.daily_trades = 0
-        self.weekly_trades = 0
-        self.last_trade_date = None
-        self.last_trade_week = None
-        self.stop_losses_triggered = []
-        self.take_profits_triggered = []
-        self.load()
-    
-    def load(self):
-        """Load state from file"""
-        if self.state_file.exists():
+def load_alpaca_config() -> Dict:
+    for path in TradingConfig.ALPACA_CONFIG_PATHS:
+        if os.path.exists(path):
             try:
-                with open(self.state_file) as f:
-                    data = json.load(f)
-                    self.daily_trades = data.get('daily_trades', 0)
-                    self.weekly_trades = data.get('weekly_trades', 0)
-                    self.last_trade_date = data.get('last_trade_date')
-                    self.last_trade_week = data.get('last_trade_week')
-                    self.stop_losses_triggered = data.get('stop_losses_triggered', [])
-                    self.take_proits_triggered = data.get('take_profits_triggered', [])
+                with open(path) as f:
+                    cfg = json.load(f)
+                logger.info(f"Loaded Alpaca config from {path}")
+                return cfg
             except Exception as e:
-                logger.error(f"Failed to load state: {e}")
-    
-    def save(self):
-        """Save state to file"""
-        try:
-            with open(self.state_file, 'w') as f:
-                json.dump({
-                    'daily_trades': self.daily_trades,
-                    'weekly_trades': self.weekly_trades,
-                    'last_trade_date': self.last_trade_date,
-                    'last_trade_week': self.last_trade_week,
-                    'stop_losses_triggered': self.stop_losses_triggered,
-                    'take_profits_triggered': self.take_profits_triggered
-                }, f, indent=2)
-        except Exception as e:
-            logger.error(f"Failed to save state: {e}")
+                logger.warning(f"Could not load config at {path}: {e}")
+    return {
+        "api_key": os.getenv("ALPACA_API_KEY"),
+        "api_secret": os.getenv("ALPACA_SECRET_KEY"),
+        "base_url": os.getenv("ALPACA_BASE_URL", "https://paper-api.alpaca.markets"),
+        "data_url": os.getenv("ALPACA_DATA_URL", "https://data.alpaca.markets"),
+    }
 
-    def load_dynamic_watchlist(self) -> List[str]:
-        """Load watchlist from dynamic rotation file"""
+
+class AlpacaClient:
+    def __init__(self, cfg: Dict):
+        self.api_key = cfg.get("api_key") or cfg.get("APCA_API_KEY_ID")
+        self.api_secret = cfg.get("api_secret") or cfg.get("APCA_API_SECRET_KEY")
+        self.base_url = cfg.get("base_url", "https://paper-api.alpaca.markets").rstrip("/")
+        self.data_url = cfg.get("data_url", "https://data.alpaca.markets").rstrip("/")
+
+        if not self.api_key or not self.api_secret:
+            raise ValueError("Alpaca API key/secret missing")
+
+        is_live_url = "paper-api" not in self.base_url
+        if is_live_url and not TradingConfig.LIVE_MODE:
+            raise RuntimeError(
+                "Live Alpaca endpoint detected but LIVE_MODE is False. "
+                "Set TradingConfig.LIVE_MODE = True only when ready for real money."
+            )
+
+        self.session = requests.Session()
+        self.session.headers.update({
+            "APCA-API-KEY-ID": self.api_key,
+            "APCA-API-SECRET-KEY": self.api_secret,
+            "Accept": "application/json",
+        })
+
+    def is_paper(self) -> bool:
+        return "paper-api" in self.base_url
+
+    def get_account(self) -> Dict:
+        r = self.session.get(f"{self.base_url}/v2/account", timeout=15)
+        r.raise_for_status()
+        return r.json()
+
+    def get_positions(self) -> List[Dict]:
+        r = self.session.get(f"{self.base_url}/v2/positions", timeout=15)
+        r.raise_for_status()
+        return r.json()
+
+    def is_market_open(self) -> bool:
         try:
-            with open('/var/www/hedge-fund-website/watchlist_changes.json', 'r') as f:
-                data = json.load(f)
-                symbols = data.get('new_watchlist', [])
-                if len(symbols) >= 8:
-                    logger.debug(f"Loaded {len(symbols)} symbols from dynamic watchlist")
-                    return symbols
+            r = self.session.get(f"{self.base_url}/v2/clock", timeout=10)
+            if r.status_code == 200:
+                return r.json().get("is_open", False)
         except Exception as e:
-            logger.debug(f"Could not load dynamic watchlist: {e}")
-        
-        # Fallback to static list
-        fallback = ['DKNG', 'COIN', 'UPST', 'ROKU', 'ABNB', 'SHOP', 'SQ', 'RIVN', 'NET', 'SNOW']
-        logger.debug(f"Using fallback watchlist: {len(fallback)} symbols")
-        return fallback
-    
-    def reset_daily(self):
-        """Reset daily trade count if new day"""
-        today = datetime.now().strftime('%Y-%m-%d')
-        if self.last_trade_date != today:
-            self.daily_trades = 0
-            self.last_trade_date = today
-            logger.info(f"New day - daily trades reset to 0")
-    
-    def reset_weekly(self):
-        """Reset weekly trade count if new week"""
-        current_week = datetime.now().strftime('%Y-W%U')
-        if self.last_trade_week != current_week:
-            self.weekly_trades = 0
-            self.last_trade_week = current_week
-            logger.info(f"New week - weekly trades reset to 0")
-    
-    def can_trade(self) -> bool:
-        """Check if we can make more trades today/this week"""
-        self.reset_daily()
-        self.reset_weekly()
-        
-        if self.daily_trades >= StrategyConfig.MAX_TRADES_PER_DAY:
-            logger.info(f"Daily trade limit reached ({StrategyConfig.MAX_TRADES_PER_DAY})")
-            return False
-        
-        if self.weekly_trades >= StrategyConfig.MAX_TRADES_PER_WEEK:
-            logger.info(f"Weekly trade limit reached ({StrategyConfig.MAX_TRADES_PER_WEEK})")
-            return False
-        
-        return True
-    
-    def record_trade(self, symbol: str, action: str, reason: str):
-        """Record a trade"""
-        self.daily_trades += 1
-        self.weekly_trades += 1
-        self.save()
-        logger.info(f"Trade recorded: {action} {symbol} ({self.daily_trades}/{StrategyConfig.MAX_TRADES_PER_DAY} daily)")
+            logger.warning(f"Could not check market clock: {e}")
+        return False
+
+    def get_latest_quote(self, symbol: str) -> Optional[float]:
+        """Fetch latest bid/ask midpoint for limit orders."""
+        try:
+            r = self.session.get(
+                f"{self.data_url}/v2/stocks/quotes/latest",
+                params={"symbols": symbol, "feed": "sip"},
+                timeout=15,
+            )
+            r.raise_for_status()
+            quote = r.json().get("quotes", {}).get(symbol, {})
+            bid = quote.get("bp") or 0
+            ask = quote.get("ap") or 0
+            if bid > 0 and ask > 0:
+                return (bid + ask) / 2
+            return quote.get("p") or quote.get("ap") or quote.get("bp")
+        except Exception as e:
+            logger.warning(f"Could not get quote for {symbol}: {e}")
+            return None
+
+    def get_asset(self, symbol: str) -> Optional[Dict]:
+        """Get asset info from Alpaca. Returns None if not tradable."""
+        try:
+            r = self.session.get(f"{self.base_url}/v2/assets/{symbol}", timeout=10)
+            if r.status_code == 404:
+                return None
+            r.raise_for_status()
+            return r.json()
+        except Exception:
+            return None
+
+    def is_tradable(self, symbol: str) -> bool:
+        """Check if a symbol is tradable on Alpaca. Cached."""
+        if not hasattr(self, '_tradable_cache'):
+            self._tradable_cache: Dict[str, bool] = {}
+        if symbol in self._tradable_cache:
+            return self._tradable_cache[symbol]
+        asset = self.get_asset(symbol)
+        tradable = asset is not None and asset.get('status') == 'active' and asset.get('tradable', False)
+        self._tradable_cache[symbol] = tradable
+        if not tradable:
+            logger.warning(f"{symbol} is not tradable on Alpaca, will skip")
+        return tradable
+
+    def submit_order(self, symbol: str, qty: int, side: str, dry_run: bool = False,
+                     use_limit: bool = True, twap_threshold: int = 100) -> Optional[str]:
+        if dry_run:
+            logger.info(f"DRY RUN {side.upper()} {qty} {symbol}")
+            return "dry-run"
+        if qty <= 0:
+            return None
+
+        side_lower = side.lower()
+        order_ids = []
+
+        # TWAP split for large orders
+        if qty > twap_threshold:
+            chunks = self._twap_chunks(qty, twap_threshold)
+            logger.info(f"TWAP: splitting {side} {symbol} into {len(chunks)} chunks of ~{twap_threshold}")
+        else:
+            chunks = [qty]
+
+        for chunk in chunks:
+            payload = self._build_order_payload(symbol, chunk, side_lower, use_limit=use_limit)
+            if payload is None:
+                continue
+            try:
+                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                r.raise_for_status()
+                order_ids.append(r.json().get("id", "unknown"))
+            except Exception as e:
+                logger.error(f"Failed to submit {side} order for {symbol}: {e}")
+                return None
+            # Brief pause between TWAP chunks
+            if len(chunks) > 1 and chunk != chunks[-1]:
+                import time as _time
+                _time.sleep(1)
+
+        return order_ids[0] if order_ids else None
+
+    def _twap_chunks(self, qty: int, threshold: int) -> list:
+        """Split a large order into roughly equal chunks."""
+        import math as _math
+        n = _math.ceil(qty / threshold)
+        base = qty // n
+        remainder = qty % n
+        return [base + 1] * remainder + [base] * (n - remainder)
+
+    def _build_order_payload(self, symbol: str, qty: int, side: str, use_limit: bool = True) -> Optional[dict]:
+        """Build order payload — limit at midpoint or market fallback."""
+        if not use_limit:
+            return {
+                "symbol": symbol,
+                "qty": str(qty),
+                "side": side,
+                "type": "market",
+                "time_in_force": "day",
+            }
+        midpoint = self.get_latest_quote(symbol)
+        if midpoint is None or midpoint <= 0:
+            return {
+                "symbol": symbol,
+                "qty": str(qty),
+                "side": side,
+                "type": "market",
+                "time_in_force": "day",
+            }
+        limit_price = round(midpoint, 2)
+        return {
+            "symbol": symbol,
+            "qty": str(qty),
+            "side": side,
+            "type": "limit",
+            "time_in_force": "day",
+            "limit_price": str(limit_price),
+        }
+
+
+class PortfolioDataStore:
+    def __init__(self, bot: "STONKAIBot"):
+        self.bot = bot
+
+    def fetch(self) -> Optional[Dict]:
+        try:
+            account = self.bot.alpaca.get_account()
+            positions = self.bot.alpaca.get_positions()
+
+            pv = float(account.get("portfolio_value", 0))
+            cash = float(account.get("cash", 0))
+            equity = float(account.get("equity", 0))
+
+            positions_data = []
+            for p in positions:
+                symbol = p.get("symbol", "")
+                qty = int(float(p.get("qty", 0)))
+                avg_entry = float(p.get("avg_entry_price", 0))
+                current = float(p.get("current_price", 0))
+                mv = float(p.get("market_value", 0))
+                cb = float(p.get("cost_basis", 0))
+                upl = float(p.get("unrealized_pl", 0))
+                uplpc = float(p.get("unrealized_plpc", 0)) * 100
+
+                sector = SignalEngine._sector(symbol)
+
+                positions_data.append({
+                    "symbol": symbol,
+                    "qty": qty,
+                    "avg_entry": avg_entry,
+                    "current": current,
+                    "market_value": mv,
+                    "cost_basis": cb,
+                    "unrealized_pl": upl,
+                    "unrealized_plpc": uplpc,
+                    "sector": sector,
+                })
+
+            # Enrich positions with real-time snapshot data from Alpaca hub
+            # This enables VWAP stops, intraday vol, and prev_close in the risk engine
+            try:
+                _hub = get_data_hub()
+                _symbols = [p.get("symbol", "") for p in positions]
+                _snaps = _hub.get_snapshots(_symbols)
+                for pos_dict in positions_data:
+                    _sym = pos_dict["symbol"]
+                    _snap = _snaps.get(_sym, {})
+                    if _snap:
+                        pos_dict["daily_vwap"] = _snap.get("daily_vwap")
+                        pos_dict["prev_close"] = _snap.get("prev_close")
+                        pos_dict["intraday_vwap"] = _snap.get("minute_vwap")
+                        pos_dict["daily_volume"] = _snap.get("daily_volume")
+                        pos_dict["minute_volume"] = _snap.get("minute_volume")
+                        # Use snapshot price if available (more accurate than position current)
+                        _snap_price = _snap.get("price")
+                        if _snap_price and _snap_price > 0:
+                            pos_dict["current"] = _snap_price
+                            pos_dict["market_value"] = _snap_price * pos_dict["qty"]
+            except Exception as _e:
+                logger.debug(f"Snapshot enrichment failed: {_e}")
+
+            total_pl = sum(p["unrealized_pl"] for p in positions_data)
+            total_cost = sum(p["cost_basis"] for p in positions_data)
+            total_pl_pct = (total_pl / total_cost * 100) if total_cost > 0 else 0
+
+            portfolio_data = {
+                "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "status": "live",
+                "account": {
+                    "portfolio_value": pv,
+                    "cash": cash,
+                    "equity": equity,
+                    "buying_power": float(account.get("buying_power", cash)),
+                },
+                "positions": positions_data,
+                "total_pl": total_pl,
+                "total_pl_pct": total_pl_pct,
+            }
+
+            self._save(portfolio_data)
+            self.bot.risk_engine.record_high_water(pv)
+            return portfolio_data
+
+        except Exception as e:
+            logger.error(f"Failed to fetch portfolio data: {e}")
+            return None
+
+    def _save(self, data: Dict):
+        try:
+            with open(TradingConfig.PORTFOLIO_DATA_FILE, "w") as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Could not save portfolio data: {e}")
+
+        try:
+            TradingConfig.WEB_PORTFOLIO_FILE.parent.mkdir(parents=True, exist_ok=True)
+            with open(TradingConfig.WEB_PORTFOLIO_FILE, "w") as f:
+                json.dump(data, f, indent=2)
+        except Exception as e:
+            logger.debug(f"Could not write web portfolio file: {e}")
+
+
+class ThesisManager:
+    """Manages entry theses for positions and thesis-based exits."""
+
+    def __init__(self, theses_file: Path):
+        self.theses_file = theses_file
+        self.theses: Dict[str, Dict] = {}
+        self._load()
+
+    def _load(self):
+        if self.theses_file.exists():
+            try:
+                with open(self.theses_file) as f:
+                    self.theses = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not load theses: {e}")
+                self.theses = {}
+
+    def _save(self):
+        try:
+            with open(self.theses_file, "w") as f:
+                json.dump(self.theses, f, indent=2)
+        except Exception as e:
+            logger.error(f"Could not save theses: {e}")
+
+    def add_thesis(
+        self,
+        symbol: str,
+        entry_price: float,
+        readiness_score: float,
+        thesis: str,
+        confirmations: Dict,
+    ):
+        """Record entry thesis for a new position."""
+        self.theses[symbol] = {
+            "entry_date": date.today().isoformat(),
+            "entry_price": round(entry_price, 2),
+            "entry_readiness": readiness_score,
+            "thesis": thesis,
+            "confirmations": confirmations,
+            "exit_triggers": {
+                "thesis_broken": "price falls below 20d EMA",
+                "momentum_loss": "MACD histogram turns negative for 2+ days",
+                "sector_reversal": "sector momentum turns negative",
+            },
+        }
+        self._save()
+
+    def remove_thesis(self, symbol: str):
+        """Remove thesis when position is closed."""
+        self.theses.pop(symbol, None)
+        self._save()
+
+    def check_thesis_exits(self, portfolio_data: Dict, signals: List[Dict]) -> List[Dict]:
+        """Check if any thesis exit triggers are met. Returns sell trades."""
+        trades = []
+        if not self.theses or not signals:
+            return trades
+
+        signal_map = {s["symbol"]: s for s in signals}
+        position_map = {p["symbol"]: p for p in portfolio_data.get("positions", [])}
+
+        for symbol, thesis_data in list(self.theses.items()):
+            if symbol not in position_map:
+                # Position already closed; clean up
+                self.theses.pop(symbol, None)
+                continue
+
+            pos = position_map[symbol]
+            current_price = pos.get("current", 0)
+            qty = pos.get("qty", 0)
+            if current_price <= 0 or qty <= 0:
+                continue
+
+            sig = signal_map.get(symbol, {})
+            exit_triggers = thesis_data.get("exit_triggers", {})
+
+            # 1. Thesis broken: price below 20d EMA
+            above_ema = sig.get("above_ema20", True)
+            if not above_ema:
+                # Check if it's been below for a cycle (avoid flash crashes)
+                trades.append({
+                    "symbol": symbol,
+                    "qty": qty,
+                    "action": "SELL",
+                    "reason": f"Thesis exit: {exit_triggers.get('thesis_broken', 'price below 20d EMA')}",
+                })
+                logger.info(f"THESIS EXIT: {symbol} — price below 20d EMA")
+                continue
+
+            # 2. Momentum loss: MACD histogram negative
+            macd_hist = sig.get("macd_hist", 0)
+            if macd_hist < 0:
+                # Check 2-day confirmation via confirmations dict
+                trades.append({
+                    "symbol": symbol,
+                    "qty": qty,
+                    "action": "SELL",
+                    "reason": f"Thesis exit: {exit_triggers.get('momentum_loss', 'MACD histogram negative')}",
+                })
+                logger.info(f"THESIS EXIT: {symbol} — MACD histogram negative")
+                continue
+
+            # 3. Sector reversal: sector no longer strong
+            sector_strong = sig.get("sector_strong", False)
+            confirmations = sig.get("confirmations", {})
+            rsi_signal = confirmations.get("rsi_signal", "neutral")
+            if not sector_strong and rsi_signal == "overbought":
+                trades.append({
+                    "symbol": symbol,
+                    "qty": qty,
+                    "action": "SELL",
+                    "reason": f"Thesis exit: {exit_triggers.get('sector_reversal', 'sector momentum turned negative')}",
+                })
+                logger.info(f"THESIS EXIT: {symbol} — sector reversal + RSI overbought")
+                continue
+
+        self._save()
+        return trades
 
 
 class STONKAIBot:
-    """
-    Autonomous trading bot implementing STONK.AI strategy
-    """
-    
     def __init__(self):
-        # Load config from existing file
-        config = load_alpaca_config()
-        self.api_key = config.get('api_key') or config.get('APCA_API_KEY_ID')
-        self.api_secret = config.get('api_secret') or config.get('APCA_API_SECRET_KEY')
-        self.base_url = config.get('base_url', 'https://paper-api.alpaca.markets')
-        
-        if not self.api_key or not self.api_secret:
-            raise ValueError("Alpaca API keys not found in config file")
-        
-        # Initialize API connection
-        if USE_SDK:
-            self.api = tradeapi.REST(
-                key_id=self.api_key,
-                secret_key=self.api_secret,
-                base_url=self.base_url
-            )
-            self.session = None
+        self.cfg = load_alpaca_config()
+        self.alpaca = AlpacaClient(self.cfg)
+        self.risk_engine = RiskEngine(
+            config=RiskConfig(),
+            state_file=Path(__file__).parent / "risk_state.json",
+            initial_portfolio_value=TradingConfig.INITIAL_PORTFOLIO_VALUE,
+        )
+        self.signal_engine = SignalEngine(
+            universe=None,
+            api_key=self.cfg.get("api_key"),
+            api_secret=self.cfg.get("api_secret"),
+            data_url=self.cfg.get("data_url", "https://data.alpaca.markets"),
+        )
+        self.data_store = PortfolioDataStore(self)
+        self.thesis_manager = ThesisManager(TradingConfig.THESES_FILE)
+        self._last_signal_refresh: Optional[float] = None
+        self._signals: List[Dict] = []
+        self._dry_run = TradingConfig.DRY_RUN or (not self.alpaca.is_paper() and not TradingConfig.LIVE_MODE)
+        self._failed_buy_symbols: set = set()  # symbols that failed to buy (e.g. not tradable)
+
+        # Regime detection state
+        self._regime: str = "RISK_ON"
+        self._regime_params: Dict = {"max_position_pct": 8, "cash_floor_pct": 5, "min_tier_for_entry": "NOW"}
+
+        if self._dry_run:
+            logger.info("Bot is in DRY RUN mode — trades will be logged but not submitted.")
+        elif self.alpaca.is_paper():
+            logger.info("Bot is connected to Alpaca PAPER trading — fake money orders will be submitted.")
         else:
-            self.api = None
-            self.session = requests.Session()
-            self.session.headers.update({
-                'APCA-API-KEY-ID': self.api_key,
-                'APCA-API-SECRET-KEY': self.api_secret
-            })
-        
-        self.state = PortfolioState()
-        self.portfolio_data_file = Path('portfolio_data.json')
-        self.trades_log_file = Path('TRADES_LOG.md')
-        
-    def is_market_open(self) -> bool:
-        """Check if US equity markets are open"""
+            logger.warning("Bot is connected to Alpaca LIVE trading — real money orders will be submitted.")
+
+    # ------------------------------------------------------------------
+    # Signal lifecycle
+    # ------------------------------------------------------------------
+
+    def refresh_signals(self):
         try:
-            if USE_SDK and self.api:
-                clock = self.api.get_clock()
-                return clock.is_open
-            else:
-                # Use API to check market status
-                base = self.base_url.rstrip('/')
-                resp = self.session.get(f"{base}/v2/clock", timeout=10)
-                if resp.status_code == 200:
-                    clock_data = resp.json()
-                    return clock_data.get('is_open', False)
+            signals = self.signal_engine.generate_signals(lookback_days=120)
+            self.signal_engine.save_signals(signals, TradingConfig.SIGNALS_FILE)
+            # Load from file to include mean reversion signals merged during save
+            with open(TradingConfig.SIGNALS_FILE) as f:
+                self._signals = json.load(f).get("signals", [])
+            self._last_signal_refresh = time.time()
+            # Log strategy breakdown
+            mr_count = sum(1 for s in self._signals if s.get("strategy_type") == "mean_reversion")
+            mom_count = len(self._signals) - mr_count
+            logger.info(f"Refreshed signals: {len(self._signals)} candidates ({mom_count} momentum, {mr_count} mean reversion)")
+            try:
+                dynamic_watchlist_manager.update_watchlist()
+            except Exception as e:
+                logger.warning(f"Watchlist sync failed: {e}")
         except Exception as e:
-            logger.debug(f"Could not check market status via API: {e}")
-        
-        # Fallback to time-based check
-        now = datetime.now()
-        et_hour = (now.hour - 4) % 24  # Rough ET (ignoring DST)
-        return (9 <= et_hour < 16) and now.weekday() < 5
-    
-    def fetch_portfolio_data(self) -> Dict:
-        """Fetch current portfolio state from Alpaca"""
+            logger.error(f"Failed to refresh signals: {e}")
+            try:
+                with open(TradingConfig.SIGNALS_FILE) as f:
+                    self._signals = json.load(f).get("signals", [])
+                logger.info(f"Loaded cached signals: {len(self._signals)} candidates")
+            except Exception:
+                self._signals = []
+
+    def maybe_refresh_signals(self):
+        now = time.time()
+        if (self._last_signal_refresh is None or
+                now - self._last_signal_refresh > TradingConfig.SIGNAL_REFRESH_INTERVAL_SECONDS):
+            self.refresh_signals()
+        # Filter out symbols known to be untradable or failed buys
+        if self._failed_buy_symbols:
+            self._signals = [
+                s for s in self._signals
+                if s.get("symbol") not in self._failed_buy_symbols
+            ]
+
+    # ------------------------------------------------------------------
+    # Readiness-based position sizing multiplier
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _readiness_sizing_multiplier(readiness: float) -> float:
+        """Scale position size by readiness conviction.
+        v2.1: More aggressive scaling — the old multipliers never produced
+        meaningful size differences since readiness rarely exceeds 80."""
+        if readiness >= 85:
+            return 2.0
+        if readiness >= 75:
+            return 1.5
+        if readiness >= 70:
+            return 1.25
+        if readiness >= 65:
+            return 1.0
+        return 0.75  # below entry threshold but still considered
+
+    @staticmethod
+    def _strategy_sizing_cap(strategy_type: str) -> float:
+        """Cap position size for non-momentum strategies."""
+        if strategy_type == "mean_reversion":
+            return 0.75  # lower conviction, cap at 75% of normal size
+        return 1.0  # momentum: no cap
+
+    # ------------------------------------------------------------------
+    # Main cycle
+    # ------------------------------------------------------------------
+
+    def run_cycle(self):
+        if not self.alpaca.is_market_open():
+            logger.debug("Market closed; skipping cycle")
+            return
+
+        # Regime detection: check market conditions each cycle
         try:
-            if USE_SDK:
-                return self._fetch_with_sdk()
-            else:
-                return self._fetch_with_requests()
+            regime_result = get_regime()
+            self._regime = regime_result["regime"]
+            self._regime_params = regime_result["params"]
+            # Apply regime overrides to risk engine config
+            self.risk_engine.config.max_single_position_pct = self._regime_params["max_position_pct"] / 100
+            self.risk_engine.config.min_cash_pct = self._regime_params["cash_floor_pct"] / 100
+            # Log regime state
+            _regime_emoji = {"RISK_ON": "\U0001F4C8", "RISK_OFF": "\u26A0\uFE0F", "CRISIS": "\U0001F6D1"}
+            _regime_desc = {"RISK_ON": "full size", "RISK_OFF": "defensive", "CRISIS": "no new entries"}
+            logger.info(f"{_regime_emoji.get(self._regime, '?')} Regime: {self._regime} \u2014 {_regime_desc.get(self._regime, '')}")
+            if regime_result.get("triggers"):
+                logger.info(f"  Regime triggers: {'; '.join(regime_result['triggers'])}")
         except Exception as e:
-            logger.error(f"Failed to fetch portfolio data: {e}")
-            return {}
-    
-    def _fetch_with_sdk(self) -> Dict:
-        """Fetch using Alpaca SDK"""
-        account = self.api.get_account()
-        positions = self.api.list_positions()
-        
-        portfolio_data = {
-            'timestamp': datetime.now().isoformat(),
-            'status': 'live',
-            'account': {
-                'portfolio_value': float(account.portfolio_value),
-                'cash': float(account.cash),
-                'buying_power': float(account.buying_power),
-                'equity': float(account.equity)
-            },
-            'positions': []
-        }
-        
-        total_pl = 0
-        for pos in positions:
-            pos_data = {
-                'symbol': pos.symbol,
-                'qty': int(pos.qty),
-                'avg_entry': float(pos.avg_entry_price),
-                'current': float(pos.current_price),
-                'market_value': float(pos.market_value),
-                'cost_basis': float(pos.cost_basis),
-                'unrealized_pl': float(pos.unrealized_pl),
-                'unrealized_plpc': float(pos.unrealized_plpc) * 100
-            }
-            portfolio_data['positions'].append(pos_data)
-            total_pl += float(pos.unrealized_pl)
-        
-        portfolio_data['total_pl'] = total_pl
-        # Calculate total_pl_pct based on actual cost basis
-        total_cost = sum(p['cost_basis'] for p in portfolio_data['positions'])
-        portfolio_data['total_pl_pct'] = (total_pl / total_cost * 100) if total_cost > 0 else 0
-        
-        # Save to file for website
-        with open(self.portfolio_data_file, 'w') as f:
-            json.dump(portfolio_data, f, indent=2)
-        
-        # Also save to web directory for live display
-        web_file = Path('/var/www/hedge-fund-website/portfolio_data.json')
-        try:
-            web_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(web_file, 'w') as f:
-                json.dump(portfolio_data, f, indent=2)
-        except Exception as e:
-            logger.debug(f"Could not write to web file: {e}")
-        
-        return portfolio_data
-    
-    def _fetch_with_requests(self) -> Dict:
-        """Fetch using requests (fallback)"""
-        base = self.base_url.rstrip('/')
-        
-        # Get account
-        acc_resp = self.session.get(f"{base}/v2/account", timeout=10)
-        acc_resp.raise_for_status()
-        account = acc_resp.json()
-        
-        # Get positions
-        pos_resp = self.session.get(f"{base}/v2/positions", timeout=10)
-        pos_resp.raise_for_status()
-        positions = pos_resp.json()
-        
-        portfolio_data = {
-            'timestamp': datetime.now().isoformat(),
-            'status': 'live',
-            'account': {
-                'portfolio_value': float(account.get('portfolio_value', 0)),
-                'cash': float(account.get('cash', 0)),
-                'buying_power': float(account.get('buying_power', 0)),
-                'equity': float(account.get('equity', 0))
-            },
-            'positions': []
-        }
-        
-        total_pl = 0
-        for pos in positions:
-            pos_data = {
-                'symbol': pos.get('symbol', ''),
-                'qty': int(pos.get('qty', 0)),
-                'avg_entry': float(pos.get('avg_entry_price', 0)),
-                'current': float(pos.get('current_price', 0)),
-                'market_value': float(pos.get('market_value', 0)),
-                'cost_basis': float(pos.get('cost_basis', 0)),
-                'unrealized_pl': float(pos.get('unrealized_pl', 0)),
-                'unrealized_plpc': float(pos.get('unrealized_plpc', 0)) * 100
-            }
-            portfolio_data['positions'].append(pos_data)
-            total_pl += float(pos.get('unrealized_pl', 0))
-        
-        portfolio_data['total_pl'] = total_pl
-        # Calculate total_pl_pct based on actual cost basis
-        total_cost = sum(p['cost_basis'] for p in portfolio_data['positions'])
-        portfolio_data['total_pl_pct'] = (total_pl / total_cost * 100) if total_cost > 0 else 0
-        
-        # Save to file for website
-        with open(self.portfolio_data_file, 'w') as f:
-            json.dump(portfolio_data, f, indent=2)
-        
-        # Also save to web directory for live display
-        web_file = Path('/var/www/hedge-fund-website/portfolio_data.json')
-        try:
-            web_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(web_file, 'w') as f:
-                json.dump(portfolio_data, f, indent=2)
-        except Exception as e:
-            logger.debug(f"Could not write to web file: {e}")
-        
-        return portfolio_data
-    
-    def get_sector_for_symbol(self, symbol: str) -> str:
-        """Get sector category for a symbol"""
-        for sector, symbols in StrategyConfig.SECTORS.items():
-            if symbol in symbols:
-                return sector
-        return 'Other'
-    
-    def calculate_sector_allocation(self, portfolio_data: Dict) -> Dict[str, float]:
-        """Calculate current sector allocation percentages"""
-        total_value = portfolio_data.get('account', {}).get('portfolio_value', 0)
-        if total_value == 0:
-            return {}
-        
-        sector_values = {sector: 0.0 for sector in StrategyConfig.SECTORS.keys()}
-        
-        for pos in portfolio_data.get('positions', []):
-            sector = self.get_sector_for_symbol(pos['symbol'])
-            if sector in sector_values:
-                sector_values[sector] += pos['market_value']
-        
-        # Convert to percentages
-        return {sector: (value / total_value) * 100 for sector, value in sector_values.items()}
-    
-    def get_symbols_for_sector(self, sector: str) -> List[str]:
-        """Get watchlist symbols for a given sector"""
-        sector_map = {
-            'AI': ['PLTR', 'CRWD', 'NET', 'PATH', 'SQ'],
-            'Tech': ['AMD', 'NVDA', 'AAPL', 'AMZN', 'ORCL', 'IBM', 'CDNS'],
-            'Crypto': ['COIN', 'HOOD', 'SQ'],
-            'Fintech': ['UPST', 'SOFI', 'SQ', 'HOOD'],
-            'EV': ['LCID', 'NIO', 'XPEV', 'GM'],
-            'Defense': [],
-            'Energy': ['XLE'],
-            'Housing': [],
-            'Bonds': [],
-            'Cash': []
-        }
-        return sector_map.get(sector, [])
-    
-    def check_stop_losses(self, portfolio_data: Dict) -> List[Dict]:
-        """Check for positions hitting stop loss (-15%)"""
-        stops = []
-        
-        for pos in portfolio_data.get('positions', []):
-            symbol = pos['symbol']
-            plpc = pos['unrealized_plpc']
-            
-            if plpc <= StrategyConfig.STOP_LOSS_PCT:
-                stops.append({
-                    'symbol': symbol,
-                    'qty': pos['qty'],
-                    'action': 'SELL',
-                    'reason': f'Stop loss hit: {plpc:.1f}% (limit: {StrategyConfig.STOP_LOSS_PCT}%)',
-                    'current_pl': plpc
-                })
-                logger.warning(f"STOP LOSS TRIGGERED: {symbol} at {plpc:.1f}%")
-        
-        return stops
-    
-    def check_take_profits(self, portfolio_data: Dict) -> List[Dict]:
-        """Check for positions hitting take profit levels"""
-        trims = []
-        full_exits = []
-        
-        for pos in portfolio_data.get('positions', []):
-            symbol = pos['symbol']
-            plpc = pos['unrealized_plpc']
-            qty = pos['qty']
-            
-            # Skip if not in trim list
-            if symbol not in StrategyConfig.TRIM_ON_GAIN:
+            logger.warning(f"Regime detection failed, defaulting to RISK_ON: {e}")
+            self._regime = "RISK_ON"
+            self._regime_params = {"max_position_pct": 8, "cash_floor_pct": 5, "min_tier_for_entry": "NOW"}
+
+        portfolio_data = self.data_store.fetch()
+        if not portfolio_data:
+            return
+
+        self.maybe_refresh_signals()
+        if not self._signals:
+            logger.warning("No signals available; skipping cycle")
+            return
+
+        pv = portfolio_data["account"]["portfolio_value"]
+        cash = portfolio_data["account"]["cash"]
+        logger.info(f"Portfolio: ${pv:,.2f} | Cash: ${cash:,.2f} | Positions: {len(portfolio_data['positions'])}")
+
+        # 1. Handle exits: risk engine + thesis exits
+        exit_trades = []
+        exit_trades.extend(self.risk_engine.check_exits(portfolio_data))
+        exit_trades.extend(self.risk_engine.check_concentration(portfolio_data))
+        exit_trades.extend(self.thesis_manager.check_thesis_exits(portfolio_data, self._signals))
+
+        for trade in exit_trades:
+            self._execute_sell(trade, portfolio_data)
+            # Clean up thesis when position is fully sold
+            if trade.get("qty", 0) >= portfolio_data.get("positions", [{}])[0].get("qty", 0):
+                self.thesis_manager.remove_thesis(trade["symbol"])
+
+        # Re-fetch after sells
+        if exit_trades:
+            portfolio_data = self.data_store.fetch()
+            if not portfolio_data:
+                return
+
+        # 1b. Cash-raising: if cash is below the dynamic floor, trim weakest positions
+        cash_raise_trades = self.risk_engine.check_cash_raise(portfolio_data, self._signals)
+        for trade in cash_raise_trades:
+            self._execute_sell(trade, portfolio_data)
+            # Clean up thesis when position is fully sold
+            pos_to_check = next((p for p in portfolio_data.get("positions", []) if p.get("symbol") == trade["symbol"]), {})
+            if trade.get("qty", 0) >= pos_to_check.get("qty", 0):
+                self.thesis_manager.remove_thesis(trade["symbol"])
+
+        # Re-fetch after cash-raising sells
+        if cash_raise_trades:
+            portfolio_data = self.data_store.fetch()
+            if not portfolio_data:
+                return
+
+        # 1c. Rotation: trim overweight low-readiness positions to free capital for high-readiness entries
+        # Pre-filter: check which top signal symbols are actually tradable before rotating
+        top_buy_candidates = [s for s in self._signals if s.get("entry_eligible", False) and s.get("readiness_score", 0) >= 70]
+        for s in top_buy_candidates[:10]:
+            sym = s.get("symbol")
+            if sym not in self._failed_buy_symbols and not self.alpaca.is_tradable(sym):
+                self._failed_buy_symbols.add(sym)
+        # Now filter signals to exclude untradable symbols
+        self._signals = [s for s in self._signals if s.get("symbol") not in self._failed_buy_symbols]
+        rotation_trades = self.risk_engine.check_rotation(portfolio_data, self._signals, failed_buy_symbols=self._failed_buy_symbols)
+        for trade in rotation_trades:
+            self._execute_sell(trade, portfolio_data)
+            pos_to_check = next((p for p in portfolio_data.get("positions", []) if p.get("symbol") == trade["symbol"]), {})
+            if trade.get("qty", 0) >= pos_to_check.get("qty", 0):
+                self.thesis_manager.remove_thesis(trade["symbol"])
+
+        # Re-fetch after rotation sells
+        if rotation_trades:
+            portfolio_data = self.data_store.fetch()
+            if not portfolio_data:
+                return
+
+        # 2a. CRISIS: halve all position sizes
+        if self._regime == "CRISIS":
+            crisis_trades = []
+            for pos in portfolio_data.get("positions", []):
+                sym = pos.get("symbol", "")
+                qty = pos.get("qty", 0)
+                if qty >= 2:
+                    half_qty = qty // 2
+                    crisis_trades.append({
+                        "symbol": sym,
+                        "qty": half_qty,
+                        "action": "SELL",
+                        "reason": "CRISIS regime: halving position size",
+                    })
+            for trade in crisis_trades:
+                self._execute_sell(trade, portfolio_data)
+                self.thesis_manager.remove_thesis(trade["symbol"])
+            if crisis_trades:
+                portfolio_data = self.data_store.fetch()
+                if not portfolio_data:
+                    return
+
+        # 2. Decide if we should add new positions
+        can_add, reason, _ = self.risk_engine.can_add_new_positions(portfolio_data)
+        if not can_add:
+            logger.info(f"New positions blocked: {reason}")
+            return
+
+        # 3. Build candidate buys from signals — now readiness-driven
+        current_symbols = {p["symbol"] for p in portfolio_data.get("positions", [])}
+        top_signals = self._signals[: self.risk_engine.config.top_signal_count]
+        current_positions = {p["symbol"]: p for p in portfolio_data.get("positions", [])}
+        signal_map = {s["symbol"]: s for s in top_signals}
+
+        # 3a. Build ranked entry queue by readiness_score (highest first)
+        entry_candidates = []
+        for sig in top_signals:
+            symbol = sig["symbol"]
+            if symbol in current_symbols:
                 continue
-            
-            # Check for full exit (+50%)
-            if plpc >= StrategyConfig.TAKE_PROFIT_FULL:
-                full_exits.append({
-                    'symbol': symbol,
-                    'qty': qty,
-                    'action': 'SELL',
-                    'reason': f'Take profit full exit: {plpc:.1f}% (target: +{StrategyConfig.TAKE_PROFIT_FULL}%)',
-                    'current_pl': plpc
-                })
-                logger.info(f"TAKE PROFIT FULL: {symbol} at {plpc:.1f}%")
-            
-            # Check for trim (+25%)
-            elif plpc >= StrategyConfig.TAKE_PROFIT_TRIM:
-                trim_qty = max(1, qty // 4)  # Sell 25% of position
-                trims.append({
-                    'symbol': symbol,
-                    'qty': trim_qty,
-                    'action': 'SELL',
-                    'reason': f'Take profit trim: {plpc:.1f}% (target: +{StrategyConfig.TAKE_PROFIT_TRIM}%), selling {trim_qty}/{qty} shares',
-                    'current_pl': plpc
-                })
-                logger.info(f"TAKE PROFIT TRIM: {symbol} at {plpc:.1f}%, selling {trim_qty} shares")
-        
-        return full_exits + trims
-    
-    def check_rebalancing(self, portfolio_data: Dict) -> List[Dict]:
-        """Check if portfolio needs rebalancing"""
-        trades = []
-        
-        cash_pct = portfolio_data['account']['cash'] / portfolio_data['account']['portfolio_value']
-        if cash_pct < 0.05:  # Only need 5% cash for rebalancing (was 30%)
-            logger.info(f"Cash buffer low ({cash_pct:.1%}), skipping rebalancing")
-            return trades
-        
-        current_allocation = self.calculate_sector_allocation(portfolio_data)
-        cash = portfolio_data['account']['cash']
-        portfolio_value = portfolio_data['account']['portfolio_value']
-        
-        # Find sectors that need rebalancing
-        for sector, current_pct in current_allocation.items():
-            target_pct = StrategyConfig.ALLOCATION_TARGETS.get(sector, 0)
-            deviation = current_pct - target_pct
-            
-            if abs(deviation) > StrategyConfig.MAX_SECTOR_DEVIATION:
-                logger.info(f"{sector}: {current_pct:.1f}% vs target {target_pct:.1f}% (deviation: {deviation:+.1f}%)")
-                
-                # Sell overweight sectors
-                if deviation > 0:
-                    for pos in portfolio_data.get('positions', []):
-                        if pos.get('sector') == sector:
-                            # Sell 25% of position to reduce exposure
-                            sell_qty = int(pos['qty'] * 0.25)
-                            if sell_qty > 0:
-                                trades.append({
-                                    'symbol': pos['symbol'],
-                                    'qty': sell_qty,
-                                    'action': 'SELL',
-                                    'reason': f'Rebalance: {sector} overweight ({current_pct:.1f}% vs {target_pct:.1f}%)'
-                                })
-                                logger.info(f"REBALANCE SELL: {pos['symbol']} {sell_qty} shares ({sector} rebalancing)")
-                
-                # Buy underweight sectors (if we have cash)
-                elif deviation < 0 and cash > 1000:
-                    # Find a stock in this sector to buy
-                    sector_symbols = self.get_symbols_for_sector(sector)
-                    for symbol in sector_symbols:
-                        if symbol not in {p['symbol'] for p in portfolio_data.get('positions', [])}:
-                            price = self.get_current_price(symbol)
-                            if price and price > 0:
-                                buy_amount = min(cash * 0.1, 2000)  # 10% of cash or $2000
-                                qty = int(buy_amount / price)
-                                if qty > 0:
-                                    trades.append({
-                                        'symbol': symbol,
-                                        'qty': qty,
-                                        'action': 'BUY',
-                                        'reason': f'Rebalance: {sector} underweight ({current_pct:.1f}% vs {target_pct:.1f}%)'
-                                    })
-                                    logger.info(f"REBALANCE BUY: {symbol} {qty} shares ({sector} rebalancing)")
-                                    break
-        
-        return trades
-    
-    def check_council_rebalancing(self, portfolio_data: Dict) -> List[Dict]:
-        """DEPRECATED: Council rebalancing with SELL_LIST removed.
-        
-        Original plan sold MSFT/SOFI/SCHD/SGOV to buy Core positions.
-        Since portfolio doesn't hold those stocks, this now just logs
-        a debug message and returns empty trades.
-        """
-        trades = []
-        logger.debug("Council rebalancing: SELL_LIST positions not in portfolio, skipping")
-        return trades
-    
-    def check_emergency_triggers(self, portfolio_data: Dict) -> List[str]:
-        """Check for emergency conditions that require human intervention"""
-        alerts = []
-        
-        total_value = portfolio_data.get('account', {}).get('portfolio_value', 0)
-        initial_value = 100000
-        total_return = ((total_value - initial_value) / initial_value) * 100
-        
-        # Portfolio down >20%
-        if total_return < -20:
-            alerts.append(f"EMERGENCY: Portfolio down {total_return:.1f}% (threshold: -20%)")
-        
-        # Individual position down >30% (stop loss should have triggered)
-        for pos in portfolio_data.get('positions', []):
-            if pos['unrealized_plpc'] < -30:
-                alerts.append(f"EMERGENCY: {pos['symbol']} down {pos['unrealized_plpc']:.1f}% (stop loss may have failed)")
-        
-        # Cash/Margin check - handle margin accounts properly
-        cash = portfolio_data['account']['cash']
-        buying_power = portfolio_data['account'].get('buying_power', cash)
-        
-        # For margin accounts: negative cash is OK if buying power is sufficient
-        # Only alert if buying power is critically low (< 25% of portfolio)
-        buying_power_pct = buying_power / total_value if total_value > 0 else 0
-        
-        if cash < 0:
-            # Margin account - check buying power instead
-            if buying_power_pct < 0.25:
-                alerts.append(f"WARNING: Buying power low at {buying_power_pct:.1%} (margin: ${abs(cash):,.2f})")
-            else:
-                # Info only - not an emergency
-                logger.info(f"Margin usage: ${abs(cash):,.2f} (buying power: {buying_power_pct:.1%})")
-        else:
-            # Cash account - check absolute minimum (NO MARGIN)
-            if cash < StrategyConfig.MIN_CASH_ABSOLUTE:
-                alerts.append(f"WARNING: Cash buffer low at ${cash:,.2f} (need ${StrategyConfig.MIN_CASH_ABSOLUTE} minimum)")
-        
-        return alerts
-    
-    def liquidate_for_negative_cash(self, portfolio_data: Dict) -> List[Dict]:
-        """CRITICAL: If cash is negative, liquidate positions to cover deficit.
-        
-        Priority: Sell smallest positions first (by market value), 
-        then losing positions, until cash >= 0
-        """
-        trades = []
-        cash = portfolio_data['account']['cash']
-        
-        if cash >= 0:
-            return trades  # No action needed
-        
-        deficit = abs(cash)
-        logger.critical(f"NEGATIVE CASH: ${cash:.2f} - LIQUIDATION REQUIRED to cover ${deficit:.2f}")
-        
-        positions = portfolio_data.get('positions', [])
-        if not positions:
-            logger.error("No positions to liquidate! Cannot cover negative cash.")
-            return trades
-        
-        # Sort by market value (smallest first) - sell smallest positions first
-        # Then sort by P&L (losers first) within same size bracket
-        sorted_positions = sorted(positions, key=lambda p: (p['market_value'], p.get('unrealized_plpc', 0)))
-        
-        liquidated_value = 0
-        for pos in sorted_positions:
-            if liquidated_value >= deficit * 1.05:  # Add 5% buffer for price slippage
-                break
-            
-            symbol = pos['symbol']
-            qty = pos['qty']
-            market_value = pos['market_value']
-            plpc = pos.get('unrealized_plpc', 0)
-            
-            # Sell entire position
-            trades.append({
-                'symbol': symbol,
-                'qty': qty,
-                'action': 'SELL',
-                'reason': f'LIQUIDATION: Cover negative cash (${cash:.2f}). Position was {plpc:+.1f}%',
-                'current_pl': plpc
-            })
-            
-            liquidated_value += market_value
-            logger.critical(f"LIQUIDATION ORDER: Sell {qty} {symbol} (${market_value:.2f}) - {plpc:+.1f}%")
-        
-        if liquidated_value < deficit:
-            logger.critical(f"CRITICAL: Liquidated ${liquidated_value:.2f} but need ${deficit:.2f}")
-        
-        return trades
-    
-    def execute_trade(self, trade: Dict) -> bool:
-        """Execute a trade through Alpaca - NEVER use margin"""
+            # NEW: use entry_eligible instead of total_score >= 30
+            if not sig.get("entry_eligible", False):
+                continue
+
+            # Regime-based entry gate
+            _min_tier = self._regime_params.get("min_tier_for_entry")
+            if _min_tier is None:
+                # CRISIS: no new entries at all
+                logger.info(f"CRISIS regime: skipping new entry for {symbol}")
+                continue
+            _tier_rank = {"MONITOR": 0, "WATCH": 1, "NOW": 2, "STRONG_NOW": 3}
+            _sig_tier = _tier_rank.get(sig.get("tier", "MONITOR"), 0)
+            _min_tier_rank = _tier_rank.get(_min_tier, 0)
+            if _sig_tier < _min_tier_rank:
+                logger.debug(f"Regime {_min_tier} gate: {symbol} tier {sig.get('tier')} insufficient")
+                continue
+
+            price = self.alpaca.get_latest_quote(symbol)
+            if price is None or price <= 0:
+                # Fallback: try hub snapshot
+                try:
+                    _hub = get_data_hub()
+                    _snap = _hub.get_snapshot(symbol)
+                    price = _snap.get("price") if _snap else None
+                except Exception:
+                    pass
+            if price is None or price <= 0:
+                logger.debug(f"No quote for {symbol}; skipping")
+                continue
+
+            # Intraday entry timing: check if we're buying at the top of a 15Min candle
+            _intraday_dev = 0.0
+            try:
+                _hub = get_data_hub()
+                _intra = _hub.get_intraday_bars([symbol], bars_back=3)
+                if symbol in _intra and len(_intra[symbol]) >= 2:
+                    _bars = _intra[symbol]
+                    _last_close = _bars[-1].get("c", 0)
+                    _prev_close = _bars[-2].get("c", 0) if len(_bars) >= 2 else _last_close
+                    if _prev_close > 0:
+                        _intraday_dev = (_last_close - _prev_close) / _prev_close
+                    # Skip if price has already pumped >3% in last 15 min → avoid buying top
+                    if _intraday_dev > 0.03:
+                        logger.info(f"Skipping {symbol}: intraday pump {_intraday_dev:.1%} — entry too hot")
+                        continue
+            except Exception:
+                pass
+
+            # Use options IV to adjust position size: high IV = smaller bet
+            _iv = sig.get("options_implied_vol")
+            _iv_multiplier = 1.0
+            if _iv and _iv > 0:
+                if _iv > 0.8:
+                    _iv_multiplier = 0.5   # extreme vol → half size
+                elif _iv > 0.6:
+                    _iv_multiplier = 0.7   # high vol → 70% size
+                elif _iv > 0.4:
+                    _iv_multiplier = 0.9   # elevated → 90%
+                # normal IV (<0.4) = full size
+
+            sizing = self.risk_engine.size_buy(
+                symbol=symbol,
+                price=price,
+                atr=sig.get("atr14", price * 0.02),
+                portfolio_data=portfolio_data,
+                current_positions=current_positions,
+                signal_score=sig.get("total_score", 0),
+            )
+
+            if sizing.blocked:
+                logger.debug(f"{symbol} new buy blocked: {sizing.block_reason}")
+                continue
+
+            # Apply readiness-based sizing multiplier + IV adjustment
+            readiness = sig.get("readiness_score", 0)
+            multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
+            # Apply strategy-specific cap (mean reversion = 0.75x)
+            strategy_type = sig.get("strategy_type", "momentum")
+            multiplier *= self._strategy_sizing_cap(strategy_type)
+            adjusted_qty = max(1, int(sizing.qty * multiplier))
+
+            # Re-check cash after multiplier
+            cost = adjusted_qty * price
+            cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
+            if cost > (portfolio_data["account"]["cash"] - cash_floor):
+                adjusted_qty = max(1, int((portfolio_data["account"]["cash"] - cash_floor) / price))
+                cost = adjusted_qty * price
+
+            trade = {
+                "symbol": symbol,
+                "qty": adjusted_qty,
+                "action": "BUY",
+                "reason": f"Entry (readiness {readiness:.1f}, {sig.get('confirmation_count', 0)}/5 conf) — {sizing.reason}",
+                "intended_notional": cost,
+                "readiness_score": readiness,
+            }
+            entry_candidates.append(trade)
+
+        # Sort entry queue by readiness (highest first)
+        entry_candidates.sort(key=lambda t: t.get("readiness_score", 0), reverse=True)
+
+        # Execute buys in readiness order
+        for trade in entry_candidates:
+            self._execute_buy(trade, portfolio_data)
+            self.risk_engine.record_buy(trade["intended_notional"])
+
+            # Record entry thesis
+            symbol = trade["symbol"]
+            sig = signal_map.get(symbol, {})
+            self.thesis_manager.add_thesis(
+                symbol=symbol,
+                entry_price=trade.get("entry_price", 0),
+                readiness_score=sig.get("readiness_score", 0),
+                thesis=sig.get("thesis", ""),
+                confirmations=sig.get("confirmations", {}),
+            )
+
+            # Update current_positions to prevent over-allocation
+            current_positions[symbol] = {
+                "symbol": symbol,
+                "market_value": trade["qty"] * self.alpaca.get_latest_quote(symbol, ),
+                "sector": sig.get("sector", "Other"),
+            }
+            portfolio_data["account"]["cash"] -= trade["intended_notional"]
+
+        # 3b. Average into existing positions that are still entry-eligible
+        for pos in portfolio_data.get("positions", []):
+            symbol = pos.get("symbol")
+            if not symbol or symbol not in signal_map:
+                continue
+            sig = signal_map[symbol]
+            # Use entry_eligible for averaging in too
+            if not sig.get("entry_eligible", False):
+                continue
+
+            pl_pct = pos.get("unrealized_plpc", 0) or 0.0
+            # Only average in if position is down or readiness has strengthened
+            if pl_pct >= 0 and sig.get("readiness_score", 0) < 75:
+                continue
+
+            price = self.alpaca.get_latest_quote(symbol)
+            if price is None or price <= 0:
+                continue
+
+            sizing = self.risk_engine.size_average_in(
+                symbol=symbol,
+                price=price,
+                atr=sig.get("atr14", price * 0.02),
+                portfolio_data=portfolio_data,
+                current_positions=current_positions,
+                signal_score=sig.get("total_score", 0),
+            )
+
+            if sizing.blocked:
+                logger.debug(f"{symbol} avg-in blocked: {sizing.block_reason}")
+                continue
+
+            trade = {
+                "symbol": symbol,
+                "qty": sizing.qty,
+                "action": "BUY",
+                "reason": f"Avg-in on {symbol} (readiness {sig.get('readiness_score', 0):.1f}, {sizing.reason})",
+                "intended_notional": sizing.intended_notional,
+            }
+            self._execute_buy(trade, portfolio_data, is_avg_in=True)
+            self.risk_engine.record_average_in(symbol, sizing.intended_notional)
+            current_positions[symbol]["market_value"] = current_positions[symbol].get("market_value", 0) + sizing.qty * price
+            portfolio_data["account"]["cash"] -= sizing.intended_notional
+
+    def _execute_sell(self, trade: Dict, portfolio_data: Dict):
+        symbol = trade["symbol"]
+        qty = trade["qty"]
         try:
-            # Check cash before buying (NO MARGIN)
-            if trade['action'] == 'BUY':
-                try:
-                    account = self.api.get_account() if USE_SDK else None
-                    if account:
-                        cash = float(account.cash)
-                        price = self.get_current_price(trade['symbol'])
-                        cost = trade['qty'] * price
-                        if cost > cash:
-                            logger.error(f"INSUFFICIENT CASH: Need ${cost:.2f}, have ${cash:.2f} - NO MARGIN USED")
-                            return False
-                except Exception as e:
-                    logger.warning(f"Could not verify cash before trade: {e}")
-            
-            if USE_SDK:
-                order = self.api.submit_order(
-                    symbol=trade['symbol'],
-                    qty=trade['qty'],
-                    side=trade['action'].lower(),
-                    type='market',
-                    time_in_force='day'
-                )
-                order_id = order.id
-            else:
-                # Use requests fallback
-                base = self.base_url.rstrip('/')
-                url = f"{base}/v2/orders"
-                payload = {
-                    "symbol": trade['symbol'],
-                    "qty": str(trade['qty']),
-                    "side": trade['action'].lower(),
-                    "type": "market",
-                    "time_in_force": "day"
-                }
-                resp = self.session.post(url, json=payload, timeout=10)
-                resp.raise_for_status()
-                order_data = resp.json()
-                order_id = order_data.get('id', 'unknown')
-            
-            logger.info(f"EXECUTED: {trade['action']} {trade['qty']} {trade['symbol']} - {trade['reason']}")
-            self.state.record_trade(trade['symbol'], trade['action'], trade['reason'])
-            self.log_trade(trade, order_id)
-            
-            # Log RSI entry signal for accuracy tracking
-            if 'RSI' in trade.get('reason', '').upper() and trade['action'] == 'BUY':
-                try:
-                    price = self.get_current_price(trade['symbol'])
-                    rsi = trade.get('rsi', 35.0)
-                    log_buy_signal(trade['symbol'], price, rsi)
-                except Exception as e:
-                    logger.debug(f"Could not log signal: {e}")
-            
-            return True
-            
+            order_id = self.alpaca.submit_order(symbol, qty, "sell", dry_run=self._dry_run)
+            self._log_trade(trade, order_id, portfolio_data)
+            logger.info(f"EXECUTED SELL: {qty} {symbol} ({trade['reason']})")
         except Exception as e:
-            logger.error(f"FAILED to execute {trade}: {e}")
-            return False
-    
-    def log_trade(self, trade: Dict, order_id: str):
-        """Log trade to TRADES_LOG.md and JSON for website"""
+            logger.error(f"Failed to sell {symbol}: {e}")
+
+    def _execute_buy(self, trade: Dict, portfolio_data: Dict, is_avg_in: bool = False):
+        symbol = trade["symbol"]
+        qty = trade["qty"]
+        # Check if symbol is tradable on Alpaca
+        if not self.alpaca.is_tradable(symbol):
+            logger.warning(f"Skipping buy {symbol}: not tradable on Alpaca")
+            self._failed_buy_symbols.add(symbol)
+            return
+
+        # Intraday momentum check for NEW positions (not avg-in)
+        if not is_avg_in:
+            market_open = self.alpaca.is_market_open()
+            should_buy, size_mult, intraday_reason = check_intraday_buy(self.alpaca, symbol, market_open)
+            if not should_buy:
+                logger.info(f"INTRADAY SKIP: {symbol} — {intraday_reason}")
+                return
+            if size_mult < 1.0:
+                original_qty = qty
+                qty = max(1, int(qty * size_mult))
+                trade["qty"] = qty
+                trade["reason"] = trade["reason"] + f" | intraday: {intraday_reason}"
+                logger.info(f"INTRADAY REDUCE: {symbol} qty {original_qty} -> {qty} ({intraday_reason})")
+
         try:
-            # Log to markdown
-            with open(self.trades_log_file, 'a') as f:
-                f.write(f"\n\n---\n\n")
-                f.write(f"## {datetime.now().strftime('%B %d, %Y - %I:%M %p UTC')} - AUTONOMOUS TRADE\n\n")
+            order_id = self.alpaca.submit_order(symbol, qty, "buy", dry_run=self._dry_run)
+            self._log_trade(trade, order_id, portfolio_data)
+            logger.info(f"EXECUTED BUY: {qty} {symbol} ({trade['reason']})")
+            # Clear any previous failure flag for this symbol
+            self._failed_buy_symbols.discard(symbol)
+        except Exception as e:
+            logger.error(f"Failed to buy {symbol}: {e}")
+            self._failed_buy_symbols.add(symbol)
+
+    def _log_trade(self, trade: Dict, order_id: Optional[str], portfolio_data: Dict):
+        try:
+            # Write structured rationale for sync_alpaca_trades.py to pick up
+            rationale_file = Path(TradingConfig.BOT_DIR) / "trade_rationale.json"
+            try:
+                if rationale_file.exists():
+                    data = json.loads(rationale_file.read_text())
+                else:
+                    data = {"entries": []}
+                data["entries"].append({
+                    "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                    "action": trade["action"],
+                    "symbol": trade["symbol"],
+                    "reason": trade.get("reason", ""),
+                })
+                rationale_file.write_text(json.dumps(data, indent=2))
+            except Exception:
+                pass
+
+            # Also write markdown log for human readability
+            with open(TradingConfig.TRADES_LOG_FILE, "a") as f:
+                f.write("\n\n---\n\n")
+                f.write(f"## {datetime.now(timezone.utc).strftime('%B %d, %Y - %I:%M %p UTC')} - AUTONOMOUS TRADE\n\n")
                 f.write(f"**Action:** {trade['action']} {trade['qty']} {trade['symbol']}\n\n")
                 f.write(f"**Reason:** {trade['reason']}\n\n")
                 f.write(f"**Order ID:** {order_id}\n\n")
-            
-            # Log to JSON for website trade log
-            try:
-                from trade_logger import trade_logger
-                
-                # Get current price from Alpaca
-                price = 0
-                try:
-                    if USE_SDK and self.api:
-                        quote = self.api.get_latest_quote(trade['symbol'])
-                        price = quote.ap if quote.ap > 0 else quote.bp
-                    else:
-                        base = self.base_url.rstrip('/').replace('paper-api', 'data')
-                        resp = self.session.get(f"{base}/v2/stocks/quotes/latest?symbols={trade['symbol']}", timeout=10)
-                        if resp.status_code == 200:
-                            quote = resp.json().get('quotes', {}).get(trade['symbol'], {})
-                            price = quote.get('ap', 0) or quote.get('bp', 0)
-                except Exception as e:
-                    logger.debug(f"Could not get price for trade log: {e}")
-                    price = trade.get('price', 0)
-                
-                # Determine strategy from reason
-                strategy = 'Manual'
-                if 'stop loss' in trade['reason'].lower():
-                    strategy = 'Stop Loss'
-                elif 'profit' in trade['reason'].lower() or 'trim' in trade['reason'].lower():
-                    strategy = 'Profit Take'
-                elif 'rebalance' in trade['reason'].lower():
-                    strategy = 'Rebalance'
-                elif 'RSI' in trade['reason'].upper():
-                    strategy = 'RSI Signal'
-                
-                trade_logger.log_trade(
-                    symbol=trade['symbol'],
-                    action=trade['action'],
-                    qty=trade['qty'],
-                    price=price,
-                    strategy=strategy,
-                    rationale=trade['reason'],
-                    pnl_impact=trade.get('pnl_impact'),
-                    pnl_pct=trade.get('pnl_pct')
-                )
-                logger.info(f"Trade logged to JSON for website: {trade['symbol']} {trade['action']}")
-            except Exception as e:
-                logger.error(f"Failed to log trade to JSON: {e}")
-                
+                f.write(f"**Portfolio Value:** ${portfolio_data['account']['portfolio_value']:,.2f}\n\n")
+                f.write(f"**Mode:** {'PAPER' if self._dry_run else 'LIVE'}\n\n")
         except Exception as e:
-            logger.error(f"Failed to log trade: {e}")
-    
-    def run_cycle(self):
-        """One iteration of the trading loop"""
-        # Check market hours
-        if not self.is_market_open():
-            logger.debug("Market closed, skipping cycle")
-            return
-        
-        # Fetch current portfolio state
-        portfolio_data = self.fetch_portfolio_data()
-        if not portfolio_data:
-            return
-        
-        total_value = portfolio_data['account']['portfolio_value']
-        total_pl = portfolio_data.get('total_pl', 0)
-        logger.info(f"Portfolio: ${total_value:,.2f} ({total_pl:+,.2f})")
-        
-        # Check for emergency triggers
-        emergencies = self.check_emergency_triggers(portfolio_data)
-        if emergencies:
-            for alert in emergencies:
-                logger.critical(alert)
-            logger.critical("EMERGENCY ALERTS DETECTED - Review immediately!")
-            # Don't trade during emergencies
-            return
-        
-        # Check if we can trade
-        if not self.state.can_trade():
-            return
-        
-        # PRIORITY 0: CRITICAL - Liquidate to cover negative cash
-        # Must happen before any other trades to prevent margin usage
-        liquidation_trades = self.liquidate_for_negative_cash(portfolio_data)
-        for trade in liquidation_trades:
-            if self.state.can_trade():
-                logger.critical(f"Executing liquidation trade: {trade['action']} {trade['qty']} {trade['symbol']}")
-                self.execute_trade(trade)
-        
-        # Re-fetch portfolio data if liquidations occurred
-        if liquidation_trades:
-            logger.info(f"Re-fetching portfolio data after {len(liquidation_trades)} liquidation trades")
-            portfolio_data = self.fetch_portfolio_data()
-            if not portfolio_data:
-                return
-        
-        # Priority 1: Stop losses (execute immediately)
-        stop_trades = self.check_stop_losses(portfolio_data)
-        for trade in stop_trades:
-            if self.state.can_trade():
-                self.execute_trade(trade)
-        
-        # Priority 0: THE COUNCIL'S COMPROMISE PLAN
-        # Execute Jones + Paulson + Soros + Wood unified strategy
-        council_trades = self.check_council_rebalancing(portfolio_data)
-        for trade in council_trades:
-            if self.state.can_trade():
-                self.execute_trade(trade)
-        
-        # Priority 1: COUNCIL WATCHLIST MODE
-        # Auto-buy when Council targets hit
-        council_watchlist_trades = self.check_council_watchlist(portfolio_data)
-        for trade in council_watchlist_trades:
-            if self.state.can_trade():
-                self.execute_trade(trade)
-                logger.info(f"🦁 COUNCIL WATCHLIST TRADE: {trade['symbol']} - {trade.get('council', 'UNKNOWN')}")
-        
-        # Priority 2: Take profits
-        profit_trades = self.check_take_profits(portfolio_data)
-        for trade in profit_trades:
-            if self.state.can_trade():
-                self.execute_trade(trade)
-        
-        # Priority 3: Standard rebalancing
-        rebalance_trades = self.check_rebalancing(portfolio_data)
-        for trade in rebalance_trades:
-            if self.state.can_trade():
-                self.execute_trade(trade)
-        
-        # Priority 4: RSI Auto-Entry (Core positions only)
-        if StrategyConfig.RSI_ENTRY_ENABLED:
-            entry_trades = self.check_rsi_entries(portfolio_data)
-            for trade in entry_trades:
-                if self.state.can_trade():
-                    self.execute_trade(trade)
-        
-        # Priority 5-7: DISABLED per Council recommendation
-        # No dip buys, no momentum, no speculative
-        if StrategyConfig.DIP_BUY_ENABLED:
-            pass  # Disabled
-        if StrategyConfig.MOMENTUM_ENABLED:
-            pass  # Disabled
-        if StrategyConfig.SPECULATIVE_ENABLED:
-            pass  # Disabled
-    
-    def check_rsi_entries(self, portfolio_data: Dict) -> List[Dict]:
-        """Check for RSI-based entry signals - buy oversold stocks"""
-        entries = []
-        
-        # Get watchlist stocks from dynamic rotation
-        watchlist_symbols = self.state.load_dynamic_watchlist()
-        
-        # Filter out ETFs - bot only trades individual stocks
-        ETF_SYMBOLS = {'SQQQ', 'TQQQ', 'SPY', 'QQQ', 'IWM', 'VIX', 'GLD', 'SLV', 'USO', 'TLT', 
-                       'XLE', 'XLF', 'XLK', 'XLI', 'XLP', 'XLU', 'XLV', 'XLY', 'XBI',
-                       'ARKK', 'ARKG', 'ARKF', 'ARKW', 'ARKX', 'BITO', 'SOXL', 'SOXS'}
-        watchlist_symbols = [s for s in watchlist_symbols if s not in ETF_SYMBOLS]
-        
-        logger.info(f"🔍 Checking {len(watchlist_symbols)} watchlist symbols for RSI entries (ETFs excluded)")
-        
-        # Get current positions
-        current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
-        
-        # Check cash available - NEVER use margin
-        cash = portfolio_data['account']['cash']
-        portfolio_value = portfolio_data['account']['portfolio_value']
-        
-        # Keep minimum $500 cash buffer for fees/safety, never use margin
-        MIN_CASH_BUFFER = 500
-        
-        # Only enter if we have enough cash (NO MARGIN)
-        available_cash = cash - MIN_CASH_BUFFER
-        logger.info(f"💰 Cash: ${cash:.2f}, Available (after ${MIN_CASH_BUFFER} buffer): ${available_cash:.2f}")
-        if available_cash < 100:  # Need at least $100 for a trade
-            logger.debug(f"Insufficient cash: ${cash:.2f} (keeping ${MIN_CASH_BUFFER} buffer)")
-            return entries
-        
-        logger.info(f"📊 Analyzing {len(watchlist_symbols)} symbols for RSI entries...")
-        checked_count = 0
-        for symbol in watchlist_symbols:
-            # Skip if already holding
-            if symbol in current_positions:
-                logger.debug(f"{symbol}: Already holding, skipping")
-                continue
-            
-            checked_count += 1
-            logger.info(f"Checking {symbol}...")
-            
-            # Get RSI and volume data
-            try:
-                rsi = self.fetch_rsi_for_symbol(symbol)
-                volume_data = self.fetch_volume_for_symbol(symbol)
-                
-                if rsi:
-                    logger.info(f"{symbol}: RSI = {rsi:.1f} (threshold: {StrategyConfig.RSI_ENTRY_THRESHOLD})")
-                else:
-                    logger.warning(f"{symbol}: Could not fetch RSI")
-                
-                # Get AI Score from watchlist data
-                ai_score = 50  # Default
-                try:
-                    with open('/var/www/hedge-fund-website/ai_watchlist_live.json', 'r') as f:
-                        watchlist_data = json.load(f)
-                        ai_score = watchlist_data.get('prices', {}).get(symbol, {}).get('ai_score', 50)
-                except:
-                    pass
-                
-                if rsi and rsi <= StrategyConfig.RSI_ENTRY_THRESHOLD:
-                    # Check AI score - must be WATCH tier or better (>= 70)
-                    if ai_score < StrategyConfig.RSI_ENTRY_AI_MIN:
-                        logger.info(f"❌ {symbol}: RSI {rsi:.1f} ≤ {StrategyConfig.RSI_ENTRY_THRESHOLD} but AI Score {ai_score} < {StrategyConfig.RSI_ENTRY_AI_MIN} (needs WATCH tier)")
-                        continue
-                    
-                    logger.info(f"🎯 {symbol}: NOW TIER SIGNAL - RSI {rsi:.1f}, AI Score {ai_score} - HIGH QUALITY SETUP!")
-                    
-                    # Check volume confirmation (1.5x average)
-                    volume_ok = True
-                    if volume_data:
-                        current_vol = volume_data.get('current', 0)
-                        avg_vol = volume_data.get('average', 0)
-                        if avg_vol > 0:
-                            vol_ratio = current_vol / avg_vol
-                            volume_ok = vol_ratio >= StrategyConfig.VOLUME_MULTIPLIER
-                            if not volume_ok:
-                                logger.info(f"❌ {symbol}: Volume {vol_ratio:.1f}x below {StrategyConfig.VOLUME_MULTIPLIER}x threshold")
-                    else:
-                        logger.info(f"⚠️ {symbol}: No volume data, proceeding without volume check")
-                    
-                    if volume_ok:
-                        logger.info(f"✅ {symbol}: Volume OK, calculating position size")
-                        # Calculate position size based on AVAILABLE CASH (NO MARGIN)
-                        position_value = min(available_cash * 0.5, portfolio_value * StrategyConfig.RSI_ENTRY_POSITION_SIZE)
-                        price = self.get_current_price(symbol)
-                        if price is None or price <= 0:
-                            logger.warning(f"{symbol}: Could not get valid price")
-                            continue
-                        qty = max(1, int(position_value / price))
-                        
-                        # Double check we have enough cash (NO MARGIN)
-                        trade_cost = qty * price
-                        if trade_cost > available_cash:
-                            qty = int(available_cash / price)
-                            if qty < 1:
-                                logger.debug(f"{symbol}: Insufficient cash for even 1 share")
-                                continue
-                        
-                        entries.append({
-                            'symbol': symbol,
-                            'qty': qty,
-                            'action': 'BUY',
-                            'reason': f'🔥 NOW TIER: RSI {rsi:.1f}, AI {ai_score} - High conviction dip entry [CASH ONLY]',
-                            'rsi': rsi,
-                            'ai_score': ai_score
-                        })
-                        logger.info(f"🔥 NOW TIER ENTRY: {symbol} at RSI {rsi:.1f}, AI {ai_score} (qty: {qty}, cash: ${available_cash:.2f})")
-            except Exception as e:
-                logger.warning(f"Could not check RSI for {symbol}: {e}")
-        
-        logger.info(f"✅ RSI check complete: {checked_count} symbols checked, {len(entries)} entry signals found")
-        return entries
-    
-    def fetch_rsi_for_symbol(self, symbol: str) -> Optional[float]:
-        """Fetch RSI for a symbol - uses watchlist data first, then Yahoo Finance as fallback"""
-        try:
-            # First try to get RSI from watchlist data (already calculated)
-            try:
-                with open('/var/www/hedge-fund-website/ai_watchlist_live.json', 'r') as f:
-                    watchlist_data = json.load(f)
-                    symbol_data = watchlist_data.get('prices', {}).get(symbol, {})
-                    rsi = symbol_data.get('rsi')
-                    if rsi is not None:
-                        logger.debug(f"{symbol}: Using watchlist RSI = {rsi:.1f}")
-                        return float(rsi)
-            except Exception as e:
-                logger.debug(f"{symbol}: Could not read watchlist RSI: {e}")
-            
-            # Fallback to Yahoo Finance
-            import requests
-            import time
-            
-            end = int(time.time())
-            start = end - (30 * 24 * 60 * 60)  # 30 days
-            
-            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
-            params = {
-                'period1': start,
-                'period2': end,
-                'interval': '1d',
-                'events': 'history'
-            }
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'application/json',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Referer': 'https://finance.yahoo.com/',
-            }
-            
-            # Retry logic with exponential backoff
-            max_retries = 3
-            for attempt in range(max_retries):
-                try:
-                    resp = requests.get(url, params=params, headers=headers, timeout=10)
-                    
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        result = data.get('chart', {}).get('result', [{}])[0]
-                        closes = result.get('indicators', {}).get('quote', [{}])[0].get('close', [])
-                        
-                        # Filter out None values
-                        valid_closes = [c for c in closes if c is not None]
-                        
-                        if len(valid_closes) >= 15:
-                            # Calculate RSI
-                            gains = []
-                            losses = []
-                            
-                            for i in range(1, len(valid_closes)):
-                                change = valid_closes[i] - valid_closes[i-1]
-                                if change > 0:
-                                    gains.append(change)
-                                    losses.append(0)
-                                else:
-                                    gains.append(0)
-                                    losses.append(abs(change))
-                            
-                            # Use last 14 periods
-                            avg_gain = sum(gains[-14:]) / 14
-                            avg_loss = sum(losses[-14:]) / 14
-                            
-                            if avg_loss == 0:
-                                return 100.0
-                            
-                            rs = avg_gain / avg_loss
-                            rsi = 100 - (100 / (1 + rs))
-                            
-                            logger.debug(f"Yahoo RSI for {symbol}: {rsi:.1f}")
-                            return rsi
-                        
-                        logger.debug(f"Could not get RSI for {symbol} from Yahoo - insufficient data")
-                        return None
-                    elif resp.status_code == 429:
-                        # Rate limited - wait and retry
-                        wait_time = (attempt + 1) * 2
-                        logger.debug(f"Yahoo rate limit for {symbol}, waiting {wait_time}s")
-                        time.sleep(wait_time)
-                    else:
-                        logger.debug(f"Yahoo error {resp.status_code} for {symbol}")
-                        return None
-                        
-                except Exception as e:
-                    logger.debug(f"Yahoo attempt {attempt+1} failed for {symbol}: {e}")
-                    if attempt < max_retries - 1:
-                        time.sleep(1)
-            
-            return None
-        except Exception as e:
-            logger.debug(f"Could not fetch RSI for {symbol}: {e}")
-            return None
-    
-    def fetch_volume_for_symbol(self, symbol: str) -> Optional[Dict]:
-        """Fetch current and average volume for a symbol"""
-        try:
-            import requests
-            import time
-            
-            # Use Yahoo Finance for volume data
-            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
-            params = {
-                'range': '1mo',
-                'interval': '1d'
-            }
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-                'Accept': 'application/json'
-            }
-            
-            resp = requests.get(url, params=params, headers=headers, timeout=10)
-            
-            if resp.status_code == 200:
-                data = resp.json()
-                result = data.get('chart', {}).get('result', [{}])[0]
-                volumes = result.get('indicators', {}).get('quote', [{}])[0].get('volume', [])
-                
-                # Filter out None values
-                valid_volumes = [v for v in volumes if v is not None]
-                
-                if len(valid_volumes) >= 10:
-                    current_vol = valid_volumes[-1]  # Most recent
-                    avg_vol = sum(valid_volumes[:-1]) / len(valid_volumes[:-1])  # Average of previous days
-                    
-                    return {
-                        'current': current_vol,
-                        'average': avg_vol
-                    }
-            return None
-        except Exception as e:
-            logger.debug(f"Could not fetch volume for {symbol}: {e}")
-            return None
-    
-    def check_dip_buys(self, portfolio_data: Dict) -> List[Dict]:
-        """Check for dip buying opportunities - buy stocks down >3% today"""
-        entries = []
-        
-        if not StrategyConfig.DIP_BUY_ENABLED:
-            return entries
-        
-        # Watchlist to monitor for dips
-        watchlist = ['DKNG', 'COIN', 'UPST', 'ROKU', 'ABNB', 'SHOP', 'SQ', 'RIVN', 'NET', 'SNOW']
-        current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
-        
-        cash = portfolio_data['account']['cash']
-        portfolio_value = portfolio_data['account']['portfolio_value']
-        
-        # Check cash available (NO MARGIN)
-        available_cash = cash - StrategyConfig.MIN_CASH_ABSOLUTE
-        if available_cash < 100:
-            logger.debug(f"Insufficient cash for dip entries: ${cash:.2f} (keeping ${StrategyConfig.MIN_CASH_ABSOLUTE} buffer)")
-            return entries
-        
-        for symbol in watchlist:
-            if symbol in current_positions:
-                continue
-            
-            try:
-                # Get today's change
-                from alpaca.data.historical import StockHistoricalDataClient
-                from alpaca.data.requests import StockLatestQuoteRequest
-                
-                creds = load_alpaca_config()
-                client = StockHistoricalDataClient(creds['api_key'], creds['api_secret'])
-                
-                # Get latest quote
-                quote_request = StockLatestQuoteRequest(symbol_or_symbols=symbol)
-                quotes = client.get_stock_latest_quote(quote_request)
-                
-                if symbol in quotes.data:
-                    current_price = quotes.data[symbol].ask_price
-                    
-                    # Get yesterday's close
-                    from alpaca.data.requests import StockBarsRequest
-                    from alpaca.data.timeframe import TimeFrame
-                    
-                    bars_request = StockBarsRequest(
-                        symbol_or_symbols=symbol,
-                        timeframe=TimeFrame.Day,
-                        limit=2
-                    )
-                    bars = client.get_stock_bars(bars_request)
-                    
-                    if symbol in bars.data and len(bars.data[symbol]) >= 2:
-                        prev_close = bars.data[symbol][-2].close
-                        change_pct = ((current_price - prev_close) / prev_close) * 100
-                        
-                        if change_pct <= StrategyConfig.DIP_BUY_THRESHOLD:
-                            position_value = portfolio_value * StrategyConfig.DIP_BUY_POSITION_SIZE
-                            qty = max(1, int(position_value / current_price))
-                            
-                            entries.append({
-                                'symbol': symbol,
-                                'qty': qty,
-                                'action': 'BUY',
-                                'reason': f'Dip Buy: Down {change_pct:.1f}% today',
-                                'price': current_price
-                            })
-                            logger.info(f"DIP BUY SIGNAL: {symbol} down {change_pct:.1f}%")
-            except Exception as e:
-                logger.debug(f"Could not check dip for {symbol}: {e}")
-        
-        return entries
-    
-    def get_current_price(self, symbol: str) -> float:
-        """Get current price for a symbol"""
-        try:
-            from alpaca.data.historical import StockHistoricalDataClient
-            from alpaca.data.requests import StockLatestQuoteRequest
-            
-            creds = load_alpaca_config()
-            client = StockHistoricalDataClient(creds['api_key'], creds['api_secret'])
-            request = StockLatestQuoteRequest(symbol_or_symbols=symbol)
-            quotes = client.get_stock_latest_quote(request)
-            
-            if symbol in quotes.data:
-                return quotes.data[symbol].ask_price
-            return 100.0
-        except:
-            return 100.0
-    
-    def check_momentum_entries(self, portfolio_data: Dict) -> List[Dict]:
-        """Check for momentum stocks - buy breakouts up >2% today"""
-        entries = []
-        
-        if not StrategyConfig.MOMENTUM_ENABLED:
-            return entries
-        
-        # Watchlist for momentum
-        watchlist = ['DKNG', 'COIN', 'UPST', 'ROKU', 'ABNB', 'SHOP', 'SQ', 'RIVN', 'NET', 'SNOW',
-                     'GME', 'AMC', 'LCID', 'FSR', 'SPCE', 'ARKK']
-        current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
-        
-        cash = portfolio_data['account']['cash']
-        portfolio_value = portfolio_data['account']['portfolio_value']
-        
-        # Check cash available (NO MARGIN)
-        available_cash = cash - StrategyConfig.MIN_CASH_ABSOLUTE
-        if available_cash < 100:
-            logger.debug(f"Insufficient cash for momentum entries: ${cash:.2f} (keeping ${StrategyConfig.MIN_CASH_ABSOLUTE} buffer)")
-            return entries
-        
-        for symbol in watchlist:
-            if symbol in current_positions:
-                continue
-            
-            try:
-                from alpaca.data.historical import StockHistoricalDataClient
-                from alpaca.data.requests import StockLatestQuoteRequest, StockBarsRequest
-                from alpaca.data.timeframe import TimeFrame
-                
-                client = StockHistoricalDataClient(ALPACA_API_KEY, ALPACA_SECRET_KEY)
-                
-                # Get latest quote
-                quote_request = StockLatestQuoteRequest(symbol_or_symbols=symbol)
-                quotes = client.get_stock_latest_quote(quote_request)
-                
-                if symbol in quotes.data:
-                    current_price = quotes.data[symbol].ask_price
-                    
-                    # Get yesterday's close
-                    bars_request = StockBarsRequest(
-                        symbol_or_symbols=symbol,
-                        timeframe=TimeFrame.Day,
-                        limit=2
-                    )
-                    bars = client.get_stock_bars(bars_request)
-                    
-                    if symbol in bars.data and len(bars.data[symbol]) >= 2:
-                        prev_close = bars.data[symbol][-2].close
-                        change_pct = ((current_price - prev_close) / prev_close) * 100
-                        
-                        if change_pct >= StrategyConfig.MOMENTUM_THRESHOLD:
-                            position_value = portfolio_value * StrategyConfig.MOMENTUM_POSITION_SIZE
-                            qty = max(1, int(position_value / current_price))
-                            
-                            entries.append({
-                                'symbol': symbol,
-                                'qty': qty,
-                                'action': 'BUY',
-                                'reason': f'Momentum Chase: Up {change_pct:.1f}% today',
-                                'price': current_price
-                            })
-                            logger.info(f"MOMENTUM SIGNAL: {symbol} up {change_pct:.1f}% - CHASING!")
-            except Exception as e:
-                logger.debug(f"Could not check momentum for {symbol}: {e}")
-        
-        return entries
-    
-    def check_speculative_entries(self, portfolio_data: Dict) -> List[Dict]:
-        """Check for speculative/meme stock opportunities"""
-        entries = []
-        
-        if not StrategyConfig.SPECULATIVE_ENABLED:
-            return entries
-        
-        current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
-        cash = portfolio_data['account']['cash']
-        portfolio_value = portfolio_data['account']['portfolio_value']
-        
-        # Check cash available (NO MARGIN)
-        available_cash = cash - StrategyConfig.MIN_CASH_ABSOLUTE
-        if available_cash < 100:
-            logger.debug(f"Insufficient cash for speculative entries: ${cash:.2f} (keeping ${StrategyConfig.MIN_CASH_ABSOLUTE} buffer)")
-            return entries
-        
-        for symbol in StrategyConfig.SPECULATIVE_STOCKS:
-            if symbol in current_positions:
-                continue
-            
-            try:
-                from alpaca.data.historical import StockHistoricalDataClient
-                from alpaca.data.requests import StockLatestQuoteRequest, StockBarsRequest
-                from alpaca.data.timeframe import TimeFrame
-                
-                creds = load_alpaca_config()
-                client = StockHistoricalDataClient(creds['api_key'], creds['api_secret'])
-                
-                # Get latest quote
-                quote_request = StockLatestQuoteRequest(symbol_or_symbols=symbol)
-                quotes = client.get_stock_latest_quote(quote_request)
-                
-                if symbol in quotes.data:
-                    current_price = quotes.data[symbol].ask_price
-                    
-                    # Get yesterday's close
-                    bars_request = StockBarsRequest(
-                        symbol_or_symbols=symbol,
-                        timeframe=TimeFrame.Day,
-                        limit=5
-                    )
-                    bars = client.get_stock_bars(bars_request)
-                    
-                    if symbol in bars.data and len(bars.data[symbol]) >= 2:
-                        prev_close = bars.data[symbol][-2].close
-                        change_pct = ((current_price - prev_close) / prev_close) * 100
-                        
-                        # Buy if down 4%+ (speculative dip) or up 5%+ (meme momentum)
-                        if change_pct <= -4.0 or change_pct >= 5.0:
-                            position_value = portfolio_value * StrategyConfig.SPECULATIVE_POSITION_SIZE
-                            qty = max(1, int(position_value / current_price))
-                            
-                            signal_type = "Speculative Dip" if change_pct < 0 else "Meme Momentum"
-                            entries.append({
-                                'symbol': symbol,
-                                'qty': qty,
-                                'action': 'BUY',
-                                'reason': f'{signal_type}: {symbol} {change_pct:+.1f}% (high volatility)',
-                                'price': current_price
-                            })
-                            logger.info(f"SPECULATIVE SIGNAL: {symbol} {change_pct:+.1f}% - {signal_type.upper()}!")
-            except Exception as e:
-                logger.debug(f"Could not check speculative for {symbol}: {e}")
-        
-        return entries
-    
-    def check_council_watchlist(self, portfolio_data: Dict) -> List[Dict]:
-        """COUNCIL MODE: Check Council watchlist and execute aggressive trades"""
-        entries = []
-        
-        current_positions = {pos['symbol'] for pos in portfolio_data.get('positions', [])}
-        cash = portfolio_data['account']['cash']
-        portfolio_value = portfolio_data['account']['portfolio_value']
-        
-        # Council Watchlist with targets
-        council_watchlist = [
-            {'symbol': 'DKNG', 'target': 22.00, 'max_position': 0.20, 'council': 'SOROS', 'conviction': 'HIGH'},
-            {'symbol': 'COIN', 'target': 120.00, 'max_position': 0.10, 'council': 'JONES', 'conviction': 'MEDIUM'},
-            {'symbol': 'UPST', 'target': 28.00, 'max_position': 0.15, 'council': 'PAULSON', 'conviction': 'HIGH'},
-            {'symbol': 'SHOP', 'target': 105.00, 'max_position': 0.10, 'council': 'WOOD', 'conviction': 'MEDIUM'},
-            {'symbol': 'ROKU', 'target': 95.00, 'max_position': 0.08, 'council': 'WOOD', 'conviction': 'MEDIUM'},
-            {'symbol': 'SQ', 'target': 60.00, 'max_position': 0.08, 'council': 'PAULSON', 'conviction': 'MEDIUM'},
-            {'symbol': 'RIVN', 'target': 12.00, 'max_position': 0.05, 'council': 'SOROS', 'conviction': 'SPECULATIVE'},
-        ]
-        
-        for stock in council_watchlist:
-            if stock['symbol'] in current_positions:
-                continue
-            
-            try:
-                current_price = self.get_current_price(stock['symbol'])
-                
-                # Buy if price at or below target (with 5% buffer)
-                if current_price <= stock['target'] * 1.05:
-                    position_value = portfolio_value * stock['max_position']
-                    qty = max(1, int(position_value / current_price))
-                    
-                    # Ensure we have enough cash
-                    if cash >= qty * current_price:
-                        entries.append({
-                            'symbol': stock['symbol'],
-                            'qty': qty,
-                            'action': 'BUY',
-                            'reason': f"COUNCIL MODE: {stock['council']} conviction - Target ${stock['target']:.2f} hit!",
-                            'price': current_price,
-                            'council': stock['council']
-                        })
-                        logger.info(f"COUNCIL: {stock['symbol']} at ${current_price:.2f} - {stock['council']}!")
-            except Exception as e:
-                logger.debug(f"Council check failed for {stock['symbol']}: {e}")
-        
-        return entries
+            logger.warning(f"Could not log trade: {e}")
+
+    # ------------------------------------------------------------------
+    # Entrypoint
+    # ------------------------------------------------------------------
 
     def run(self):
-        """Main loop - runs forever"""
         logger.info("=" * 70)
-        logger.info("STONK.AI Trading Bot v1.0 Starting")
-        logger.info("Strategy: AGGRESSIVE ALPHA MODE")
-        logger.info("- Max position: 25% (concentrated bets)")
-        logger.info("- Stop loss: -10% (cut losers fast)")
-        logger.info("- Take profit: +15% trim / +30% exit (compound quickly)")
-        logger.info("- Dip buying: 10% positions (aggressive sizing)")
-        logger.info("- Momentum: ENABLED (chase winners)")
-        logger.info("- Cash target: 30% (deploy 70% capital)")
-        logger.info("Check interval: 60 seconds (trades only during market hours)")
+        logger.info("STONK.AI Trading Bot v2.1 Starting")
+        logger.info(f"Mode: {'PAPER (fake money)' if self.alpaca.is_paper() else 'LIVE (real money)'}")
+        logger.info(f"Dry run: {self._dry_run}")
+        logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
+        logger.info(f"Entry: readiness >= 70 AND >= 2 confirmations")
+        logger.info(f"Max position size: {self.risk_engine.config.max_single_position_pct:.0%}")
+        logger.info(f"Stop loss: {self.risk_engine.config.hard_stop_loss_pct:.0%}")
+        logger.info(f"Drawdown halt: {self.risk_engine.config.new_entry_max_drawdown_pct:.0%}")
         logger.info("=" * 70)
-        
+
+        self.refresh_signals()
+
         while True:
             try:
-                # Check if markets are open (skip trading on weekends/holidays)
-                if not is_market_open():
-                    now = datetime.now()
-                    if now.weekday() >= 5:
-                        reason = "weekend"
-                    else:
-                        reason = "holiday"
-                    logger.info(f"Markets closed ({reason}) - Monitoring only, no trading")
-                    time.sleep(300)  # Check every 5 minutes when closed
-                    continue
-                
                 self.run_cycle()
             except Exception as e:
                 logger.error(f"Error in main loop: {e}", exc_info=True)
-            
-            time.sleep(60)  # Check every minute during market hours
+            time.sleep(TradingConfig.CYCLE_INTERVAL_SECONDS)
 
 
 if __name__ == "__main__":
