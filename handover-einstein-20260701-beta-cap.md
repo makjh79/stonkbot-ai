@@ -11,8 +11,8 @@ Implemented the macro-concentration guard Gemini flagged: a **high-beta basket c
 - `/opt/stonk-ai/trading_bot.py`
   - Imports `load_high_beta_symbols`.
   - Loads basket once per cycle.
-  - Calls `risk_engine.check_high_beta_basket()` in exit logic.
   - New `_high_beta_buy_blocked()` gate blocks new high-beta buys that would push the basket over cap (both RISK_OFF and RISK_ON entry branches).
+  - **Trim is NOT wired into the live cycle yet.** Per the agreed rollout, first version is buy-block only. Trim logic exists in risk_engine for later.
 - `/opt/stonk-ai/paper_rebalancer.py`
   - Same cap applied to paper target allocation.
   - Adds `high_beta_cap` metadata to the output plan.
@@ -31,15 +31,17 @@ Implemented the macro-concentration guard Gemini flagged: a **high-beta basket c
 - Non-high-beta symbols still show `not_ready` because they don't meet readiness/confirmations.
 
 ### Backup
-- `/opt/stonk-ai/backups/beta-cap-20260701-1230.tar.gz`
+- `/opt/stonk-ai/backups/beta-cap-20260701-1240.tar.gz` (latest, includes risk_engine method fix + trading_bot no-trim)
+- Earlier: `/opt/stonk-ai/backups/beta-cap-20260701-1230.tar.gz`
 
 ### Git
-- Local workspace commit: `00d055c`
-- Pushed to `origin/main` on `makjh79/stonkbot-ai` (new branch created).
+- Local workspace commit: `832af8b`
+- Pushed to `origin/main` on `makjh79/stonkbot-ai`.
 
 ### Monitoring notes for Einstein
-1. Watch the first few bot cycles for `"HIGH-BETA TRIM"` or `"Blocking .* buy: would push high-beta basket"` log lines.
+1. Watch the first few bot cycles for `"Blocking .* buy: would push high-beta basket"` log lines.
 2. Verify `correlation_report.json` is fresh (nightly cron at 01:00 UTC); stale betas could over/under-block.
 3. Consider whether 35% is too tight; 30% would immediately trigger trims because current basket is already ~80% of deployed. We chose 35% as a buy-blocking-only threshold for now.
 4. The live bot is still PAPER. Do not switch to live keys until strategy edge is rebuilt/verified.
 5. No new crons needed; the cap runs inside existing cycles.
+6. If you enable the trim later, wire `risk_engine.check_high_beta_basket(portfolio_data, high_beta_symbols)` into `trading_bot.run_cycle()` exit logic.

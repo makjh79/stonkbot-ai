@@ -1,0 +1,11 @@
+path = "/opt/stonk-ai/risk_engine.py"
+text = open(path).read()
+
+method = '''\n\n    def check_high_beta_basket(self, portfolio_data: dict, high_beta_symbols: set) -> list:\n        """Trim high-beta positions if deployed capital in the high-beta basket exceeds the configured cap."""\n        trades = []\n        if not self.config.high_beta_basket_cap_enabled or not high_beta_symbols:\n            return trades\n\n        account = portfolio_data.get("account", {})\n        pv = account.get("portfolio_value", 0)\n        equity = account.get("equity", pv)\n        deployed = equity - account.get("cash", 0)\n        if deployed <= 0 or pv <= 0:\n            return trades\n\n        positions = portfolio_data.get("positions", [])\n        high_beta_mv = sum(p.get("market_value", 0) for p in positions if p.get("symbol") in high_beta_symbols)\n        high_beta_pct = high_beta_mv / deployed if deployed > 0 else 0.0\n        cap = self.config.max_high_beta_deployed_pct\n        if high_beta_pct <= cap:\n            return trades\n\n        excess_mv = high_beta_mv - deployed * cap\n        hb_positions = [p for p in positions if p.get("symbol") in high_beta_symbols and p.get("market_value", 0) > 0 and p.get("qty", 0) > 0]\n        hb_positions.sort(key=lambda p: p.get("market_value", 0), reverse=True)\n\n        for pos in hb_positions:\n            if excess_mv <= 0:\n                break\n            symbol = pos.get("symbol")\n            qty = pos.get("qty", 0)\n            mv = pos.get("market_value", 0)\n            price = mv / qty if qty > 0 else 0\n            trim_qty = max(1, int(min(qty, excess_mv / price)) if price > 0 else 1)\n            trades.append({\n                "symbol": symbol,\n                "qty": trim_qty,\n                "action": "SELL",\n                "reason": f"High-beta basket trim: {high_beta_pct:.1%} deployed vs {cap:.1%} cap",\n            })\n            logger.info(f"HIGH-BETA TRIM: {symbol} {trim_qty} shares ({high_beta_pct:.1%} > {cap:.1%})")\n            excess_mv -= trim_qty * price\n\n        return trades\n'''
+
+if "def check_high_beta_basket" not in text:
+    text = text.rstrip() + method
+    open(path, "w").write(text)
+    print("added check_high_beta_basket method")
+else:
+    print("method already present")
