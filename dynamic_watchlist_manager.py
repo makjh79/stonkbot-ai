@@ -343,7 +343,13 @@ def build_watchlist(signals: List[Dict]) -> Dict:
     portfolio_value = 0.0
     try:
         portfolio = json.loads(Path("/var/www/hedge-fund-website/portfolio_data.json").read_text())
-        portfolio_value = float(portfolio.get("total_value", portfolio.get("portfolio_value", 0)) or 0)
+        # Prefer total account value (cash + equity), then fall back to legacy fields
+        portfolio_value = float(
+            portfolio.get("account", {}).get("portfolio_value")
+            or portfolio.get("total_value")
+            or portfolio.get("portfolio_value")
+            or 0
+        )
         positions = portfolio.get("positions", [])
         # If no explicit total, sum market values
         if not portfolio_value:
