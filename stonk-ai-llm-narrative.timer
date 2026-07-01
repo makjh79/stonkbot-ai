@@ -1,0 +1,12 @@
+[Unit]
+Description=Run StonkBOT AI LLM narrative generator every 15 minutes
+Requires=stonk-ai-llm-narrative.service
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=15min
+AccuracySec=1s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

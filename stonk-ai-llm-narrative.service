@@ -1,0 +1,22 @@
+[Unit]
+Description=StonkBOT AI LLM narrative generator (batched, OpenRouter)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/stonk-ai
+Environment=PYTHONPATH=/opt/stonk-ai
+Environment=STONKBOT_BOT_DIR=/opt/stonk-ai
+Environment=STONKBOT_PORTFOLIO_FILE=/var/www/hedge-fund-website/portfolio_data.json
+Environment=STONKBOT_WATCHLIST_FILE=/var/www/hedge-fund-website/ai_watchlist_live.json
+Environment=STONKBOT_POPUP_NARRATIVES_FILE=/var/www/hedge-fund-website/popup_narratives.json
+Environment=STONKBOT_WATCHLIST_NARRATIVES_FILE=/var/www/hedge-fund-website/watchlist_narratives_llm.json
+Environment=STONKBOT_KNOWLEDGE_FILE=/opt/stonk-ai/company_knowledge.json
+Environment=STONKBOT_NARRATIVE_MODEL=openrouter/moonshotai/kimi-k2.6
+Environment=STONKBOT_NARRATIVE_TIMEOUT=240
+Environment=STONKBOT_NARRATIVE_BATCH_SIZE=6
+ExecStart=/usr/bin/python3 /opt/stonk-ai/generate_narratives_llm_batched.py
+StandardOutput=journal
+StandardError=journal
