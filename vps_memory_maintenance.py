@@ -10,6 +10,11 @@ it creates a backup first.
 
 Runs on the VPS as root because OpenClaw auth profiles live under
 /root/.openclaw/.
+
+NOTE: This is an independent, report-only maintenance loop for Jeeves.
+It does NOT use OpenClaw's memory-core dreaming plugin and does NOT touch
+Einstein's memory directory or OpenClaw's internal .dreams/ store. It only
+reads from /opt/stonk-ai/jeeves-memory/ and writes DREAMS.md there.
 """
 
 import argparse
