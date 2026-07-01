@@ -232,8 +232,11 @@ Risk: {_company_risk(symbol)}
 def _build_holdings_prompt(items: dict[str, dict]) -> str:
     intro = """You are a seasoned, plain-speaking equity trader writing short popup copy for a portfolio tracking app. No jargon, no templates, no repetition.
 
-For EACH holding below, generate these fields. Output ONLY a single JSON object where each key is the symbol and the value is an object with:
+For EACH holding below, generate these fields. Output ONLY a single JSON object where each TOP-LEVEL KEY is the SYMBOL (e.g. "AAPL") and the value is an object with:
 {"whatItIs": "1 sentence", "whyWeOwnIt": "2-4 sentences", "howItsDoing": "1-2 sentences", "catalyst": "1-2 sentences", "risk": "2-3 sentences"}
+
+Example for two symbols:
+{"AAPL": {"whatItIs": "Consumer electronics giant...", "whyWeOwnIt": "...", "howItsDoing": "...", "catalyst": "...", "risk": "..."}, "TSLA": {"whatItIs": "EV maker...", ...}}
 
 No markdown, no commentary."""
     blocks = [_build_holdings_block(sym, ctx["position"], ctx["signal"], ctx["risk_config"]) for sym, ctx in items.items()]
@@ -243,8 +246,11 @@ No markdown, no commentary."""
 def _build_watchlist_prompt(items: dict[str, dict]) -> str:
     intro = """You are a seasoned, plain-speaking equity trader writing short popup copy for a watchlist tracking app. No jargon, no templates, no repetition.
 
-For EACH watchlist symbol below, generate these fields. Output ONLY a single JSON object where each key is the symbol and the value is an object with:
+For EACH watchlist symbol below, generate these fields. Output ONLY a single JSON object where each TOP-LEVEL KEY is the SYMBOL (e.g. "AAPL") and the value is an object with:
 {"whatItIs": "1 sentence", "whyOnWatchlist": "2-3 sentences", "whatTriggersBuy": "1-2 sentences", "catalyst": "1-2 sentences", "risk": "2-3 sentences"}
+
+Example for two symbols:
+{"AAPL": {"whatItIs": "Consumer electronics giant...", "whyOnWatchlist": "...", "whatTriggersBuy": "...", "catalyst": "...", "risk": "..."}, "TSLA": {"whatItIs": "EV maker...", ...}}
 
 No markdown, no commentary."""
     blocks = [_build_watchlist_block(sym, ctx["signal"], ctx["watchlist"]) for sym, ctx in items.items()]
@@ -256,6 +262,38 @@ def _chunk_dict(d: dict[str, Any], size: int) -> list[dict[str, Any]]:
     return [dict(items[i : i + size]) for i in range(0, len(items), size)]
 
 
+WATCHLIST_FIELDS = {"whatItIs", "whyOnWatchlist", "whatTriggersBuy", "catalyst", "risk"}
+HOLDINGS_FIELDS = {"whatItIs", "whyWeOwnIt", "howItsDoing", "catalyst", "risk"}
+
+
+def _normalize_holdings_result(result: Any, chunk_symbols: list[str]) -> dict[str, dict]:
+    """Ensure result is {symbol: {fields}}. Handle common malformed outputs."""
+    if not isinstance(result, dict):
+        return {}
+    # If the LLM returned flat field keys and there was exactly one symbol, wrap it.
+    if HOLDINGS_FIELDS.issubset(set(result.keys())) and len(chunk_symbols) == 1:
+        return {chunk_symbols[0]: result}
+    # If it returned {symbol: {fields}} correctly, filter out non-dict values
+    normalized: dict[str, dict] = {}
+    for sym, data in result.items():
+        if isinstance(data, dict) and HOLDINGS_FIELDS.issubset(set(data.keys())):
+            normalized[sym] = data
+    return normalized
+
+
+def _normalize_watchlist_result(result: Any, chunk_symbols: list[str]) -> dict[str, dict]:
+    """Ensure result is {symbol: {fields}}. Handle common malformed outputs."""
+    if not isinstance(result, dict):
+        return {}
+    if WATCHLIST_FIELDS.issubset(set(result.keys())) and len(chunk_symbols) == 1:
+        return {chunk_symbols[0]: result}
+    normalized: dict[str, dict] = {}
+    for sym, data in result.items():
+        if isinstance(data, dict) and WATCHLIST_FIELDS.issubset(set(data.keys())):
+            normalized[sym] = data
+    return normalized
+
+
 def generate_holdings_narratives(holdings: dict[str, dict], chunk_size: int = BATCH_SIZE) -> dict:
     results: dict[str, dict] = {}
     chunks = _chunk_dict(holdings, chunk_size)
@@ -263,8 +301,12 @@ def generate_holdings_narratives(holdings: dict[str, dict], chunk_size: int = BA
         print(f"[LLM] Holdings batch {idx}/{len(chunks)} ({len(chunk)} symbols)...", file=sys.stderr)
         try:
             result = llm_generate_json(_build_holdings_prompt(chunk))
-            if isinstance(result, dict):
-                results.update(result)
+            chunk_symbols = list(chunk.keys())
+            normalized = _normalize_holdings_result(result, chunk_symbols)
+            if normalized:
+                results.update(normalized)
+            else:
+                print(f"[WARN] Holdings batch {idx} returned no usable symbol-keyed narratives", file=sys.stderr)
         except Exception as exc:
             print(f"[ERROR] Holdings batch {idx} failed: {exc}", file=sys.stderr)
     return results
@@ -277,8 +319,12 @@ def generate_watchlist_narratives(items: dict[str, dict], chunk_size: int = BATC
         print(f"[LLM] Watchlist batch {idx}/{len(chunks)} ({len(chunk)} symbols)...", file=sys.stderr)
         try:
             result = llm_generate_json(_build_watchlist_prompt(chunk))
-            if isinstance(result, dict):
-                results.update(result)
+            chunk_symbols = list(chunk.keys())
+            normalized = _normalize_watchlist_result(result, chunk_symbols)
+            if normalized:
+                results.update(normalized)
+            else:
+                print(f"[WARN] Watchlist batch {idx} returned no usable symbol-keyed narratives", file=sys.stderr)
         except Exception as exc:
             print(f"[ERROR] Watchlist batch {idx} failed: {exc}", file=sys.stderr)
     return results
