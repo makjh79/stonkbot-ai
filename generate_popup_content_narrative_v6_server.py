@@ -25,6 +25,7 @@ POPUP_FILE = WEB_DIR / "popup_content.json"
 WATCHLIST_FILE = WEB_DIR / "watchlist_narratives.json"
 LLM_HOLDINGS_FILE = WEB_DIR / "popup_narratives.json"
 LLM_WATCHLIST_FILE = WEB_DIR / "watchlist_narratives_llm.json"
+WATCHLIST_LIVE_FILE = WEB_DIR / "ai_watchlist_live.json"
 
 
 def load_json(path: Path) -> dict:
@@ -67,9 +68,16 @@ def merge_holdings_narratives(popup_content: dict, llm_narratives: dict) -> dict
     return popup_content
 
 
-def merge_watchlist_narratives(watchlist_content: dict, llm_narratives: dict) -> dict:
+def merge_watchlist_narratives(watchlist_content: dict, llm_narratives: dict, buy_status_map: dict) -> dict:
     narrative_fields = {"whatItIs", "whyOnWatchlist", "whatTriggersBuy", "catalyst", "risk"}
     narratives = watchlist_content.setdefault("narratives", {})
+    DISPLAY_TIER = {
+        "STRONG_NOW": "PRIME",
+        "NOW": "BUILDING",
+        "WATCH": "WATCHING",
+        "MONITOR": "TRACKING",
+        "TRACKING": "TRACKING",
+    }
     for symbol, fields in (llm_narratives.get("narratives") or {}).items():
         if symbol not in narratives:
             continue
@@ -77,6 +85,41 @@ def merge_watchlist_narratives(watchlist_content: dict, llm_narratives: dict) ->
             val = fields.get(field)
             if val and isinstance(val, str) and val.strip():
                 narratives[symbol][field] = val.strip()
+        # Always ensure a display_tier is set, falling back from buy info to tier mapping
+        buy_info = buy_status_map.get(symbol)
+        if buy_info:
+            narratives[symbol]["buy_status"] = buy_info.get("status", "")
+            narratives[symbol]["buy_reason"] = buy_info.get("reason", "")
+            narratives[symbol]["display_tier"] = buy_info.get("display_tier") or DISPLAY_TIER.get(narratives[symbol].get("tier"), "TRACKING")
+        else:
+            narratives[symbol]["display_tier"] = DISPLAY_TIER.get(narratives[symbol].get("tier"), "TRACKING")
+
+        # Incorporate bot intent into whatTriggersBuy narrative
+        base_trigger = narratives[symbol].get("whatTriggersBuy", "")
+        status = narratives[symbol].get("buy_status", "")
+        reason = narratives[symbol].get("buy_reason", "")
+        if status == "queued":
+            suffix = f" Bot status: queued for a new buy — {reason}."
+        elif status == "add":
+            suffix = f" Bot status: add to existing position — {reason}."
+        elif status == "hold":
+            suffix = f" Bot status: hold current position — {reason}."
+        elif status == "not_ready":
+            suffix = f" Bot status: not yet ready to buy — {reason}."
+        elif status == "tier_too_low":
+            suffix = f" Bot status: tier too low to trigger a buy — {reason}."
+        elif status == "no_price":
+            suffix = f" Bot status: cannot evaluate — {reason}."
+        else:
+            suffix = ""
+        if suffix and not base_trigger.rstrip().endswith("."):
+            suffix = " " + suffix.lstrip()
+        if suffix:
+            narratives[symbol]["whatTriggersBuy"] = (base_trigger + suffix).strip()
+    # Final pass: ensure every narrative has a display_tier
+    for symbol, data in narratives.items():
+        if not data.get("display_tier"):
+            data["display_tier"] = DISPLAY_TIER.get(data.get("tier"), "TRACKING")
     return watchlist_content
 
 
@@ -84,11 +127,18 @@ def main() -> None:
     # Step 1: run base generator for fresh data
     base_ok = run_base_generator()
 
-    # Step 2: load fresh base files + Mac-uploaded LLM narratives
+    # Step 2: load fresh base files + LLM narratives + live watchlist buy status
     popup_content = load_json(POPUP_FILE)
     watchlist_content = load_json(WATCHLIST_FILE)
     llm_holdings = load_json(LLM_HOLDINGS_FILE)
     llm_watchlist = load_json(LLM_WATCHLIST_FILE)
+    watchlist_live = load_json(WATCHLIST_LIVE_FILE)
+    buy_status_map = {
+        c["symbol"]: c
+        for c in (watchlist_live.get("buy_candidates") or [])
+        if c.get("symbol")
+    }
+    print(f"[INFO] Loaded buy status for {len(buy_status_map)} watchlist symbols")
 
     if not base_ok and not popup_content and not watchlist_content:
         print("[ERROR] No base files and base generator failed; aborting", file=sys.stderr)
@@ -98,7 +148,7 @@ def main() -> None:
     if llm_holdings or llm_watchlist:
         print(f"[INFO] Merging LLM narratives: holdings={len(llm_holdings.get('holdings', {}))}, watchlist={len(llm_watchlist.get('narratives', {}))}")
         popup_content = merge_holdings_narratives(popup_content, llm_holdings)
-        watchlist_content = merge_watchlist_narratives(watchlist_content, llm_watchlist)
+        watchlist_content = merge_watchlist_narratives(watchlist_content, llm_watchlist, buy_status_map)
     else:
         print("[INFO] No Mac-uploaded LLM narratives found; serving v2 base copy")
 
