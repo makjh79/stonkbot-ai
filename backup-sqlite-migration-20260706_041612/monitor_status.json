@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-07-06T02:43:33.199924Z",
+  "services": {
+    "stonk-ai.service": "active",
+    "stonk-ai-data.service": "active",
+    "stonk-ai-watchlist.service": "active",
+    "stonk-ai-markets.service": "active"
+  },
+  "data_freshness": {
+    "signals.json": {
+      "age_minutes": 3.28191795,
+      "max_age_minutes": 2880
+    },
+    "popup_content.json": {
+      "status": "missing"
+    },
+    "portfolio_data.json": {
+      "age_minutes": 33.16659223333333,
+      "max_age_minutes": 30
+    },
+    "ai_watchlist_live.json": {
+      "age_minutes": 7.115969633333333,
+      "max_age_minutes": 2880
+    }
+  },
+  "portfolio": {
+    "portfolio_value": 98895.56,
+    "daily_return": -0.011044400000000024,
+    "kill_switch_threshold": -0.15
+  },
+  "disk": {
+    "size": "99G",
+    "used": "18G",
+    "available": "77G",
+    "use_pct": "19%"
+  },
+  "rogue_processes": [],
+  "permissions": [],
+  "kill_switch_triggered": false,
+  "healthy": false,
+  "data_quality": {
+    "checked_at": "2026-07-06T02:43:33.344188+00:00",
+    "issues_found": 21
+  }
+}

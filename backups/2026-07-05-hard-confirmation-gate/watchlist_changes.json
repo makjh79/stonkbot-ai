@@ -1,0 +1,493 @@
+{
+  "timestamp": "2026-07-05T04:45:01.939923Z",
+  "source": "signals.json",
+  "added": [],
+  "removed": [],
+  "new_watchlist": [
+    "UBER",
+    "DUOL",
+    "ETSY",
+    "SNOW",
+    "UPST",
+    "PINS",
+    "MDB",
+    "SOFI",
+    "NET",
+    "HD",
+    "NKE",
+    "DDOG",
+    "SPOT",
+    "ABNB",
+    "SHOP",
+    "PATH",
+    "GTLB",
+    "ROKU",
+    "APP",
+    "EXPE"
+  ],
+  "kept": [
+    "UBER",
+    "DUOL",
+    "ETSY",
+    "SNOW",
+    "UPST",
+    "PINS",
+    "MDB",
+    "SOFI",
+    "NET",
+    "HD",
+    "NKE",
+    "DDOG",
+    "SPOT",
+    "ABNB",
+    "SHOP",
+    "PATH",
+    "GTLB",
+    "ROKU",
+    "APP",
+    "EXPE"
+  ],
+  "tiers": {
+    "PRIME": [
+      "UBER",
+      "SNOW"
+    ],
+    "BUILDING": [
+      "DUOL",
+      "ETSY",
+      "UPST",
+      "PINS",
+      "MDB",
+      "SOFI",
+      "NET",
+      "HD",
+      "NKE",
+      "DDOG",
+      "SPOT",
+      "ABNB",
+      "SHOP",
+      "PATH",
+      "GTLB",
+      "ROKU",
+      "APP",
+      "EXPE"
+    ],
+    "WATCHING": [],
+    "TRACKING": []
+  },
+  "tier_changes": [
+    {
+      "symbol": "UBER",
+      "change_type": "demote",
+      "from_tier": "PRIME",
+      "to_tier": "STRONG_NOW",
+      "readiness_score": 79.9,
+      "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "DUOL",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "STRONG_NOW",
+      "readiness_score": 79.7,
+      "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "ETSY",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "STRONG_NOW",
+      "readiness_score": 78.8,
+      "reason": "STRONG_NOW: readiness 78.8 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "SNOW",
+      "change_type": "demote",
+      "from_tier": "PRIME",
+      "to_tier": "STRONG_NOW",
+      "readiness_score": 78.5,
+      "reason": "STRONG_NOW: readiness 78.5 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "UPST",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 76.0,
+      "reason": "NOW: readiness 76.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "PINS",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 75.9,
+      "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "MDB",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 75.8,
+      "reason": "NOW: readiness 75.8 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "SOFI",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 74.8,
+      "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "NET",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 74.0,
+      "reason": "NOW: readiness 74.0 \u2014 building strength, not yet entry-ready. above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "HD",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 73.8,
+      "reason": "NOW: readiness 73.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "NKE",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 73.8,
+      "reason": "NOW: readiness 73.8 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "DDOG",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 73.5,
+      "reason": "NOW: readiness 73.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "SPOT",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 73.5,
+      "reason": "NOW: readiness 73.5 \u2014 building strength, not yet entry-ready. above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "ABNB",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 73.4,
+      "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "SHOP",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 73.3,
+      "reason": "NOW: readiness 73.3 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "PATH",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 72.8,
+      "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "GTLB",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "NOW",
+      "readiness_score": 72.6,
+      "reason": "NOW: readiness 72.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "ROKU",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "WATCH",
+      "readiness_score": 71.5,
+      "reason": "WATCH: readiness 71.5. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "APP",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "WATCH",
+      "readiness_score": 70.4,
+      "reason": "WATCH: readiness 70.4. above 20d EMA + sector strength.",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    },
+    {
+      "symbol": "EXPE",
+      "change_type": "demote",
+      "from_tier": "BUILDING",
+      "to_tier": "WATCH",
+      "readiness_score": 70.3,
+      "reason": "WATCH: readiness 70.3. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+      "timestamp": "2026-07-05T04:45:01.926122Z"
+    }
+  ],
+  "buy_candidates": [
+    {
+      "symbol": "UBER",
+      "display_tier": "PRIME",
+      "tier": "PRIME",
+      "status": "add",
+      "reason": "Held, underweight (5.0%) and still eligible",
+      "readiness_score": 79.9,
+      "confirmation_count": 6,
+      "entry_eligible": true,
+      "weight_pct": 5.045402766871962
+    },
+    {
+      "symbol": "DUOL",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 4.8% \u2014 no add planned",
+      "readiness_score": 79.7,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 4.835029683214135
+    },
+    {
+      "symbol": "ETSY",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 4.6% \u2014 no add planned",
+      "readiness_score": 78.8,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 4.594587402969424
+    },
+    {
+      "symbol": "SNOW",
+      "display_tier": "PRIME",
+      "tier": "PRIME",
+      "status": "add",
+      "reason": "Held, underweight (4.7%) and still eligible",
+      "readiness_score": 78.5,
+      "confirmation_count": 7,
+      "entry_eligible": true,
+      "weight_pct": 4.737719611621724
+    },
+    {
+      "symbol": "UPST",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 76.0 / 5 confirmations",
+      "readiness_score": 76.0,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 0
+    },
+    {
+      "symbol": "PINS",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 0.5% \u2014 no add planned",
+      "readiness_score": 75.9,
+      "confirmation_count": 6,
+      "entry_eligible": false,
+      "weight_pct": 0.491244875867942
+    },
+    {
+      "symbol": "MDB",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 5.0% \u2014 no add planned",
+      "readiness_score": 75.8,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 5.026695517716797
+    },
+    {
+      "symbol": "SOFI",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 74.8 / 5 confirmations",
+      "readiness_score": 74.8,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 0
+    },
+    {
+      "symbol": "NET",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 74.0 / 3 confirmations",
+      "readiness_score": 74.0,
+      "confirmation_count": 3,
+      "entry_eligible": false,
+      "weight_pct": 0
+    },
+    {
+      "symbol": "HD",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 8.0% \u2014 no add planned",
+      "readiness_score": 73.8,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 7.966313596426662
+    },
+    {
+      "symbol": "NKE",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 7.7% \u2014 no add planned",
+      "readiness_score": 73.8,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 7.717190505054244
+    },
+    {
+      "symbol": "DDOG",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 2.1% \u2014 no add planned",
+      "readiness_score": 73.5,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 2.1073528999625553
+    },
+    {
+      "symbol": "SPOT",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 6.4% \u2014 no add planned",
+      "readiness_score": 73.5,
+      "confirmation_count": 4,
+      "entry_eligible": false,
+      "weight_pct": 6.391839066260388
+    },
+    {
+      "symbol": "ABNB",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 73.4 / 4 confirmations",
+      "readiness_score": 73.4,
+      "confirmation_count": 4,
+      "entry_eligible": false,
+      "weight_pct": 0
+    },
+    {
+      "symbol": "SHOP",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 2.5% \u2014 no add planned",
+      "readiness_score": 73.3,
+      "confirmation_count": 4,
+      "entry_eligible": false,
+      "weight_pct": 2.538135622801152
+    },
+    {
+      "symbol": "PATH",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "hold",
+      "reason": "Held at 3.8% \u2014 no add planned",
+      "readiness_score": 72.8,
+      "confirmation_count": 4,
+      "entry_eligible": false,
+      "weight_pct": 3.7912279088280108
+    },
+    {
+      "symbol": "GTLB",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 72.6 / 5 confirmations",
+      "readiness_score": 72.6,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 0
+    },
+    {
+      "symbol": "ROKU",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 71.5 / 4 confirmations",
+      "readiness_score": 71.5,
+      "confirmation_count": 4,
+      "entry_eligible": false,
+      "weight_pct": 0
+    },
+    {
+      "symbol": "APP",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 70.4 / 3 confirmations",
+      "readiness_score": 70.4,
+      "confirmation_count": 3,
+      "entry_eligible": false,
+      "weight_pct": 0
+    },
+    {
+      "symbol": "EXPE",
+      "display_tier": "BUILDING",
+      "tier": "BUILDING",
+      "status": "not_ready",
+      "reason": "Readiness 70.3 / 5 confirmations",
+      "readiness_score": 70.3,
+      "confirmation_count": 5,
+      "entry_eligible": false,
+      "weight_pct": 0
+    }
+  ],
+  "summary": {
+    "total": 20,
+    "prime_count": 2,
+    "building_count": 18,
+    "tracking_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "tier_changes_count": 20,
+    "queued_count": 0,
+    "held_count": 0
+  }
+}

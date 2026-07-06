@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-07-02T11:20:01.278234Z",
+  "status": "HEALTHY",
+  "issues": [],
+  "checks": {
+    "stonk-ai.service": "active",
+    "stonk-ai-data.service": "active",
+    "stonk-ai-watchlist.service": "active",
+    "stonk-ai-markets.service": "active",
+    "signals": "ok",
+    "watchlist": "ok",
+    "portfolio": "ok",
+    "alpaca": "ok",
+    "disk": "ok"
+  }
+}

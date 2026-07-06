@@ -1,0 +1,335 @@
+{
+  "checks": [
+    {
+      "timestamp": "2026-06-04T16:00:00Z",
+      "portfolio_value": 100394.5,
+      "cash": 60071.9,
+      "total_pl": 394.5,
+      "total_pl_pct": 0.3945,
+      "notified": false,
+      "benchmark_value": 100000.0,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-05T16:00:00Z",
+      "portfolio_value": 97288.29,
+      "cash": 34893.48,
+      "total_pl": -2711.71,
+      "total_pl_pct": -2.7117,
+      "notified": false,
+      "benchmark_value": 97419.07,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-06T16:00:00Z",
+      "portfolio_value": 97288.29,
+      "cash": 34893.48,
+      "total_pl": -2711.71,
+      "total_pl_pct": -2.7117,
+      "notified": false,
+      "benchmark_value": 97419.07,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-07T16:00:00Z",
+      "portfolio_value": 97288.29,
+      "cash": 34893.48,
+      "total_pl": -2711.71,
+      "total_pl_pct": -2.7117,
+      "notified": false,
+      "benchmark_value": 97419.07,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-08T16:00:00Z",
+      "portfolio_value": 98155.4,
+      "cash": 41947.18,
+      "total_pl": -1844.6,
+      "total_pl_pct": -1.8446,
+      "notified": false,
+      "benchmark_value": 97639.65,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-09T16:00:00Z",
+      "portfolio_value": 97125.67,
+      "cash": -14787.6,
+      "total_pl": -2874.33,
+      "total_pl_pct": -2.8743,
+      "notified": false,
+      "benchmark_value": 97353.02,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-10T16:00:00Z",
+      "portfolio_value": 96784.75,
+      "cash": -14787.6,
+      "total_pl": -3215.25,
+      "total_pl_pct": -3.2153,
+      "notified": false,
+      "benchmark_value": 95818.2,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-11T16:00:00Z",
+      "portfolio_value": 101273.01,
+      "cash": -10966.12,
+      "total_pl": 1273.01,
+      "total_pl_pct": 1.273,
+      "notified": false,
+      "benchmark_value": 97446.8,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-12T16:00:00Z",
+      "portfolio_value": 100440.98,
+      "cash": 8640.18,
+      "total_pl": 440.98,
+      "total_pl_pct": 0.441,
+      "notified": false,
+      "benchmark_value": 97973.82,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-13T16:00:00Z",
+      "portfolio_value": 100440.98,
+      "cash": 8640.18,
+      "total_pl": 440.98,
+      "total_pl_pct": 0.441,
+      "notified": false,
+      "benchmark_value": 97973.82,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-14T16:00:00Z",
+      "portfolio_value": 100440.98,
+      "cash": 8640.18,
+      "total_pl": 440.98,
+      "total_pl_pct": 0.441,
+      "notified": false,
+      "benchmark_value": 97973.82,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-15T16:00:00Z",
+      "portfolio_value": 104011.02,
+      "cash": -1193.02,
+      "total_pl": 4011.02,
+      "total_pl_pct": 4.011,
+      "notified": false,
+      "benchmark_value": 99701.49,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-16T16:00:00Z",
+      "portfolio_value": 101898.77,
+      "cash": 823.58,
+      "total_pl": 1898.77,
+      "total_pl_pct": 1.8988,
+      "notified": false,
+      "benchmark_value": 99107.11,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-17T16:00:00Z",
+      "portfolio_value": 99755.74,
+      "cash": 813.46,
+      "total_pl": -244.26,
+      "total_pl_pct": -0.2443,
+      "notified": false,
+      "benchmark_value": 97869.47,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-18T16:00:00Z",
+      "portfolio_value": 101834.12,
+      "cash": 433.8,
+      "total_pl": 1834.12,
+      "total_pl_pct": 1.8341,
+      "notified": false,
+      "benchmark_value": 98632.92,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-19T16:00:00Z",
+      "portfolio_value": 101834.12,
+      "cash": 433.8,
+      "total_pl": 1834.12,
+      "total_pl_pct": 1.8341,
+      "notified": false,
+      "benchmark_value": 98632.92,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-20T16:00:00Z",
+      "portfolio_value": 101834.12,
+      "cash": 433.8,
+      "total_pl": 1834.12,
+      "total_pl_pct": 1.8341,
+      "notified": false,
+      "benchmark_value": 98632.92,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-21T16:00:00Z",
+      "portfolio_value": 101834.12,
+      "cash": 433.8,
+      "total_pl": 1834.12,
+      "total_pl_pct": 1.8341,
+      "notified": false,
+      "benchmark_value": 98632.92,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-22T16:00:00Z",
+      "portfolio_value": 98990.33,
+      "cash": 433.8,
+      "total_pl": -1009.67,
+      "total_pl_pct": -1.0097,
+      "notified": false,
+      "benchmark_value": 98322.52,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-23T16:00:00Z",
+      "portfolio_value": 96702.31,
+      "cash": 433.8,
+      "total_pl": -3297.69,
+      "total_pl_pct": -3.2977,
+      "notified": false,
+      "benchmark_value": 96894.69,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-24T16:00:00Z",
+      "portfolio_value": 95499.31,
+      "cash": 5117.86,
+      "total_pl": -4500.69,
+      "total_pl_pct": -4.5007,
+      "notified": false,
+      "benchmark_value": 96849.78,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-25T16:00:00Z",
+      "portfolio_value": 94541.13,
+      "cash": 4492.3,
+      "total_pl": -5458.87,
+      "total_pl_pct": -5.4589,
+      "notified": false,
+      "benchmark_value": 96989.79,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-26T16:00:00Z",
+      "portfolio_value": 96829.89,
+      "cash": 7039.45,
+      "total_pl": -3170.11,
+      "total_pl_pct": -3.1701,
+      "notified": false,
+      "benchmark_value": 96288.42,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-27T16:00:00Z",
+      "portfolio_value": 96829.89,
+      "cash": 7039.45,
+      "total_pl": -3170.11,
+      "total_pl_pct": -3.1701,
+      "notified": false,
+      "benchmark_value": 96288.42,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-28T16:00:00Z",
+      "portfolio_value": 96829.89,
+      "cash": 7039.45,
+      "total_pl": -3170.11,
+      "total_pl_pct": -3.1701,
+      "notified": false,
+      "benchmark_value": 96288.42,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-29T16:00:00Z",
+      "portfolio_value": 99539.59,
+      "cash": 59892.84,
+      "total_pl": -460.41,
+      "total_pl_pct": -0.4604,
+      "notified": false,
+      "benchmark_value": 97874.76,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-06-30T16:00:00Z",
+      "portfolio_value": 100265.06,
+      "cash": 61439.35,
+      "total_pl": 265.06,
+      "total_pl_pct": 0.2651,
+      "notified": false,
+      "benchmark_value": 98636.89,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-07-01T16:00:00Z",
+      "portfolio_value": 98997.64,
+      "cash": 12346.2,
+      "total_pl": -1002.36,
+      "total_pl_pct": -1.0024,
+      "notified": false,
+      "benchmark_value": 98503.48,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-07-02T16:00:00Z",
+      "portfolio_value": 98840.83,
+      "cash": 44239.63,
+      "total_pl": -1159.17,
+      "total_pl_pct": -1.1592,
+      "notified": false,
+      "benchmark_value": 98374.04,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-07-03T16:00:00Z",
+      "portfolio_value": 98840.83,
+      "cash": 44239.63,
+      "total_pl": -1159.17,
+      "total_pl_pct": -1.1592,
+      "notified": false,
+      "benchmark_value": 98374.04,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-07-04T16:00:00Z",
+      "portfolio_value": 98840.83,
+      "cash": 44239.63,
+      "total_pl": -1159.17,
+      "total_pl_pct": -1.1592,
+      "notified": false,
+      "benchmark_value": 98374.04,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-07-05T16:00:00Z",
+      "portfolio_value": 98840.83,
+      "cash": 44239.63,
+      "total_pl": -1159.17,
+      "total_pl_pct": -1.1592,
+      "notified": false,
+      "benchmark_value": 98374.04,
+      "benchmark_symbol": "SPY"
+    },
+    {
+      "timestamp": "2026-07-06T12:08:28.813068Z",
+      "portfolio_value": 98475.51,
+      "cash": 44237.49,
+      "total_pl": 174.87026200000372,
+      "total_pl_pct": 0.3234555789207876,
+      "notified": false
+    }
+  ],
+  "reconstructed": true,
+  "last_reconstructed": "2026-07-05T22:30:12.953457Z",
+  "last_check": "2026-07-06T12:08:28.813068Z"
+}

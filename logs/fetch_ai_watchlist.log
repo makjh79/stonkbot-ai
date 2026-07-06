@@ -1,0 +1,308 @@
+2026-06-30 15:51:22,894 - INFO - AI Watchlist Price Fetcher Starting
+2026-06-30 15:51:22,895 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:51:22,895 - INFO - Monitoring: AMD, MU, MRVL, UPST, SOFI, HD, AMAT, HOOD, TER, LRCX, AFRM, KLAC, LMND, PAYO, CAT, RELY, UNP, EXPE, UBER, ROKU
+2026-06-30 15:51:22,895 - INFO - Missing sentiment for 2 symbols: ['CAT', 'UNP']
+2026-06-30 15:51:22,900 - INFO - Triggered sentiment regeneration
+2026-06-30 15:51:22,900 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:51:22,900 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:51:24,028 - INFO - Fetched bars for 20 symbols
+2026-06-30 15:51:24,028 - INFO - Fetched trades for 20 symbols
+2026-06-30 15:51:24,028 - INFO - Fetched quotes for 20 symbols
+2026-06-30 15:51:24,028 - INFO - AMD: Using trade price $578.73 from 2026-06-30T15:51:22.973846113Z
+2026-06-30 15:51:24,028 - INFO - AMD: Using snapshot change 7.27% ($539.49 -> $578.73)
+2026-06-30 15:51:24,029 - INFO - AMD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,029 - INFO - AMD: Volume extracted - current=13,847,237, avg=13,847,237
+2026-06-30 15:51:24,036 - INFO - MU: Using trade price $1142.39 from 2026-06-30T15:51:22.824520704Z
+2026-06-30 15:51:24,037 - INFO - MU: Using snapshot change -0.25% ($1145.28 -> $1142.39)
+2026-06-30 15:51:24,037 - INFO - MU: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,037 - INFO - MU: Volume extracted - current=16,604,463, avg=16,604,463
+2026-06-30 15:51:24,044 - INFO - MRVL: Using trade price $297.03 from 2026-06-30T15:51:21.152999094Z
+2026-06-30 15:51:24,045 - INFO - MRVL: Using snapshot change 6.94% ($277.75 -> $297.03)
+2026-06-30 15:51:24,045 - INFO - MRVL: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,045 - INFO - MRVL: Volume extracted - current=14,972,696, avg=14,972,696
+2026-06-30 15:51:24,050 - INFO - UPST: Using trade price $34.94 from 2026-06-30T15:51:06.660018504Z
+2026-06-30 15:51:24,051 - INFO - UPST: Using snapshot change -0.26% ($35.03 -> $34.94)
+2026-06-30 15:51:24,052 - INFO - UPST: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,052 - INFO - UPST: Volume extracted - current=1,412,208, avg=1,412,208
+2026-06-30 15:51:24,057 - INFO - SOFI: Using trade price $17.87 from 2026-06-30T15:51:23.1134421Z
+2026-06-30 15:51:24,057 - INFO - SOFI: Using snapshot change -1.76% ($18.19 -> $17.87)
+2026-06-30 15:51:24,057 - INFO - SOFI: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,057 - INFO - SOFI: Volume extracted - current=23,958,238, avg=23,958,238
+2026-06-30 15:51:24,063 - INFO - HD: Using trade price $351.70 from 2026-06-30T15:51:22.180702793Z
+2026-06-30 15:51:24,063 - INFO - HD: Using snapshot change 0.26% ($350.81 -> $351.70)
+2026-06-30 15:51:24,063 - INFO - HD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,064 - INFO - HD: Volume extracted - current=1,039,586, avg=1,039,586
+2026-06-30 15:51:24,069 - INFO - AMAT: Using trade price $730.22 from 2026-06-30T15:51:21.158171174Z
+2026-06-30 15:51:24,069 - INFO - AMAT: Using snapshot change 5.12% ($694.64 -> $730.22)
+2026-06-30 15:51:24,069 - INFO - AMAT: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,069 - INFO - AMAT: Volume extracted - current=5,780,433, avg=5,780,433
+2026-06-30 15:51:24,074 - INFO - HOOD: Using trade price $101.60 from 2026-06-30T15:51:22.529759455Z
+2026-06-30 15:51:24,075 - INFO - HOOD: Using snapshot change -0.23% ($101.83 -> $101.60)
+2026-06-30 15:51:24,075 - INFO - HOOD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,075 - INFO - HOOD: Volume extracted - current=8,231,895, avg=8,231,895
+2026-06-30 15:51:24,080 - INFO - TER: Using trade price $474.63 from 2026-06-30T15:50:55.290524096Z
+2026-06-30 15:51:24,081 - INFO - TER: Using snapshot change 2.47% ($463.21 -> $474.63)
+2026-06-30 15:51:24,081 - INFO - TER: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,081 - INFO - TER: Volume extracted - current=1,366,220, avg=1,366,220
+2026-06-30 15:51:24,085 - INFO - LRCX: Using trade price $425.25 from 2026-06-30T15:51:20.754608321Z
+2026-06-30 15:51:24,085 - INFO - LRCX: Using snapshot change 3.49% ($410.91 -> $425.25)
+2026-06-30 15:51:24,086 - INFO - LRCX: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,086 - INFO - LRCX: Volume extracted - current=5,626,935, avg=5,626,935
+2026-06-30 15:51:24,092 - INFO - AFRM: Using trade price $81.14 from 2026-06-30T15:51:03.347864403Z
+2026-06-30 15:51:24,092 - INFO - AFRM: Using snapshot change -0.79% ($81.79 -> $81.14)
+2026-06-30 15:51:24,093 - INFO - AFRM: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,093 - INFO - AFRM: Volume extracted - current=909,362, avg=909,362
+2026-06-30 15:51:24,098 - INFO - KLAC: Using trade price $293.36 from 2026-06-30T15:51:23.057871828Z
+2026-06-30 15:51:24,098 - INFO - KLAC: Using snapshot change 5.38% ($278.39 -> $293.36)
+2026-06-30 15:51:24,098 - INFO - KLAC: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,098 - INFO - KLAC: Volume extracted - current=5,674,018, avg=5,674,018
+2026-06-30 15:51:24,103 - INFO - LMND: Using trade price $63.19 from 2026-06-30T15:50:13.568193723Z
+2026-06-30 15:51:24,104 - INFO - LMND: Using snapshot change 1.62% ($62.18 -> $63.19)
+2026-06-30 15:51:24,104 - INFO - LMND: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,104 - INFO - LMND: Volume extracted - current=336,383, avg=336,383
+2026-06-30 15:51:24,109 - INFO - PAYO: Using trade price $7.09 from 2026-06-30T15:50:46.244573644Z
+2026-06-30 15:51:24,109 - INFO - PAYO: Using snapshot change 0.00% ($7.09 -> $7.09)
+2026-06-30 15:51:24,109 - INFO - PAYO: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,109 - INFO - PAYO: Volume extracted - current=579,458, avg=579,458
+2026-06-30 15:51:24,113 - INFO - CAT: Using trade price $1063.32 from 2026-06-30T15:51:16.592829772Z
+2026-06-30 15:51:24,113 - INFO - CAT: Using snapshot change 2.92% ($1033.19 -> $1063.32)
+2026-06-30 15:51:24,113 - INFO - CAT: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,113 - INFO - CAT: Volume extracted - current=839,218, avg=839,218
+2026-06-30 15:51:24,117 - INFO - RELY: Using trade price $22.55 from 2026-06-30T15:51:12.518640931Z
+2026-06-30 15:51:24,118 - INFO - RELY: Using snapshot change -1.08% ($22.79 -> $22.55)
+2026-06-30 15:51:24,118 - INFO - RELY: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,118 - INFO - RELY: Volume extracted - current=574,801, avg=574,801
+2026-06-30 15:51:24,123 - INFO - UNP: Using trade price $272.05 from 2026-06-30T15:50:59.990696051Z
+2026-06-30 15:51:24,123 - INFO - UNP: Using snapshot change -0.24% ($272.70 -> $272.05)
+2026-06-30 15:51:24,123 - INFO - UNP: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,123 - INFO - UNP: Volume extracted - current=630,452, avg=630,452
+2026-06-30 15:51:24,128 - INFO - EXPE: Using trade price $259.28 from 2026-06-30T15:50:19.2354006Z
+2026-06-30 15:51:24,128 - INFO - EXPE: Using snapshot change -2.26% ($265.28 -> $259.28)
+2026-06-30 15:51:24,128 - INFO - EXPE: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,128 - INFO - EXPE: Volume extracted - current=226,097, avg=226,097
+2026-06-30 15:51:24,132 - INFO - UBER: Using trade price $73.41 from 2026-06-30T15:51:19.700090197Z
+2026-06-30 15:51:24,133 - INFO - UBER: Using snapshot change -2.77% ($75.50 -> $73.41)
+2026-06-30 15:51:24,133 - INFO - UBER: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,133 - INFO - UBER: Volume extracted - current=8,233,142, avg=8,233,142
+2026-06-30 15:51:24,137 - INFO - ROKU: Using trade price $137.48 from 2026-06-30T15:51:17.294276175Z
+2026-06-30 15:51:24,138 - INFO - ROKU: Using snapshot change 0.70% ($136.53 -> $137.48)
+2026-06-30 15:51:24,138 - INFO - ROKU: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:51:24,138 - INFO - ROKU: Volume extracted - current=1,330,112, avg=1,330,112
+2026-06-30 15:51:24,151 - INFO - Fetching RSI from Alpaca...
+2026-06-30 15:51:24,426 - INFO -   AMD: RSI=66.2 (via alpaca)
+2026-06-30 15:51:24,682 - INFO -   MU: RSI=60.8 (via alpaca)
+2026-06-30 15:51:24,955 - INFO -   MRVL: RSI=57.0 (via alpaca)
+2026-06-30 15:51:25,221 - INFO -   UPST: RSI=63.8 (via alpaca)
+2026-06-30 15:51:25,481 - INFO -   SOFI: RSI=62.4 (via alpaca)
+2026-06-30 15:51:25,742 - INFO -   HD: RSI=70.5 (via alpaca)
+2026-06-30 15:51:25,994 - INFO -   AMAT: RSI=75.0 (via alpaca)
+2026-06-30 15:51:26,241 - INFO -   HOOD: RSI=67.8 (via alpaca)
+2026-06-30 15:51:26,495 - INFO -   TER: RSI=65.5 (via alpaca)
+2026-06-30 15:51:26,745 - INFO -   LRCX: RSI=68.2 (via alpaca)
+2026-06-30 15:51:26,997 - INFO -   AFRM: RSI=72.3 (via alpaca)
+2026-06-30 15:51:27,247 - INFO -   KLAC: RSI=70.3 (via alpaca)
+2026-06-30 15:51:27,514 - INFO -   LMND: RSI=70.9 (via alpaca)
+2026-06-30 15:51:27,751 - INFO -   PAYO: RSI=88.9 (via alpaca)
+2026-06-30 15:51:28,026 - INFO -   CAT: RSI=66.1 (via alpaca)
+2026-06-30 15:51:28,292 - INFO -   RELY: RSI=81.3 (via alpaca)
+2026-06-30 15:51:28,545 - INFO -   UNP: RSI=50.9 (via alpaca)
+2026-06-30 15:51:28,793 - INFO -   EXPE: RSI=64.0 (via alpaca)
+2026-06-30 15:51:29,050 - INFO -   UBER: RSI=56.0 (via alpaca)
+2026-06-30 15:51:29,290 - INFO -   ROKU: RSI=68.2 (via alpaca)
+2026-06-30 15:51:30,122 - INFO - Extended hours data for 8 symbols
+2026-06-30 15:51:30,128 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:51:30,128 - INFO - COUNCIL: Adding TQQQ momentum play
+2026-06-30 15:51:30,128 - INFO - COUNCIL: Adding SOXL semiconductor leverage
+2026-06-30 15:51:30,130 - INFO - Saved to /opt/stonk-ai/ai_watchlist_live.json
+2026-06-30 15:51:30,141 - INFO - Enriched 20 prices on brain watchlist
+2026-06-30 15:51:30,142 - INFO - AMD: $578.73 (+7.27%) RSI: 66.2
+2026-06-30 15:51:30,142 - INFO - MU: $1142.39 (-0.25%) RSI: 60.8
+2026-06-30 15:51:30,142 - INFO - MRVL: $297.03 (+6.94%) RSI: 57.0
+2026-06-30 15:52:30,143 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:52:30,143 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:52:31,179 - INFO - Fetched bars for 20 symbols
+2026-06-30 15:52:31,179 - INFO - Fetched trades for 20 symbols
+2026-06-30 15:52:31,180 - INFO - Fetched quotes for 20 symbols
+2026-06-30 15:52:31,180 - INFO - MU: Using trade price $1145.60 from 2026-06-30T15:52:30.261042645Z
+2026-06-30 15:52:31,180 - INFO - MU: Using snapshot change 0.03% ($1145.28 -> $1145.60)
+2026-06-30 15:52:31,180 - INFO - MU: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,180 - INFO - MU: Volume extracted - current=16,655,206, avg=16,655,206
+2026-06-30 15:52:31,185 - INFO - MRVL: Using trade price $297.08 from 2026-06-30T15:52:29.060598139Z
+2026-06-30 15:52:31,186 - INFO - MRVL: Using snapshot change 6.96% ($277.75 -> $297.08)
+2026-06-30 15:52:31,186 - INFO - MRVL: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,186 - INFO - MRVL: Volume extracted - current=15,000,178, avg=15,000,178
+2026-06-30 15:52:31,191 - INFO - TER: Using trade price $474.78 from 2026-06-30T15:51:55.288933182Z
+2026-06-30 15:52:31,191 - INFO - TER: Using snapshot change 2.50% ($463.21 -> $474.78)
+2026-06-30 15:52:31,191 - INFO - TER: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,191 - INFO - TER: Volume extracted - current=1,369,766, avg=1,369,766
+2026-06-30 15:52:31,196 - INFO - UPST: Using trade price $34.94 from 2026-06-30T15:52:28.221823936Z
+2026-06-30 15:52:31,196 - INFO - UPST: Using snapshot change -0.27% ($35.03 -> $34.94)
+2026-06-30 15:52:31,197 - INFO - UPST: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,197 - INFO - UPST: Volume extracted - current=1,414,627, avg=1,414,627
+2026-06-30 15:52:31,202 - INFO - HD: Using trade price $351.58 from 2026-06-30T15:52:23.811238167Z
+2026-06-30 15:52:31,202 - INFO - HD: Using snapshot change 0.22% ($350.81 -> $351.58)
+2026-06-30 15:52:31,203 - INFO - HD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,203 - INFO - HD: Volume extracted - current=1,041,980, avg=1,041,980
+2026-06-30 15:52:31,208 - INFO - AMAT: Using trade price $732.76 from 2026-06-30T15:52:29.559860902Z
+2026-06-30 15:52:31,208 - INFO - AMAT: Using snapshot change 5.49% ($694.64 -> $732.76)
+2026-06-30 15:52:31,208 - INFO - AMAT: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,208 - INFO - AMAT: Volume extracted - current=5,799,584, avg=5,799,584
+2026-06-30 15:52:31,214 - INFO - AMD: Using trade price $578.79 from 2026-06-30T15:52:30.150139449Z
+2026-06-30 15:52:31,214 - INFO - AMD: Using snapshot change 7.29% ($539.49 -> $578.79)
+2026-06-30 15:52:31,214 - INFO - AMD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,214 - INFO - AMD: Volume extracted - current=14,023,265, avg=14,023,265
+2026-06-30 15:52:31,219 - INFO - LRCX: Using trade price $426.30 from 2026-06-30T15:52:27.6937249Z
+2026-06-30 15:52:31,220 - INFO - LRCX: Using snapshot change 3.75% ($410.91 -> $426.30)
+2026-06-30 15:52:31,220 - INFO - LRCX: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,220 - INFO - LRCX: Volume extracted - current=5,646,506, avg=5,646,506
+2026-06-30 15:52:31,227 - INFO - SOFI: Using trade price $17.88 from 2026-06-30T15:52:29.452264005Z
+2026-06-30 15:52:31,227 - INFO - SOFI: Using snapshot change -1.70% ($18.19 -> $17.88)
+2026-06-30 15:52:31,227 - INFO - SOFI: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,228 - INFO - SOFI: Volume extracted - current=24,075,608, avg=24,075,608
+2026-06-30 15:52:31,233 - INFO - HOOD: Using trade price $101.59 from 2026-06-30T15:52:29.567676264Z
+2026-06-30 15:52:31,233 - INFO - HOOD: Using snapshot change -0.23% ($101.83 -> $101.59)
+2026-06-30 15:52:31,234 - INFO - HOOD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,234 - INFO - HOOD: Volume extracted - current=8,256,880, avg=8,256,880
+2026-06-30 15:52:31,241 - INFO - AFRM: Using trade price $81.12 from 2026-06-30T15:52:04.396673306Z
+2026-06-30 15:52:31,241 - INFO - AFRM: Using snapshot change -0.82% ($81.79 -> $81.12)
+2026-06-30 15:52:31,241 - INFO - AFRM: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,241 - INFO - AFRM: Volume extracted - current=911,026, avg=911,026
+2026-06-30 15:52:31,247 - INFO - KLAC: Using trade price $293.81 from 2026-06-30T15:52:30.254241479Z
+2026-06-30 15:52:31,248 - INFO - KLAC: Using snapshot change 5.54% ($278.39 -> $293.81)
+2026-06-30 15:52:31,248 - INFO - KLAC: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,248 - INFO - KLAC: Volume extracted - current=5,683,213, avg=5,683,213
+2026-06-30 15:52:31,256 - INFO - LMND: Using trade price $63.15 from 2026-06-30T15:52:15.004522364Z
+2026-06-30 15:52:31,256 - INFO - LMND: Using snapshot change 1.55% ($62.18 -> $63.15)
+2026-06-30 15:52:31,256 - INFO - LMND: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,256 - INFO - LMND: Volume extracted - current=336,619, avg=336,619
+2026-06-30 15:52:31,263 - INFO - PAYO: Using trade price $7.08 from 2026-06-30T15:52:04.293375576Z
+2026-06-30 15:52:31,264 - INFO - PAYO: Using snapshot change -0.07% ($7.09 -> $7.08)
+2026-06-30 15:52:31,264 - INFO - PAYO: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,264 - INFO - PAYO: Volume extracted - current=583,591, avg=583,591
+2026-06-30 15:52:31,273 - INFO - RELY: Using trade price $22.53 from 2026-06-30T15:52:27.29977734Z
+2026-06-30 15:52:31,273 - INFO - RELY: Using snapshot change -1.14% ($22.79 -> $22.53)
+2026-06-30 15:52:31,273 - INFO - RELY: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,273 - INFO - RELY: Volume extracted - current=577,581, avg=577,581
+2026-06-30 15:52:31,278 - INFO - UNP: Using trade price $271.90 from 2026-06-30T15:52:27.0326707Z
+2026-06-30 15:52:31,279 - INFO - UNP: Using snapshot change -0.29% ($272.70 -> $271.90)
+2026-06-30 15:52:31,279 - INFO - UNP: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,279 - INFO - UNP: Volume extracted - current=631,234, avg=631,234
+2026-06-30 15:52:31,285 - INFO - EXPE: Using trade price $259.06 from 2026-06-30T15:52:10.799032574Z
+2026-06-30 15:52:31,286 - INFO - EXPE: Using snapshot change -2.35% ($265.28 -> $259.06)
+2026-06-30 15:52:31,286 - INFO - EXPE: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,286 - INFO - EXPE: Volume extracted - current=226,169, avg=226,169
+2026-06-30 15:52:31,290 - INFO - UBER: Using trade price $73.42 from 2026-06-30T15:52:27.894373926Z
+2026-06-30 15:52:31,290 - INFO - UBER: Using snapshot change -2.76% ($75.50 -> $73.42)
+2026-06-30 15:52:31,290 - INFO - UBER: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,290 - INFO - UBER: Volume extracted - current=8,264,167, avg=8,264,167
+2026-06-30 15:52:31,296 - INFO - CAT: Using trade price $1063.33 from 2026-06-30T15:52:27.381934261Z
+2026-06-30 15:52:31,296 - INFO - CAT: Using snapshot change 2.92% ($1033.19 -> $1063.33)
+2026-06-30 15:52:31,300 - INFO - CAT: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,300 - INFO - CAT: Volume extracted - current=845,791, avg=845,791
+2026-06-30 15:52:31,309 - INFO - ROKU: Using trade price $137.49 from 2026-06-30T15:52:28.546909969Z
+2026-06-30 15:52:31,309 - INFO - ROKU: Using snapshot change 0.70% ($136.53 -> $137.49)
+2026-06-30 15:52:31,309 - INFO - ROKU: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:52:31,310 - INFO - ROKU: Volume extracted - current=1,350,154, avg=1,350,154
+2026-06-30 15:52:32,199 - INFO - Extended hours data for 8 symbols
+2026-06-30 15:52:32,206 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:52:32,206 - INFO - COUNCIL: Adding TQQQ momentum play
+2026-06-30 15:52:32,206 - INFO - COUNCIL: Adding SOXL semiconductor leverage
+2026-06-30 15:52:32,208 - INFO - Saved to /opt/stonk-ai/ai_watchlist_live.json
+2026-06-30 15:52:32,219 - INFO - Enriched 20 prices on brain watchlist
+2026-06-30 15:52:32,220 - INFO - MU: $1145.60 (+0.03%) RSI: 60.8
+2026-06-30 15:52:32,220 - INFO - MRVL: $297.08 (+6.96%) RSI: 57.0
+2026-06-30 15:52:32,220 - INFO - TER: $474.78 (+2.50%) RSI: 65.5
+2026-06-30 15:53:32,222 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:53:32,223 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:53:33,449 - INFO - Fetched bars for 20 symbols
+2026-06-30 15:53:33,449 - INFO - Fetched trades for 20 symbols
+2026-06-30 15:53:33,450 - INFO - Fetched quotes for 20 symbols
+2026-06-30 15:53:33,450 - INFO - MU: Using trade price $1146.88 from 2026-06-30T15:53:32.254283114Z
+2026-06-30 15:53:33,450 - INFO - MU: Using snapshot change 0.14% ($1145.28 -> $1146.88)
+2026-06-30 15:53:33,450 - INFO - MU: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,450 - INFO - MU: Volume extracted - current=16,718,171, avg=16,718,171
+2026-06-30 15:53:33,456 - INFO - MRVL: Using trade price $297.24 from 2026-06-30T15:53:31.83001323Z
+2026-06-30 15:53:33,456 - INFO - MRVL: Using snapshot change 7.02% ($277.75 -> $297.24)
+2026-06-30 15:53:33,457 - INFO - MRVL: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,457 - INFO - MRVL: Volume extracted - current=15,060,732, avg=15,060,732
+2026-06-30 15:53:33,462 - INFO - TER: Using trade price $475.04 from 2026-06-30T15:53:15.5278076Z
+2026-06-30 15:53:33,463 - INFO - TER: Using snapshot change 2.55% ($463.21 -> $475.04)
+2026-06-30 15:53:33,463 - INFO - TER: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,463 - INFO - TER: Volume extracted - current=1,370,588, avg=1,370,588
+2026-06-30 15:53:33,469 - INFO - UPST: Using trade price $34.90 from 2026-06-30T15:53:28.639938883Z
+2026-06-30 15:53:33,470 - INFO - UPST: Using snapshot change -0.37% ($35.03 -> $34.90)
+2026-06-30 15:53:33,470 - INFO - UPST: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,470 - INFO - UPST: Volume extracted - current=1,420,386, avg=1,420,386
+2026-06-30 15:53:33,476 - INFO - HD: Using trade price $351.49 from 2026-06-30T15:53:31.778824516Z
+2026-06-30 15:53:33,477 - INFO - HD: Using snapshot change 0.19% ($350.81 -> $351.49)
+2026-06-30 15:53:33,477 - INFO - HD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,477 - INFO - HD: Volume extracted - current=1,044,334, avg=1,044,334
+2026-06-30 15:53:33,485 - INFO - AMAT: Using trade price $733.15 from 2026-06-30T15:53:32.323590914Z
+2026-06-30 15:53:33,486 - INFO - AMAT: Using snapshot change 5.54% ($694.64 -> $733.15)
+2026-06-30 15:53:33,486 - INFO - AMAT: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,486 - INFO - AMAT: Volume extracted - current=5,815,119, avg=5,815,119
+2026-06-30 15:53:33,490 - INFO - AMD: Using trade price $577.04 from 2026-06-30T15:53:32.282924621Z
+2026-06-30 15:53:33,491 - INFO - AMD: Using snapshot change 6.96% ($539.49 -> $577.04)
+2026-06-30 15:53:33,491 - INFO - AMD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,491 - INFO - AMD: Volume extracted - current=14,136,401, avg=14,136,401
+2026-06-30 15:53:33,496 - INFO - LRCX: Using trade price $426.64 from 2026-06-30T15:53:29.864163042Z
+2026-06-30 15:53:33,497 - INFO - LRCX: Using snapshot change 3.83% ($410.91 -> $426.64)
+2026-06-30 15:53:33,497 - INFO - LRCX: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,497 - INFO - LRCX: Volume extracted - current=5,660,941, avg=5,660,941
+2026-06-30 15:53:33,502 - INFO - SOFI: Using trade price $17.86 from 2026-06-30T15:53:31.080221849Z
+2026-06-30 15:53:33,502 - INFO - SOFI: Using snapshot change -1.79% ($18.19 -> $17.86)
+2026-06-30 15:53:33,502 - INFO - SOFI: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,502 - INFO - SOFI: Volume extracted - current=24,201,522, avg=24,201,522
+2026-06-30 15:53:33,508 - INFO - HOOD: Using trade price $101.48 from 2026-06-30T15:53:27.359373806Z
+2026-06-30 15:53:33,509 - INFO - HOOD: Using snapshot change -0.34% ($101.83 -> $101.48)
+2026-06-30 15:53:33,509 - INFO - HOOD: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,509 - INFO - HOOD: Volume extracted - current=8,278,291, avg=8,278,291
+2026-06-30 15:53:33,516 - INFO - AFRM: Using trade price $81.25 from 2026-06-30T15:53:10.974972141Z
+2026-06-30 15:53:33,516 - INFO - AFRM: Using snapshot change -0.66% ($81.79 -> $81.25)
+2026-06-30 15:53:33,516 - INFO - AFRM: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,516 - INFO - AFRM: Volume extracted - current=915,656, avg=915,656
+2026-06-30 15:53:33,523 - INFO - KLAC: Using trade price $294.50 from 2026-06-30T15:53:32.421048575Z
+2026-06-30 15:53:33,524 - INFO - KLAC: Using snapshot change 5.79% ($278.39 -> $294.50)
+2026-06-30 15:53:33,524 - INFO - KLAC: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,524 - INFO - KLAC: Volume extracted - current=5,695,811, avg=5,695,811
+2026-06-30 15:53:33,534 - INFO - LMND: Using trade price $63.16 from 2026-06-30T15:52:45.80177211Z
+2026-06-30 15:53:33,535 - INFO - LMND: Using snapshot change 1.58% ($62.18 -> $63.16)
+2026-06-30 15:53:33,535 - INFO - LMND: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,536 - INFO - LMND: Volume extracted - current=337,097, avg=337,097
+2026-06-30 15:53:33,541 - INFO - PAYO: Using trade price $7.09 from 2026-06-30T15:53:25.449518278Z
+2026-06-30 15:53:33,541 - INFO - PAYO: Using snapshot change 0.00% ($7.09 -> $7.09)
+2026-06-30 15:53:33,542 - INFO - PAYO: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,542 - INFO - PAYO: Volume extracted - current=584,567, avg=584,567
+2026-06-30 15:53:33,547 - INFO - RELY: Using trade price $22.51 from 2026-06-30T15:53:29.944235715Z
+2026-06-30 15:53:33,548 - INFO - RELY: Using snapshot change -1.23% ($22.79 -> $22.51)
+2026-06-30 15:53:33,548 - INFO - RELY: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,548 - INFO - RELY: Volume extracted - current=579,705, avg=579,705
+2026-06-30 15:53:33,556 - INFO - UNP: Using trade price $271.82 from 2026-06-30T15:52:49.274714521Z
+2026-06-30 15:53:33,556 - INFO - UNP: Using snapshot change -0.32% ($272.70 -> $271.82)
+2026-06-30 15:53:33,556 - INFO - UNP: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,556 - INFO - UNP: Volume extracted - current=633,554, avg=633,554
+2026-06-30 15:53:33,563 - INFO - EXPE: Using trade price $259.07 from 2026-06-30T15:53:28.265241307Z
+2026-06-30 15:53:33,564 - INFO - EXPE: Using snapshot change -2.34% ($265.28 -> $259.07)
+2026-06-30 15:53:33,564 - INFO - EXPE: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,564 - INFO - EXPE: Volume extracted - current=227,686, avg=227,686
+2026-06-30 15:53:33,570 - INFO - UBER: Using trade price $73.38 from 2026-06-30T15:53:32.31240066Z
+2026-06-30 15:53:33,570 - INFO - UBER: Using snapshot change -2.81% ($75.50 -> $73.38)
+2026-06-30 15:53:33,571 - INFO - UBER: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,571 - INFO - UBER: Volume extracted - current=8,288,641, avg=8,288,641
+2026-06-30 15:53:33,578 - INFO - CAT: Using trade price $1063.49 from 2026-06-30T15:53:32.001842099Z
+2026-06-30 15:53:33,578 - INFO - CAT: Using snapshot change 2.93% ($1033.19 -> $1063.49)
+2026-06-30 15:53:33,579 - INFO - CAT: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,579 - INFO - CAT: Volume extracted - current=847,384, avg=847,384
+2026-06-30 15:53:33,584 - INFO - ROKU: Using trade price $137.49 from 2026-06-30T15:53:31.886542284Z
+2026-06-30 15:53:33,584 - INFO - ROKU: Using snapshot change 0.70% ($136.53 -> $137.49)
+2026-06-30 15:53:33,584 - INFO - ROKU: Got 1 bars, keys=['c', 'h', 'l', 'n', 'o', 't', 'v', 'vw']
+2026-06-30 15:53:33,584 - INFO - ROKU: Volume extracted - current=1,351,060, avg=1,351,060
+2026-06-30 15:53:34,516 - INFO - Extended hours data for 8 symbols
+2026-06-30 15:53:34,521 - INFO - Loaded 20 symbols from dynamic manager
+2026-06-30 15:53:34,522 - INFO - COUNCIL: Adding TQQQ momentum play
+2026-06-30 15:53:34,522 - INFO - COUNCIL: Adding SOXL semiconductor leverage
+2026-06-30 15:53:34,524 - INFO - Saved to /opt/stonk-ai/ai_watchlist_live.json
+2026-06-30 15:53:34,532 - INFO - Enriched 20 prices on brain watchlist
+2026-06-30 15:53:34,534 - INFO - MU: $1146.88 (+0.14%) RSI: 60.8
+2026-06-30 15:53:34,534 - INFO - MRVL: $297.24 (+7.02%) RSI: 57.0
+2026-06-30 15:53:34,534 - INFO - TER: $475.04 (+2.55%) RSI: 65.5

@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+"""Reconstruct portfolio_history.json from Alpaca bars + trade log."""
+import json, urllib.request, ssl
+from datetime import datetime, timedelta
+from collections import defaultdict
+
+CFG = json.load(open("/opt/stonk-ai/alpaca_config.json"))
+KEY = CFG["api_key"]
+SECRET = CFG["api_secret"]
+CTX = ssl.create_default_context()
+
+def api(path):
+    url = "https://data.alpaca.markets/v2" + path
+    req = urllib.request.Request(url)
+    req.add_header("APCA-API-KEY-ID", KEY)
+    req.add_header("APCA-API-SECRET-KEY", SECRET)
+    req.add_header("accept", "application/json")
+    return json.loads(urllib.request.urlopen(req, context=CTX).read())
+
+# Load trades
+with open("/opt/stonk-ai/trades_log.json") as f:
+    trades = json.load(f)["trades"]
+
+# Get date range
+start_date = min(t["timestamp"][:10] for t in trades)
+end_date = datetime.utcnow().strftime("%Y-%m-%d")
+
+# Get symbols
+symbols = sorted(set(t["symbol"] for t in trades))
+print(f"Symbols: {symbols}")
+print(f"Range: {start_date} to {end_date}")
+
+# Fetch daily bars per symbol
+prices = defaultdict(dict)  # symbol -> {date: close}
+for sym in symbols:
+    try:
+        url = f"/stocks/{sym}/bars?timeframe=1Day&start={start_date}T00:00:00Z&end={end_date}T23:59:59Z&limit=1000&feed=iex"
+        resp = api(url)
+        bars = resp.get("bars", [])
+        for b in bars:
+            day = b["t"][:10]
+            prices[sym][day] = b["c"]
+        print(f"  {sym}: {len(bars)} bars")
+    except Exception as e:
+        print(f"  {sym}: ERROR {e}")
+# Fetch S&P 500 benchmark (SPY)
+benchmark_prices = {}
+benchmark_symbol = None
+for bench_sym in ["SPY", "VOO"]:
+    try:
+        resp = api(f"/stocks/{bench_sym}/bars?timeframe=1Day&start={start_date}T00:00:00Z&end={end_date}T23:59:59Z&limit=1000&feed=iex")
+        bars = resp.get("bars", [])
+        if bars:
+            for b in bars:
+                benchmark_prices[b["t"][:10]] = b["c"]
+            benchmark_symbol = bench_sym
+            print(f"  Benchmark {bench_sym}: {len(bars)} bars")
+            break
+    except Exception as e:
+        print(f"  Benchmark {bench_sym}: ERROR {e}")
+
+
+# Replay trades day by day
+start_dt = datetime.strptime(start_date, "%Y-%m-%d")
+end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+
+cash = 100000.0
+positions = defaultdict(float)  # symbol -> qty
+
+checks = []
+current_day = start_dt
+
+while current_day <= end_dt:
+    day = current_day.strftime("%Y-%m-%d")
+    # Execute trades for this day
+    for t in trades:
+        if t["timestamp"][:10] == day:
+            sym = t["symbol"]
+            qty = float(t["qty"])
+            value = float(t["total_value"])
+            if t["action"] == "BUY":
+                positions[sym] += qty
+                cash -= value
+            else:
+                positions[sym] -= qty
+                cash += value
+    # Compute portfolio value (forward-fill last known price across non-trading days)
+    value = cash
+    for sym, qty in positions.items():
+        if qty > 0:
+            last_price = None
+            for d in sorted(prices[sym].keys(), reverse=True):
+                if d <= day:
+                    last_price = prices[sym][d]
+                    break
+            if last_price:
+                value += qty * last_price
+    total_pl = value - 100000.0
+    total_pl_pct = (total_pl / 100000.0) * 100.0
+    benchmark_value = None
+    if benchmark_prices:
+        # Normalize benchmark to same starting value as portfolio on first day
+        first_bench = next(iter(sorted(benchmark_prices.items())), None)
+        if first_bench:
+            _, first_price = first_bench
+            bench_close = None
+            for d in sorted(benchmark_prices.keys(), reverse=True):
+                if d <= day:
+                    bench_close = benchmark_prices[d]
+                    break
+            if bench_close:
+                benchmark_value = round((bench_close / first_price) * 100000.0, 2)
+    checks.append({
+        "timestamp": day + "T16:00:00Z",
+        "portfolio_value": round(value, 2),
+        "cash": round(cash, 2),
+        "total_pl": round(total_pl, 2),
+        "total_pl_pct": round(total_pl_pct, 4),
+        "notified": False,
+        "benchmark_value": benchmark_value,
+        "benchmark_symbol": benchmark_symbol
+    })
+    current_day += timedelta(days=1)
+
+# Preserve any existing live checks newer than the reconstruction
+try:
+    existing = json.load(open("/var/www/hedge-fund-website/portfolio_history.json"))
+    existing_days = {c["timestamp"][:10]: c for c in existing["checks"]}
+    reconstructed_days = {c["timestamp"][:10]: c for c in checks}
+    # Reconstructed overrides stale existing; live microsecond timestamps win only if same date
+    merged = []
+    for day in sorted(set(existing_days.keys()) | set(reconstructed_days.keys())):
+        if day in reconstructed_days:
+            merged.append(reconstructed_days[day])
+        else:
+            merged.append(existing_days[day])
+    checks = merged
+except Exception as e:
+    print(f"No existing history merge: {e}")
+
+output = {"checks": checks, "reconstructed": True, "last_reconstructed": datetime.utcnow().isoformat() + "Z"}
+with open("/var/www/hedge-fund-website/portfolio_history.json", "w") as f:
+    json.dump(output, f, indent=2)
+with open("/opt/stonk-ai/portfolio_history.json", "w") as f:
+    json.dump(output, f, indent=2)
+
+print(f"\nWrote {len(checks)} daily snapshots")
+print(f"First: {checks[0]['timestamp'][:10]} ${checks[0]['portfolio_value']:,.2f}")
+print(f"Last: {checks[-1]['timestamp'][:10]} ${checks[-1]['portfolio_value']:,.2f}")
+print(f"Peak: ${max(c['portfolio_value'] for c in checks):,.2f}")
+print(f"Trough: ${min(c['portfolio_value'] for c in checks):,.2f}")

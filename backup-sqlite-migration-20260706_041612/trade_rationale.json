@@ -1,0 +1,2296 @@
+{
+  "entries": [
+    {
+      "timestamp": "2026-06-30T13:31:36.537715Z",
+      "action": "SELL",
+      "symbol": "AAPL",
+      "reason": "thesis_broken_below_40"
+    },
+    {
+      "timestamp": "2026-06-30T13:31:36.673046Z",
+      "action": "SELL",
+      "symbol": "AAPL",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T13:53:55.889029Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "Concentration trim: position 4.0% > trigger 4.0%"
+    },
+    {
+      "timestamp": "2026-06-30T13:53:58.248344Z",
+      "action": "BUY",
+      "symbol": "MRVL",
+      "reason": "Entry (momentum, readiness 79.9, 3/9 conf) - score=63.4 atr%=9.08% target=$4,000 qty=13"
+    },
+    {
+      "timestamp": "2026-06-30T13:53:59.164494Z",
+      "action": "BUY",
+      "symbol": "TER",
+      "reason": "Avg-in on TER (readiness 79.6, avg-in score=66.7 atr%=7.09% target=$1,185 qty=2)"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:00.289492Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 21.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:00.462677Z",
+      "action": "SELL",
+      "symbol": "AMD",
+      "reason": "Sector trim: Semiconductors 20.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:09.721296Z",
+      "action": "BUY",
+      "symbol": "UBER",
+      "reason": "Entry (readiness 76.3, 5/9 conf) - score=48.7 atr%=3.73% target=$7,997 qty=105 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:15.557382Z",
+      "action": "BUY",
+      "symbol": "ROKU",
+      "reason": "Entry (readiness 74.9, 4/9 conf) - score=60.6 atr%=3.58% target=$7,997 qty=57 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:21.434036Z",
+      "action": "BUY",
+      "symbol": "ABNB",
+      "reason": "Entry (readiness 74.6, 4/9 conf) - score=58.7 atr%=3.04% target=$7,997 qty=53 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:27.315067Z",
+      "action": "BUY",
+      "symbol": "LMND",
+      "reason": "Entry (readiness 73.9, 3/9 conf) - score=47.1 atr%=5.83% target=$7,997 qty=123"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:33.166578Z",
+      "action": "BUY",
+      "symbol": "CAT",
+      "reason": "Entry (readiness 72.4, 5/9 conf) - score=68.5 atr%=3.92% target=$7,997 qty=7"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:38.780144Z",
+      "action": "BUY",
+      "symbol": "PAYO",
+      "reason": "Entry (readiness 72.3, 2/9 conf) - score=65.8 atr%=1.83% target=$7,997 qty=1101 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-06-30T13:59:44.620393Z",
+      "action": "BUY",
+      "symbol": "SHOP",
+      "reason": "Entry (readiness 72.1, 4/9 conf) - score=37.6 atr%=4.44% target=$7,997 qty=67 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:46.472765Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 24.7% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:46.611101Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "Sector trim: Fintech 29.7% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:46.753571Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 20.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:46.903015Z",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "reason": "Sector trim: Fintech 28.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:47.041546Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Sector trim: Fintech 27.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:47.192620Z",
+      "action": "SELL",
+      "symbol": "PAYO",
+      "reason": "Sector trim: Fintech 25.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:47.327029Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "Sector trim: Consumer/Platform 23.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:47.532233Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 21.7% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:47.667135Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "Sector trim: Fintech 24.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:47.803778Z",
+      "action": "SELL",
+      "symbol": "UBER",
+      "reason": "Sector trim: Consumer/Platform 20.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:04:47.939654Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "Sector trim: Fintech 23.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:44.905020Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "Sector trim: Fintech 22.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:45.127553Z",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "reason": "Sector trim: Fintech 21.7% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:45.304744Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Sector trim: Fintech 21.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:45.438486Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Thesis exit: sector momentum turns negative"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:45.929023Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:46.070529Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:46.241972Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:46.384384Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:46.557182Z",
+      "action": "SELL",
+      "symbol": "UBER",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:52.417263Z",
+      "action": "BUY",
+      "symbol": "AMAT",
+      "reason": "Avg-in on AMAT (readiness 77.5, avg-in score=67.9 atr%=6.45% target=$5,834 qty=7)"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:52.754132Z",
+      "action": "BUY",
+      "symbol": "HD",
+      "reason": "Avg-in on HD (readiness 81.8, avg-in score=61.6 atr%=2.43% target=$4,147 qty=11)"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:53.002615Z",
+      "action": "BUY",
+      "symbol": "HOOD",
+      "reason": "Avg-in on HOOD (readiness 79.7, avg-in score=61.2 atr%=6.84% target=$5,062 qty=49)"
+    },
+    {
+      "timestamp": "2026-06-30T14:10:58.583289Z",
+      "action": "BUY",
+      "symbol": "LRCX",
+      "reason": "Avg-in on LRCX (readiness 75.4, avg-in score=68.1 atr%=6.66% target=$3,211 qty=7)"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:00.056005Z",
+      "action": "SELL",
+      "symbol": "LRCX",
+      "reason": "Concentration trim: position 9.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:00.274859Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "Sector trim: Fintech 24.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:00.664253Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 29.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:00.888666Z",
+      "action": "SELL",
+      "symbol": "AMD",
+      "reason": "Sector trim: Semiconductors 28.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:01.050512Z",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "reason": "Sector trim: Fintech 24.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:01.251988Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Sector trim: Fintech 22.3% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:01.437400Z",
+      "action": "SELL",
+      "symbol": "MRVL",
+      "reason": "Sector trim: Semiconductors 27.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:01.580711Z",
+      "action": "SELL",
+      "symbol": "MU",
+      "reason": "Sector trim: Semiconductors 26.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:01.737908Z",
+      "action": "SELL",
+      "symbol": "PAYO",
+      "reason": "Sector trim: Fintech 21.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:01.900567Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "Sector trim: Fintech 20.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:02.075471Z",
+      "action": "SELL",
+      "symbol": "TER",
+      "reason": "Sector trim: Semiconductors 25.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:02.730724Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:03.623329Z",
+      "action": "BUY",
+      "symbol": "MRVL",
+      "reason": "Avg-in on MRVL (readiness 79.9, avg-in score=63.4 atr%=8.98% target=$5,350 qty=17)"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:03.923680Z",
+      "action": "BUY",
+      "symbol": "PAYO",
+      "reason": "Avg-in on PAYO (readiness 72.3, avg-in score=65.9 atr%=1.83% target=$3,687 qty=509)"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:04.209452Z",
+      "action": "BUY",
+      "symbol": "SOFI",
+      "reason": "Avg-in on SOFI (readiness 78.9, avg-in score=44.0 atr%=4.99% target=$5,026 qty=273)"
+    },
+    {
+      "timestamp": "2026-06-30T14:16:04.504589Z",
+      "action": "BUY",
+      "symbol": "UPST",
+      "reason": "Avg-in on UPST (readiness 79.4, avg-in score=53.2 atr%=6.29% target=$4,992 qty=139)"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:05.543105Z",
+      "action": "SELL",
+      "symbol": "LRCX",
+      "reason": "Concentration trim: position 8.2% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:05.693996Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "Sector trim: Fintech 24.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:05.852941Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 29.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:06.021035Z",
+      "action": "SELL",
+      "symbol": "AMD",
+      "reason": "Sector trim: Semiconductors 27.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:06.157335Z",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "reason": "Sector trim: Fintech 23.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:06.290523Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Sector trim: Fintech 22.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:06.468698Z",
+      "action": "SELL",
+      "symbol": "MRVL",
+      "reason": "Sector trim: Semiconductors 27.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:06.614736Z",
+      "action": "SELL",
+      "symbol": "MU",
+      "reason": "Sector trim: Semiconductors 25.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:06.751973Z",
+      "action": "SELL",
+      "symbol": "PAYO",
+      "reason": "Sector trim: Fintech 21.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:06.919693Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "Sector trim: Fintech 20.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:07.055364Z",
+      "action": "SELL",
+      "symbol": "TER",
+      "reason": "Sector trim: Semiconductors 24.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:07.187417Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "Sector trim: Fintech 20.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:21:07.908633Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:26:57.101799Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 23.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:26:57.237769Z",
+      "action": "SELL",
+      "symbol": "AMD",
+      "reason": "Sector trim: Semiconductors 22.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:26:57.377558Z",
+      "action": "SELL",
+      "symbol": "LRCX",
+      "reason": "Sector trim: Semiconductors 21.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:26:57.509252Z",
+      "action": "SELL",
+      "symbol": "MRVL",
+      "reason": "Sector trim: Semiconductors 20.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:26:58.063800Z",
+      "action": "SELL",
+      "symbol": "CAT",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:27:04.342342Z",
+      "action": "BUY",
+      "symbol": "EXPE",
+      "reason": "Entry (readiness 72.5, 3/9 conf) - score=60.6 atr%=4.17% target=$8,006 qty=29"
+    },
+    {
+      "timestamp": "2026-06-30T14:27:10.246050Z",
+      "action": "BUY",
+      "symbol": "LMND",
+      "reason": "Avg-in on LMND (readiness 72.8, avg-in score=50.7 atr%=5.97% target=$5,490 qty=85)"
+    },
+    {
+      "timestamp": "2026-06-30T14:32:11.706557Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Concentration trim: position 10.7% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:32:11.841082Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "Sector trim: Fintech 26.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:32:11.977092Z",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "reason": "Sector trim: Fintech 26.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:32:12.118904Z",
+      "action": "SELL",
+      "symbol": "PAYO",
+      "reason": "Sector trim: Fintech 25.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:32:12.257871Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "Sector trim: Fintech 24.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:32:12.433582Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "Sector trim: Fintech 24.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:37:15.254491Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Concentration trim: position 8.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:43:06.506432Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T14:48:09.219552Z",
+      "action": "BUY",
+      "symbol": "MU",
+      "reason": "Avg-in on MU (readiness 81.7, avg-in score=65.8 atr%=8.89% target=$6,842 qty=5)"
+    },
+    {
+      "timestamp": "2026-06-30T14:53:10.544903Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 24.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:53:10.698402Z",
+      "action": "SELL",
+      "symbol": "AMD",
+      "reason": "Sector trim: Semiconductors 24.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:53:10.852313Z",
+      "action": "SELL",
+      "symbol": "LRCX",
+      "reason": "Sector trim: Semiconductors 23.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:53:11.007900Z",
+      "action": "SELL",
+      "symbol": "MRVL",
+      "reason": "Sector trim: Semiconductors 22.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:53:11.155335Z",
+      "action": "SELL",
+      "symbol": "MU",
+      "reason": "Sector trim: Semiconductors 21.3% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:53:11.293273Z",
+      "action": "SELL",
+      "symbol": "TER",
+      "reason": "Sector trim: Semiconductors 20.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T14:59:04.799112Z",
+      "action": "BUY",
+      "symbol": "AFRM",
+      "reason": "Avg-in on AFRM (readiness 76.4, avg-in score=65.4 atr%=5.44% target=$6,998 qty=84)"
+    },
+    {
+      "timestamp": "2026-06-30T15:04:06.850781Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "Sector trim: Fintech 26.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:04:07.027505Z",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "reason": "Sector trim: Fintech 24.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:04:07.208515Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Sector trim: Fintech 23.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:04:07.387028Z",
+      "action": "SELL",
+      "symbol": "PAYO",
+      "reason": "Sector trim: Fintech 21.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:04:07.554432Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "Sector trim: Fintech 21.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:04:07.837766Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "Sector trim: Fintech 21.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:09:10.445473Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "Sector trim: Fintech 20.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:25:05.603387Z",
+      "action": "BUY",
+      "symbol": "AMD",
+      "reason": "Avg-in on AMD (readiness 86.8, avg-in score=62.8 atr%=6.10% target=$6,866 qty=11)"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:53.246333Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 25.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:53.407050Z",
+      "action": "SELL",
+      "symbol": "AMD",
+      "reason": "Sector trim: Semiconductors 25.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:53.556987Z",
+      "action": "SELL",
+      "symbol": "LRCX",
+      "reason": "Sector trim: Semiconductors 23.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:53.858985Z",
+      "action": "SELL",
+      "symbol": "MRVL",
+      "reason": "Sector trim: Semiconductors 22.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:54.004831Z",
+      "action": "SELL",
+      "symbol": "MU",
+      "reason": "Sector trim: Semiconductors 22.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:54.183783Z",
+      "action": "SELL",
+      "symbol": "TER",
+      "reason": "Sector trim: Semiconductors 20.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:54.760574Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T15:33:54.910359Z",
+      "action": "SELL",
+      "symbol": "PAYO",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-06-30T15:38:57.023592Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "Sector trim: Semiconductors 20.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T13:30:22.033378Z",
+      "action": "SELL",
+      "symbol": "AMAT",
+      "reason": "VWAP stop: -5.7% below VWAP $726.04"
+    },
+    {
+      "timestamp": "2026-07-01T13:30:22.184931Z",
+      "action": "SELL",
+      "symbol": "AMD",
+      "reason": "VWAP stop: -2.8% below VWAP $572.03"
+    },
+    {
+      "timestamp": "2026-07-01T13:30:22.349662Z",
+      "action": "SELL",
+      "symbol": "LRCX",
+      "reason": "VWAP stop: -4.9% below VWAP $431.78"
+    },
+    {
+      "timestamp": "2026-07-01T13:30:22.509357Z",
+      "action": "SELL",
+      "symbol": "MRVL",
+      "reason": "VWAP stop: -4.4% below VWAP $294.60"
+    },
+    {
+      "timestamp": "2026-07-01T13:30:22.655932Z",
+      "action": "SELL",
+      "symbol": "MU",
+      "reason": "VWAP stop: -6.2% below VWAP $1151.86"
+    },
+    {
+      "timestamp": "2026-07-01T13:30:22.801132Z",
+      "action": "SELL",
+      "symbol": "TER",
+      "reason": "VWAP stop: -4.9% below VWAP $480.24"
+    },
+    {
+      "timestamp": "2026-07-01T13:43:01.621730Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T13:43:05.089668Z",
+      "action": "BUY",
+      "symbol": "ETSY",
+      "reason": "Entry (readiness 84.4, 4/9 conf) - score=59.6 atr%=3.73% target=$7,926 qty=102 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-07-01T13:43:05.784488Z",
+      "action": "BUY",
+      "symbol": "SNOW",
+      "reason": "Entry (readiness 82.2, 5/9 conf) - score=55.6 atr%=4.95% target=$7,926 qty=29"
+    },
+    {
+      "timestamp": "2026-07-01T13:43:12.415761Z",
+      "action": "BUY",
+      "symbol": "SHOP",
+      "reason": "Entry (readiness 76.2, 4/9 conf) - score=43.0 atr%=4.43% target=$7,926 qty=64"
+    },
+    {
+      "timestamp": "2026-07-01T13:43:18.433538Z",
+      "action": "BUY",
+      "symbol": "LMND",
+      "reason": "Entry (readiness 75.1, 4/9 conf) - score=54.0 atr%=5.28% target=$7,926 qty=116"
+    },
+    {
+      "timestamp": "2026-07-01T13:48:19.646518Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Concentration trim: position 9.3% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T13:48:20.026084Z",
+      "action": "SELL",
+      "symbol": "SNOW",
+      "reason": "Concentration trim: position 8.2% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T13:48:23.501793Z",
+      "action": "BUY",
+      "symbol": "GTLB",
+      "reason": "Entry (readiness 80.5, 4/9 conf) - score=54.0 atr%=4.51% target=$7,927 qty=244 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-07-01T13:53:25.101519Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Concentration trim: position 8.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T13:53:25.233820Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Concentration trim: position 9.4% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T13:53:25.371816Z",
+      "action": "SELL",
+      "symbol": "SNOW",
+      "reason": "Concentration trim: position 11.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T13:53:27.500773Z",
+      "action": "BUY",
+      "symbol": "EXPE",
+      "reason": "Entry (readiness 80.8, 4/9 conf) - score=56.2 atr%=4.18% target=$7,953 qty=29"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:53.659780Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Concentration trim: position 11.3% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:53.811492Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Concentration trim: position 8.1% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:53.948768Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Concentration trim: position 8.1% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:54.091136Z",
+      "action": "SELL",
+      "symbol": "SNOW",
+      "reason": "Concentration trim: position 8.1% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:54.249720Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 26.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:54.389927Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 25.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:54.967385Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:01:56.776524Z",
+      "action": "BUY",
+      "symbol": "PINS",
+      "reason": "Entry (readiness 81.7, 4/9 conf) - score=53.8 atr%=5.08% target=$7,972 qty=357"
+    },
+    {
+      "timestamp": "2026-07-01T14:02:02.698841Z",
+      "action": "BUY",
+      "symbol": "ABNB",
+      "reason": "Entry (readiness 77.9, 4/9 conf) - score=57.0 atr%=3.20% target=$7,972 qty=53"
+    },
+    {
+      "timestamp": "2026-07-01T14:02:08.345741Z",
+      "action": "BUY",
+      "symbol": "CHWY",
+      "reason": "Entry (readiness 75.0, 4/9 conf) - score=28.6 atr%=4.91% target=$7,972 qty=379"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:09.847435Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Concentration trim: position 8.1% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:10.009067Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Concentration trim: position 8.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:10.148867Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Concentration trim: position 8.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:10.302529Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Concentration trim: position 11.7% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:10.444116Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 47.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:10.605427Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "Sector trim: Consumer/Platform 45.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:10.817851Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 43.3% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:10.961631Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 41.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:11.098718Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "Thesis exit: MACD histogram turns negative for 2+ days"
+    },
+    {
+      "timestamp": "2026-07-01T14:07:12.158859Z",
+      "action": "BUY",
+      "symbol": "SHOP",
+      "reason": "Avg-in on SHOP (readiness 76.6, avg-in score=42.1 atr%=4.42% target=$2,219 qty=18)"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:13.286471Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 36.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:13.428425Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "Sector trim: Consumer/Platform 35.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:13.574710Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 33.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:13.710495Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 32.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:13.848963Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 30.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:13.988491Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 28.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:14.745045Z",
+      "action": "BUY",
+      "symbol": "ABNB",
+      "reason": "Avg-in on ABNB (readiness 77.9, avg-in score=57.0 atr%=3.19% target=$2,138 qty=14)"
+    },
+    {
+      "timestamp": "2026-07-01T14:12:14.961906Z",
+      "action": "BUY",
+      "symbol": "CHWY",
+      "reason": "Avg-in on CHWY (readiness 75.0, avg-in score=28.6 atr%=4.90% target=$2,119 qty=100)"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:32.521922Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 27.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:32.664120Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "Sector trim: Consumer/Platform 26.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:32.808740Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 25.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:32.964265Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 24.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:33.111440Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 23.3% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:33.300412Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 21.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:33.813666Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:34.809317Z",
+      "action": "BUY",
+      "symbol": "UBER",
+      "reason": "Entry (readiness 79.1, 4/9 conf) - score=41.8 atr%=3.93% target=$8,008 qty=107"
+    },
+    {
+      "timestamp": "2026-07-01T14:20:35.326748Z",
+      "action": "BUY",
+      "symbol": "PINS",
+      "reason": "Avg-in on PINS (readiness 82.5, avg-in score=54.9 atr%=5.10% target=$1,990 qty=88)"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:36.659478Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "Concentration trim: position 8.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:36.850704Z",
+      "action": "SELL",
+      "symbol": "UBER",
+      "reason": "Concentration trim: position 11.7% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:37.021664Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 32.8% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:37.249385Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "Sector trim: Consumer/Platform 32.1% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:37.422522Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 31.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:37.592659Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 30.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:37.760286Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 29.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:37.939315Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 28.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:38.568009Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:25:38.739526Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:40.575202Z",
+      "action": "SELL",
+      "symbol": "UBER",
+      "reason": "Concentration trim: position 8.1% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:40.743287Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 24.2% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:40.968217Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "Sector trim: Consumer/Platform 23.6% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:41.112354Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 23.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:41.264686Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 22.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:41.413355Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 21.7% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:41.559709Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 20.9% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:30:42.198095Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:39:05.739668Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 20.4% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:39:06.352988Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:39:06.499958Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:39:07.658079Z",
+      "action": "BUY",
+      "symbol": "DUOL",
+      "reason": "Entry (readiness 84.9, 4/9 conf) - score=58.8 atr%=6.39% target=$8,000 qty=64"
+    },
+    {
+      "timestamp": "2026-07-01T14:44:09.176673Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Concentration trim: position 11.6% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:44:09.325248Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Sector trim: AI/Growth 27.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:44:09.483959Z",
+      "action": "SELL",
+      "symbol": "SNOW",
+      "reason": "Sector trim: AI/Growth 25.5% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:44:10.011698Z",
+      "action": "SELL",
+      "symbol": "LMND",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T14:49:11.624569Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Concentration trim: position 8.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:49:11.767134Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Sector trim: AI/Growth 20.0% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T14:49:12.689409Z",
+      "action": "BUY",
+      "symbol": "GTLB",
+      "reason": "Avg-in on GTLB (readiness 77.7, avg-in score=56.4 atr%=4.59% target=$1,989 qty=60)"
+    },
+    {
+      "timestamp": "2026-07-01T14:49:13.070651Z",
+      "action": "BUY",
+      "symbol": "SNOW",
+      "reason": "Avg-in on SNOW (readiness 82.4, avg-in score=56.4 atr%=4.98% target=$1,990 qty=7)"
+    },
+    {
+      "timestamp": "2026-07-01T14:57:26.146190Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Sector trim: AI/Growth 20.3% > trigger 20.0%"
+    },
+    {
+      "timestamp": "2026-07-01T15:15:54.443454Z",
+      "action": "SELL",
+      "symbol": "UBER",
+      "reason": "Concentration trim: position 8.0% > trigger 8.0%"
+    },
+    {
+      "timestamp": "2026-07-01T15:16:01.202508Z",
+      "action": "BUY",
+      "symbol": "HOOD",
+      "reason": "Avg-in on HOOD (readiness 76.0, avg-in score=62.3 atr%=6.51% target=$5,423 qty=49)"
+    },
+    {
+      "timestamp": "2026-07-01T15:57:24.401915Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T16:02:10.496364Z",
+      "action": "BUY",
+      "symbol": "COIN",
+      "reason": "Entry (readiness 75.4, 4/9 conf) - score=27.1 atr%=6.43% target=$8,015 qty=48"
+    },
+    {
+      "timestamp": "2026-07-01T16:02:16.513837Z",
+      "action": "BUY",
+      "symbol": "APP",
+      "reason": "Entry (readiness 75.3, 4/9 conf) - score=46.7 atr%=5.63% target=$8,015 qty=13 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-07-01T16:07:17.942268Z",
+      "action": "SELL",
+      "symbol": "COIN",
+      "reason": "Thesis exit: MACD histogram turns negative for 2+ days"
+    },
+    {
+      "timestamp": "2026-07-01T16:07:18.092954Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Thesis exit: MACD histogram turns negative for 2+ days"
+    },
+    {
+      "timestamp": "2026-07-01T16:07:18.862836Z",
+      "action": "BUY",
+      "symbol": "APP",
+      "reason": "Avg-in on APP (readiness 75.3, avg-in score=46.7 atr%=5.64% target=$2,296 qty=3)"
+    },
+    {
+      "timestamp": "2026-07-01T16:12:27.106260Z",
+      "action": "BUY",
+      "symbol": "APP",
+      "reason": "Entry (readiness 75.3, 4/9 conf) - score=46.7 atr%=5.64% target=$8,010 qty=13"
+    },
+    {
+      "timestamp": "2026-07-01T16:20:57.325864Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 25.6% > trigger 25.0%"
+    },
+    {
+      "timestamp": "2026-07-01T16:20:58.035130Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "flat_dead_money"
+    },
+    {
+      "timestamp": "2026-07-01T16:28:58.019130Z",
+      "action": "BUY",
+      "symbol": "SHOP",
+      "reason": "Entry (readiness 76.2, 4/9 conf) - score=45.0 atr%=4.52% target=$7,998 qty=64"
+    },
+    {
+      "timestamp": "2026-07-01T16:34:53.838804Z",
+      "action": "BUY",
+      "symbol": "DUOL",
+      "reason": "Avg-in on DUOL (readiness 81.1, avg-in score=59.3 atr%=6.46% target=$2,020 qty=16)"
+    },
+    {
+      "timestamp": "2026-07-01T16:34:54.162952Z",
+      "action": "BUY",
+      "symbol": "ETSY",
+      "reason": "Avg-in on ETSY (readiness 80.4, avg-in score=59.2 atr%=3.84% target=$6,496 qty=84)"
+    },
+    {
+      "timestamp": "2026-07-01T16:56:40.506985Z",
+      "action": "BUY",
+      "symbol": "MDB",
+      "reason": "Entry (readiness 75.6, 3/9 conf) - score=47.9 atr%=5.41% target=$7,993 qty=21 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-07-01T16:56:46.464113Z",
+      "action": "BUY",
+      "symbol": "PATH",
+      "reason": "Entry (readiness 74.9, 3/9 conf) - score=45.2 atr%=4.67% target=$7,993 qty=664"
+    },
+    {
+      "timestamp": "2026-07-01T16:56:52.529113Z",
+      "action": "BUY",
+      "symbol": "ROKU",
+      "reason": "Entry (readiness 74.7, 3/9 conf) - score=61.3 atr%=3.49% target=$7,993 qty=55"
+    },
+    {
+      "timestamp": "2026-07-01T16:56:58.508543Z",
+      "action": "BUY",
+      "symbol": "UPST",
+      "reason": "Entry (readiness 73.8, 3/9 conf) - score=58.2 atr%=6.21% target=$7,993 qty=213"
+    },
+    {
+      "timestamp": "2026-07-01T16:57:05.002511Z",
+      "action": "BUY",
+      "symbol": "EXPE",
+      "reason": "Entry (readiness 73.2, 3/9 conf) - score=57.7 atr%=4.22% target=$7,993 qty=29"
+    },
+    {
+      "timestamp": "2026-07-01T16:57:11.500415Z",
+      "action": "BUY",
+      "symbol": "DDOG",
+      "reason": "Entry (readiness 72.5, 3/9 conf) - score=53.8 atr%=4.28% target=$7,993 qty=29"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:00.756237Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 43.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:00.987863Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 42.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:01.154052Z",
+      "action": "SELL",
+      "symbol": "DDOG",
+      "reason": "Sector trim: AI/Growth 41.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:01.314176Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Sector trim: AI/Growth 40.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:01.486397Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 42.9% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:01.650112Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 41.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:01.815489Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Sector trim: AI/Growth 38.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:01.972170Z",
+      "action": "SELL",
+      "symbol": "MDB",
+      "reason": "Sector trim: AI/Growth 37.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:02.124495Z",
+      "action": "SELL",
+      "symbol": "PATH",
+      "reason": "Sector trim: AI/Growth 35.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:02.323955Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 39.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:02.580286Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "Sector trim: Consumer/Platform 38.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:02.738569Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 36.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:02.888405Z",
+      "action": "SELL",
+      "symbol": "SNOW",
+      "reason": "Sector trim: AI/Growth 34.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:03:03.043876Z",
+      "action": "SELL",
+      "symbol": "UBER",
+      "reason": "Sector trim: Consumer/Platform 34.7% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:14.938777Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 32.7% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:15.292004Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 32.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:15.448997Z",
+      "action": "SELL",
+      "symbol": "DDOG",
+      "reason": "Sector trim: AI/Growth 31.3% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:15.606252Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Sector trim: AI/Growth 30.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:15.763221Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 32.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:15.924289Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 31.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:24.262703Z",
+      "action": "BUY",
+      "symbol": "SOFI",
+      "reason": "Entry (readiness 73.6, 3/9 conf) - score=51.2 atr%=4.81% target=$558 qty=29"
+    },
+    {
+      "timestamp": "2026-07-01T17:20:30.427627Z",
+      "action": "BUY",
+      "symbol": "EXPE",
+      "reason": "Avg-in on EXPE (readiness 75.7, avg-in score=57.4 atr%=4.23% target=$3,220 qty=11)"
+    },
+    {
+      "timestamp": "2026-07-01T17:25:32.710443Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 32.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:25:32.866523Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 32.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:25:33.008966Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 31.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:25:39.729454Z",
+      "action": "BUY",
+      "symbol": "SPOT",
+      "reason": "Entry (readiness 73.0, 3/9 conf) - score=41.6 atr%=3.84% target=$3,354 qty=6"
+    },
+    {
+      "timestamp": "2026-07-01T17:30:42.445254Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 32.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:30:42.619473Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 32.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:30:42.782411Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 31.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:30:42.943131Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 30.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:30:50.074477Z",
+      "action": "BUY",
+      "symbol": "MDB",
+      "reason": "Avg-in on MDB (readiness 75.6, avg-in score=48.0 atr%=5.41% target=$2,858 qty=7)"
+    },
+    {
+      "timestamp": "2026-07-01T17:39:07.217338Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 31.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:39:07.363473Z",
+      "action": "SELL",
+      "symbol": "DDOG",
+      "reason": "Sector trim: AI/Growth 30.9% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:39:07.764405Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Sector trim: AI/Growth 30.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:39:14.534174Z",
+      "action": "BUY",
+      "symbol": "CRWD",
+      "reason": "Entry (readiness 72.4, 4/9 conf) - score=54.9 atr%=4.14% target=$2,738 qty=3"
+    },
+    {
+      "timestamp": "2026-07-01T17:39:20.668885Z",
+      "action": "BUY",
+      "symbol": "PATH",
+      "reason": "Avg-in on PATH (readiness 72.2, avg-in score=45.8 atr%=4.66% target=$951 qty=78)"
+    },
+    {
+      "timestamp": "2026-07-01T17:39:26.542888Z",
+      "action": "BUY",
+      "symbol": "ROKU",
+      "reason": "Avg-in on ROKU (readiness 74.8, avg-in score=61.2 atr%=3.50% target=$2,088 qty=14)"
+    },
+    {
+      "timestamp": "2026-07-01T17:44:28.549139Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 31.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:44:28.688761Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 31.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:44:28.823686Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Sector trim: AI/Growth 30.9% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:44:28.958199Z",
+      "action": "SELL",
+      "symbol": "DDOG",
+      "reason": "Sector trim: AI/Growth 30.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:44:29.090987Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 31.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:44:29.230094Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 30.9% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:44:35.482089Z",
+      "action": "BUY",
+      "symbol": "CRWD",
+      "reason": "Avg-in on CRWD (readiness 72.4, avg-in score=54.9 atr%=4.14% target=$1,766 qty=2)"
+    },
+    {
+      "timestamp": "2026-07-01T17:49:38.131971Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 31.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:49:38.277994Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Sector trim: AI/Growth 30.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T17:49:45.154513Z",
+      "action": "BUY",
+      "symbol": "SOFI",
+      "reason": "Avg-in on SOFI (readiness 73.6, avg-in score=52.1 atr%=4.85% target=$2,893 qty=151)"
+    },
+    {
+      "timestamp": "2026-07-01T17:58:08.324956Z",
+      "action": "BUY",
+      "symbol": "SPOT",
+      "reason": "Avg-in on SPOT (readiness 72.9, avg-in score=41.6 atr%=3.85% target=$1,414 qty=2)"
+    },
+    {
+      "timestamp": "2026-07-01T18:03:10.252882Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 30.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T18:03:10.421085Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 30.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T18:03:10.606518Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 30.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T18:03:13.031412Z",
+      "action": "BUY",
+      "symbol": "UBER",
+      "reason": "Avg-in on UBER (readiness 80.1, avg-in score=41.8 atr%=4.00% target=$608 qty=8)"
+    },
+    {
+      "timestamp": "2026-07-01T18:16:39.452325Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 30.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T18:45:17.656878Z",
+      "action": "BUY",
+      "symbol": "CAT",
+      "reason": "Entry (readiness 73.8, 3/9 conf) - score=62.9 atr%=4.46% target=$1,432 qty=1"
+    },
+    {
+      "timestamp": "2026-07-01T18:53:31.135717Z",
+      "action": "SELL",
+      "symbol": "CAT",
+      "reason": "VWAP stop: -2.4% below VWAP $1011.61"
+    },
+    {
+      "timestamp": "2026-07-01T19:11:57.848935Z",
+      "action": "BUY",
+      "symbol": "AFRM",
+      "reason": "Entry (readiness 72.4, 4/9 conf) - score=65.4 atr%=5.23% target=$1,449 qty=16"
+    },
+    {
+      "timestamp": "2026-07-01T19:30:21.076560Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "VWAP stop: -2.1% below VWAP $74.62"
+    },
+    {
+      "timestamp": "2026-07-01T19:35:26.731300Z",
+      "action": "BUY",
+      "symbol": "ETSY",
+      "reason": "Entry (readiness 80.3, 3/9 conf) - score=56.1 atr%=4.07% target=$1,555 qty=20"
+    },
+    {
+      "timestamp": "2026-07-01T19:35:32.673182Z",
+      "action": "BUY",
+      "symbol": "PLTR",
+      "reason": "Entry (readiness 72.8, 4/9 conf) - score=27.3 atr%=5.03% target=$1,555 qty=12"
+    },
+    {
+      "timestamp": "2026-07-01T19:35:38.663925Z",
+      "action": "BUY",
+      "symbol": "S",
+      "reason": "Entry (readiness 72.1, 3/9 conf) - score=52.9 atr%=4.06% target=$1,555 qty=85"
+    },
+    {
+      "timestamp": "2026-07-01T19:40:41.109019Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 30.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T19:40:41.310651Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 32.7% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T19:40:41.449971Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Sector trim: AI/Growth 32.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T19:40:41.615488Z",
+      "action": "SELL",
+      "symbol": "DDOG",
+      "reason": "Sector trim: AI/Growth 31.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T19:40:41.751023Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Sector trim: AI/Growth 31.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T19:40:41.897151Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 30.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-01T19:40:42.037966Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Sector trim: AI/Growth 30.3% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T13:33:34.513224Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -75.1% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T13:33:34.710329Z",
+      "action": "SELL",
+      "symbol": "SPOT",
+      "reason": "Thesis exit: price falls below 20d EMA"
+    },
+    {
+      "timestamp": "2026-07-02T13:33:34.912833Z",
+      "action": "SELL",
+      "symbol": "PLTR",
+      "reason": "Thesis exit: price falls below 20d EMA"
+    },
+    {
+      "timestamp": "2026-07-02T13:41:36.031339Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.9% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T13:41:36.278012Z",
+      "action": "SELL",
+      "symbol": "MDB",
+      "reason": "Thesis exit: MACD histogram turns negative for 2+ days"
+    },
+    {
+      "timestamp": "2026-07-02T13:41:39.167857Z",
+      "action": "BUY",
+      "symbol": "NKE",
+      "reason": "Entry (readiness 78.1, 4/9 conf) - score=47.3 atr%=3.27% target=$5,735 qty=126"
+    },
+    {
+      "timestamp": "2026-07-02T13:41:45.282259Z",
+      "action": "BUY",
+      "symbol": "NET",
+      "reason": "Entry (readiness 76.0, 3/9 conf) - score=45.3 atr%=4.47% target=$5,735 qty=23"
+    },
+    {
+      "timestamp": "2026-07-02T13:41:51.318842Z",
+      "action": "BUY",
+      "symbol": "SPOT",
+      "reason": "Entry (readiness 73.8, 3/9 conf) - score=44.5 atr%=3.69% target=$5,735 qty=11"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:53.831864Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.9% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:54.035938Z",
+      "action": "SELL",
+      "symbol": "DUOL",
+      "reason": "Trailing stop: -5.5% from peak $123.61 (limit -5.0%)"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:54.250096Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 34.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:54.451590Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 34.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:54.663534Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 33.7% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:54.865911Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 33.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:55.066423Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "Sector trim: Consumer/Platform 32.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T13:46:55.286444Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 30.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T13:51:57.056445Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.8% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T13:59:53.711016Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.3% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:04:57.813729Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.4% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:10:03.197530Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.6% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:18:07.382407Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.5% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:23:12.190911Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.4% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:28:16.652429Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.5% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:28:16.863002Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "VWAP stop: -2.9% below VWAP $18.69"
+    },
+    {
+      "timestamp": "2026-07-02T14:36:23.506808Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.6% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:36:34.177299Z",
+      "action": "BUY",
+      "symbol": "PLTR",
+      "reason": "Entry (readiness 72.5, 3/9 conf) - score=30.7 atr%=5.03% target=$2,437 qty=18"
+    },
+    {
+      "timestamp": "2026-07-02T14:36:40.622546Z",
+      "action": "BUY",
+      "symbol": "ELF",
+      "reason": "Entry (readiness 72.3, 3/9 conf) - score=64.1 atr%=5.65% target=$2,437 qty=31"
+    },
+    {
+      "timestamp": "2026-07-02T14:41:44.082128Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.7% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:46:46.087375Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.7% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:46:46.297862Z",
+      "action": "SELL",
+      "symbol": "ELF",
+      "reason": "VWAP stop: -2.1% below VWAP $77.07"
+    },
+    {
+      "timestamp": "2026-07-02T14:54:49.713939Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.7% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T14:59:53.930869Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.6% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T15:04:58.503357Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.7% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T15:04:58.713112Z",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "reason": "VWAP stop: -2.8% below VWAP $117.15"
+    },
+    {
+      "timestamp": "2026-07-02T15:13:11.813752Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.5% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T15:13:14.130313Z",
+      "action": "BUY",
+      "symbol": "SOFI",
+      "reason": "Entry (readiness 79.4, 3/9 conf) - score=52.4 atr%=5.24% target=$8,402 qty=458"
+    },
+    {
+      "timestamp": "2026-07-02T15:13:20.292389Z",
+      "action": "BUY",
+      "symbol": "MDB",
+      "reason": "Entry (readiness 77.8, 3/9 conf) - score=51.7 atr%=5.39% target=$8,402 qty=23"
+    },
+    {
+      "timestamp": "2026-07-02T15:13:26.212852Z",
+      "action": "BUY",
+      "symbol": "ABNB",
+      "reason": "Entry (readiness 76.3, 3/9 conf) - score=58.3 atr%=3.18% target=$8,402 qty=55"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:28.969988Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "VWAP stop: -2.1% below VWAP $559.80"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:29.170713Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.6% from peak $775.98 (limit -8.3%)"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:29.377935Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "VWAP stop: -3.1% below VWAP $18.43"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:29.689691Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 38.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:29.966769Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Sector trim: AI/Growth 33.3% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:30.216896Z",
+      "action": "SELL",
+      "symbol": "DDOG",
+      "reason": "Sector trim: AI/Growth 33.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:30.442716Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 36.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:30.684864Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 35.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:30.940035Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Sector trim: AI/Growth 32.9% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:31.153082Z",
+      "action": "SELL",
+      "symbol": "MDB",
+      "reason": "Sector trim: AI/Growth 32.3% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:31.386783Z",
+      "action": "SELL",
+      "symbol": "NET",
+      "reason": "Sector trim: AI/Growth 30.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:31.628832Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 35.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:31.972305Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "Sector trim: Consumer/Platform 35.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:32.185868Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 33.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:32.429959Z",
+      "action": "SELL",
+      "symbol": "SPOT",
+      "reason": "Sector trim: Consumer/Platform 32.7% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:18:32.667358Z",
+      "action": "SELL",
+      "symbol": "UBER",
+      "reason": "Sector trim: Consumer/Platform 30.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:23:38.777001Z",
+      "action": "BUY",
+      "symbol": "SOFI",
+      "reason": "Entry (readiness 79.4, 3/9 conf) - score=52.4 atr%=5.26% target=$5,955 qty=326"
+    },
+    {
+      "timestamp": "2026-07-02T15:23:39.481156Z",
+      "action": "BUY",
+      "symbol": "APP",
+      "reason": "Entry (readiness 78.5, 3/9 conf) - score=48.3 atr%=5.95% target=$5,955 qty=10"
+    },
+    {
+      "timestamp": "2026-07-02T15:23:45.548591Z",
+      "action": "BUY",
+      "symbol": "CRWD",
+      "reason": "Entry (readiness 77.2, 4/9 conf) - score=59.8 atr%=3.89% target=$5,955 qty=29"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:13.192204Z",
+      "action": "SELL",
+      "symbol": "CRWD",
+      "reason": "Trailing stop: -74.6% from peak $775.98 (limit -7.8%)"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:13.462371Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "Sector trim: AI/Growth 40.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:13.752925Z",
+      "action": "SELL",
+      "symbol": "DDOG",
+      "reason": "Sector trim: AI/Growth 37.3% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:14.034293Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "Sector trim: AI/Growth 37.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:14.234851Z",
+      "action": "SELL",
+      "symbol": "MDB",
+      "reason": "Sector trim: AI/Growth 36.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:14.444667Z",
+      "action": "SELL",
+      "symbol": "NET",
+      "reason": "Sector trim: AI/Growth 35.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:14.660971Z",
+      "action": "SELL",
+      "symbol": "PATH",
+      "reason": "Sector trim: AI/Growth 34.4% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:14.867784Z",
+      "action": "SELL",
+      "symbol": "PLTR",
+      "reason": "Sector trim: AI/Growth 33.1% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:15.079334Z",
+      "action": "SELL",
+      "symbol": "S",
+      "reason": "Sector trim: AI/Growth 32.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T15:33:15.309218Z",
+      "action": "SELL",
+      "symbol": "SNOW",
+      "reason": "Sector trim: AI/Growth 32.3% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:01:42.586163Z",
+      "action": "SELL",
+      "symbol": "APP",
+      "reason": "VWAP stop: -2.3% below VWAP $556.04"
+    },
+    {
+      "timestamp": "2026-07-02T16:15:36.764320Z",
+      "action": "BUY",
+      "symbol": "COIN",
+      "reason": "Entry (readiness 77.5, 4/9 conf) - score=37.3 atr%=6.58% target=$4,152 qty=24"
+    },
+    {
+      "timestamp": "2026-07-02T16:20:39.547124Z",
+      "action": "SELL",
+      "symbol": "COIN",
+      "reason": "VWAP stop: -3.0% below VWAP $169.35"
+    },
+    {
+      "timestamp": "2026-07-02T16:30:35.069239Z",
+      "action": "BUY",
+      "symbol": "ABNB",
+      "reason": "Avg-in on ABNB (readiness 79.3, avg-in score=58.9 atr%=3.21% target=$1,593 qty=10)"
+    },
+    {
+      "timestamp": "2026-07-02T16:30:35.639085Z",
+      "action": "BUY",
+      "symbol": "DDOG",
+      "reason": "Avg-in on DDOG (readiness 78.6, avg-in score=60.3 atr%=4.36% target=$1,133 qty=4)"
+    },
+    {
+      "timestamp": "2026-07-02T16:30:41.404714Z",
+      "action": "BUY",
+      "symbol": "GTLB",
+      "reason": "Avg-in on GTLB (readiness 77.1, avg-in score=57.1 atr%=4.61% target=$2,040 qty=62)"
+    },
+    {
+      "timestamp": "2026-07-02T16:35:44.082494Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "Trailing stop: -5.0% from peak $36.89 (limit -5.0%)"
+    },
+    {
+      "timestamp": "2026-07-02T16:35:44.302299Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 30.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:40:48.329261Z",
+      "action": "BUY",
+      "symbol": "ETSY",
+      "reason": "Avg-in on ETSY (readiness 85.7, avg-in score=63.4 atr%=4.06% target=$6,819 qty=89)"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:54.396705Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 35.6% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:54.604128Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 34.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:54.807066Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 32.3% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:55.011977Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 32.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:55.252990Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "Sector trim: Consumer/Platform 31.8% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:55.503771Z",
+      "action": "SELL",
+      "symbol": "SHOP",
+      "reason": "Sector trim: Consumer/Platform 30.7% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:57.739912Z",
+      "action": "BUY",
+      "symbol": "DUOL",
+      "reason": "Entry (readiness 88.3, 7/9 conf) - score=60.4 atr%=6.42% target=$2,700 qty=21"
+    },
+    {
+      "timestamp": "2026-07-02T16:48:58.389537Z",
+      "action": "BUY",
+      "symbol": "UPST",
+      "reason": "Entry (readiness 80.7, 6/9 conf) - score=58.5 atr%=6.39% target=$2,700 qty=75 | intraday: intraday mixed \u2014 size reduced to 0.8x"
+    },
+    {
+      "timestamp": "2026-07-02T16:49:04.257665Z",
+      "action": "BUY",
+      "symbol": "CHWY",
+      "reason": "Entry (readiness 75.4, 6/9 conf) - score=32.7 atr%=4.58% target=$2,700 qty=126"
+    },
+    {
+      "timestamp": "2026-07-02T16:54:06.947253Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "Sector trim: Consumer/Platform 34.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:54:07.200505Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "Sector trim: Consumer/Platform 32.9% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:54:07.418142Z",
+      "action": "SELL",
+      "symbol": "ETSY",
+      "reason": "Sector trim: Consumer/Platform 31.9% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:54:07.634627Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "Sector trim: Consumer/Platform 30.5% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:54:07.840706Z",
+      "action": "SELL",
+      "symbol": "PINS",
+      "reason": "Sector trim: Consumer/Platform 30.2% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:54:08.047713Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "Sector trim: Consumer/Platform 30.0% > trigger 30.0%"
+    },
+    {
+      "timestamp": "2026-07-02T16:59:09.895718Z",
+      "action": "SELL",
+      "symbol": "SOFI",
+      "reason": "Trailing stop: -5.1% from peak $18.99 (limit -5.0%)"
+    },
+    {
+      "timestamp": "2026-07-02T16:59:10.107524Z",
+      "action": "SELL",
+      "symbol": "UPST",
+      "reason": "Trailing stop: -5.2% from peak $36.89 (limit -5.0%)"
+    },
+    {
+      "timestamp": "2026-07-02T17:11:06.324169Z",
+      "action": "SELL",
+      "symbol": "S",
+      "reason": "MAX_POSITIONS auto-trim (#1/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:11:06.641565Z",
+      "action": "SELL",
+      "symbol": "CHWY",
+      "reason": "MAX_POSITIONS auto-trim (#2/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:11:06.860689Z",
+      "action": "SELL",
+      "symbol": "AFRM",
+      "reason": "MAX_POSITIONS auto-trim (#3/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:16:08.503962Z",
+      "action": "SELL",
+      "symbol": "EXPE",
+      "reason": "MAX_POSITIONS auto-trim (#1/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:16:08.722783Z",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "reason": "MAX_POSITIONS auto-trim (#2/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:16:09.082075Z",
+      "action": "SELL",
+      "symbol": "PLTR",
+      "reason": "MAX_POSITIONS auto-trim (#3/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:21:10.585145Z",
+      "action": "SELL",
+      "symbol": "NET",
+      "reason": "MAX_POSITIONS auto-trim (#1/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:21:10.795020Z",
+      "action": "SELL",
+      "symbol": "GTLB",
+      "reason": "MAX_POSITIONS auto-trim (#2/3)"
+    },
+    {
+      "timestamp": "2026-07-02T17:21:11.003500Z",
+      "action": "SELL",
+      "symbol": "ABNB",
+      "reason": "MAX_POSITIONS auto-trim (#3/3)"
+    }
+  ]
+}

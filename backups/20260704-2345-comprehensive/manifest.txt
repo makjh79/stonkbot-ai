@@ -1,0 +1,17 @@
+total 1696
+drwxr-xr-x  2 root root   4096 Jul  4 15:44 .
+drwxr-xr-x 61 root root  12288 Jul  4 15:44 ..
+-rw-------  1 root root 145329 Jul  4 15:44 ai_watchlist_live.json
+-rw-r--r--  1 root root  44796 Jul  4 15:44 comprehensive_monitor.py
+-rwxr-xr-x  1 root root  24645 Jul  4 15:44 dynamic_watchlist_manager.py
+-rw-r--r--  1 root root  34095 Jul  4 15:44 fetch_ai_watchlist.py
+-rw-r--r--  1 root root  32263 Jul  4 15:44 generate_popup_content_v3_full.py
+-rw-r--r--  1 root root  60353 Jul  4 15:44 generate_popup_content_v3.py
+-rw-r--r--  1 root root 626589 Jul  4 15:44 index.html
+-rw-r--r--  1 root root      0 Jul  4 15:44 manifest.txt
+-rw-r--r--  1 root root  66973 Jul  4 15:44 popup_content.json
+-rw-------  1 root root  24780 Jul  4 15:44 readiness_score.py
+-rw-r--r--  1 root root    679 Jul  4 15:44 run_signal_engine.py
+-rw-r--r--  1 root root  43792 Jul  4 15:44 signal_engine.py
+-rw-r--r--  1 root root 526797 Jul  4 15:44 signals.json
+-rw-r--r--  1 root root  64130 Jul  4 15:44 watchlist_narratives.json

@@ -1,0 +1,12 @@
+{
+  "tracked": [],
+  "stats": {
+    "total_tracked": 0,
+    "now_tier_accuracy": 0,
+    "watch_tier_accuracy": 0,
+    "monitor_tier_accuracy": 0,
+    "avg_return_now_10d": 0,
+    "avg_return_watch_10d": 0
+  },
+  "last_run": "2026-07-03T22:30:01.482135Z"
+}

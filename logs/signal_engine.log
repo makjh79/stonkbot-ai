@@ -1,0 +1,75 @@
+INFO:__main__:Generating signals for 130 symbols...
+INFO:__main__:Loaded options sentiment for 30 symbols
+INFO:__main__:Generated 125 signals. Top: ABNB (readiness=83.4)
+INFO:__main__:Signal merge: 125 momentum + 2 mean reversion = 125 total (removed 2 duplicates)
+INFO:__main__:Saved 125 signals to /opt/stonk-ai/signals.json
+# 1 ABNB  readiness=83.4 tier=STRONG_NOW score=55.8 conf=5/5 entry=YES
+# 2 MU    readiness=82.9 tier=STRONG_NOW score=66.6 conf=3/5 entry=YES
+# 3 SHOP  readiness=82.9 tier=STRONG_NOW score=44.5 conf=5/5 entry=YES
+# 4 AMD   readiness=82.8 tier=STRONG_NOW score=56.8 conf=4/5 entry=YES
+# 5 UBER  readiness=81.6 tier=STRONG_NOW score=52.9 conf=5/5 entry=YES
+# 6 SOFI  readiness=81.0 tier=STRONG_NOW score=53.6 conf=4/5 entry=YES
+# 7 TER   readiness=80.9 tier=STRONG_NOW score=64.6 conf=3/5 entry=YES
+# 8 HOOD  readiness=80.6 tier=STRONG_NOW score=61.3 conf=4/5 entry=YES
+# 9 ROKU  readiness=80.6 tier=STRONG_NOW score=57.3 conf=3/5 entry=YES
+#10 KLAC  readiness=80.0 tier=STRONG_NOW score=65.3 conf=3/5 entry=YES
+INFO:__main__:Generating signals for 130 symbols...
+INFO:__main__:Loaded options sentiment for 30 symbols
+INFO:__main__:Generated 125 signals. Top: AMD (readiness=82.1)
+INFO:__main__:Signal merge: 125 momentum + 1 mean reversion = 125 total (removed 1 duplicates)
+INFO:__main__:Saved 125 signals to /opt/stonk-ai/signals.json
+# 1 AMD   readiness=82.1 tier=STRONG_NOW score=62.2 conf=4/5 entry=YES
+# 2 MU    readiness=81.5 tier=STRONG_NOW score=68.0 conf=3/5 entry=YES
+# 3 TER   readiness=80.9 tier=STRONG_NOW score=67.8 conf=5/5 entry=YES
+# 4 UPST  readiness=79.9 tier=STRONG_NOW score=55.2 conf=4/5 entry=YES
+# 5 LRCX  readiness=79.0 tier=STRONG_NOW score=68.5 conf=4/5 entry=YES
+# 6 HOOD  readiness=78.9 tier=STRONG_NOW score=61.1 conf=3/5 entry=YES
+# 7 SOFI  readiness=78.8 tier=STRONG_NOW score=50.6 conf=4/5 entry=YES
+# 8 HD    readiness=76.3 tier=NOW     score=62.1 conf=3/5 entry=YES
+# 9 KLAC  readiness=76.2 tier=NOW     score=67.8 conf=4/5 entry=YES
+#10 MRVL  readiness=74.4 tier=NOW     score=59.3 conf=2/5 entry=YES
+INFO:__main__:Generating signals for 130 symbols...
+INFO:__main__:Loaded options sentiment for 30 symbols
+INFO:__main__:Generated 125 signals. Top: MRVL (readiness=82.6)
+INFO:__main__:Signal merge: 125 momentum + 0 mean reversion = 125 total (removed 0 duplicates)
+INFO:__main__:Saved 125 signals to /opt/stonk-ai/signals.json
+# 1 MRVL  readiness=82.6 tier=STRONG_NOW score=64.5 conf=3/5 entry=NO 
+# 2 MU    readiness=82.0 tier=STRONG_NOW score=67.1 conf=3/5 entry=NO 
+# 3 SOFI  readiness=80.4 tier=STRONG_NOW score=47.1 conf=4/5 entry=YES
+# 4 AMD   readiness=79.8 tier=STRONG_NOW score=67.2 conf=4/5 entry=YES
+# 5 HD    readiness=79.0 tier=STRONG_NOW score=63.5 conf=3/5 entry=NO 
+# 6 AFRM  readiness=78.6 tier=STRONG_NOW score=66.8 conf=3/5 entry=NO 
+# 7 UPST  readiness=78.6 tier=STRONG_NOW score=58.8 conf=4/5 entry=YES
+# 8 HOOD  readiness=78.1 tier=STRONG_NOW score=61.6 conf=3/5 entry=NO 
+# 9 TER   readiness=77.6 tier=NOW     score=68.2 conf=4/5 entry=YES
+#10 LRCX  readiness=77.0 tier=NOW     score=69.2 conf=4/5 entry=YES
+INFO:__main__:Generating signals for 130 symbols...
+INFO:__main__:Loaded options sentiment for 30 symbols
+INFO:__main__:Generated 125 signals. Top: SNOW (readiness=82.4)
+INFO:__main__:Signal merge: 125 momentum + 0 mean reversion = 125 total (removed 0 duplicates)
+INFO:__main__:Saved 125 signals to /opt/stonk-ai/signals.json
+# 1 SNOW  readiness=82.4 tier=STRONG_NOW score=56.4 conf=5/5 entry=YES
+# 2 PINS  readiness=82.4 tier=STRONG_NOW score=54.5 conf=4/5 entry=YES
+# 3 ETSY  readiness=81.6 tier=STRONG_NOW score=58.1 conf=3/5 entry=NO 
+# 4 DUOL  readiness=80.3 tier=STRONG_NOW score=58.4 conf=3/5 entry=NO 
+# 5 GTLB  readiness=80.2 tier=STRONG_NOW score=53.2 conf=4/5 entry=YES
+# 6 UBER  readiness=78.2 tier=STRONG_NOW score=40.8 conf=3/5 entry=NO 
+# 7 HD    readiness=77.8 tier=NOW     score=61.4 conf=3/5 entry=NO 
+# 8 HOOD  readiness=77.4 tier=NOW     score=62.2 conf=4/5 entry=YES
+# 9 ABNB  readiness=77.0 tier=NOW     score=60.1 conf=3/5 entry=NO 
+#10 SHOP  readiness=76.2 tier=NOW     score=44.0 conf=4/5 entry=YES
+INFO:__main__:Generating signals for 130 symbols...
+INFO:__main__:Loaded options sentiment for 30 symbols
+INFO:__main__:Generated 125 signals. Top: UBER (readiness=87.8)
+INFO:__main__:Signal merge: 125 momentum + 1 mean reversion = 125 total (removed 1 duplicates)
+INFO:__main__:Saved 125 signals to /opt/stonk-ai/signals.json
+# 1 UBER  readiness=87.8 tier=STRONG_NOW score=48.7 conf=8/5 entry=YES
+# 2 SNOW  readiness=85.9 tier=STRONG_NOW score=62.8 conf=8/5 entry=YES
+# 3 DUOL  readiness=85.5 tier=STRONG_NOW score=61.8 conf=6/5 entry=YES
+# 4 ETSY  readiness=85.1 tier=STRONG_NOW score=64.5 conf=6/5 entry=YES
+# 5 MDB   readiness=82.4 tier=STRONG_NOW score=52.0 conf=6/5 entry=YES
+# 6 SOFI  readiness=82.1 tier=STRONG_NOW score=53.8 conf=7/5 entry=YES
+# 7 UPST  readiness=81.9 tier=STRONG_NOW score=60.5 conf=6/5 entry=YES
+# 8 NKE   readiness=81.5 tier=STRONG_NOW score=45.9 conf=7/5 entry=YES
+# 9 PINS  readiness=81.3 tier=STRONG_NOW score=55.9 conf=7/5 entry=YES
+#10 NET   readiness=79.8 tier=STRONG_NOW score=47.3 conf=5/5 entry=YES

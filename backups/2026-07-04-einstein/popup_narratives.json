@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-07-04T05:53:17.251583Z",
+  "holdings": {
+    "DDOG": {
+      "whatItIs": "Cloud monitoring platform that watches servers, apps, and databases so engineers know what's broken before customers do.",
+      "whyWeOwnIt": "Every company runs on cloud infrastructure now, and someone has to keep the lights on. Datadog's usage-based model scales with their customers' growth, and multi-cloud complexity keeps deepening. The bill only grows as systems get more complicated.",
+      "howItsDoing": "Sitting just below breakeven since entry with decent 20-day momentum but RSI near 68 says it's starting to look stretched. Price hugging VWAP tightly.",
+      "catalyst": "Any surprise expansion in AI infrastructure spending flows straight to observability budgets. Earnings upside usually comes from customers adding more modules.",
+      "risk": "The cloud optimization squeeze is real\u2014customers are actively trying to cut their usage bills, which hits Datadog's revenue directly. Grafana is eating the low end and Splunk's still a force in enterprise. At 67% implied vol, you're paying up for any surprise."
+    },
+    "DUOL": {
+      "whatItIs": "Language learning app that turned flashcards into a dopamine-driven daily habit for 100 million monthly users.",
+      "whyWeOwnIt": "Subscription businesses with this level of engagement don't grow on trees. They're using AI to generate lessons faster and cheaper than human translators, which should expand margins while keeping content fresh. DAU growth has been the engine, and monetization is still early outside English speakers.",
+      "howItsDoing": "Up 3% since entry with strong 17% 20-day momentum pushing it above VWAP. MACD negative divergence is worth watching\u2014momentum might be cooling even as price lifts.",
+      "catalyst": "New tier launches or AI tutor features could change the pricing story entirely. International markets are barely monetized compared to the core US base.",
+      "risk": "ChatGPT and Claude are already decent language tutors for free, and the gap closes fast. The market for dedicated language apps might be smaller than it looks, especially if casual learners just use AI chat instead. 58% volatility says the stock moves hard on any narrative shift."
+    },
+    "ETSY": {
+      "whatItIs": "Online marketplace connecting buyers with independent artisans, vintage sellers, and custom makers.",
+      "whyWeOwnIt": "The pandemic boom finally washed out and the stock got cheap enough to matter. Flywheel effects still work\u2014more buyers attract more sellers, more sellers improve selection. Fee increases were controversial but they're sticking, and margins are proving more durable than feared.",
+      "howItsDoing": "Up 2.5% since entry with solid 15% 20-day momentum. Clear break above VWAP and EMA, though RSI at 65 suggests we're not early anymore.",
+      "catalyst": "Any stabilization in gross merchandise value trends would reset the narrative hard. Holiday quarters are make-or-break for this business.",
+      "risk": "GMV has been decelerating for two years straight, and seller backlash on fee hikes wasn't just noise. Amazon Handmade and eBay are happy to undercut them on take rates. If the artisan story loses authenticity, there's not much left."
+    },
+    "HD": {
+      "whatItIs": "The unchallenged king of home improvement retail, running a fortress balance sheet through 2,300 big-box stores.",
+      "whyWeOwnIt": "Housing turnover will eventually thaw, and when it does, Home Depot\u6355\u83b7 more spending than anyone. Their Pro business is sticky as hell\u2014contractors don't switch suppliers for a few basis points. Margins held up even through the worst of the DIY normalization.",
+      "howItsDoing": "Up 3% since entry with 15% 20-day momentum, but RSI at 71 is flashing overheated. Sitting above VWAP and EMA with positive MACD, so trend is friend until it isn't.",
+      "catalyst": "Rate cuts accelerating housing activity is the obvious one, but even stabilization in existing home sales would help. Pro penetration keeps climbing steadily.",
+      "risk": "High rates have frozen housing turnover for longer than anyone expected, and the DIY pandemic binge created tough year-over-year compares. Lumber volatility can whipsaw gross margins quarter to quarter. At these RSI levels, good news is already priced in."
+    },
+    "MDB": {
+      "whatItIs": "Developer-favorite database software for handling messy, unstructured data that traditional systems choke on.",
+      "whyWeOwnIt": "Atlas cloud revenue growing 30%-plus is the cleanest growth story in infrastructure software. Developers choose MongoDB before procurement gets involved, which is how you build durable enterprise adoption. The shift away from legacy databases is a decade-long tailwind.",
+      "howItsDoing": "Basically flat since entry with recent 20-day momentum turning negative. Volume spike worth noting\u2014someone's active. Price sitting just under VWAP after failing to hold it.",
+      "catalyst": "Atlas growth reacceleration or new AI-vector database features could reignite the multiple. Developer conferences often drive product announcement cycles.",
+      "risk": "Atlas deceleration is the bear case everyone watches, and Snowflake plus Databricks aren't standing still. Mongo's valuation assumes growth stays premium, so any crack gets punished hard. At 66% volatility and negative MACD, this needs a narrative reset soon."
+    },
+    "NKE": {
+      "whatItIs": "The world's most recognized sportswear brand, selling shoes and apparel through wholesale, retail, and increasingly direct online channels.",
+      "whyWeOwnIt": "Stock got cut in half and finally found a floor near multi-year support. Brand power is real even when execution stumbles. China will eventually turn, and when it does, Nike's distribution scale there is unmatched by any Western rival.",
+      "howItsDoing": "Down slightly since entry, stuck in a rut with flat 20-day momentum. Volume and relative volume both spiking\u2014something's shifting. Price hovering just under VWAP with negative MACD, so sellers still have edge.",
+      "catalyst": "New product cycle with innovation in running and basketball could rebuild hype. China stimulus or consumption recovery would flow disproportionately here.",
+      "risk": "China demand isn't just weak, it's structurally uncertain with local competition rising. Inventory glut from 2022 still haunts margins, and the DTC pivot burned cash without delivering promised profitability. At this volatility, you're betting on a turnaround in a stock that hasn't shown it can sustain one."
+    },
+    "PATH": {
+      "whatItIs": "UiPath builds software robots that automate repetitive office tasks like data entry and form processing.",
+      "whyWeOwnIt": "Enterprise automation is still early innings, and UiPath owns the brand in RPA. AI integration could expand use cases beyond simple bots to smarter workflows. We're watching for a profitability pivot that justifies the growth multiple.",
+      "howItsDoing": "Flat since entry, hovering just above VWAP with momentum barely positive. MACD negative suggests short-term fatigue after recent run.",
+      "catalyst": "Any proof that AI-enhanced automation drives larger deal sizes or faster customer expansion. Enterprise pilots converting to paid contracts would move the needle.",
+      "risk": "AI agents from OpenAI and Microsoft could make basic RPA obsolete faster than expected. Growth has already decelerated, and the path to sustained profitability is unproven. Stop sits at $10.62 to limit damage if the thesis breaks."
+    },
+    "PINS": {
+      "whatItIs": "Pinterest is a visual discovery platform where users find ideas and increasingly buy products directly.",
+      "whyWeOwnIt": "Ad recovery is real, and the Amazon partnership turns intent into transactions with better attribution. Visual search creates a differentiated ad environment that brands actually want. This is our NOW-tier active position with momentum confirming.",
+      "howItsDoing": "Up 1.1% since entry, sitting above VWAP and EMA with positive MACD. Momentum building over 20 days without chasing.",
+      "catalyst": "Amazon partnership revenue ramp in coming quarters would prove the commerce vision. Advertisers shifting budget from underperforming platforms is a near-term tailwind.",
+      "risk": "User growth in core markets has plateaued, so monetization must carry the story. Amazon revenue share terms are undisclosed and could disappoint. Ad spend remains economically sensitive. Stop at $19.65 protects capital."
+    },
+    "SHOP": {
+      "whatItIs": "Shopify provides the tools for small and mid-sized businesses to build online stores and process payments.",
+      "whyWeOwnIt": "Merchant solutions revenue keeps growing as the installed base deepens engagement. Margin turnaround from 2022's cost bloat is underway but not fully priced. This is a watch position waiting for cleaner entry.",
+      "howItsDoing": "Down 1.5% from entry, now below VWAP despite positive 20-day momentum. MACD positive but price action weakens the signal.",
+      "catalyst": "Evidence that take rate stability holds while gross margin expands. Any acceleration in merchant additions or enterprise Plus segment wins.",
+      "risk": "SMBs fail faster in downturns, directly hitting subscription revenue. Amazon and WooCommerce compete aggressively on price and features. Take rate pressure from payment processing competition is real. Stop at $109.14."
+    },
+    "SNOW": {
+      "whatItIs": "Snowflake runs a cloud data warehouse where companies store and analyze massive datasets, paid by usage.",
+      "whyWeOwnIt": "Consumption models benefit from AI-driven data expansion long-term. Profitability is improving as sales efficiency catches up to the 2021 hiring binge. Strongest readiness score in our book right now.",
+      "howItsDoing": "Slightly green since entry, above VWAP and EMA with volume confirming. MACD negative is the blemish, but 20-day momentum of 7.8% shows underlying demand.",
+      "catalyst": "AI workloads driving actual consumption growth, not just pilot projects. Any stabilization in net revenue retention after several quarters of decline.",
+      "risk": "Consumption growth has slowed as customers optimize spend. Databricks and BigQuery are fierce competitors with deeper pockets. NRR declining hurts the Land-and-Expand math. Stop at $233.58."
+    },
+    "SPOT": {
+      "whatItIs": "Spotify is the leading global audio streaming service, with music, podcasts, and audiobooks.",
+      "whyWeOwnIt": "Cost discipline from 2022-2023 layoffs is finally showing in margin expansion. Subscriber growth in emerging markets and price increases in mature ones create a dual revenue engine. Audio remains undermonetized versus video.",
+      "howItsDoing": "Up 2.3% from entry, above VWAP and EMA but MACD negative and 20-day momentum flat. RSI at 50 shows balanced sentiment, not euphoria.",
+      "catalyst": "Further price increases without meaningful churn spike. Audiobook adoption accelerating and margin accretion from own-content pivot.",
+      "risk": "Music label renegotiations happen regularly and always threaten cost structure. Podcast investments haven't clearly paid off. Lower-priced ad tier dilutes average revenue per user. Stop at $427.49."
+    },
+    "UBER": {
+      "whatItIs": "Uber operates the dominant ride-sharing and food delivery networks across global markets.",
+      "whyWeOwnIt": "Free cash flow inflection is here, and the core business is finally self-funding. Mobility and delivery create defensive diversification. Autonomous vehicle partnerships position optionality without full capital commitment.",
+      "howItsDoing": "Up 1.6% since entry, above VWAP and EMA with positive MACD and volume confirmation. Strongest confirmation profile in our active positions.",
+      "catalyst": "Sustained FCF growth proving 2023 wasn't a one-off. Any autonomous deployment scaling faster than expected. Delivery segment margin expansion.",
+      "risk": "AV partners like Waymo or Tesla could eventually bypass Uber's network. Driver supply and demand imbalance creates surge volatility and regulatory heat. Gig worker reclassification remains an existential legal threat. Stop at $65.93."
+    }
+  }
+}

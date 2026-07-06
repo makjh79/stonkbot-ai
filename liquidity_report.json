@@ -1,0 +1,212 @@
+{
+  "generated_at": "2026-07-06T09:00:02.917140",
+  "symbol_count": 24,
+  "warning_threshold_bps": 20.0,
+  "critical_threshold_bps": 50.0,
+  "symbols": {
+    "ABNB": {
+      "half_spread_bps": 63.974999999999994,
+      "adv": 4245639.0,
+      "total_bps": 64.22
+    },
+    "AFRM": {
+      "half_spread_bps": 75.06,
+      "adv": 4859512.0,
+      "total_bps": 75.29
+    },
+    "DDOG": {
+      "half_spread_bps": 73.96,
+      "adv": 4750648.0,
+      "total_bps": 74.19
+    },
+    "DUOL": {
+      "half_spread_bps": 158.73,
+      "adv": 1564676.0,
+      "total_bps": 159.13
+    },
+    "ELF": {
+      "half_spread_bps": 423.99,
+      "adv": 3842322.0,
+      "total_bps": 424.25
+    },
+    "ETSY": {
+      "half_spread_bps": 353.79,
+      "adv": 3370203.0,
+      "total_bps": 354.06
+    },
+    "EXPE": {
+      "half_spread_bps": 185.87,
+      "adv": 1778461.0,
+      "total_bps": 186.24
+    },
+    "GTLB": {
+      "half_spread_bps": 151.63,
+      "adv": 4787203.0,
+      "total_bps": 151.86
+    },
+    "HD": {
+      "half_spread_bps": 28.86,
+      "adv": 5747731.0,
+      "total_bps": 29.07
+    },
+    "HOOD": {
+      "half_spread_bps": 16.99,
+      "adv": 35133708.0,
+      "total_bps": 17.07
+    },
+    "LMND": {
+      "half_spread_bps": 84.39,
+      "adv": 1490257.0,
+      "total_bps": 84.8
+    },
+    "MDB": {
+      "half_spread_bps": 127.95,
+      "adv": 1776011.0,
+      "total_bps": 128.33
+    },
+    "NKE": {
+      "half_spread_bps": 24.9,
+      "adv": 35259264.0,
+      "total_bps": 24.98
+    },
+    "PANW": {
+      "half_spread_bps": 71.9,
+      "adv": 7601859.0,
+      "total_bps": 72.08
+    },
+    "PATH": {
+      "half_spread_bps": 12.82,
+      "adv": 55970956.0,
+      "total_bps": 12.89
+    },
+    "PINS": {
+      "half_spread_bps": 125.43,
+      "adv": 18429520.0,
+      "total_bps": 125.55
+    },
+    "ROKU": {
+      "half_spread_bps": 188.33,
+      "adv": 10490709.0,
+      "total_bps": 188.48
+    },
+    "S": {
+      "half_spread_bps": 127.31,
+      "adv": 6175549.0,
+      "total_bps": 127.51
+    },
+    "SHOP": {
+      "half_spread_bps": 18.21,
+      "adv": 9235702.0,
+      "total_bps": 18.37
+    },
+    "SNOW": {
+      "half_spread_bps": 63.79,
+      "adv": 7515040.0,
+      "total_bps": 63.97
+    },
+    "SOFI": {
+      "half_spread_bps": 10.86,
+      "adv": 89557423.0,
+      "total_bps": 10.91
+    },
+    "SPOT": {
+      "half_spread_bps": 50.47,
+      "adv": 1875678.0,
+      "total_bps": 50.84
+    },
+    "UBER": {
+      "half_spread_bps": 20.75,
+      "adv": 24858977.0,
+      "total_bps": 20.85
+    },
+    "UPST": {
+      "half_spread_bps": 118.12,
+      "adv": 4742400.0,
+      "total_bps": 118.35
+    }
+  },
+  "warnings": [
+    {
+      "symbol": "HD",
+      "spread_bps": 28.86
+    },
+    {
+      "symbol": "NKE",
+      "spread_bps": 24.9
+    },
+    {
+      "symbol": "UBER",
+      "spread_bps": 20.75
+    }
+  ],
+  "critical": [
+    {
+      "symbol": "ABNB",
+      "spread_bps": 63.974999999999994
+    },
+    {
+      "symbol": "AFRM",
+      "spread_bps": 75.06
+    },
+    {
+      "symbol": "DDOG",
+      "spread_bps": 73.96
+    },
+    {
+      "symbol": "DUOL",
+      "spread_bps": 158.73
+    },
+    {
+      "symbol": "ELF",
+      "spread_bps": 423.99
+    },
+    {
+      "symbol": "ETSY",
+      "spread_bps": 353.79
+    },
+    {
+      "symbol": "EXPE",
+      "spread_bps": 185.87
+    },
+    {
+      "symbol": "GTLB",
+      "spread_bps": 151.63
+    },
+    {
+      "symbol": "LMND",
+      "spread_bps": 84.39
+    },
+    {
+      "symbol": "MDB",
+      "spread_bps": 127.95
+    },
+    {
+      "symbol": "PANW",
+      "spread_bps": 71.9
+    },
+    {
+      "symbol": "PINS",
+      "spread_bps": 125.43
+    },
+    {
+      "symbol": "ROKU",
+      "spread_bps": 188.33
+    },
+    {
+      "symbol": "S",
+      "spread_bps": 127.31
+    },
+    {
+      "symbol": "SNOW",
+      "spread_bps": 63.79
+    },
+    {
+      "symbol": "SPOT",
+      "spread_bps": 50.47
+    },
+    {
+      "symbol": "UPST",
+      "spread_bps": 118.12
+    }
+  ]
+}

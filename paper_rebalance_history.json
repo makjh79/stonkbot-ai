@@ -1,0 +1,3748 @@
+[
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T08:55:07.699401Z",
+    "portfolio_value": 99793.0,
+    "deployable_value": 89813.7,
+    "simulated_return_pct": null,
+    "target_weights": {
+      "SOFI": 18.43,
+      "AMD": 18.13,
+      "UPST": 18.01,
+      "TER": 17.78,
+      "LRCX": 17.65
+    },
+    "prices": {
+      "SOFI": 17.93,
+      "AMD": 580.91,
+      "UPST": 35.43,
+      "TER": 483.84,
+      "LRCX": 433.33
+    },
+    "plan_summary": [
+      {
+        "symbol": "SOFI",
+        "action": "BUY",
+        "target_pct": 18.43
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 18.13
+      },
+      {
+        "symbol": "UPST",
+        "action": "BUY",
+        "target_pct": 18.01
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 17.78
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 17.65
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T12:21:46.456076Z",
+    "portfolio_value": 99897.2,
+    "deployable_value": 89907.48,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "AMD": 15.69,
+      "SOFI": 15.35,
+      "UPST": 15.01,
+      "TER": 14.82,
+      "LRCX": 14.7,
+      "AMAT": 14.43
+    },
+    "prices": {
+      "AMD": 580.91,
+      "SOFI": 17.93,
+      "UPST": 35.43,
+      "TER": 483.84,
+      "LRCX": 433.33,
+      "AMAT": 723
+    },
+    "plan_summary": [
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 15.69
+      },
+      {
+        "symbol": "SOFI",
+        "action": "BUY",
+        "target_pct": 15.35
+      },
+      {
+        "symbol": "UPST",
+        "action": "BUY",
+        "target_pct": 15.01
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 14.82
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 14.7
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 14.43
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T12:28:48.531040Z",
+    "portfolio_value": 99879.22,
+    "deployable_value": 89891.3,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "AMD": 5.73,
+      "LRCX": 3.83,
+      "UPST": 3.41,
+      "TER": 1.43,
+      "AMAT": 1.41,
+      "SOFI": 0.96
+    },
+    "prices": {
+      "AMD": 580.91,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.73
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.83
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.41
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.43
+      },
+      {
+        "symbol": "AMAT",
+        "action": "HOLD",
+        "target_pct": 1.41
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T12:41:25.611990Z",
+    "portfolio_value": 99537.35,
+    "deployable_value": 89583.62,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "AMD": 5.69,
+      "LRCX": 3.76,
+      "UPST": 3.43,
+      "TER": 1.42,
+      "SOFI": 0.95
+    },
+    "prices": {
+      "AMD": 580.91,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "TER": 483.84,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.69
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.76
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.43
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.42
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.95
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:10:40.891369Z",
+    "portfolio_value": 99369.02,
+    "deployable_value": 89432.12,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 11.41,
+      "UPST": 3.43,
+      "HOOD": 2.41,
+      "SOFI": 0.96,
+      "AMD": 0.39,
+      "LRCX": 0.26,
+      "TER": 0.1,
+      "AMAT": 0.1
+    },
+    "prices": {
+      "HD": 352.68,
+      "UPST": 35.43,
+      "HOOD": 100.28,
+      "SOFI": 17.93,
+      "AMD": 580.91,
+      "LRCX": 433.33,
+      "TER": 483.84,
+      "AMAT": 723
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 11.41
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.43
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.41
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "AMD",
+        "action": "TRIM",
+        "target_pct": 0.39
+      },
+      {
+        "symbol": "LRCX",
+        "action": "TRIM",
+        "target_pct": 0.26
+      },
+      {
+        "symbol": "TER",
+        "action": "TRIM",
+        "target_pct": 0.1
+      },
+      {
+        "symbol": "AMAT",
+        "action": "TRIM",
+        "target_pct": 0.1
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:11:22.284245Z",
+    "portfolio_value": 99314.5,
+    "deployable_value": 89383.05,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 11.41,
+      "AMD": 5.63,
+      "LRCX": 3.72,
+      "UPST": 3.42,
+      "HOOD": 2.41,
+      "TER": 1.4,
+      "AMAT": 1.39,
+      "SOFI": 0.96
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 11.41
+      },
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.63
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.72
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.41
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.4
+      },
+      {
+        "symbol": "AMAT",
+        "action": "HOLD",
+        "target_pct": 1.39
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:12:28.387406Z",
+    "portfolio_value": 99317.26,
+    "deployable_value": 89385.53,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 11.41,
+      "AMD": 5.62,
+      "LRCX": 3.72,
+      "UPST": 3.42,
+      "HOOD": 2.41,
+      "TER": 1.4,
+      "AMAT": 1.38,
+      "SOFI": 0.96
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 11.41
+      },
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.62
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.72
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.41
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.4
+      },
+      {
+        "symbol": "AMAT",
+        "action": "HOLD",
+        "target_pct": 1.38
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:13:17.398089Z",
+    "portfolio_value": 99339.41,
+    "deployable_value": 89405.47,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 11.41,
+      "AMD": 5.63,
+      "LRCX": 3.73,
+      "UPST": 3.42,
+      "HOOD": 2.41,
+      "TER": 1.4,
+      "AMAT": 1.38,
+      "SOFI": 0.96
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 11.41
+      },
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.63
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.73
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.41
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.4
+      },
+      {
+        "symbol": "AMAT",
+        "action": "HOLD",
+        "target_pct": 1.38
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:13:55.632450Z",
+    "portfolio_value": 99293.72,
+    "deployable_value": 89364.35,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 9.1,
+      "MU": 7.28,
+      "LRCX": 6.03,
+      "AFRM": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "UPST": 3.41,
+      "FTNT": 3.32,
+      "MRVL": 3.09,
+      "HOOD": 2.41,
+      "TER": 2.27,
+      "AMAT": 2.23,
+      "SOFI": 0.96,
+      "PAYO": 0.77
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "MU": 1154.29,
+      "LRCX": 433.33,
+      "AFRM": 81.55,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "UPST": 35.43,
+      "FTNT": 153.62,
+      "MRVL": 297.89,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93,
+      "PAYO": 7.12
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 9.1
+      },
+      {
+        "symbol": "MU",
+        "action": "BUY",
+        "target_pct": 7.28
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 6.03
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.41
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 3.32
+      },
+      {
+        "symbol": "MRVL",
+        "action": "BUY",
+        "target_pct": 3.09
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.41
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 2.27
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 2.23
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 0.77
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:19:38.365208Z",
+    "portfolio_value": 99389.3,
+    "deployable_value": 89450.37,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 9.14,
+      "MU": 7.28,
+      "LRCX": 6.05,
+      "AFRM": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "UPST": 3.41,
+      "FTNT": 3.38,
+      "MRVL": 3.01,
+      "HOOD": 2.41,
+      "TER": 2.27,
+      "AMAT": 2.24,
+      "SOFI": 0.96,
+      "PAYO": 0.76
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "MU": 1154.29,
+      "LRCX": 433.33,
+      "AFRM": 81.55,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "UPST": 35.43,
+      "FTNT": 153.62,
+      "MRVL": 297.89,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93,
+      "PAYO": 7.12
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 9.14
+      },
+      {
+        "symbol": "MU",
+        "action": "BUY",
+        "target_pct": 7.28
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 6.05
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.41
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 3.38
+      },
+      {
+        "symbol": "MRVL",
+        "action": "HOLD",
+        "target_pct": 3.01
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.41
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 2.27
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 2.24
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 0.76
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:20:25.739362Z",
+    "portfolio_value": 99331.54,
+    "deployable_value": 89398.39,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 9.1,
+      "MU": 7.28,
+      "LRCX": 6.02,
+      "AFRM": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "UPST": 3.42,
+      "FTNT": 3.34,
+      "MRVL": 3.09,
+      "HOOD": 2.42,
+      "TER": 2.27,
+      "AMAT": 2.24,
+      "SOFI": 0.96,
+      "PAYO": 0.74
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "MU": 1154.29,
+      "LRCX": 433.33,
+      "AFRM": 81.55,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "UPST": 35.43,
+      "FTNT": 153.62,
+      "MRVL": 297.89,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93,
+      "PAYO": 7.12
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 9.1
+      },
+      {
+        "symbol": "MU",
+        "action": "BUY",
+        "target_pct": 7.28
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 6.02
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 3.34
+      },
+      {
+        "symbol": "MRVL",
+        "action": "BUY",
+        "target_pct": 3.09
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.42
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 2.27
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 2.24
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 0.74
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:21:19.688783Z",
+    "portfolio_value": 99349.67,
+    "deployable_value": 89414.7,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 9.12,
+      "MU": 7.28,
+      "LRCX": 6.02,
+      "AFRM": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "UPST": 3.42,
+      "FTNT": 3.36,
+      "MRVL": 3.07,
+      "HOOD": 2.42,
+      "TER": 2.27,
+      "AMAT": 2.24,
+      "SOFI": 0.96,
+      "PAYO": 0.75
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "MU": 1154.29,
+      "LRCX": 433.33,
+      "AFRM": 81.55,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "UPST": 35.43,
+      "FTNT": 153.62,
+      "MRVL": 297.89,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93,
+      "PAYO": 7.12
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 9.12
+      },
+      {
+        "symbol": "MU",
+        "action": "BUY",
+        "target_pct": 7.28
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 6.02
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 3.36
+      },
+      {
+        "symbol": "MRVL",
+        "action": "HOLD",
+        "target_pct": 3.07
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.42
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 2.27
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 2.24
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 0.75
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:22:01.263894Z",
+    "portfolio_value": 99349.35,
+    "deployable_value": 89414.42,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 9.13,
+      "MU": 7.28,
+      "LRCX": 6.02,
+      "AFRM": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "UPST": 3.42,
+      "FTNT": 3.36,
+      "MRVL": 3.06,
+      "HOOD": 2.42,
+      "TER": 2.27,
+      "AMAT": 2.25,
+      "SOFI": 0.96,
+      "PAYO": 0.75
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "MU": 1154.29,
+      "LRCX": 433.33,
+      "AFRM": 81.55,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "UPST": 35.43,
+      "FTNT": 153.62,
+      "MRVL": 297.89,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93,
+      "PAYO": 7.12
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 9.13
+      },
+      {
+        "symbol": "MU",
+        "action": "BUY",
+        "target_pct": 7.28
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 6.02
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 3.36
+      },
+      {
+        "symbol": "MRVL",
+        "action": "HOLD",
+        "target_pct": 3.06
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.42
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 2.27
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 2.25
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 0.75
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:22:09.157382Z",
+    "portfolio_value": 99349.35,
+    "deployable_value": 89414.42,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 9.13,
+      "MU": 7.28,
+      "LRCX": 6.02,
+      "AFRM": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "UPST": 3.42,
+      "FTNT": 3.36,
+      "MRVL": 3.06,
+      "HOOD": 2.42,
+      "TER": 2.27,
+      "AMAT": 2.25,
+      "SOFI": 0.96,
+      "PAYO": 0.75
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "MU": 1154.29,
+      "LRCX": 433.33,
+      "AFRM": 81.55,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "UPST": 35.43,
+      "FTNT": 153.62,
+      "MRVL": 297.89,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93,
+      "PAYO": 7.12
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 9.13
+      },
+      {
+        "symbol": "MU",
+        "action": "BUY",
+        "target_pct": 7.28
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 6.02
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 3.36
+      },
+      {
+        "symbol": "MRVL",
+        "action": "HOLD",
+        "target_pct": 3.06
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.42
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 2.27
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 2.25
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 0.75
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:22:15.832282Z",
+    "portfolio_value": 99349.35,
+    "deployable_value": 89414.42,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 9.13,
+      "MU": 7.28,
+      "LRCX": 6.02,
+      "AFRM": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "UPST": 3.42,
+      "FTNT": 3.36,
+      "MRVL": 3.06,
+      "HOOD": 2.42,
+      "TER": 2.27,
+      "AMAT": 2.25,
+      "SOFI": 0.96,
+      "PAYO": 0.75
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "MU": 1154.29,
+      "LRCX": 433.33,
+      "AFRM": 81.55,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "UPST": 35.43,
+      "FTNT": 153.62,
+      "MRVL": 297.89,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93,
+      "PAYO": 7.12
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "BUY",
+        "target_pct": 9.13
+      },
+      {
+        "symbol": "MU",
+        "action": "BUY",
+        "target_pct": 7.28
+      },
+      {
+        "symbol": "LRCX",
+        "action": "BUY",
+        "target_pct": 6.02
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 3.36
+      },
+      {
+        "symbol": "MRVL",
+        "action": "HOLD",
+        "target_pct": 3.06
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.42
+      },
+      {
+        "symbol": "TER",
+        "action": "BUY",
+        "target_pct": 2.27
+      },
+      {
+        "symbol": "AMAT",
+        "action": "BUY",
+        "target_pct": 2.25
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 0.75
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:24:28.897222Z",
+    "portfolio_value": 99347.59,
+    "deployable_value": 89412.83,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 5.64,
+      "PAYO": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "LLY": 4.5,
+      "CAT": 4.5,
+      "BMY": 4.5,
+      "TMO": 4.5,
+      "FTNT": 4.5,
+      "JPM": 4.5,
+      "ABNB": 4.5,
+      "V": 4.5,
+      "RTX": 4.5,
+      "UNH": 4.5,
+      "SCHW": 4.5,
+      "ILMN": 4.5,
+      "BAC": 4.5,
+      "LRCX": 3.73,
+      "UPST": 3.42,
+      "MRK": 3.0,
+      "HOOD": 2.42,
+      "TER": 1.4,
+      "AMAT": 1.39,
+      "SOFI": 0.96
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "PAYO": 7.12,
+      "UNP": 272,
+      "JNJ": 253.97,
+      "LLY": 1199.43,
+      "CAT": 1064.9,
+      "BMY": 57.62,
+      "TMO": 501.36,
+      "FTNT": 153.62,
+      "JPM": 327.33,
+      "ABNB": 143.1,
+      "V": 343.09,
+      "RTX": 189.73,
+      "UNH": 415.63,
+      "SCHW": 92.27,
+      "ILMN": 175.83,
+      "BAC": 56.98,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "MRK": 128.5,
+      "HOOD": 100.28,
+      "TER": 483.84,
+      "AMAT": 723,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.64
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JPM",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABNB",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "V",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BAC",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.73
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.42
+      },
+      {
+        "symbol": "MRK",
+        "action": "BUY",
+        "target_pct": 3.0
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 2.42
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.4
+      },
+      {
+        "symbol": "AMAT",
+        "action": "HOLD",
+        "target_pct": 1.39
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.96
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:32:04.365107Z",
+    "portfolio_value": 99451.27,
+    "deployable_value": 89506.14,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 30.0,
+      "AMD": 5.65,
+      "PAYO": 4.5,
+      "UNP": 4.5,
+      "LLY": 4.5,
+      "JNJ": 4.5,
+      "TMO": 4.5,
+      "ABBV": 4.5,
+      "JPM": 4.5,
+      "CAT": 4.5,
+      "V": 4.5,
+      "RTX": 4.5,
+      "UNH": 4.5,
+      "SCHW": 4.5,
+      "ILMN": 4.5,
+      "ABNB": 4.5,
+      "FTNT": 4.5,
+      "BAC": 4.5,
+      "LRCX": 3.72,
+      "UPST": 3.47,
+      "BMY": 3.0,
+      "TER": 1.36,
+      "SOFI": 0.97
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "PAYO": 7.12,
+      "UNP": 272,
+      "LLY": 1199.43,
+      "JNJ": 253.97,
+      "TMO": 501.36,
+      "ABBV": 251.64,
+      "JPM": 327.33,
+      "CAT": 1064.9,
+      "V": 343.09,
+      "RTX": 189.73,
+      "UNH": 415.63,
+      "SCHW": 92.27,
+      "ILMN": 175.83,
+      "ABNB": 143.1,
+      "FTNT": 153.62,
+      "BAC": 56.98,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "BMY": 57.62,
+      "TER": 483.84,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "BUY",
+        "target_pct": 30.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.65
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JPM",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "V",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABNB",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BAC",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.72
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.47
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 3.0
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.36
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.97
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:33:01.694184Z",
+    "portfolio_value": 99304.0,
+    "deployable_value": 89373.6,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 8.0,
+      "AMD": 5.61,
+      "PAYO": 4.5,
+      "UNP": 4.5,
+      "LLY": 4.5,
+      "JNJ": 4.5,
+      "TMO": 4.5,
+      "ABBV": 4.5,
+      "JPM": 4.5,
+      "CAT": 4.5,
+      "V": 4.5,
+      "RTX": 4.5,
+      "UNH": 4.5,
+      "SCHW": 4.5,
+      "ILMN": 4.5,
+      "ABNB": 4.5,
+      "FTNT": 4.5,
+      "BAC": 4.5,
+      "LRCX": 3.69,
+      "UPST": 3.47,
+      "BMY": 3.0,
+      "TER": 1.35,
+      "SOFI": 0.98
+    },
+    "prices": {
+      "HD": 352.68,
+      "AMD": 580.91,
+      "PAYO": 7.12,
+      "UNP": 272,
+      "LLY": 1199.43,
+      "JNJ": 253.97,
+      "TMO": 501.36,
+      "ABBV": 251.64,
+      "JPM": 327.33,
+      "CAT": 1064.9,
+      "V": 343.09,
+      "RTX": 189.73,
+      "UNH": 415.63,
+      "SCHW": 92.27,
+      "ILMN": 175.83,
+      "ABNB": 143.1,
+      "FTNT": 153.62,
+      "BAC": 56.98,
+      "LRCX": 433.33,
+      "UPST": 35.43,
+      "BMY": 57.62,
+      "TER": 483.84,
+      "SOFI": 17.93
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "HOLD",
+        "target_pct": 8.0
+      },
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 5.61
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JPM",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "V",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABNB",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BAC",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 3.69
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.47
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 3.0
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 1.35
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.98
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:42:48.708149Z",
+    "portfolio_value": 99110.84,
+    "deployable_value": 89199.76,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HD": 8.0,
+      "PAYO": 4.5,
+      "UNP": 4.5,
+      "LLY": 4.5,
+      "JNJ": 4.5,
+      "TMO": 4.5,
+      "ABBV": 4.5,
+      "JPM": 4.5,
+      "CAT": 4.5,
+      "V": 4.5,
+      "RTX": 4.5,
+      "UNH": 4.5,
+      "SCHW": 4.5,
+      "ILMN": 4.5,
+      "ABNB": 4.5,
+      "FTNT": 4.5,
+      "BAC": 4.5,
+      "UPST": 3.43,
+      "BMY": 3.0,
+      "SOFI": 0.97,
+      "AMD": 0.0,
+      "TER": 0.0,
+      "LRCX": 0.0
+    },
+    "prices": {
+      "HD": 352.68,
+      "PAYO": 7.12,
+      "UNP": 272,
+      "LLY": 1199.43,
+      "JNJ": 253.97,
+      "TMO": 501.36,
+      "ABBV": 251.64,
+      "JPM": 327.33,
+      "CAT": 1064.9,
+      "V": 343.09,
+      "RTX": 189.73,
+      "UNH": 415.63,
+      "SCHW": 92.27,
+      "ILMN": 175.83,
+      "ABNB": 143.1,
+      "FTNT": 153.62,
+      "BAC": 56.98,
+      "UPST": 35.43,
+      "BMY": 57.62,
+      "SOFI": 17.93,
+      "AMD": 580.91,
+      "TER": 483.84,
+      "LRCX": 433.33
+    },
+    "plan_summary": [
+      {
+        "symbol": "HD",
+        "action": "HOLD",
+        "target_pct": 8.0
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JPM",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "V",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABNB",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "FTNT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BAC",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.43
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 3.0
+      },
+      {
+        "symbol": "SOFI",
+        "action": "HOLD",
+        "target_pct": 0.97
+      },
+      {
+        "symbol": "AMD",
+        "action": "HOLD",
+        "target_pct": 0.0
+      },
+      {
+        "symbol": "TER",
+        "action": "HOLD",
+        "target_pct": 0.0
+      },
+      {
+        "symbol": "LRCX",
+        "action": "HOLD",
+        "target_pct": 0.0
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T13:46:59.691285Z",
+    "portfolio_value": 99097.03,
+    "deployable_value": 89187.33,
+    "simulated_return_pct": -0.1221,
+    "target_weights": {
+      "ETSY": 8.0,
+      "SNOW": 8.0,
+      "SHOP": 8.0,
+      "LMND": 7.88,
+      "PAYO": 4.5,
+      "S": 4.5,
+      "ZS": 4.5,
+      "CRWD": 4.5,
+      "LLY": 4.5,
+      "BAC": 4.5,
+      "PANW": 4.5,
+      "UNP": 4.5,
+      "TMO": 4.5,
+      "ABBV": 4.5,
+      "SCHW": 4.5,
+      "JNJ": 4.5,
+      "UNH": 4.5,
+      "CAT": 4.5,
+      "RTX": 4.5,
+      "BMY": 4.5,
+      "AFRM": 4.48,
+      "ABNB": 3.63,
+      "EXPE": 3.63,
+      "GTLB": 3.61,
+      "UPST": 3.41,
+      "ILMN": 3.0
+    },
+    "prices": {
+      "ETSY": 75.84,
+      "SNOW": 259.01,
+      "SHOP": 120.42,
+      "LMND": 67.1,
+      "PAYO": 7.11,
+      "S": 17.61,
+      "ZS": 145.19,
+      "CRWD": 774.63,
+      "LLY": 1197.18,
+      "BAC": 57.3,
+      "PANW": 345.22,
+      "UNP": 271,
+      "TMO": 506,
+      "ABBV": 248.28,
+      "SCHW": 92.84,
+      "JNJ": 251.54,
+      "UNH": 416.88,
+      "CAT": 1021.55,
+      "RTX": 189.85,
+      "BMY": 57.27,
+      "AFRM": 82.47,
+      "ABNB": 145.46,
+      "EXPE": 260.0,
+      "GTLB": 31.75,
+      "UPST": 35.42,
+      "ILMN": 177.58
+    },
+    "plan_summary": [
+      {
+        "symbol": "ETSY",
+        "action": "TRIM",
+        "target_pct": 8.0
+      },
+      {
+        "symbol": "SNOW",
+        "action": "HOLD",
+        "target_pct": 8.0
+      },
+      {
+        "symbol": "SHOP",
+        "action": "HOLD",
+        "target_pct": 8.0
+      },
+      {
+        "symbol": "LMND",
+        "action": "HOLD",
+        "target_pct": 7.88
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "S",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ZS",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CRWD",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BAC",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "PANW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "BMY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "AFRM",
+        "action": "HOLD",
+        "target_pct": 4.48
+      },
+      {
+        "symbol": "ABNB",
+        "action": "BUY",
+        "target_pct": 3.63
+      },
+      {
+        "symbol": "EXPE",
+        "action": "BUY",
+        "target_pct": 3.63
+      },
+      {
+        "symbol": "GTLB",
+        "action": "BUY",
+        "target_pct": 3.61
+      },
+      {
+        "symbol": "UPST",
+        "action": "HOLD",
+        "target_pct": 3.41
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 3.0
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T15:33:41.406945Z",
+    "portfolio_value": 100068.21,
+    "deployable_value": 90061.39,
+    "simulated_return_pct": 0.6223,
+    "target_weights": {
+      "SNOW": 8.0,
+      "UBER": 8.0,
+      "HOOD": 7.85,
+      "GTLB": 5.62,
+      "DUOL": 4.5,
+      "ETSY": 4.5,
+      "HD": 4.5,
+      "PAYO": 4.5,
+      "CAT": 4.5,
+      "S": 4.5,
+      "ZS": 4.5,
+      "PANW": 4.5,
+      "COIN": 4.5,
+      "CRWD": 4.5,
+      "LLY": 4.5,
+      "ABBV": 4.5,
+      "UNH": 4.5,
+      "UNP": 4.5,
+      "JNJ": 4.5,
+      "SCHW": 4.5,
+      "ILMN": 4.5,
+      "MRK": 4.5,
+      "WFC": 4.5,
+      "RTX": 4.5,
+      "PINS": 3.95,
+      "TMO": 3.0,
+      "SHOP": 2.84,
+      "CHWY": 1.15
+    },
+    "prices": {
+      "SNOW": 262.4,
+      "UBER": 73.61,
+      "HOOD": 107.94,
+      "GTLB": 32.48,
+      "DUOL": 122.54,
+      "ETSY": 75.97,
+      "HD": 355.63,
+      "PAYO": 7.11,
+      "CAT": 1003,
+      "S": 17.7,
+      "ZS": 146.63,
+      "PANW": 354.56,
+      "COIN": 161.02,
+      "CRWD": 771.09,
+      "LLY": 1184.43,
+      "ABBV": 249.49,
+      "UNH": 420.95,
+      "UNP": 275.72,
+      "JNJ": 252.37,
+      "SCHW": 94.21,
+      "ILMN": 181.97,
+      "MRK": 126.34,
+      "WFC": 85.4,
+      "RTX": 190.25,
+      "PINS": 22.12,
+      "TMO": 517.98,
+      "SHOP": 122.31,
+      "CHWY": 20.89
+    },
+    "plan_summary": [
+      {
+        "symbol": "SNOW",
+        "action": "HOLD",
+        "target_pct": 8.0
+      },
+      {
+        "symbol": "UBER",
+        "action": "HOLD",
+        "target_pct": 8.0
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 7.85
+      },
+      {
+        "symbol": "GTLB",
+        "action": "BUY",
+        "target_pct": 5.62
+      },
+      {
+        "symbol": "DUOL",
+        "action": "TRIM",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ETSY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "HD",
+        "action": "TRIM",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "S",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ZS",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "PANW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "COIN",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "CRWD",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "MRK",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "WFC",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 4.5
+      },
+      {
+        "symbol": "PINS",
+        "action": "BUY",
+        "target_pct": 3.95
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 3.0
+      },
+      {
+        "symbol": "SHOP",
+        "action": "BUY",
+        "target_pct": 2.84
+      },
+      {
+        "symbol": "CHWY",
+        "action": "BUY",
+        "target_pct": 1.15
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T15:37:48.765889Z",
+    "portfolio_value": 100011.06,
+    "deployable_value": 95010.51,
+    "simulated_return_pct": 0.0289,
+    "target_weights": {
+      "UBER": 9.66,
+      "SNOW": 9.62,
+      "HOOD": 7.85,
+      "GTLB": 6.61,
+      "PINS": 5.11,
+      "DUOL": 4.75,
+      "ETSY": 4.75,
+      "HD": 4.75,
+      "PAYO": 4.75,
+      "APP": 4.75,
+      "COIN": 4.75,
+      "S": 4.75,
+      "ZS": 4.75,
+      "CRWD": 4.75,
+      "PANW": 4.75,
+      "LLY": 4.75,
+      "UNP": 4.75,
+      "JNJ": 4.75,
+      "ABBV": 4.75,
+      "CAT": 4.75,
+      "SCHW": 4.75,
+      "UNH": 4.75,
+      "ILMN": 4.75,
+      "MRK": 4.75,
+      "WFC": 4.75,
+      "TMO": 4.75,
+      "RTX": 4.75,
+      "SHOP": 4.0,
+      "LULU": 0.66
+    },
+    "prices": {
+      "UBER": 73.4,
+      "SNOW": 261.69,
+      "HOOD": 107.61,
+      "GTLB": 32.31,
+      "PINS": 22.13,
+      "DUOL": 122.93,
+      "ETSY": 76.25,
+      "HD": 354.89,
+      "PAYO": 7.11,
+      "APP": 568.52,
+      "COIN": 161.56,
+      "S": 17.66,
+      "ZS": 147.56,
+      "CRWD": 779.15,
+      "PANW": 355.6,
+      "LLY": 1188.53,
+      "UNP": 276.07,
+      "JNJ": 251.78,
+      "ABBV": 248.53,
+      "CAT": 1019.48,
+      "SCHW": 93.94,
+      "UNH": 419.5,
+      "ILMN": 180.78,
+      "MRK": 126.22,
+      "WFC": 85.3,
+      "TMO": 517.09,
+      "RTX": 190.78,
+      "SHOP": 122.79,
+      "LULU": 116.45
+    },
+    "plan_summary": [
+      {
+        "symbol": "UBER",
+        "action": "BUY",
+        "target_pct": 9.66
+      },
+      {
+        "symbol": "SNOW",
+        "action": "BUY",
+        "target_pct": 9.62
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 7.85
+      },
+      {
+        "symbol": "GTLB",
+        "action": "BUY",
+        "target_pct": 6.61
+      },
+      {
+        "symbol": "PINS",
+        "action": "BUY",
+        "target_pct": 5.11
+      },
+      {
+        "symbol": "DUOL",
+        "action": "TRIM",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "ETSY",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "HD",
+        "action": "TRIM",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "APP",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "COIN",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "S",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "ZS",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "CRWD",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "PANW",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "MRK",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "WFC",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 4.75
+      },
+      {
+        "symbol": "SHOP",
+        "action": "BUY",
+        "target_pct": 4.0
+      },
+      {
+        "symbol": "LULU",
+        "action": "BUY",
+        "target_pct": 0.66
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T15:38:11.527127Z",
+    "portfolio_value": 100011.06,
+    "deployable_value": 95010.51,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "UBER": 8.76,
+      "SNOW": 8.7,
+      "HOOD": 7.85,
+      "HD": 7.82,
+      "DUOL": 6.0,
+      "GTLB": 5.51,
+      "PINS": 3.81,
+      "ETSY": 3.09,
+      "SHOP": 2.7,
+      "PAYO": 2.31,
+      "APP": 2.31,
+      "COIN": 2.31,
+      "S": 2.31,
+      "ZS": 2.31,
+      "CRWD": 2.31,
+      "PANW": 2.31,
+      "LLY": 2.31,
+      "UNP": 2.31,
+      "JNJ": 2.31,
+      "ABBV": 2.31,
+      "CAT": 2.31,
+      "SCHW": 2.31,
+      "UNH": 2.31,
+      "ILMN": 2.31,
+      "MRK": 2.31,
+      "WFC": 2.31,
+      "TMO": 2.31,
+      "RTX": 2.31,
+      "LULU": 0.32
+    },
+    "prices": {
+      "UBER": 73.4,
+      "SNOW": 261.69,
+      "HOOD": 107.61,
+      "HD": 354.89,
+      "DUOL": 122.93,
+      "GTLB": 32.31,
+      "PINS": 22.13,
+      "ETSY": 76.25,
+      "SHOP": 122.79,
+      "PAYO": 7.11,
+      "APP": 568.52,
+      "COIN": 161.56,
+      "S": 17.66,
+      "ZS": 147.56,
+      "CRWD": 779.15,
+      "PANW": 355.6,
+      "LLY": 1188.53,
+      "UNP": 276.07,
+      "JNJ": 251.78,
+      "ABBV": 248.53,
+      "CAT": 1019.48,
+      "SCHW": 93.94,
+      "UNH": 419.5,
+      "ILMN": 180.78,
+      "MRK": 126.22,
+      "WFC": 85.3,
+      "TMO": 517.09,
+      "RTX": 190.78,
+      "LULU": 116.45
+    },
+    "plan_summary": [
+      {
+        "symbol": "UBER",
+        "action": "BUY",
+        "target_pct": 8.76
+      },
+      {
+        "symbol": "SNOW",
+        "action": "BUY",
+        "target_pct": 8.7
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 7.85
+      },
+      {
+        "symbol": "HD",
+        "action": "HOLD",
+        "target_pct": 7.82
+      },
+      {
+        "symbol": "DUOL",
+        "action": "HOLD",
+        "target_pct": 6.0
+      },
+      {
+        "symbol": "GTLB",
+        "action": "BUY",
+        "target_pct": 5.51
+      },
+      {
+        "symbol": "PINS",
+        "action": "BUY",
+        "target_pct": 3.81
+      },
+      {
+        "symbol": "ETSY",
+        "action": "BUY",
+        "target_pct": 3.09
+      },
+      {
+        "symbol": "SHOP",
+        "action": "BUY",
+        "target_pct": 2.7
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "APP",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "COIN",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "S",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "ZS",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "CRWD",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "PANW",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "MRK",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "WFC",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "LULU",
+        "action": "HOLD",
+        "target_pct": 0.32
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T15:38:28.617764Z",
+    "portfolio_value": 100011.06,
+    "deployable_value": 95010.51,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "UBER": 8.76,
+      "SNOW": 8.7,
+      "HOOD": 7.85,
+      "HD": 7.82,
+      "DUOL": 6.0,
+      "GTLB": 5.51,
+      "PINS": 3.81,
+      "ETSY": 3.09,
+      "SHOP": 2.7,
+      "PAYO": 2.31,
+      "APP": 2.31,
+      "COIN": 2.31,
+      "S": 2.31,
+      "ZS": 2.31,
+      "CRWD": 2.31,
+      "PANW": 2.31,
+      "LLY": 2.31,
+      "UNP": 2.31,
+      "JNJ": 2.31,
+      "ABBV": 2.31,
+      "CAT": 2.31,
+      "SCHW": 2.31,
+      "UNH": 2.31,
+      "ILMN": 2.31,
+      "MRK": 2.31,
+      "WFC": 2.31,
+      "TMO": 2.31,
+      "RTX": 2.31,
+      "LULU": 0.32
+    },
+    "prices": {
+      "UBER": 73.4,
+      "SNOW": 261.69,
+      "HOOD": 107.61,
+      "HD": 354.89,
+      "DUOL": 122.93,
+      "GTLB": 32.31,
+      "PINS": 22.13,
+      "ETSY": 76.25,
+      "SHOP": 122.79,
+      "PAYO": 7.11,
+      "APP": 568.52,
+      "COIN": 161.56,
+      "S": 17.66,
+      "ZS": 147.56,
+      "CRWD": 779.15,
+      "PANW": 355.6,
+      "LLY": 1188.53,
+      "UNP": 276.07,
+      "JNJ": 251.78,
+      "ABBV": 248.53,
+      "CAT": 1019.48,
+      "SCHW": 93.94,
+      "UNH": 419.5,
+      "ILMN": 180.78,
+      "MRK": 126.22,
+      "WFC": 85.3,
+      "TMO": 517.09,
+      "RTX": 190.78,
+      "LULU": 116.45
+    },
+    "plan_summary": [
+      {
+        "symbol": "UBER",
+        "action": "BUY",
+        "target_pct": 8.76
+      },
+      {
+        "symbol": "SNOW",
+        "action": "BUY",
+        "target_pct": 8.7
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 7.85
+      },
+      {
+        "symbol": "HD",
+        "action": "HOLD",
+        "target_pct": 7.82
+      },
+      {
+        "symbol": "DUOL",
+        "action": "HOLD",
+        "target_pct": 6.0
+      },
+      {
+        "symbol": "GTLB",
+        "action": "BUY",
+        "target_pct": 5.51
+      },
+      {
+        "symbol": "PINS",
+        "action": "BUY",
+        "target_pct": 3.81
+      },
+      {
+        "symbol": "ETSY",
+        "action": "BUY",
+        "target_pct": 3.09
+      },
+      {
+        "symbol": "SHOP",
+        "action": "BUY",
+        "target_pct": 2.7
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "APP",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "COIN",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "S",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "ZS",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "CRWD",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "PANW",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "MRK",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "WFC",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 2.31
+      },
+      {
+        "symbol": "LULU",
+        "action": "HOLD",
+        "target_pct": 0.32
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T15:38:48.988623Z",
+    "portfolio_value": 100048.56,
+    "deployable_value": 95046.13,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "UBER": 8.68,
+      "SNOW": 8.62,
+      "HOOD": 7.85,
+      "HD": 7.82,
+      "DUOL": 6.0,
+      "GTLB": 5.41,
+      "PINS": 3.69,
+      "ETSY": 2.94,
+      "SHOP": 2.58,
+      "PAYO": 2.08,
+      "APP": 2.08,
+      "COIN": 2.08,
+      "S": 2.08,
+      "ZS": 2.08,
+      "CRWD": 2.08,
+      "PANW": 2.08,
+      "LLY": 2.08,
+      "UNP": 2.08,
+      "JNJ": 2.08,
+      "ABBV": 2.08,
+      "CAT": 2.08,
+      "SCHW": 2.08,
+      "UNH": 2.08,
+      "ILMN": 2.08,
+      "MRK": 2.08,
+      "WFC": 2.08,
+      "TMO": 2.08,
+      "RTX": 2.08,
+      "LULU": 0.29
+    },
+    "prices": {
+      "UBER": 73.4,
+      "SNOW": 261.69,
+      "HOOD": 107.61,
+      "HD": 354.89,
+      "DUOL": 122.93,
+      "GTLB": 32.31,
+      "PINS": 22.13,
+      "ETSY": 76.25,
+      "SHOP": 122.79,
+      "PAYO": 7.11,
+      "APP": 568.52,
+      "COIN": 161.56,
+      "S": 17.66,
+      "ZS": 147.56,
+      "CRWD": 779.15,
+      "PANW": 355.6,
+      "LLY": 1188.53,
+      "UNP": 276.07,
+      "JNJ": 251.78,
+      "ABBV": 248.53,
+      "CAT": 1019.48,
+      "SCHW": 93.94,
+      "UNH": 419.5,
+      "ILMN": 180.78,
+      "MRK": 126.22,
+      "WFC": 85.3,
+      "TMO": 517.09,
+      "RTX": 190.78,
+      "LULU": 116.45
+    },
+    "plan_summary": [
+      {
+        "symbol": "UBER",
+        "action": "BUY",
+        "target_pct": 8.68
+      },
+      {
+        "symbol": "SNOW",
+        "action": "BUY",
+        "target_pct": 8.62
+      },
+      {
+        "symbol": "HOOD",
+        "action": "HOLD",
+        "target_pct": 7.85
+      },
+      {
+        "symbol": "HD",
+        "action": "HOLD",
+        "target_pct": 7.82
+      },
+      {
+        "symbol": "DUOL",
+        "action": "HOLD",
+        "target_pct": 6.0
+      },
+      {
+        "symbol": "GTLB",
+        "action": "BUY",
+        "target_pct": 5.41
+      },
+      {
+        "symbol": "PINS",
+        "action": "BUY",
+        "target_pct": 3.69
+      },
+      {
+        "symbol": "ETSY",
+        "action": "BUY",
+        "target_pct": 2.94
+      },
+      {
+        "symbol": "SHOP",
+        "action": "BUY",
+        "target_pct": 2.58
+      },
+      {
+        "symbol": "PAYO",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "APP",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "COIN",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "S",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "ZS",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "CRWD",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "PANW",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "UNP",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "JNJ",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "ABBV",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "CAT",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "SCHW",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "UNH",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "ILMN",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "MRK",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "WFC",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "TMO",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "RTX",
+        "action": "BUY",
+        "target_pct": 2.08
+      },
+      {
+        "symbol": "LULU",
+        "action": "HOLD",
+        "target_pct": 0.29
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T15:39:25.012749Z",
+    "portfolio_value": 100037.65,
+    "deployable_value": 95035.77,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HOOD": 10.0,
+      "UBER": 9.66,
+      "SNOW": 9.63,
+      "GTLB": 6.61,
+      "PINS": 5.11,
+      "SHOP": 4.0
+    },
+    "prices": {
+      "HOOD": 107.61,
+      "UBER": 73.4,
+      "SNOW": 261.69,
+      "GTLB": 32.31,
+      "PINS": 22.13,
+      "SHOP": 122.79
+    },
+    "plan_summary": [
+      {
+        "symbol": "HOOD",
+        "action": "BUY",
+        "target_pct": 10.0
+      },
+      {
+        "symbol": "UBER",
+        "action": "BUY",
+        "target_pct": 9.66
+      },
+      {
+        "symbol": "SNOW",
+        "action": "BUY",
+        "target_pct": 9.63
+      },
+      {
+        "symbol": "GTLB",
+        "action": "BUY",
+        "target_pct": 6.61
+      },
+      {
+        "symbol": "PINS",
+        "action": "BUY",
+        "target_pct": 5.11
+      },
+      {
+        "symbol": "SHOP",
+        "action": "BUY",
+        "target_pct": 4.0
+      }
+    ]
+  },
+  {
+    "date": "2026-07-01",
+    "timestamp": "2026-07-01T15:41:23.725879Z",
+    "portfolio_value": 100090.47,
+    "deployable_value": 95085.95,
+    "simulated_return_pct": 0.0,
+    "target_weights": {
+      "HOOD": 9.01,
+      "UBER": 7.9,
+      "SNOW": 7.84,
+      "HD": 7.82,
+      "DUOL": 6.02,
+      "GTLB": 4.54,
+      "ETSY": 4.01,
+      "APP": 3.57,
+      "COIN": 3.57,
+      "S": 3.57,
+      "ZS": 3.57,
+      "CRWD": 3.57,
+      "PANW": 3.57,
+      "LLY": 3.57,
+      "UPST": 3.57,
+      "SOFI": 3.57,
+      "RELY": 3.57,
+      "PINS": 2.89,
+      "ABNB": 2.07,
+      "SHOP": 1.93,
+      "MDB": 0.65,
+      "PATH": 0.65,
+      "ROKU": 0.65,
+      "EXPE": 0.65,
+      "SPOT": 0.65,
+      "PLTR": 0.65,
+      "TTD": 0.65,
+      "DDOG": 0.65
+    },
+    "prices": {
+      "HOOD": 107.61,
+      "UBER": 73.4,
+      "SNOW": 261.69,
+      "HD": 354.89,
+      "DUOL": 122.93,
+      "GTLB": 32.31,
+      "ETSY": 76.25,
+      "APP": 568.52,
+      "COIN": 161.56,
+      "S": 17.66,
+      "ZS": 147.56,
+      "CRWD": 779.15,
+      "PANW": 355.6,
+      "LLY": 1188.53,
+      "UPST": 36.45,
+      "SOFI": 18.52,
+      "RELY": 23.26,
+      "PINS": 22.13,
+      "ABNB": 148.08,
+      "SHOP": 122.79,
+      "MDB": 358.08,
+      "PATH": 11.79,
+      "ROKU": 141.27,
+      "EXPE": 266.64,
+      "SPOT": 477.0,
+      "PLTR": 127.16,
+      "TTD": 19.53,
+      "DDOG": 269.63
+    },
+    "plan_summary": [
+      {
+        "symbol": "HOOD",
+        "action": "BUY",
+        "target_pct": 9.01
+      },
+      {
+        "symbol": "UBER",
+        "action": "HOLD",
+        "target_pct": 7.9
+      },
+      {
+        "symbol": "SNOW",
+        "action": "HOLD",
+        "target_pct": 7.84
+      },
+      {
+        "symbol": "HD",
+        "action": "HOLD",
+        "target_pct": 7.82
+      },
+      {
+        "symbol": "DUOL",
+        "action": "HOLD",
+        "target_pct": 6.02
+      },
+      {
+        "symbol": "GTLB",
+        "action": "HOLD",
+        "target_pct": 4.54
+      },
+      {
+        "symbol": "ETSY",
+        "action": "BUY",
+        "target_pct": 4.01
+      },
+      {
+        "symbol": "APP",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "COIN",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "S",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "ZS",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "CRWD",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "PANW",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "LLY",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "UPST",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "SOFI",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "RELY",
+        "action": "BUY",
+        "target_pct": 3.57
+      },
+      {
+        "symbol": "PINS",
+        "action": "HOLD",
+        "target_pct": 2.89
+      },
+      {
+        "symbol": "ABNB",
+        "action": "HOLD",
+        "target_pct": 2.07
+      },
+      {
+        "symbol": "SHOP",
+        "action": "HOLD",
+        "target_pct": 1.93
+      },
+      {
+        "symbol": "MDB",
+        "action": "BUY",
+        "target_pct": 0.65
+      },
+      {
+        "symbol": "PATH",
+        "action": "BUY",
+        "target_pct": 0.65
+      },
+      {
+        "symbol": "ROKU",
+        "action": "BUY",
+        "target_pct": 0.65
+      },
+      {
+        "symbol": "EXPE",
+        "action": "BUY",
+        "target_pct": 0.65
+      },
+      {
+        "symbol": "SPOT",
+        "action": "BUY",
+        "target_pct": 0.65
+      },
+      {
+        "symbol": "PLTR",
+        "action": "BUY",
+        "target_pct": 0.65
+      },
+      {
+        "symbol": "TTD",
+        "action": "BUY",
+        "target_pct": 0.65
+      },
+      {
+        "symbol": "DDOG",
+        "action": "BUY",
+        "target_pct": 0.65
+      }
+    ]
+  }
+]

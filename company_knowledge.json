@@ -1,0 +1,538 @@
+{
+  "AAPL": {
+    "note": "iPhone cash cow, services flywheel compounding margins. $3T ecosystem lock-in.",
+    "risk": "iPhone upgrade cycle stalling, China demand erosion, services regulatory risk"
+  },
+  "ABBV": {
+    "note": "pharma giant. Humira biosimilar competition phased, Skyrizi + Rinvoq immunology growth.",
+    "risk": "Patent cliffs, biosimilar erosion, pipeline setbacks"
+  },
+  "ABNB": {
+    "note": "travel marketplace. Host supply growth drives take rate. Cyclical travel demand exposure.",
+    "risk": "Travel demand normalization post-revenge-spend, host regulation risk, hotels competing on price"
+  },
+  "ADBE": {
+    "note": "creative software monopoly. Photoshop, Acrobat, Experience Cloud. AI Firefly monetization.",
+    "risk": "AI disruption of creative tools, subscription fatigue, Figma deal regulatory risk"
+  },
+  "AFRM": {
+    "note": "buy-now-pay-later platform for e-commerce. Interest income + merchant network growth. Consumer credit cycle exposure.",
+    "risk": "consumer credit losses in downturn, merchant concentration, rising funding costs"
+  },
+  "AMAT": {
+    "note": "semiconductor equipment. Sells the picks and shovels to the chip cycle.",
+    "risk": "Chip equipment cycle downturn, China export restrictions, Korea capex cuts"
+  },
+  "AMD": {
+    "note": "Intel's only real x86 rival. MI300 taking GPU share from NVDA in inference workloads.",
+    "risk": "GPU share gains priced in, x86 slowdown from Intel comeback, console cycle declining"
+  },
+  "AMZN": {
+    "note": "AWS margins fund retail dominance. Logistics moat nobody can replicate at scale.",
+    "risk": "AWS growth slowing, retail margin compression, re-investment cycle eating FCF"
+  },
+  "APP": {
+    "note": "mobile ad tech platform. Game monetization + AI-driven ad optimization/AppLovin.",
+    "risk": "Ad market cyclicality, Apple ATT impact, high multiple de-risking"
+  },
+  "ARM": {
+    "note": "Arm architecture licensing. Royalty model. AI data center adoption is the growth story.",
+    "risk": "Royalty rate compression, client concentration (Google/Apple), high-multiple de-rating risk"
+  },
+  "ASML": {
+    "note": "EUV lithography monopoly. Every advanced chip needs their machines. China export risk.",
+    "risk": "China export restrictions are the binary risk, EUV shipment delays, fab capex pull-ins already price the upside"
+  },
+  "AVGO": {
+    "note": "Custom AI silicon for Google and Meta. VMware acquisition shifts mix toward recurring software revenue.",
+    "risk": "VMware integration risk, customer concentration (Google/Meta buy 40%+ of revenue), semiconductor cyclicality"
+  },
+  "BAC": {
+    "note": "money-center bank. Consumer + commercial. Net interest income and rate sensitivity.",
+    "risk": "Rate cuts compress NII, credit cycle deterioration, regulatory capital requirements"
+  },
+  "BLK": {
+    "note": "asset management colossus. iShares ETF monopoly. Aladdin risk platform. $10T AUM.",
+    "risk": "AUM outflows in risk-off, fee compression, Aladdin competition"
+  },
+  "BMY": {
+    "note": "big pharma. Revlimid patent cliff, Opdivo oncology franchise. Pipeline M&A (Karuna) story.",
+    "risk": "Revlimid erosion, Opdivo patent cliff, pipeline disappointments"
+  },
+  "CAT": {
+    "note": "heavy machinery and construction equipment. Global infrastructure / mining capex. China demand macro bellwether.",
+    "risk": "China construction slowdown, commodity price collapse, inventory destocking"
+  },
+  "CDNS": {
+    "note": "EDA software. Cadence, chip design tools for semiconductor industry. AI-assisted design.",
+    "risk": "Semiconductor cycle downturn, Synopsys competition, AI design disruption"
+  },
+  "CFLT": {
+    "note": "Confluent. Managed Kafka streaming data. Event streaming for real-time apps.",
+    "risk": "Cloud hyperscaler competition, consumption growth volatility, path to profitability"
+  },
+  "CHTR": {
+    "note": "cable broadband monopoly. Spectrum brand. Video cord-cutting continues, broadband grows.",
+    "risk": "Broadband subscriber loss, wireless competition, video decline"
+  },
+  "CHWY": {
+    "note": "online pet food and pharmacy subscription. Chewy brand. Sticky auto-ship revenue.",
+    "risk": "Customer acquisition slowdown, margin compression, competition from Amazon/retailers"
+  },
+  "CMCSA": {
+    "note": "cable + NBCUniversal. Broadband pricing. Peacock streaming. Theme parks.",
+    "risk": "Broadband saturation, streaming losses, theme parks cyclicality"
+  },
+  "COIN": {
+    "note": "crypto exchange. Revenue volatile with trading volumes. Diversifying into staking and Base L2.",
+    "risk": "Crypto volume collapse in risk-off, regulation (SEC), staking revenue under legal threat"
+  },
+  "COP": {
+    "note": "oil and gas exploration. Permian and Alaska assets. Production growth story.",
+    "risk": "Oil price collapse, capital discipline erosion, energy transition pressure"
+  },
+  "COST": {
+    "note": "membership warehouse retail. Low prices, ultra-loyal customers, defensive consumer play.",
+    "risk": "membership growth saturation, international expansion execution, wage inflation"
+  },
+  "CRM": {
+    "note": "Salesforce. CRM cloud leader. Data Cloud + AI. Acquisitions (Slack, Tableau) integration.",
+    "risk": "Growth deceleration, AI monetization pressure, executive turnover"
+  },
+  "CRWD": {
+    "note": "endpoint security leader. Falcon platform dominance. Recovery from 2024 outage.",
+    "risk": "Post-outage churn risk, PANW and S competitive pressure, large-enterprise deal lengthening"
+  },
+  "CVX": {
+    "note": "integrated supermajor. Permian, LNG, renewables. Dividend fortress.",
+    "risk": "Oil price collapse, energy transition, mega-project cost overruns"
+  },
+  "CYBR": {
+    "note": "cybersecurity. Privileged access management (PAM). Identity security.",
+    "risk": "Competition from larger platforms, sales cycle elongation, breach risk"
+  },
+  "DDOG": {
+    "note": "cloud infrastructure monitoring. Multi-cloud observability play. Usage-based revenue.",
+    "risk": "Cloud spend optimization hitting usage revenue, competition from Grafana and Splunk"
+  },
+  "DE": {
+    "note": "agricultural equipment. John Deere precision farming. Commodity price sensitivity.",
+    "risk": "Commodity price collapse, farm income decline, high inventory"
+  },
+  "DIS": {
+    "note": "media empire in transition. Streaming profitability improving. Parks cash cow. Linear TV decline.",
+    "risk": "Linear TV decline accelerating, streaming unprofitability, parks cyclicality, CEO transition risk"
+  },
+  "DKNG": {
+    "note": "sports betting and iGaming platform. State legalization tailwind. Marketing spend intensive.",
+    "risk": "State regulatory setbacks, marketing ROI pressure, competition from FanDuel"
+  },
+  "DOCN": {
+    "note": "developer cloud for SMBs. Simple pricing vs AWS. Niche player with sticky revenue.",
+    "risk": "Hyperscaler price war crushing SMB cloud pricing, scale disadvantage, churn risk in down cycle"
+  },
+  "DUOL": {
+    "note": "language learning app. Subscription growth and DAU engagement. AI-powered content creation.",
+    "risk": "Language learning market saturation, AI competition from ChatGPT, monetization ceiling uncertain"
+  },
+  "ELF": {
+    "note": "mass-market beauty / cosmetics. Gen Z brand power. Growth outpacing legacy beauty.",
+    "risk": "Category slowdown, retailer concentration, valuation de-rating"
+  },
+  "EOG": {
+    "note": "shale oil and gas. Permian + Bakken. Low-cost producer. Capital returns focused.",
+    "risk": "Oil price collapse, well productivity degradation, shareholder return sustainability"
+  },
+  "ESTC": {
+    "note": "Elastic. Search + observability + security. Open-source ELK stack. Consumption pricing.",
+    "risk": "Consumption growth volatility, OpenSearch competition, cloud spending slowdown"
+  },
+  "ETSY": {
+    "note": "handmade / artisan e-commerce. Pandemic pull-forward normalizing. Marketplace flywheel.",
+    "risk": "GMV deceleration, fee increase pushback, Amazon/eBay competition"
+  },
+  "EXPE": {
+    "note": "online travel agency. Expedia / Hotels.com brands. Travel recovery and margin story.",
+    "risk": "Travel demand normalization, Google competition, hotel direct booking push"
+  },
+  "FIS": {
+    "note": "fintech infrastructure. Core banking and payments tech. Spun out Worldpay.",
+    "risk": "Banking IT spend slowdown, Worldpay spin complexity, margin pressure"
+  },
+  "FTNT": {
+    "note": "Fortinet. Network security (firewall) + SASE. Enterprise cybersecurity leader.",
+    "risk": "SASE market crowding, firewall commoditization, billings growth deceleration"
+  },
+  "GE": {
+    "note": "conglomerate breakup. Vernova (power/renewables) and GE Aerospace spin. Aviation is core.",
+    "risk": "Aerospace cycle downturn, supply chain disruption, spin execution"
+  },
+  "GILD": {
+    "note": "biotech. HIV treatment leader, cell therapy and oncology pivot. M&A for growth.",
+    "risk": "HIV franchise maturation, oncology pipeline setbacks, M&A integration"
+  },
+  "GOOGL": {
+    "note": "Search ad monopoly under regulatory pressure. YouTube and Cloud are the real growth drivers.",
+    "risk": "Search disruption from AI chatbots, antitrust breakup risk, YouTube ad pricing pressure"
+  },
+  "GS": {
+    "note": "investment bank + wealth management. Trading, M&A, asset management. Market proxy.",
+    "risk": "Trading/M&A revenue cyclicality, regulatory scrutiny, consumer banking losses"
+  },
+  "GTLB": {
+    "note": "DevOps platform. AI-powered CI/CD. Usage-based revenue. Competing with Microsoft GitHub.",
+    "risk": "GitHub (Microsoft) competition, AI feature monetization uncertain, usage-based revenue volatile"
+  },
+  "HD": {
+    "note": "home improvement retail fortress. Housing turnover and rate sensitive. Cyclical but margin resilient.",
+    "risk": "housing market freeze from high rates, DIY demand normalization, lumber cost volatility"
+  },
+  "HON": {
+    "note": "industrial conglomerate. Aerospace, building tech, safety. Software-driven manufacturing.",
+    "risk": "Aerospace cycle, China exposure, conglomerate discount"
+  },
+  "HOOD": {
+    "note": "retail brokerage. Payment for order flow model. Crypto and options revenue growing.",
+    "risk": "PFOF regulatory risk, crypto volume volatility, retail trading decline in bear markets"
+  },
+  "IBM": {
+    "note": "hybrid cloud + consulting + mainframe. AI (Watson, Granite). Turnaround story.",
+    "risk": "Consulting demand cyclicality, AI monetization lag, mainframe decline"
+  },
+  "ILMN": {
+    "note": "DNA sequencing. Genomics tools for clinical and research. Short-read monopoly under pressure.",
+    "risk": "Long-read competition (PacBio/ONT), clinical reimbursement, growth slowdown"
+  },
+  "INTC": {
+    "note": "semiconductor foundry. IDM 2.0 strategy. Catching TSMC in process nodes. Capex heavy.",
+    "risk": "Process node delays, foundry losses, market share loss to AMD/ARM"
+  },
+  "INTU": {
+    "note": "financial software. TurboTax and QuickBooks. Mint shutdown. AI-assisted finances.",
+    "risk": "Free filing competition, SMB downturn, AI disruption of tax prep"
+  },
+  "ISRG": {
+    "note": "surgical robotics. Da Vinci install base drives recurring instrument sales. Procedure growth tailwind.",
+    "risk": "Procedure volume slowdown, competition from Medtronic/J&J, high valuation"
+  },
+  "JNJ": {
+    "note": "healthcare conglomerate. Pharma + med devices + consumer. Spinning off Kenvue. Defensive staple.",
+    "risk": "Talc litigation overhang, pharma patent cliffs, consumer weakness"
+  },
+  "JPM": {
+    "note": "biggest US bank. Universal banking model. Fortress balance sheet under Jamie Dimon.",
+    "risk": "Rate cuts compress NII, credit cycle deterioration, regulatory burden"
+  },
+  "KLAC": {
+    "note": "process control equipment for chip fabs. Near-monopoly in defect inspection.",
+    "risk": "Inspection equipment cycle, China export risk, fab capex deferral"
+  },
+  "LCID": {
+    "note": "luxury EV maker. Burning cash, Saudi-backed. Production ramp is the only thing that matters.",
+    "risk": "Cash burn runway, production ramp delays, Saudi ownership overhang. Not investable without execution."
+  },
+  "LLY": {
+    "note": "pharma giant riding the GLP-1 obesity wave. Mounjaro/Zepbound revenue compounding. Duopoly with Novo Nordisk.",
+    "risk": "GLP-1 supply constraints, Novo Nordisk competition, insurance formulary pushback"
+  },
+  "LMND": {
+    "note": "AI-native insurance disruptor. Home / renters / pet coverage. Loss ratio -> profitability path.",
+    "risk": "loss ratio volatility, catastrophic event exposure, cash runway to profitability"
+  },
+  "LMT": {
+    "note": "defense prime. F-35, missile systems. Government budget dependent.",
+    "risk": "Defense budget cuts, program delays, cost overruns"
+  },
+  "LRCX": {
+    "note": "wafer fab equipment. Highly leveraged to NAND capex cycles.",
+    "risk": "NAND capex cuts, China export exposure, memory cycle downturn hitting WFE spend"
+  },
+  "LULU": {
+    "note": "premium athleisure. Lululemon brand. International expansion. Peloton adjacency.",
+    "risk": "Growth normalization, inventory mismanagement, international execution"
+  },
+  "META": {
+    "note": "Facebook + Instagram ad machine prints cash. Reality Labs is a long-term metaverse bet.",
+    "risk": "Reels monetization lag, Reality Labs cash drain, ad market cyclicality"
+  },
+  "MDB": {
+    "note": "NoSQL database. Atlas cloud revenue growing 30%+. Developer mindshare leader.",
+    "risk": "Atlas growth deceleration, competition from Snowflake and Databricks, developer preference shifts"
+  },
+  "MPC": {
+    "note": "oil refiner + midstream + retail. Marathon brand. Crack spread sensitive.",
+    "risk": "Crack spread collapse, renewable transition, refining overcapacity"
+  },
+  "MRK": {
+    "note": "big pharma. Keytruda is the world's top-selling drug. Animal health spin. Patent cliff coming.",
+    "risk": "Keytruda patent cliff, pipeline setbacks, animal health spin execution"
+  },
+  "MRVL": {
+    "note": "semiconductor networking + custom AI silicon. Data center and 5G infra exposure.",
+    "risk": "data center buildout slowdown, custom silicon competition, China telecom exposure"
+  },
+  "MS": {
+    "note": "investment bank + E*Trade + asset management. Wealth management fees.",
+    "risk": "Trading/M&A cyclicality, wealth management fee pressure, credit losses"
+  },
+  "MSFT": {
+    "note": "Azure is #2 cloud, Office is a monopoly, OpenAI partnership gives them AI distribution.",
+    "risk": "Azure growth deceleration, AI monetization lag, OPEX bloat from OpenAI investment"
+  },
+  "MU": {
+    "note": "DRAM/NAND memory cyclical. AI demand driving HBM pricing power. Boom-bust name.",
+    "risk": "Memory glut if AI demand slows, capex overbuild risk, China DRAM competition (CXMT)"
+  },
+  "NET": {
+    "note": "Cloudflare. CDN, zero-trust, edge compute. Internet infrastructure layer.",
+    "risk": "SASE competition from ZS and PANW, zero-trust market fragmenting, code-key incident reputation risk"
+  },
+  "NFLX": {
+    "note": "streaming leader. Ad-tier and password crackdown driving subscriber growth. Content moat.",
+    "risk": "Content spend arms race, ad-tier ARPU dilution, sub saturation in developed markets"
+  },
+  "NIO": {
+    "note": "Chinese EV maker. Battery swap stations. Competitive with Tesla / BYD in China.",
+    "risk": "China EV price war, cash burn, geopolitical delisting risk"
+  },
+  "NKE": {
+    "note": "sportswear global leader. Direct-to-consumer pivot. China market exposure.",
+    "risk": "China demand weakness, inventory glut, DTC execution"
+  },
+  "NOW": {
+    "note": "ServiceNow. Enterprise workflow SaaS. ITSM leader. AI copilots.",
+    "risk": "IT spend slowdown, workflow commoditization, AI feature pricing pressure"
+  },
+  "NVDA": {
+    "note": "GPU monopoly for AI training. Data center revenue compounding 80%+. CUDA moat is unbreachable near-term.",
+    "risk": "AI capex air pocket, China export restrictions, AMD/Google internal chip competition"
+  },
+  "NXPI": {
+    "note": "automotive semiconductor. EV power electronics, radar, secure connectivity.",
+    "risk": "Auto demand slowdown, EV adoption plateau, China exposure"
+  },
+  "OKTA": {
+    "note": "identity management. SSO and access control. Margins expanding post-Salesforce competition.",
+    "risk": "Security incident overhang, Salesforce competition in identity, large-deal cycle elongation"
+  },
+  "ON": {
+    "note": "ON Semiconductor. Power management, SiC for EVs. Industrial + automotive.",
+    "risk": "EV demand slowdown, industrial inventory destocking, SiC competition"
+  },
+  "ORCL": {
+    "note": "enterprise database and cloud. Multi-cloud database. Cerner healthcare data. AI RAG.",
+    "risk": "Cloud growth deceleration, Cerner integration, AI RAG competition"
+  },
+  "OXY": {
+    "note": "oil and gas. Permian focus. Buffett-backed. Occidental / Anadarko synergies.",
+    "risk": "Oil price collapse, Permian cost inflation, Berkshire ownership overhang"
+  },
+  "PANW": {
+    "note": "Palo Alto Networks. Enterprise firewall + security platform. SASE and zero-trust.",
+    "risk": "Platformization execution, billings deceleration, SASE competition"
+  },
+  "PARA": {
+    "note": "Paramount Global. CBS, cable, Paramount+. Streaming wars. M&A target (Skydance deal).",
+    "risk": "Linear TV decline, streaming losses, M&A uncertainty"
+  },
+  "PATH": {
+    "note": "UiPath. Robotic process automation (RPA). Enterprise automation, AI integration.",
+    "risk": "RPA commoditization by AI agents, growth deceleration, profitability path"
+  },
+  "PAYO": {
+    "note": "cross-border payments for SMBs and freelancers. Emerging market revenue. Take rate expansion story.",
+    "risk": "regulatory scrutiny on cross-border payments, FX volatility, SMB customer churn"
+  },
+  "PFE": {
+    "note": "pharma. COVID windfall gone. Oncology rebuild via Seagen acquisition. Pipeline dependent.",
+    "risk": "Pipeline setbacks, Seagen integration, patent cliffs"
+  },
+  "PINS": {
+    "note": "visual search and social commerce. Ad recovery play. Amazon partnership driving monetization.",
+    "risk": "User growth plateau, Amazon partnership revenue ramp uncertain, ad market cyclicality"
+  },
+  "PLTR": {
+    "note": "government and enterprise data analytics. AI platform expansion driving commercial growth.",
+    "risk": "Government contract lumpiness, high multiple means growth miss punishes the stock"
+  },
+  "PSTG": {
+    "note": "Pure Storage. Flash storage arrays. Evergreen subscription model. Enterprise IT spend.",
+    "risk": "IT spend slowdown, competition from incumbents, consumption growth volatility"
+  },
+  "PSX": {
+    "note": "downstream refiner and midstream. Phillips 66. Energy infrastructure consolidation.",
+    "risk": "Crack spread collapse, energy transition, midstream regulatory risk"
+  },
+  "PYPL": {
+    "note": "digital payments. Braintree growing, branded checkout losing share to Apple Pay.",
+    "risk": "Branded checkout losing share to Apple Pay, Braintree take rate compression, turnaround execution risk"
+  },
+  "QCOM": {
+    "note": "mobile Snapdragon chips and 5G modems. Apple modem threat looming.",
+    "risk": "Apple in-house modem threat, handset cycle weakness, royalty disputes"
+  },
+  "REGN": {
+    "note": "biotech. Dupixent franchise (dermatitis, asthma). Monoclonal antibody platform powerhouse.",
+    "risk": "Dupixent competition, patent cliffs, pipeline setbacks"
+  },
+  "RELY": {
+    "note": "digital remittance platform. Competing with Western Union wire transfers. Latam volume growth.",
+    "risk": "remittance volume tied to immigration flows, FX headwinds, regulatory licensing"
+  },
+  "RIVN": {
+    "note": "adventure EV trucks and vans. Amazon delivery fleet contract is the lifeline. Cash burn is critical risk.",
+    "risk": "Cash burn is existential, Amazon van contract renegotiation risk, pickup truck demand weakening"
+  },
+  "RKLB": {
+    "note": "small launch vehicle. Neutron rocket development is the next catalyst. Space systems revenue growing.",
+    "risk": "Launch failure risk, Neutron rocket schedule slippage, small-launch market limited, cash runway"
+  },
+  "ROKU": {
+    "note": "streaming device and platform. Roku OS for TV OEMs. Ad inventory monetization.",
+    "risk": "Platform competition, ad market cyclicality, account growth saturation"
+  },
+  "RTX": {
+    "note": "defense and aerospace. Pratt & Whitney engines, Collins. Supply chain recovery.",
+    "risk": "Engine recall costs, defense budget pressure, supply chain disruption"
+  },
+  "S": {
+    "note": "AI-native endpoint security. Growth rate slowing but differentiation vs CRWD is the debate.",
+    "risk": "CRWD competitive pressure, growth rate slowing, path to profitability longer than peers"
+  },
+  "SCHW": {
+    "note": "brokerage and wealth. Zero-commission model, NIM sensitive to rates.",
+    "risk": "Rate cuts compress NIM, deposit outflows, trading volume decline"
+  },
+  "SGEN": {
+    "note": "biotech, acquired by Pfizer. ADC (antibody-drug conjugate) oncology tech.",
+    "risk": "Integration with Pfizer, pipeline competition, ADC market saturation"
+  },
+  "SHOP": {
+    "note": "e-commerce platform for SMBs. Merchant solutions revenue growing. Margin turnaround story.",
+    "risk": "SMB churn in downturn, competitive pressure from Amazon and WooCommerce, revenue take rate pressure"
+  },
+  "SLB": {
+    "note": "oilfield services. Completion, drilling, digital. Rig count levered.",
+    "risk": "Rig count collapse, energy transition, international project delays"
+  },
+  "SNAP": {
+    "note": "ephemeral social media. Snap Ads and AR lens. Alternatives to Meta.",
+    "risk": "Ad market cyclicality, Meta competition, ARPU stagnation"
+  },
+  "SNOW": {
+    "note": "cloud data warehouse. Consumption model. Growth slowing, profitability improving.",
+    "risk": "Consumption growth slowing, competition from Databricks and BigQuery, NRR declining"
+  },
+  "SNPS": {
+    "note": "Synopsys. EDA + IP for chip design monopoly. AI design tools acquisition.",
+    "risk": "Semiconductor cycle downturn, AI design disruption, Ansys integration"
+  },
+  "SOFI": {
+    "note": "neobank with lending, deposits, and Galileo fintech infra. Student loan refinancing origin story.",
+    "risk": "student loan refinancing policy risk, deposit beta pressure, Galileo customer concentration"
+  },
+  "SPOT": {
+    "note": "audio streaming leader. Premium subscriber growth and margin expansion from cost discipline.",
+    "risk": "Label relationship renegotiation, podcast investment ROI unclear, ad-tier margin dilution"
+  },
+  "SQ": {
+    "note": "fintech ecosystem. Cash App and Square POS. Bitcoin revenue is volatile, margins are the story.",
+    "risk": "Cash App regulatory scrutiny, Bitcoin revenue volatility, forward-guidance risk from macro sensitivity"
+  },
+  "SWKS": {
+    "note": "Skyworks. RF semiconductors for smartphones and IoT. Apple concentration risk.",
+    "risk": "Apple concentration, handset cycle weakness, RF competition"
+  },
+  "TEAM": {
+    "note": "Atlassian. Jira + Confluence developer tools. Cloud shift. Team collaboration.",
+    "risk": "Microsoft competition, IT spend slowdown, cloud migration saturation"
+  },
+  "TER": {
+    "note": "semiconductor test equipment leader. Robotics/automation arm. Cyclical recovery tied to chip demand.",
+    "risk": "memory overbuild cutting test demand, auto/robotics slowdown, China fab restrictions"
+  },
+  "TMO": {
+    "note": "life sciences tools and diagnostics giant. Biopharma capex cycle. M&A roll-up strategy.",
+    "risk": "biopharma R&D budget cuts, China diagnostics competition, M&A integration risk"
+  },
+  "TMUS": {
+    "note": "mobile carrier. 5G network leader. Customer poaching from Verizon/AT&T.",
+    "risk": "Price war with Verizon/AT&T, spectrum costs, regulatory scrutiny"
+  },
+  "TSLA": {
+    "note": "EV market leader losing share to BYD and legacy OEMs. Real optionality is FSD and robotaxi.",
+    "risk": "EV demand normalization, FSD timeline slippage, China price war crushing margins"
+  },
+  "TTD": {
+    "note": "Trade Desk. Programmatic ad tech platform. Connected TV (CTV) growth. Cookie deprecation play.",
+    "risk": "CTV growth deceleration, Google competition, DSP commoditization"
+  },
+  "TXN": {
+    "note": "Texas Instruments. Analog and embedded semiconductors. Industrial + auto dividend aristocrat.",
+    "risk": "Industrial/auto downturn, inventory destocking, China demand weakness"
+  },
+  "TWLO": {
+    "note": "cloud communications API. Engagement data platform expanding. Path to profitability is the thesis.",
+    "risk": "Growth deceleration, competitive pressure from AWS Pinpoint and Bandwidth, path to GAAP profitability unproven"
+  },
+  "UBER": {
+    "note": "ride-share and delivery dominance. FCF inflection. Autonomous vehicle partner risk.",
+    "risk": "AV partners could disintermediate, driver supply/demand imbalance, regulatory pressure on gig classification"
+  },
+  "UNH": {
+    "note": "managed care titan — health insurance, pharmacy benefits (Optum), Medicare. Moves on CMS rates and drug pricing policy.",
+    "risk": "CMS rate cuts, GLP-1 cost inflation for insurers, regulatory overhaul risk"
+  },
+  "UNP": {
+    "note": "Union Pacific Railroad. Cross-country freight. Economic activity barometer.",
+    "risk": "Freight volume slowdown, labor inflation, derailment/operational risk"
+  },
+  "UPS": {
+    "note": "parcel delivery duopoly with FedEx. B2C e-commerce spikes. Margin compression.",
+    "risk": "Volume slowdown, labor costs, Amazon logistics competition"
+  },
+  "UPST": {
+    "note": "AI-powered lending marketplace. Personal / auto loans. High credit-cycle beta.",
+    "risk": "recession -> loan defaults spike, funding partner pullback, AI model bias scrutiny"
+  },
+  "V": {
+    "note": "payments network duopoly. VisaNet infrastructure. Cross-border volume recovery.",
+    "risk": "Cross-border slowdown, regulatory pressure on swipe fees, fintech disruption"
+  },
+  "VEEV": {
+    "note": "life sciences SaaS. Pharma CRM, clinical data, and marketing. Subscription model for biotech.",
+    "risk": "Biotech spending cuts, CRM competition, growth deceleration"
+  },
+  "VRTX": {
+    "note": "gene therapy. Cystic fibrosis monopoly (Trikafta). Casgevy CRISPR launch for sickle cell.",
+    "risk": "Trikafta patent cliff, gene therapy competition, Casgevy adoption"
+  },
+  "WBD": {
+    "note": "Warner Bros Discovery. HBOMax + Discovery+ merger. Content cost cutting focus.",
+    "risk": "Streaming losses, content spend pressure, linear TV decline"
+  },
+  "WFC": {
+    "note": "US bank, recovering from scandals. Consumer focused. Rate and turnaround story.",
+    "risk": "Asset cap lingering, consumer credit deterioration, rate sensitivity"
+  },
+  "WMT": {
+    "note": "retail fortress. Walmart US, Sam's Club, international. Grocery + omnichannel.",
+    "risk": "Margin pressure from grocery mix, Amazon competition, consumer trade-down"
+  },
+  "XOM": {
+    "note": "supermajor oil. Upstream + downstream + chemicals. Permian and Guyana acceleration.",
+    "risk": "Oil price collapse, energy transition pressure, project cost overruns"
+  },
+  "XPEV": {
+    "note": "Chinese EV maker. XPeng. Autonomous driving focus. Sedan / SUV models.",
+    "risk": "China EV price war, cash burn, geopolitical delisting risk"
+  },
+  "ZBH": {
+    "note": "orthopedic devices. Knees, hips, spine. Elective procedure recovery.",
+    "risk": "Elective procedure slowdown, pricing pressure, robotics competition"
+  },
+  "ZS": {
+    "note": "zero-trust security gateway. Cloud-native. Competing with NET in SASE market.",
+    "risk": "SASE market crowding, zero-trust commoditization, sales cycle lengthening"
+  }
+}

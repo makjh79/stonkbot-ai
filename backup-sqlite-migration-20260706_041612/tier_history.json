@@ -1,0 +1,4502 @@
+[
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:40:16.355841Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:43:33.260808Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:45:01.354646Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:50:02.053236Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:54:43.764217Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T02:55:01.537189Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:00:02.041902Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:05:01.787632Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:10:02.225564Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:15:01.583917Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:20:01.768876Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:25:02.308712Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:30:01.928243Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:35:01.355225Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:36:14.459301Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:40:01.753971Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:45:02.405780Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:50:01.373340Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:54:08.335920Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T03:55:02.061655Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:00:01.889210Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:05:02.275960Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:10:01.652462Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:12:01.892648Z"
+  },
+  {
+    "symbol": "ETSY",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.9,
+    "reason": "STRONG_NOW: readiness 79.9 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "DUOL",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.7,
+    "reason": "STRONG_NOW: readiness 79.7 \u2014 entry-ready tier. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "SNOW",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 79.3,
+    "reason": "STRONG_NOW: readiness 79.3 \u2014 entry-ready tier. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "UBER",
+    "change_type": "demote",
+    "from_tier": "PRIME",
+    "to_tier": "STRONG_NOW",
+    "readiness_score": 78.3,
+    "reason": "STRONG_NOW: readiness 78.3 \u2014 entry-ready tier. volume confirmation + MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "UPST",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 77.2,
+    "reason": "NOW: readiness 77.2 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "PINS",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 76.4,
+    "reason": "NOW: readiness 76.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "SOFI",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 75.9,
+    "reason": "NOW: readiness 75.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "HD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.9,
+    "reason": "NOW: readiness 74.9 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "LMND",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.8,
+    "reason": "NOW: readiness 74.8 \u2014 building strength, not yet entry-ready. volume confirmation + MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "DDOG",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.6,
+    "reason": "NOW: readiness 74.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "ABNB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 74.5,
+    "reason": "NOW: readiness 74.5 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "ELF",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "GTLB",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.6,
+    "reason": "NOW: readiness 73.6 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "HOOD",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "SHOP",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.4,
+    "reason": "NOW: readiness 73.4 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "EXPE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 73.0,
+    "reason": "NOW: readiness 73.0 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "AFRM",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.8,
+    "reason": "NOW: readiness 72.8 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "ROKU",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.7,
+    "reason": "NOW: readiness 72.7 \u2014 building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "NKE",
+    "change_type": "demote",
+    "from_tier": "BUILDING",
+    "to_tier": "NOW",
+    "readiness_score": 72.0,
+    "reason": "NOW: readiness 72.0 \u2014 building strength, not yet entry-ready. volume confirmation + above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  },
+  {
+    "symbol": "PATH",
+    "change_type": "demote",
+    "from_tier": "WATCHING",
+    "to_tier": "WATCH",
+    "readiness_score": 71.9,
+    "reason": "WATCH: readiness 71.9. above 20d EMA + sector strength.",
+    "timestamp": "2026-07-06T04:15:02.027079Z"
+  }
+]

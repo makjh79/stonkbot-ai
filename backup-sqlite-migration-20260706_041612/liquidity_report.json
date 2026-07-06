@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-07-03T13:00:02.025179",
+  "symbol_count": 20,
+  "warning_threshold_bps": 20.0,
+  "critical_threshold_bps": 50.0,
+  "symbols": {},
+  "warnings": [],
+  "critical": []
+}

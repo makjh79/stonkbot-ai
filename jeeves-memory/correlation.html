@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StonkBOT — Watchlist Correlation Report</title>
+  <style>
+    :root { --bg: #0f172a; --card: rgba(30,41,59,0.7); --text: #f8fafc; --muted: #94a3b8; --border: rgba(148,163,184,0.15); }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .card .label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+    .red { color: #ef4444; }
+    .amber { color: #fbbf24; }
+    .green { color: #22c55e; }
+    .cyan { color: #06b6d4; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-top: 16px; }
+    th, td { padding: 4px 3px; text-align: right; border: 1px solid var(--border); }
+    th { background: rgba(15,23,42,0.8); position: sticky; top: 0; }
+    td:first-child, th:first-child { text-align: left; position: sticky; left: 0; background: rgba(15,23,42,0.95); }
+    .heat-0 { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .heat-1 { background: rgba(34,197,94,0.08); color: #86efac; }
+    .heat-2 { background: rgba(251,191,36,0.08); color: #fbbf24; }
+    .heat-3 { background: rgba(249,115,22,0.12); color: #fb923c; }
+    .heat-4 { background: rgba(239,68,68,0.18); color: #ef4444; font-weight: 700; }
+    .matrix-wrap { overflow: auto; max-height: 70vh; border: 1px solid var(--border); border-radius: 12px; }
+    .section { margin-bottom: 32px; }
+    .tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin: 2px; }
+    .tag-beta { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .tag-safe { background: rgba(34,197,94,0.15); color: #22c55e; }
+    a { color: #06b6d4; }
+  </style>
+</head>
+<body>
+  <h1>Watchlist Correlation Report</h1>
+  <div class="subtitle" id="subtitle">Loading...</div>
+
+  <div class="grid" id="summary"></div>
+
+  <div class="section">
+    <div class="card">
+      <div class="label">High-Beta Basket (SPY beta &gt; 1.2 or SPY corr &gt; 0.7)</div>
+      <div id="high-beta"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="label">Beta vs SPY (highest first)</div>
+      <div id="betas"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <div class="label">Sector Average Pairwise Correlation</div>
+      <div id="sectors"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label">Pairwise Correlation Matrix</div>
+    <div class="matrix-wrap">
+      <table id="matrix"></table>
+    </div>
+  </div>
+
+  <p style="color: var(--muted); font-size: 0.75rem; margin-top: 32px;">
+    Updated nightly from Alpaca SIP daily adjusted bars. &lt; 60 trading days of history may produce noisy estimates.
+    <br><a href="https://stonkbot.ai">← Back to StonkBOT</a>
+  </p>
+
+  <script>
+    async function load() {
+      const res = await fetch('correlation_report.json');
+      const r = await res.json();
+      document.getElementById('subtitle').textContent = 'Generated: ' + r.timestamp + ' · Lookback: ' + r.lookback_trading_days + ' trading days';
+
+      const summary = document.getElementById('summary');
+      const cards = [
+        { label: 'Avg Pairwise Correlation', value: r.average_pairwise_correlation, format: v => v.toFixed(3), color: v => v > 0.5 ? 'red' : v > 0.35 ? 'amber' : 'green' },
+        { label: 'Max Pairwise Correlation', value: r.max_pairwise_correlation, format: v => v.toFixed(3), color: v => v > 0.8 ? 'red' : v > 0.6 ? 'amber' : 'green' },
+        { label: 'High-Beta Symbols', value: r.high_beta_basket.count, format: v => v + ' / ' + r.symbols.length, color: v => v > 12 ? 'red' : v > 8 ? 'amber' : 'green' },
+        { label: 'High-Beta Deployed', value: r.high_beta_basket.deployed_pct, format: v => v.toFixed(1) + '%', color: v => v > 50 ? 'red' : v > 35 ? 'amber' : 'green' },
+        { label: 'Diversification Score', value: r.diversification_score, format: v => v.toFixed(3), color: v => v < 0.5 ? 'red' : v < 0.65 ? 'amber' : 'green' },
+      ];
+      summary.innerHTML = cards.map(c => {
+        const v = typeof c.value === 'number' ? c.value : 0;
+        return `<div class="card"><div class="label">${c.label}</div><div class="value ${c.color(v)}">${c.format(v)}</div></div>`;
+      }).join('');
+
+      document.getElementById('high-beta').innerHTML = r.high_beta_basket.symbols.map(s => `<span class="tag tag-beta">${s}</span>`).join(' ');
+
+      const betas = Object.entries(r.betas)
+        .filter(([s, d]) => d.spy !== null)
+        .sort((a, b) => b[1].spy - a[1].spy);
+      document.getElementById('betas').innerHTML = betas.map(([s, d]) => {
+        const cls = d.spy > 2 ? 'tag-beta' : 'tag-safe';
+        return `<span class="tag ${cls}">${s}: ${d.spy.toFixed(2)}</span>`;
+      }).join(' ');
+
+      document.getElementById('sectors').innerHTML = Object.entries(r.sector_average_correlation)
+        .filter(([k, v]) => v !== null)
+        .sort((a, b) => b[1] - a[1])
+        .map(([k, v]) => {
+          const cls = v > 0.6 ? 'tag-beta' : v > 0.4 ? 'amber' : 'tag-safe';
+          return `<span class="tag ${cls}">${k}: ${v.toFixed(3)}</span>`;
+        }).join(' ');
+
+      const syms = r.symbols;
+      const tbl = document.getElementById('matrix');
+      let html = '<tr><th></th>' + syms.map(s => `<th>${s}</th>`).join('') + '</tr>';
+      for (const a of syms) {
+        html += `<tr><th>${a}</th>`;
+        for (const b of syms) {
+          const v = (r.correlation_matrix[a] && r.correlation_matrix[a][b]) || (a === b ? 1 : null);
+          let cls = 'heat-0';
+          const abs = Math.abs(v || 0);
+          if (abs > 0.8) cls = 'heat-4';
+          else if (abs > 0.6) cls = 'heat-3';
+          else if (abs > 0.4) cls = 'heat-2';
+          else if (abs > 0.2) cls = 'heat-1';
+          const txt = v !== null ? v.toFixed(2) : '—';
+          html += `<td class="${cls}">${txt}</td>`;
+        }
+        html += '</tr>';
+      }
+      tbl.innerHTML = html;
+    }
+    load().catch(e => document.body.innerHTML += '<pre style="color:#ef4444">' + e + '</pre>');
+  </script>
+</body>
+</html>

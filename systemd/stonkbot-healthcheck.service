@@ -1,0 +1,19 @@
+[Unit]
+Description=StonkBOT Healthcheck
+After=stonkbot-db-ready.target
+
+[Service]
+Type=oneshot
+User=stonkai
+Group=stonkai
+WorkingDirectory=/opt/stonk-ai
+ExecStart=/usr/bin/python3 /opt/stonk-ai/stonkbot_healthcheck.py --check
+StandardOutput=journal
+StandardError=journal
+# Exit code meaning:
+#   0 = healthy
+#   1 = degraded (alert sent, but systemd considers this a failure for logging)
+#   2 = critical (trading should halt)
+
+[Install]
+WantedBy=multi-user.target

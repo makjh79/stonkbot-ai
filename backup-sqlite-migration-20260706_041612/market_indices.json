@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-07-06T04:15:51.944681",
+  "indices": {
+    "S&P 500": {
+      "symbol": "SPY",
+      "current_price": 744.78,
+      "start_price": 757.09,
+      "return_pct": -1.63,
+      "current_value": 98374.04,
+      "last_updated": "2026-07-06T04:15:52.377718",
+      "source": "Alpaca"
+    },
+    "Dow Jones": {
+      "symbol": "DIA",
+      "current_price": 527.88,
+      "start_price": 515.29,
+      "return_pct": 2.44,
+      "current_value": 102443.28,
+      "last_updated": "2026-07-06T04:15:52.586864",
+      "source": "Alpaca"
+    },
+    "NASDAQ": {
+      "symbol": "QQQ",
+      "current_price": 714.22,
+      "start_price": 739.8,
+      "return_pct": -3.46,
+      "current_value": 96542.31,
+      "last_updated": "2026-07-06T04:15:52.806867",
+      "source": "Alpaca"
+    }
+  },
+  "regime": {
+    "HYG": {
+      "price": 79.71,
+      "prev_close": 79.59,
+      "change_pct": 0.15077271013945262
+    },
+    "LQD": {
+      "price": 108.64,
+      "prev_close": 108.46,
+      "change_pct": 0.16595980084824527
+    },
+    "TLT": {
+      "price": 85.5103,
+      "prev_close": 85.52,
+      "change_pct": -0.011342376052379744
+    },
+    "SHY": {
+      "price": 82,
+      "prev_close": 81.84,
+      "change_pct": 0.19550342130986875
+    },
+    "VIXY": {
+      "price": 21.23,
+      "prev_close": 21.52,
+      "change_pct": -1.3475836431226726
+    },
+    "yield_curve_ratio": 0.9589,
+    "credit_spread_ratio": 1.3629
+  }
+}

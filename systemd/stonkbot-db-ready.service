@@ -1,0 +1,13 @@
+# Dummy target to signal that stonkbot.db is ready.
+# Other services can use: After=stonkbot-db-ready.target
+[Unit]
+Description=StonkBOT DB Ready Target
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

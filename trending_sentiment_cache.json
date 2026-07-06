@@ -1,0 +1,214 @@
+{
+  "timestamp": "2026-06-26T00:26:43.293994",
+  "total_tickers": 18,
+  "sources": [
+    "Yahoo Finance Most Active",
+    "Yahoo Finance Trending",
+    "Yahoo Finance Gainers",
+    "Yahoo Finance Losers",
+    "StockTwits",
+    "Finviz",
+    "MarketWatch",
+    "Benzinga"
+  ],
+  "tickers": {
+    "AAPL": {
+      "ticker": "AAPL",
+      "label": "neutral",
+      "emoji": "\u26aa",
+      "sentiment_score": -0.15,
+      "bullish_pct": 51,
+      "bearish_pct": 39,
+      "neutral_pct": 10,
+      "mentions": 4,
+      "updated": "2026-06-26T00:26:43.293772"
+    },
+    "HOOD": {
+      "ticker": "HOOD",
+      "label": "bullish",
+      "emoji": "\ud83d\udfe2",
+      "sentiment_score": 0.66,
+      "bullish_pct": 77,
+      "bearish_pct": 11,
+      "neutral_pct": 12,
+      "mentions": 4,
+      "updated": "2026-06-26T00:26:43.293798"
+    },
+    "BB": {
+      "ticker": "BB",
+      "label": "neutral",
+      "emoji": "\u26aa",
+      "sentiment_score": -0.05,
+      "bullish_pct": 49,
+      "bearish_pct": 44,
+      "neutral_pct": 7,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293813"
+    },
+    "ABNB": {
+      "ticker": "ABNB",
+      "label": "neutral",
+      "emoji": "\u26aa",
+      "sentiment_score": 0.21,
+      "bullish_pct": 54,
+      "bearish_pct": 41,
+      "neutral_pct": 5,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293826"
+    },
+    "AFRM": {
+      "ticker": "AFRM",
+      "label": "neutral",
+      "emoji": "\u26aa",
+      "sentiment_score": -0.12,
+      "bullish_pct": 51,
+      "bearish_pct": 44,
+      "neutral_pct": 5,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293838"
+    },
+    "AMAT": {
+      "ticker": "AMAT",
+      "label": "neutral",
+      "emoji": "\u26aa",
+      "sentiment_score": -0.2,
+      "bullish_pct": 49,
+      "bearish_pct": 45,
+      "neutral_pct": 6,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293850"
+    },
+    "AMD": {
+      "ticker": "AMD",
+      "label": "bearish",
+      "emoji": "\ud83d\udd34",
+      "sentiment_score": -0.64,
+      "bullish_pct": 35,
+      "bearish_pct": 56,
+      "neutral_pct": 9,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293862"
+    },
+    "AMZN": {
+      "ticker": "AMZN",
+      "label": "bearish",
+      "emoji": "\ud83d\udd34",
+      "sentiment_score": -0.44,
+      "bullish_pct": 33,
+      "bearish_pct": 59,
+      "neutral_pct": 8,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293875"
+    },
+    "CDNS": {
+      "ticker": "CDNS",
+      "label": "bullish",
+      "emoji": "\ud83d\udfe2",
+      "sentiment_score": 0.64,
+      "bullish_pct": 75,
+      "bearish_pct": 13,
+      "neutral_pct": 12,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293886"
+    },
+    "COST": {
+      "ticker": "COST",
+      "label": "bullish",
+      "emoji": "\ud83d\udfe2",
+      "sentiment_score": 0.86,
+      "bullish_pct": 63,
+      "bearish_pct": 31,
+      "neutral_pct": 6,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293898"
+    },
+    "HD": {
+      "ticker": "HD",
+      "label": "bullish",
+      "emoji": "\ud83d\udfe2",
+      "sentiment_score": 0.32,
+      "bullish_pct": 58,
+      "bearish_pct": 28,
+      "neutral_pct": 14,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293909"
+    },
+    "LCID": {
+      "ticker": "LCID",
+      "label": "bearish",
+      "emoji": "\ud83d\udd34",
+      "sentiment_score": -0.56,
+      "bullish_pct": 32,
+      "bearish_pct": 53,
+      "neutral_pct": 15,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293921"
+    },
+    "LULU": {
+      "ticker": "LULU",
+      "label": "bearish",
+      "emoji": "\ud83d\udd34",
+      "sentiment_score": -0.4,
+      "bullish_pct": 40,
+      "bearish_pct": 49,
+      "neutral_pct": 11,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293933"
+    },
+    "NVDA": {
+      "ticker": "NVDA",
+      "label": "neutral",
+      "emoji": "\u26aa",
+      "sentiment_score": -0.02,
+      "bullish_pct": 45,
+      "bearish_pct": 42,
+      "neutral_pct": 13,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293944"
+    },
+    "PLTR": {
+      "ticker": "PLTR",
+      "label": "bullish",
+      "emoji": "\ud83d\udfe2",
+      "sentiment_score": 0.47,
+      "bullish_pct": 67,
+      "bearish_pct": 20,
+      "neutral_pct": 13,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293955"
+    },
+    "RIVN": {
+      "ticker": "RIVN",
+      "label": "bearish",
+      "emoji": "\ud83d\udd34",
+      "sentiment_score": -0.45,
+      "bullish_pct": 26,
+      "bearish_pct": 64,
+      "neutral_pct": 10,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293966"
+    },
+    "UPST": {
+      "ticker": "UPST",
+      "label": "bullish",
+      "emoji": "\ud83d\udfe2",
+      "sentiment_score": 0.82,
+      "bullish_pct": 56,
+      "bearish_pct": 39,
+      "neutral_pct": 5,
+      "mentions": 3,
+      "updated": "2026-06-26T00:26:43.293978"
+    },
+    "U": {
+      "ticker": "U",
+      "label": "bullish",
+      "emoji": "\ud83d\udfe2",
+      "sentiment_score": 0.87,
+      "bullish_pct": 72,
+      "bearish_pct": 22,
+      "neutral_pct": 6,
+      "mentions": 2,
+      "updated": "2026-06-26T00:26:43.293989"
+    }
+  }
+}

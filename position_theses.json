@@ -1,0 +1,170 @@
+{
+  "HD": {
+    "entry_date": "2026-06-25",
+    "entry_price": 0,
+    "entry_readiness": 74.8,
+    "thesis": "HD is a consumer retail / lifestyle brand with strong 20-day momentum, scoring 57/100 on the quality-momentum model. The setup is in an uptrend in a neutral macro backdrop. Evidence: latest earnings miss by 2.2%, 63% of analysts are bullish. Risk is elevated (22.5% vol, 2.4% ATR); position is sized with volatility-aware stops.",
+    "confirmations": {
+      "momentum_score": 56.9,
+      "rsi_signal": "neutral",
+      "volume_confirmed": false,
+      "macd_turning": true,
+      "above_ema": true,
+      "sector_strong": true
+    },
+    "exit_triggers": {
+      "thesis_broken": "price falls below 20d EMA",
+      "momentum_loss": "MACD histogram turns negative for 2+ days",
+      "sector_reversal": "sector momentum turns negative"
+    },
+    "macd_hist_negative_days": 0
+  },
+  "SNOW": {
+    "entry_date": "2026-07-01",
+    "entry_price": 0,
+    "entry_readiness": 82.2,
+    "thesis": "SNOW is a AI / high-growth software play with soft 20-day momentum, scoring 56/100 on the quality-momentum model. The setup is in an uptrend in a neutral macro backdrop. Evidence: recent news reads bullish. Risk is elevated (50.3% vol, 4.9% ATR); position is sized with volatility-aware stops.",
+    "confirmations": {
+      "momentum_score": 55.6,
+      "rsi_signal": "neutral",
+      "volume_confirmed": true,
+      "macd_turning": true,
+      "above_ema": true,
+      "sector_strong": true,
+      "intraday_confirmed": false,
+      "intraday_score": 50.0,
+      "options_confirmed": false,
+      "options_score": 50.0
+    },
+    "exit_triggers": {
+      "thesis_broken": "price falls below 20d EMA",
+      "momentum_loss": "MACD histogram turns negative for 2+ days",
+      "sector_reversal": "sector momentum turns negative"
+    },
+    "macd_hist_negative_days": 0
+  },
+  "DDOG": {
+    "entry_date": "2026-07-01",
+    "entry_price": 0,
+    "entry_readiness": 72.5,
+    "thesis": "DDOG is a AI / high-growth software play with soft 20-day momentum, scoring 54/100 on the quality-momentum model. The setup is in an uptrend in a neutral macro backdrop. Evidence: trading near 52-week highs. Risk is manageable (51.8% vol, 4.3% ATR). RSI is stretched; watch for a pullback.",
+    "confirmations": {
+      "momentum_score": 53.8,
+      "rsi_signal": "overbought",
+      "volume_confirmed": false,
+      "macd_turning": true,
+      "above_ema": true,
+      "sector_strong": true,
+      "intraday_confirmed": false,
+      "intraday_score": 62.0,
+      "options_confirmed": false,
+      "options_score": 50.0
+    },
+    "macd_hist_negative_days": 0,
+    "exit_triggers": {
+      "thesis_broken": "price falls below 20d EMA",
+      "momentum_loss": "MACD histogram turns negative for 2+ days",
+      "sector_reversal": "sector momentum turns negative"
+    }
+  },
+  "NKE": {
+    "entry_date": "2026-07-02",
+    "entry_price": 0,
+    "entry_readiness": 78.1,
+    "thesis": "NKE is a consumer retail / lifestyle brand with modest 20-day momentum, scoring 47/100 on the quality-momentum model. The setup is in recovery in a neutral macro backdrop. Evidence: recent news reads bearish, still close to 52-week lows. Risk is manageable (38.5% vol, 3.3% ATR).",
+    "confirmations": {
+      "momentum_score": 47.3,
+      "rsi_signal": "neutral",
+      "volume_confirmed": true,
+      "macd_turning": false,
+      "above_ema": true,
+      "sector_strong": true,
+      "intraday_confirmed": false,
+      "intraday_score": 50.0,
+      "options_confirmed": false,
+      "options_score": 50.0
+    },
+    "macd_hist_negative_days": 0,
+    "exit_triggers": {
+      "thesis_broken": "price falls below 20d EMA",
+      "momentum_loss": "MACD histogram turns negative for 2+ days",
+      "sector_reversal": "sector momentum turns negative"
+    }
+  },
+  "SPOT": {
+    "entry_date": "2026-07-02",
+    "entry_price": 0,
+    "entry_readiness": 73.8,
+    "thesis": "SPOT is a consumer / platform growth play with soft 20-day momentum, scoring 44/100 on the quality-momentum model. The setup is in an uptrend in a neutral macro backdrop.  Risk is elevated (32.0% vol, 3.7% ATR); position is sized with volatility-aware stops.",
+    "confirmations": {
+      "momentum_score": 44.4,
+      "rsi_signal": "neutral",
+      "volume_confirmed": false,
+      "macd_turning": false,
+      "above_ema": true,
+      "sector_strong": true,
+      "intraday_confirmed": false,
+      "intraday_score": 50.0,
+      "options_confirmed": false,
+      "options_score": 50.0
+    },
+    "macd_hist_negative_days": 0,
+    "exit_triggers": {
+      "thesis_broken": "price falls below 20d EMA",
+      "momentum_loss": "MACD histogram turns negative for 2+ days",
+      "sector_reversal": "sector momentum turns negative"
+    }
+  },
+  "MDB": {
+    "entry_date": "2026-07-02",
+    "entry_price": 0,
+    "entry_readiness": 77.8,
+    "thesis": "MDB is a AI / high-growth software play with soft 20-day momentum, scoring 52/100 on the quality-momentum model. The setup is in an uptrend in a neutral macro backdrop.  Risk is elevated (65.9% vol, 5.4% ATR); position is sized with volatility-aware stops.",
+    "confirmations": {
+      "momentum_score": 51.7,
+      "rsi_signal": "neutral",
+      "volume_confirmed": false,
+      "macd_turning": false,
+      "above_ema": true,
+      "sector_strong": true,
+      "intraday_confirmed": false,
+      "intraday_score": 50.0,
+      "options_confirmed": false,
+      "options_score": 50.0
+    },
+    "macd_hist_negative_days": 0,
+    "exit_triggers": {
+      "thesis_broken": "price falls below 20d EMA",
+      "momentum_loss": "MACD histogram turns negative for 2+ days",
+      "sector_reversal": "sector momentum turns negative"
+    }
+  },
+  "DUOL": {
+    "entry_date": "2026-07-02",
+    "entry_price": 0,
+    "entry_readiness": 88.3,
+    "thesis": "DUOL is a AI / high-growth software play with strong 20-day momentum, scoring 60/100 on the quality-momentum model. The setup is in an uptrend in a neutral macro backdrop.  Risk is elevated (57.6% vol, 6.4% ATR); position is sized with volatility-aware stops.",
+    "confirmations": {
+      "momentum_score": 60.4,
+      "rsi_signal": "neutral",
+      "volume_confirmed": false,
+      "macd_turning": false,
+      "above_ema": true,
+      "sector_strong": true,
+      "intraday_confirmed": true,
+      "intraday_score": 95.0,
+      "options_confirmed": false,
+      "options_score": 50.0,
+      "relvol_confirmed": false,
+      "relvol_score": 34.4,
+      "vwap_confirmed": true,
+      "vwap_score": 89.7
+    },
+    "macd_hist_negative_days": 0,
+    "exit_triggers": {
+      "thesis_broken": "price falls below 20d EMA",
+      "momentum_loss": "MACD histogram turns negative for 2+ days",
+      "sector_reversal": "sector momentum turns negative"
+    }
+  }
+}

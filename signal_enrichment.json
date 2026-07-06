@@ -1,0 +1,3387 @@
+{
+  "generated_at": "2026-07-06T05:30:02.470685Z",
+  "source": "finnhub",
+  "count": 130,
+  "data": {
+    "AAPL": {
+      "earnings": null,
+      "news": {
+        "headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "summary": "Samsung is expected to post a record profit as booming AI memory demand offsets concerns over rising bonus costs.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60270603/samsung-eyes-another-record-quarter-on-explosive-ai-memory-demand-but-rising-employee-bonuses-could-cloud-earnings-report",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 317.4,
+        "week_52_low": 201.5,
+        "week_52_high_date": "2026-06-08",
+        "week_52_low_date": "2025-08-01",
+        "beta": 1.0946059,
+        "pe_ttm": 36.9811,
+        "eps_ttm": 8.2666,
+        "dividend_yield": 0.349933577422804,
+        "market_cap": 4532959
+      },
+      "fetched_at": "2026-07-06T04:00:02.285957Z"
+    },
+    "MSFT": {
+      "earnings": null,
+      "news": {
+        "headline": "Popular Magnificent 7 ETF Falls 8.7% as Top Stocks Turn Into Bargains",
+        "summary": "MAGS, the top Magnificent 7 ETF has tumbled by 8.7% from its highest point this year, with some of its companies becoming bargains",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Popular Magnificent 7 ETF Falls 8.7% as Top Stocks Turn Into Bargains",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269851/popular-magnificent-7-etf-falls-8-7-as-top-stocks-turn-into-bargains",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 555.45,
+        "week_52_low": 349.2,
+        "week_52_high_date": "2025-07-31",
+        "week_52_low_date": "2026-06-25",
+        "beta": 1.1233559,
+        "pe_ttm": 23.1658,
+        "eps_ttm": 16.7896,
+        "dividend_yield": 0.9321621552408512,
+        "market_cap": 2900729.2
+      },
+      "fetched_at": "2026-07-06T04:00:02.572231Z"
+    },
+    "GOOGL": {
+      "earnings": null,
+      "news": {
+        "headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "summary": "Samsung is expected to post a record profit as booming AI memory demand offsets concerns over rising bonus costs.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60270603/samsung-eyes-another-record-quarter-on-explosive-ai-memory-demand-but-rising-employee-bonuses-could-cloud-earnings-report",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 408.61,
+        "week_52_low": 172.77,
+        "week_52_high_date": "2026-05-18",
+        "week_52_low_date": "2025-07-09",
+        "beta": 1.2445093,
+        "pe_ttm": 27.3504,
+        "eps_ttm": 13.108600000000001,
+        "dividend_yield": 0.2445055708371537,
+        "market_cap": 4381746
+      },
+      "fetched_at": "2026-07-06T04:00:02.816691Z"
+    },
+    "AMZN": {
+      "earnings": null,
+      "news": {
+        "headline": "Popular Magnificent 7 ETF Falls 8.7% as Top Stocks Turn Into Bargains",
+        "summary": "MAGS, the top Magnificent 7 ETF has tumbled by 8.7% from its highest point this year, with some of its companies becoming bargains",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Popular Magnificent 7 ETF Falls 8.7% as Top Stocks Turn Into Bargains",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269851/popular-magnificent-7-etf-falls-8-7-as-top-stocks-turn-into-bargains",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 278.56,
+        "week_52_low": 196,
+        "week_52_high_date": "2026-05-05",
+        "week_52_low_date": "2026-02-17",
+        "beta": 1.474173,
+        "pe_ttm": 28.7498,
+        "eps_ttm": 8.3676,
+        "dividend_yield": null,
+        "market_cap": 2610427.8
+      },
+      "fetched_at": "2026-07-06T04:00:03.109946Z"
+    },
+    "META": {
+      "earnings": null,
+      "news": {
+        "headline": "Top Three Catalysts That Could Move the S&P 500 and Dow This Week",
+        "summary": "These are the top three catalysts that could move the S&amp;P 500 and Dow Jones this week, including falling crude oil prices and key earnings.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Top Three Catalysts That Could Move the S&P 500 and Dow This Week",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269993/top-three-catalysts-that-could-move-the-sp-500-and-dow-this-week",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 796.25,
+        "week_52_low": 520.26,
+        "week_52_high_date": "2025-08-15",
+        "week_52_low_date": "2026-03-27",
+        "beta": 1.2394247,
+        "pe_ttm": 20.962,
+        "eps_ttm": 27.516999999999996,
+        "dividend_yield": 0.3602676273803397,
+        "market_cap": 1479646.9
+      },
+      "fetched_at": "2026-07-06T04:00:03.344480Z"
+    },
+    "NVDA": {
+      "earnings": null,
+      "news": {
+        "headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "summary": "Samsung is expected to post a record profit as booming AI memory demand offsets concerns over rising bonus costs.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60270603/samsung-eyes-another-record-quarter-on-explosive-ai-memory-demand-but-rising-employee-bonuses-could-cloud-earnings-report",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 236.54,
+        "week_52_low": 152.97,
+        "week_52_high_date": "2026-05-14",
+        "week_52_low_date": "2025-07-02",
+        "beta": 2.2444465,
+        "pe_ttm": 29.5395,
+        "eps_ttm": 6.529999999999999,
+        "dividend_yield": 0.5132679772109018,
+        "market_cap": 4714886
+      },
+      "fetched_at": "2026-07-06T04:00:03.622102Z"
+    },
+    "NFLX": {
+      "earnings": null,
+      "news": {
+        "headline": "Netflix Stock Defies Tech Sell-Off Thursday: What's Going On?",
+        "summary": "Netflix Inc (NASDAQ:NFLX) shares are trading higher on Thursday. The move stands out on a risk-off day, with the Nasdaq-100 sliding over 2%.",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Netflix Stock Defies Tech Sell-Off Thursday: What's Going On?",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/movers/26/07/60255550/netflix-stock-defies-tech-sell-off-thursday-whats-going-on",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 130.23,
+        "week_52_low": 70.86,
+        "week_52_high_date": "2025-07-03",
+        "week_52_low_date": "2026-06-25",
+        "beta": 1.5145862,
+        "pe_ttm": 24.4487,
+        "eps_ttm": 3.0947000000000005,
+        "dividend_yield": null,
+        "market_cap": 326968.5
+      },
+      "fetched_at": "2026-07-06T04:00:03.844399Z"
+    },
+    "AMD": {
+      "earnings": null,
+      "news": {
+        "headline": "EXCLUSIVE: Top 12 Most-Searched Tickers For First Half of 2026 - Where Do Micron, Nvidia, Tesla, SanDisk Rank?",
+        "summary": "A look at the most-searched stock tickers on Benzinga Pro for the first six months of 2026.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "EXCLUSIVE: Top 12 Most-Searched Tickers For First Half of 2026 - Where Do Micron, Nvidia, Tesla, SanDisk Rank?",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/long-ideas/26/07/60266829/exclusive-top-12-most-searched-tickers-for-first-half-of-2026-where-do-micron-nvidia-tesla-sandisk-rank",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 584.73,
+        "week_52_low": 133.5,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-07-07",
+        "beta": 2.5164676,
+        "pe_ttm": 166.5889,
+        "eps_ttm": 3.0476,
+        "dividend_yield": null,
+        "market_cap": 834443.56
+      },
+      "fetched_at": "2026-07-06T04:00:04.096966Z"
+    },
+    "MU": {
+      "earnings": null,
+      "news": {
+        "headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "summary": "Samsung is expected to post a record profit as booming AI memory demand offsets concerns over rising bonus costs.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Samsung Eyes Another Record Quarter on Explosive AI Memory Demand, But Rising Employee Bonuses Could Cloud Earnings: Report",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60270603/samsung-eyes-another-record-quarter-on-explosive-ai-memory-demand-but-rising-employee-bonuses-could-cloud-earnings-report",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 1255,
+        "week_52_low": 103.38,
+        "week_52_high_date": "2026-06-25",
+        "week_52_low_date": "2025-08-01",
+        "beta": 2.220814,
+        "pe_ttm": 21.831,
+        "eps_ttm": 44.17209999999999,
+        "dividend_yield": 0.06150313665996966,
+        "market_cap": 1101790.8
+      },
+      "fetched_at": "2026-07-06T04:00:04.329236Z"
+    },
+    "LRCX": {
+      "earnings": null,
+      "news": {
+        "headline": "Here\u2019s How Much You Would Have Made Owning Lam Research Stock In The Last 20 Years",
+        "summary": "Lam Research (NASDAQ:LRCX) has outperformed the market over the past 20 years by 15.17% on an annualized basis producing an average annual return of 24.4%. Currently, Lam Research has a market capital",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here\u2019s How Much You Would Have Made Owning Lam Research Stock In The Last 20 Years",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60262968/here-s-how-much-you-would-have-made-owning-lam-research-stock-last-20-years",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 438.5,
+        "week_52_low": 90.94,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-07-31",
+        "beta": 1.8585434,
+        "pe_ttm": 65.5113,
+        "eps_ttm": 5.298,
+        "dividend_yield": 0.2959505990153951,
+        "market_cap": 439463.2
+      },
+      "fetched_at": "2026-07-06T04:00:04.576133Z"
+    },
+    "AMAT": {
+      "earnings": null,
+      "news": {
+        "headline": "Here's How Much $1000 Invested In Applied Materials 10 Years Ago Would Be Worth Today",
+        "summary": "Applied Materials (NASDAQ:AMAT) has outperformed the market over the past 10 years by 24.36% on an annualized basis producing an average annual return of 37.88%. Currently, Applied Materials has a mar",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here's How Much $1000 Invested In Applied Materials 10 Years Ago Would Be Worth Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60266864/here-s-how-much-1000-invested-applied-materials-10-years-ago-would-be-worth-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 739.67,
+        "week_52_low": 154.47,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-09-03",
+        "beta": 1.6054809,
+        "pe_ttm": 56.2752,
+        "eps_ttm": 10.639999999999999,
+        "dividend_yield": 0.3515521358450518,
+        "market_cap": 478789.28
+      },
+      "fetched_at": "2026-07-06T04:00:06.879147Z"
+    },
+    "KLAC": {
+      "earnings": null,
+      "news": {
+        "headline": "Dow Jones Hits Record High as Chip Bloodbath Sinks Nasdaq 100: Stock Market Today",
+        "summary": "The Dow hit a record after a weak June jobs report eased Fed rate-hike fears, but a sharp semiconductor rout dragged the Nasdaq 100 lower Thursday.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Dow Jones Hits Record High as Chip Bloodbath Sinks Nasdaq 100: Stock Market Today",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/market-summary/26/07/60252913/dow-jones-record-highs-nasdaq-100-sinks-chipmakers-selloff",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 307.3743,
+        "week_52_low": 83.22,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-09-03",
+        "beta": 1.4410789,
+        "pe_ttm": 64.9675,
+        "eps_ttm": 35.320299999999996,
+        "dividend_yield": 0.3905752494162598,
+        "market_cap": 303434.7
+      },
+      "fetched_at": "2026-07-06T04:00:07.110955Z"
+    },
+    "SNPS": {
+      "earnings": null,
+      "news": {
+        "headline": "Here's How Much $100 Invested In Synopsys 20 Years Ago Would Be Worth Today",
+        "summary": "Synopsys (NASDAQ:SNPS) has outperformed the market over the past 20 years by 7.95% on an annualized basis producing an average annual return of 17.18%. Currently, Synopsys has a market capitalization ",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here's How Much $100 Invested In Synopsys 20 Years Ago Would Be Worth Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60266326/here-s-how-much-100-invested-synopsys-20-years-ago-would-be-worth-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 651.73,
+        "week_52_low": 376.18,
+        "week_52_high_date": "2025-07-30",
+        "week_52_low_date": "2025-11-18",
+        "beta": 1.226023,
+        "pe_ttm": 108.2511,
+        "eps_ttm": 4.3149,
+        "dividend_yield": null,
+        "market_cap": 83707.1
+      },
+      "fetched_at": "2026-07-06T04:00:07.367450Z"
+    },
+    "CDNS": {
+      "earnings": null,
+      "news": {
+        "headline": "Here\u2019s How Much You Would Have Made Owning Cadence Design Systems Stock In The Last 10 Years",
+        "summary": "Cadence Design Systems (NASDAQ:CDNS) has outperformed the market over the past 10 years by 18.25% on an annualized basis producing an average annual return of 31.73%. Currently, Cadence Design Systems",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here\u2019s How Much You Would Have Made Owning Cadence Design Systems Stock In The Last 10 Years",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60003655/here-s-how-much-you-would-have-made-owning-cadence-design-systems-stock-last-10-years",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 416.69,
+        "week_52_low": 262.75,
+        "week_52_high_date": "2026-06-02",
+        "week_52_low_date": "2026-02-03",
+        "beta": 1.1401364,
+        "pe_ttm": 87.8913,
+        "eps_ttm": 4.2836,
+        "dividend_yield": null,
+        "market_cap": 102917.99
+      },
+      "fetched_at": "2026-07-06T04:00:07.642504Z"
+    },
+    "MRVL": {
+      "earnings": null,
+      "news": {
+        "headline": "EXCLUSIVE: Top 12 Most-Searched Tickers in June on Benzinga Pro \u2014 SpaceX, Marvell Join List, Micron Stays On Top",
+        "summary": "A look at the most searched tickers on Benzinga Pro for the month of June 2026, with new IPO SpaceX making the list in its first month.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "EXCLUSIVE: Top 12 Most-Searched Tickers in June on Benzinga Pro \u2014 SpaceX, Marvell Join List, Micron Stays On Top",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/long-ideas/26/07/60247336/exclusive-top-12-most-searched-tickers-in-june-on-benzinga-pro-spacex-marvell-join-list-micron-stays-on-top",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 329.88,
+        "week_52_low": 61.44,
+        "week_52_high_date": "2026-06-18",
+        "week_52_low_date": "2025-09-04",
+        "beta": 2.2343514,
+        "pe_ttm": 84.9249,
+        "eps_ttm": 2.9195,
+        "dividend_yield": 0.09784336907334176,
+        "market_cap": 214579.69
+      },
+      "fetched_at": "2026-07-06T04:00:07.870878Z"
+    },
+    "NXPI": {
+      "earnings": null,
+      "news": {
+        "headline": "Cantor Fitzgerald Maintains Overweight on NXP Semiconductors, Raises Price Target to $400",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Cantor Fitzgerald Maintains Overweight on NXP Semiconductors, Raises Price Target to $400",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60159054/cantor-fitzgerald-maintains-overweight-nxp-semiconductors-raises-price-target-400",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 339.95,
+        "week_52_low": 183,
+        "week_52_high_date": "2026-05-27",
+        "week_52_low_date": "2025-11-20",
+        "beta": 1.8280557,
+        "pe_ttm": 26.0141,
+        "eps_ttm": 10.4503,
+        "dividend_yield": 1.4837576821773484,
+        "market_cap": 69015.49
+      },
+      "fetched_at": "2026-07-06T04:00:08.116556Z"
+    },
+    "QCOM": {
+      "earnings": null,
+      "news": {
+        "headline": "Wall Street Is Raising The Ceiling On Qualcomm\u2014Here's Why",
+        "summary": "Qualcomm (NASDAQ:QCOM) is a business that many people thought they understood. It made the chips inside Android phones. It collected fees from phone makers who used its wireless technology. That was a",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Wall Street Is Raising The Ceiling On Qualcomm\u2014Here's Why",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/Opinion/26/07/60256737/wall-street-is-raising-the-ceiling-on-qualcomm-heres-why",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 259.92,
+        "week_52_low": 121.99,
+        "week_52_high_date": "2026-05-29",
+        "week_52_low_date": "2026-04-07",
+        "beta": 1.6687568,
+        "pe_ttm": 18.7209,
+        "eps_ttm": 9.1934,
+        "dividend_yield": 2.0879432624113474,
+        "market_cap": 185767.5
+      },
+      "fetched_at": "2026-07-06T04:00:08.359763Z"
+    },
+    "SWKS": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/06/60052728/10-information-technology-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 90.9,
+        "week_52_low": 51.93,
+        "week_52_high_date": "2025-10-28",
+        "week_52_low_date": "2026-03-30",
+        "beta": 1.5061487,
+        "pe_ttm": 26.0504,
+        "eps_ttm": 2.4057999999999997,
+        "dividend_yield": 4.539641943734015,
+        "market_cap": 9409.398
+      },
+      "fetched_at": "2026-07-06T04:00:08.612875Z"
+    },
+    "TER": {
+      "earnings": null,
+      "news": {
+        "headline": "Meta Compute Could Trigger a 'Butterfly Effect' in AI Infrastructure \u2014 and Fuel a Mag 7 Bounce, Trader Says",
+        "summary": "Meta Platforms Inc.\u2019s reported AI cloud plans spark a &#34;butterfly effect&#34; sell-off in neocloud stocks like Nebius and CoreWeave while backing the MAGS bounce case.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Meta Compute Could Trigger a 'Butterfly Effect' in AI Infrastructure \u2014 and Fuel a Mag 7 Bounce, Trader Says",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60227351/meta-compute-could-trigger-a-butterfly-effect-in-ai-infrastructure-and-fuel-a-mag-7-bounce-trader-says",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 487.91,
+        "week_52_low": 88.6,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-07-16",
+        "beta": 1.7995911,
+        "pe_ttm": 67.0281,
+        "eps_ttm": 5.4031,
+        "dividend_yield": 0.14088704651981904,
+        "market_cap": 57245.902
+      },
+      "fetched_at": "2026-07-06T04:00:08.886200Z"
+    },
+    "ON": {
+      "earnings": null,
+      "news": {
+        "headline": "Mizuho Maintains Outperform on ON Semiconductor, Lowers Price Target to $125",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Mizuho Maintains Outperform on ON Semiconductor, Lowers Price Target to $125",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60213563/mizuho-maintains-outperform-semiconductor-lowers-price-target-125",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 134.92,
+        "week_52_low": 44.56,
+        "week_52_high_date": "2026-06-03",
+        "week_52_low_date": "2025-11-21",
+        "beta": 2.032018,
+        "pe_ttm": 61.8817,
+        "eps_ttm": 1.4003999999999999,
+        "dividend_yield": null,
+        "market_cap": 35501.51
+      },
+      "fetched_at": "2026-07-06T04:00:09.118959Z"
+    },
+    "CRWD": {
+      "earnings": null,
+      "news": {
+        "headline": "Here's How Much $100 Invested In CrowdStrike Holdings 5 Years Ago Would Be Worth Today",
+        "summary": "CrowdStrike Holdings (NASDAQ:CRWD) has outperformed the market over the past 5 years by 12.51% on an annualized basis producing an average annual return of 23.97%. Currently, CrowdStrike Holdings has ",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here's How Much $100 Invested In CrowdStrike Holdings 5 Years Ago Would Be Worth Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60267801/here-s-how-much-100-invested-crowdstrike-holdings-5-years-ago-would-be-worth-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 786,
+        "week_52_low": 190.61,
+        "week_52_high_date": "2026-07-01",
+        "week_52_low_date": "2026-07-02",
+        "beta": 1.3120991,
+        "pe_ttm": null,
+        "eps_ttm": -0.10330000000000003,
+        "dividend_yield": null,
+        "market_cap": 196712.42
+      },
+      "fetched_at": "2026-07-06T04:00:11.395965Z"
+    },
+    "PANW": {
+      "earnings": null,
+      "news": {
+        "headline": "Top Three Likely Outperformers BTIG Analysts Expect to Jump This Year",
+        "summary": "Here are three US stocks that BTIG analysts believe will go parabolic in the second half of the year.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Top Three Likely Outperformers BTIG Analysts Expect to Jump This Year",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60270058/top-three-likely-outperformers-btig-analysts-expect-to-jump-this-year",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 358.1,
+        "week_52_low": 139.57,
+        "week_52_high_date": "2026-07-01",
+        "week_52_low_date": "2026-02-24",
+        "beta": 0.8991077,
+        "pe_ttm": 336.5791,
+        "eps_ttm": 1.2145000000000001,
+        "dividend_yield": null,
+        "market_cap": 283668.9
+      },
+      "fetched_at": "2026-07-06T04:00:11.620770Z"
+    },
+    "ZS": {
+      "earnings": null,
+      "news": {
+        "headline": "Zscaler Lands Aston Martin F1 Deal, Stock Jumps",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Zscaler Lands Aston Martin F1 Deal, Stock Jumps",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/movers/26/06/60135997/zscaler-lands-aston-martin-f1-deal-stock-jumps",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 336.99,
+        "week_52_low": 114.625,
+        "week_52_high_date": "2025-11-03",
+        "week_52_low_date": "2026-04-10",
+        "beta": 0.92756015,
+        "pe_ttm": null,
+        "eps_ttm": -0.4868,
+        "dividend_yield": null,
+        "market_cap": 22900.072
+      },
+      "fetched_at": "2026-07-06T04:00:11.866789Z"
+    },
+    "NET": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60227090/10-information-technology-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 276.815,
+        "week_52_low": 158.83,
+        "week_52_high_date": "2026-06-04",
+        "week_52_low_date": "2026-02-23",
+        "beta": 1.694133,
+        "pe_ttm": null,
+        "eps_ttm": -0.2483,
+        "dividend_yield": null,
+        "market_cap": 85861.58
+      },
+      "fetched_at": "2026-07-06T04:00:12.121153Z"
+    },
+    "DDOG": {
+      "earnings": null,
+      "news": {
+        "headline": "$100 Invested In Datadog 5 Years Ago Would Be Worth This Much Today",
+        "summary": "Datadog (NASDAQ:DDOG) has outperformed the market over the past 5 years by 7.57% on an annualized basis producing an average annual return of 19.01%. Currently, Datadog has a market capitalization of ",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "$100 Invested In Datadog 5 Years Ago Would Be Worth This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60251948/100-invested-datadog-5-years-ago-would-be-worth-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 278.705,
+        "week_52_low": 98.01,
+        "week_52_high_date": "2026-06-01",
+        "week_52_low_date": "2026-02-24",
+        "beta": 1.5317475,
+        "pe_ttm": 683.0968,
+        "eps_ttm": 0.37160000000000004,
+        "dividend_yield": null,
+        "market_cap": 92677.79
+      },
+      "fetched_at": "2026-07-06T04:00:12.344060Z"
+    },
+    "OKTA": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/06/60197276/10-information-technology-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 145.95,
+        "week_52_low": 62.66,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2026-04-10",
+        "beta": 0.75361615,
+        "pe_ttm": 99.5135,
+        "eps_ttm": 1.3796,
+        "dividend_yield": null,
+        "market_cap": 24579.836
+      },
+      "fetched_at": "2026-07-06T04:00:12.590631Z"
+    },
+    "FTNT": {
+      "earnings": null,
+      "news": {
+        "headline": "If You Invested $100 In Fortinet Stock 15 Years Ago, You Would Have This Much Today",
+        "summary": "Fortinet (NASDAQ:FTNT) has outperformed the market over the past 15 years by 12.52% on an annualized basis producing an average annual return of 24.65%. Currently, Fortinet has a market capitalization",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "If You Invested $100 In Fortinet Stock 15 Years Ago, You Would Have This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60203790/if-you-invested-100-fortinet-stock-15-years-ago-you-would-have-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 159.8,
+        "week_52_low": 70.12,
+        "week_52_high_date": "2026-07-01",
+        "week_52_low_date": "2025-08-07",
+        "beta": 1.0576173,
+        "pe_ttm": 58.5706,
+        "eps_ttm": 2.5885000000000002,
+        "dividend_yield": null,
+        "market_cap": 114476.31
+      },
+      "fetched_at": "2026-07-06T04:00:12.813329Z"
+    },
+    "CYBR": {
+      "earnings": null,
+      "news": {
+        "headline": "AI Agents Are Moving Into DeFi. Investors Should Pay Attention",
+        "summary": "Decentralized finance was built on the idea of removing human intermediaries. Now a new layer is being added in their place: autonomous AI agents that manage liquidity pools, execute flash loans, and ",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "AI Agents Are Moving Into DeFi. Investors Should Pay Attention",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/Opinion/26/03/51336926/ai-agents-are-moving-into-defi-investors-should-pay-attention",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 526.19,
+        "week_52_low": 370.16,
+        "week_52_high_date": "2025-10-28",
+        "week_52_low_date": "2025-07-11",
+        "beta": 0.30419174,
+        "pe_ttm": null,
+        "eps_ttm": -2.9265000000000003,
+        "dividend_yield": null,
+        "market_cap": 20637.502
+      },
+      "fetched_at": "2026-07-06T04:00:13.036778Z"
+    },
+    "S": {
+      "earnings": null,
+      "news": {
+        "headline": "SentinelOne Expands AI Security Platform With Amazon Bedrock AgentCore Integration, Adding Runtime Guardrails For Enterprise AI Agent Workflows",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "SentinelOne Expands AI Security Platform With Amazon Bedrock AgentCore Integration, Adding Runtime Guardrails For Enterprise AI Agent Workflows",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/53255160/sentinelone-expands-ai-security-platform-with-amazon-bedrock-agentcore-integration-adding-runtime-gu",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 21.4,
+        "week_52_low": 11.81,
+        "week_52_high_date": "2025-07-21",
+        "week_52_low_date": "2026-04-10",
+        "beta": 0.7613285,
+        "pe_ttm": null,
+        "eps_ttm": -0.9540000000000001,
+        "dividend_yield": null,
+        "market_cap": 6002.493
+      },
+      "fetched_at": "2026-07-06T04:00:13.286065Z"
+    },
+    "PATH": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60227090/10-information-technology-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 19.84,
+        "week_52_low": 9.2,
+        "week_52_high_date": "2025-12-08",
+        "week_52_low_date": "2026-05-14",
+        "beta": 0.96153116,
+        "pe_ttm": 18.5309,
+        "eps_ttm": 0.6061,
+        "dividend_yield": null,
+        "market_cap": 6067.192
+      },
+      "fetched_at": "2026-07-06T04:00:13.531206Z"
+    },
+    "PLTR": {
+      "earnings": null,
+      "news": {
+        "headline": "Michael Dell\u2019s Net Wealth Falls $34 Billion as Stock Faces Headwinds",
+        "summary": "Michael Dell was initally one of the biggest winners this year, with his net worth soaring by more than $70 billion since January as Dell stock surged. But recently, his wealth has declined by about $",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Michael Dell\u2019s Net Wealth Falls $34 Billion as Stock Faces Headwinds",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269972/michael-dells-net-wealth-falls-34-billion-as-stock-faces-headwinds",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 207.52,
+        "week_52_low": 106.37,
+        "week_52_high_date": "2025-11-03",
+        "week_52_low_date": "2026-06-25",
+        "beta": 1.573053,
+        "pe_ttm": 135.8617,
+        "eps_ttm": 0.8876,
+        "dividend_yield": null,
+        "market_cap": 309972.5
+      },
+      "fetched_at": "2026-07-06T04:00:15.778988Z"
+    },
+    "SNOW": {
+      "earnings": null,
+      "news": {
+        "headline": "Palantir Thinks AI's Competitive Moat Is Moving Beyond OpenAI and Anthropic",
+        "summary": "An interview with Palantir CEO Alex Karp suggests the next AI competitive moat may lie in enterprise software rather than foundation models.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Palantir Thinks AI's Competitive Moat Is Moving Beyond OpenAI and Anthropic",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60266003/palantir-thinks-ais-competitive-moat-is-moving-beyond-openai-and-anthropic",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 284.99,
+        "week_52_low": 118.3,
+        "week_52_high_date": "2026-06-01",
+        "week_52_low_date": "2026-04-10",
+        "beta": 1.3474115,
+        "pe_ttm": null,
+        "eps_ttm": -3.5145,
+        "dividend_yield": null,
+        "market_cap": 90167.99
+      },
+      "fetched_at": "2026-07-06T04:00:16.008299Z"
+    },
+    "MDB": {
+      "earnings": null,
+      "news": {
+        "headline": "Software Stocks Are Sinking In 2026, But These 'Fab Five' Are Up 30% \u2014 And BofA Says They're Just Getting Started",
+        "summary": "Bank of America&#39;s &#34;Fab Five&#34; software stocks are up 30% in 2026, while the rest of the sector is falling. Why BofA likes the Fab Five.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Software Stocks Are Sinking In 2026, But These 'Fab Five' Are Up 30% \u2014 And BofA Says They're Just Getting Started",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/06/53120036/bofa-fab-five-software-stocks-2026",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 444.72,
+        "week_52_low": 198.47,
+        "week_52_high_date": "2026-01-07",
+        "week_52_low_date": "2025-08-12",
+        "beta": 1.5311377,
+        "pe_ttm": null,
+        "eps_ttm": -0.35950000000000004,
+        "dividend_yield": null,
+        "market_cap": 28543.684
+      },
+      "fetched_at": "2026-07-06T04:00:16.256563Z"
+    },
+    "GTLB": {
+      "earnings": null,
+      "news": {
+        "headline": "Consumer Tech News (Jun 8-12): SpaceX Debuts On Nasdaq, Big Tech Faces Political Scrutiny & More",
+        "summary": "Global tensions rise as cyber espionage, chip export risks, and AI competition intensify across Meta, Google, NVIDIA, and OpenAI ecosystems.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Consumer Tech News (Jun 8-12): SpaceX Debuts On Nasdaq, Big Tech Faces Political Scrutiny & More",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/06/53185374/consumer-tech-news-jun-8-12-spacex-debuts-on-nasdaq-big-tech-faces-political-scrutiny-more",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 52.38,
+        "week_52_low": 18.73,
+        "week_52_high_date": "2025-11-03",
+        "week_52_low_date": "2026-04-10",
+        "beta": 0.9341316,
+        "pe_ttm": null,
+        "eps_ttm": -0.1495,
+        "dividend_yield": null,
+        "market_cap": 5416.623
+      },
+      "fetched_at": "2026-07-06T04:00:16.497268Z"
+    },
+    "CFLT": {
+      "earnings": null,
+      "news": {
+        "headline": "Confluent Q4 Adj. EPS $0.12 Beats $0.10 Estimate, Sales $314.819M Beat $308.064M Estimate",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Confluent Q4 Adj. EPS $0.12 Beats $0.10 Estimate, Sales $314.819M Beat $308.064M Estimate",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/news/earnings/26/02/50559577/confluent-q4-adj-eps-0-12-beats-0-10-estimate-sales-314-819m-beat-308-064m-estimate",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 31,
+        "week_52_low": 15.64,
+        "week_52_high_date": "2026-03-16",
+        "week_52_low_date": "2025-08-12",
+        "beta": 0.5523214,
+        "pe_ttm": null,
+        "eps_ttm": -0.8599,
+        "dividend_yield": null,
+        "market_cap": 11133.73
+      },
+      "fetched_at": "2026-07-06T04:00:16.724787Z"
+    },
+    "ESTC": {
+      "earnings": null,
+      "news": {
+        "headline": "ON Semiconductor To Rally More Than 15%? Here Are 10 Top Analyst Forecasts For Friday",
+        "summary": "Top analysts change outlook on top names: BMO, Chardan, Rosenblatt, Susquehanna, Evercore, Deutsche Bank, Baird, Stephens &amp; Co.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "ON Semiconductor To Rally More Than 15%? Here Are 10 Top Analyst Forecasts For Friday",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/analyst-stock-ratings/price-target/26/06/60124122/on-semiconductor-to-rally-more-than-15-here-are-10-top-analyst-forecasts-for-friday",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 96.065,
+        "week_52_low": 42.05,
+        "week_52_high_date": "2025-11-12",
+        "week_52_low_date": "2026-04-10",
+        "beta": 0.9965785,
+        "pe_ttm": 16.4054,
+        "eps_ttm": 3.2575,
+        "dividend_yield": null,
+        "market_cap": 6033.3525
+      },
+      "fetched_at": "2026-07-06T04:00:16.959212Z"
+    },
+    "PSTG": {
+      "earnings": null,
+      "news": {
+        "headline": "JP Morgan Maintains Overweight on Everpure, Lowers Price Target to $80",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "JP Morgan Maintains Overweight on Everpure, Lowers Price Target to $80",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/news/26/04/51871129/jp-morgan-maintains-overweight-on-everpure-lowers-price-target-to-80",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 100.5899,
+        "week_52_low": 53.4264,
+        "week_52_high_date": "2025-11-03",
+        "week_52_low_date": "2025-07-16",
+        "beta": 0.28218833,
+        "pe_ttm": 119.0622,
+        "eps_ttm": 0.5448000000000001,
+        "dividend_yield": null,
+        "market_cap": 22405.252
+      },
+      "fetched_at": "2026-07-06T04:00:17.196111Z"
+    },
+    "DOCN": {
+      "earnings": null,
+      "news": {
+        "headline": "DigitalOcean Shares Surge On Russell 1000 Index Inclusion",
+        "summary": "DigitalOcean Holdings shares are trading higher by almost 5% on Tuesday after the company was added to the Russell 1000 Index, and a rally tracking a risk-on tape.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "DigitalOcean Shares Surge On Russell 1000 Index Inclusion",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/movers/26/06/60202380/digitalocean-shares-surge-on-russell-1000-index-inclusion",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 187.5,
+        "week_52_low": 25.56,
+        "week_52_high_date": "2026-06-17",
+        "week_52_low_date": "2025-08-01",
+        "beta": 1.5975167,
+        "pe_ttm": 57.3448,
+        "eps_ttm": 2.2384,
+        "dividend_yield": null,
+        "market_cap": 13580.911
+      },
+      "fetched_at": "2026-07-06T04:00:17.428888Z"
+    },
+    "VEEV": {
+      "earnings": null,
+      "news": {
+        "headline": "8 Health Care Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "8 Health Care Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60266616/8-health-care-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 310.5,
+        "week_52_low": 148.05,
+        "week_52_high_date": "2025-10-07",
+        "week_52_low_date": "2026-04-10",
+        "beta": 0.9156799,
+        "pe_ttm": 32.5761,
+        "eps_ttm": 5.6528,
+        "dividend_yield": null,
+        "market_cap": 30675.387
+      },
+      "fetched_at": "2026-07-06T04:00:17.664781Z"
+    },
+    "TEAM": {
+      "earnings": null,
+      "news": {
+        "headline": "BMO Capital Maintains Outperform on Atlassian, Lowers Price Target to $95",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "BMO Capital Maintains Outperform on Atlassian, Lowers Price Target to $95",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60109056/bmo-capital-maintains-outperform-atlassian-lowers-price-target-95",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 222.59,
+        "week_52_low": 56.0101,
+        "week_52_high_date": "2025-07-09",
+        "week_52_low_date": "2026-04-10",
+        "beta": 1.0651121,
+        "pe_ttm": null,
+        "eps_ttm": -0.8267,
+        "dividend_yield": null,
+        "market_cap": 21275.896
+      },
+      "fetched_at": "2026-07-06T04:00:17.898700Z"
+    },
+    "NOW": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Information Technology Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60266614/10-information-technology-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 211.48,
+        "week_52_low": 81.24,
+        "week_52_high_date": "2025-07-03",
+        "week_52_low_date": "2026-04-10",
+        "beta": 0.94010067,
+        "pe_ttm": 62.4068,
+        "eps_ttm": 1.6814,
+        "dividend_yield": null,
+        "market_cap": 109648.664
+      },
+      "fetched_at": "2026-07-06T04:00:20.142204Z"
+    },
+    "HOOD": {
+      "earnings": null,
+      "news": {
+        "headline": "Trump's Crypto Push Isn't About Bitcoin Anymore\u2014It's About the Dollar",
+        "summary": "Trump&#39;s latest crypto remarks reinforce a broader White House strategy centered on stablecoins, the U.S. dollar and digital financial leadership.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Trump's Crypto Push Isn't About Bitcoin Anymore\u2014It's About the Dollar",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/crypto/cryptocurrency/26/07/60266422/trumps-crypto-push-isnt-about-bitcoin-anymore-its-about-the-dollar",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 153.86,
+        "week_52_low": 63.515,
+        "week_52_high_date": "2025-10-06",
+        "week_52_low_date": "2026-03-30",
+        "beta": 2.2856514,
+        "pe_ttm": 53.5604,
+        "eps_ttm": 2.072,
+        "dividend_yield": null,
+        "market_cap": 101604.15
+      },
+      "fetched_at": "2026-07-06T04:00:20.381416Z"
+    },
+    "COIN": {
+      "earnings": null,
+      "news": {
+        "headline": "Consumer Tech (June 29-July 2): Microsoft Announces Layoffs, Meta & Google Sued In Several States & More",
+        "summary": "Catch this week&#39;s biggest market-moving stories, including Nvidia&#39;s AI startup initiative, Tesla deliveries, Meta&#39;s legal challenges, Microsoft&#39;s layoffs, and Amazon&#39;s expanding AI",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Consumer Tech (June 29-July 2): Microsoft Announces Layoffs, Meta & Google Sued In Several States & More",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60269593/consumer-tech-june-29-july-2-microsoft-announces-layoffs-meta-google-sued-in-several-states-more",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 444.65,
+        "week_52_low": 139.18,
+        "week_52_high_date": "2025-07-18",
+        "week_52_low_date": "2026-06-26",
+        "beta": 3.3649569,
+        "pe_ttm": 54.4559,
+        "eps_ttm": 2.6317000000000004,
+        "dividend_yield": null,
+        "market_cap": 43597.527
+      },
+      "fetched_at": "2026-07-06T04:00:20.614587Z"
+    },
+    "SQ": {
+      "earnings": null,
+      "news": {
+        "headline": "Jack Dorsey Opens Block's $2.2 Billion Bitcoin Reserves To Public View",
+        "summary": "Block Inc. (NYSE:SQ) published its first proof-of-reserves report Monday, disclosing total Bitcoin ",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Jack Dorsey Opens Block's $2.2 Billion Bitcoin Reserves To Public View",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/crypto/cryptocurrency/26/04/52094640/jack-dorsey-opens-blocks-2-2-billion-bitcoin-reserves-to-public-view",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 89.95,
+        "week_52_low": 38.85,
+        "week_52_high_date": "2023-02-02",
+        "week_52_low_date": "2023-10-30",
+        "beta": 1.5409827,
+        "pe_ttm": 47.7364,
+        "eps_ttm": 1.7770000000000001,
+        "dividend_yield": null,
+        "market_cap": 53899.023
+      },
+      "fetched_at": "2026-07-06T04:00:20.841379Z"
+    },
+    "UPST": {
+      "earnings": null,
+      "news": {
+        "headline": "Upstart Expected To Receive $600M Investment Under Renewed Agreement With Neuberger Specialty Finance",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Upstart Expected To Receive $600M Investment Under Renewed Agreement With Neuberger Specialty Finance",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60067459/upstart-expected-receive-600m-investment-under-renewed-agreement-neuberger-specialty-finance",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 87.3,
+        "week_52_low": 23.965,
+        "week_52_high_date": "2025-07-31",
+        "week_52_low_date": "2026-03-30",
+        "beta": 2.1923015,
+        "pe_ttm": 67.3829,
+        "eps_ttm": 0.44189999999999996,
+        "dividend_yield": null,
+        "market_cap": 3328.8486
+      },
+      "fetched_at": "2026-07-06T04:00:21.050655Z"
+    },
+    "AFRM": {
+      "earnings": null,
+      "news": {
+        "headline": "Citigroup Maintains Buy on Affirm Holdings, Raises Price Target to $115",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Citigroup Maintains Buy on Affirm Holdings, Raises Price Target to $115",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60218800/citigroup-maintains-buy-affirm-holdings-raises-price-target-115",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 100,
+        "week_52_low": 42.095,
+        "week_52_high_date": "2025-08-29",
+        "week_52_low_date": "2026-03-27",
+        "beta": 3.6416352,
+        "pe_ttm": 74.0693,
+        "eps_ttm": 1.0715,
+        "dividend_yield": null,
+        "market_cap": 28325.72
+      },
+      "fetched_at": "2026-07-06T04:00:21.288382Z"
+    },
+    "SOFI": {
+      "earnings": null,
+      "news": {
+        "headline": "Michael Dell Reaffirms $250 Trump Accounts Pledge to 25M Children, Says It Gives Them 'A Real Stake' in America",
+        "summary": "Michael Dell reiterated his $6.25 billion pledge to provide $250 to 25 million children as Trump Accounts launched nationwide.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Michael Dell Reaffirms $250 Trump Accounts Pledge to 25M Children, Says It Gives Them 'A Real Stake' in America",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60270528/michael-dell-reaffirms-250-trump-accounts-pledge-for-25-million-children-says-it-gives-them-a-real-stake-in-america",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 32.73,
+        "week_52_low": 14.92,
+        "week_52_high_date": "2025-11-12",
+        "week_52_low_date": "2026-05-19",
+        "beta": 2.2188203,
+        "pe_ttm": 40.5543,
+        "eps_ttm": 0.44,
+        "dividend_yield": null,
+        "market_cap": 23397.201
+      },
+      "fetched_at": "2026-07-06T04:00:21.513186Z"
+    },
+    "PAYO": {
+      "earnings": null,
+      "news": {
+        "headline": "Benchmark Downgrades Payoneer Global to Hold",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Benchmark Downgrades Payoneer Global to Hold",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/53273604/benchmark-downgrades-payoneer-global-to-hold",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 7.665,
+        "week_52_low": 4.08,
+        "week_52_high_date": "2025-08-07",
+        "week_52_low_date": "2026-03-02",
+        "beta": 0.9618788,
+        "pe_ttm": 33.2183,
+        "eps_ttm": 0.2001,
+        "dividend_yield": null,
+        "market_cap": 2397.7983
+      },
+      "fetched_at": "2026-07-06T04:00:21.734246Z"
+    },
+    "LMND": {
+      "earnings": null,
+      "news": {
+        "headline": "Lemonade Renews Reinsurance Program, Effective July 1",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Lemonade Renews Reinsurance Program, Effective July 1",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60187720/lemonade-renews-reinsurance-program-effective-july-1",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 99.9,
+        "week_52_low": 35.7,
+        "week_52_high_date": "2026-01-22",
+        "week_52_low_date": "2025-08-01",
+        "beta": 1.9052045,
+        "pe_ttm": null,
+        "eps_ttm": -1.8609,
+        "dividend_yield": null,
+        "market_cap": 5468.872
+      },
+      "fetched_at": "2026-07-06T04:00:21.973184Z"
+    },
+    "RELY": {
+      "earnings": null,
+      "news": {
+        "headline": "Cantor Fitzgerald Maintains Overweight on Remitly Global, Raises Price Target to $28",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Cantor Fitzgerald Maintains Overweight on Remitly Global, Raises Price Target to $28",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/05/52446602/cantor-fitzgerald-maintains-overweight-on-remitly-global-raises-price-target-to-28",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 24.92,
+        "week_52_low": 12.08,
+        "week_52_high_date": "2026-05-11",
+        "week_52_low_date": "2025-11-14",
+        "beta": 0.3511842,
+        "pe_ttm": 47.3411,
+        "eps_ttm": 0.4876,
+        "dividend_yield": null,
+        "market_cap": 5000.8257
+      },
+      "fetched_at": "2026-07-06T04:00:22.196836Z"
+    },
+    "UBER": {
+      "earnings": null,
+      "news": {
+        "headline": "Consumer Tech (June 29-July 2): Microsoft Announces Layoffs, Meta & Google Sued In Several States & More",
+        "summary": "Catch this week&#39;s biggest market-moving stories, including Nvidia&#39;s AI startup initiative, Tesla deliveries, Meta&#39;s legal challenges, Microsoft&#39;s layoffs, and Amazon&#39;s expanding AI",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Consumer Tech (June 29-July 2): Microsoft Announces Layoffs, Meta & Google Sued In Several States & More",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60269593/consumer-tech-june-29-july-2-microsoft-announces-layoffs-meta-google-sued-in-several-states-more",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 101.99,
+        "week_52_low": 67.19,
+        "week_52_high_date": "2025-09-22",
+        "week_52_low_date": "2026-06-11",
+        "beta": 1.1535735,
+        "pe_ttm": 17.7412,
+        "eps_ttm": 4.0241,
+        "dividend_yield": null,
+        "market_cap": 151509.64
+      },
+      "fetched_at": "2026-07-06T04:00:24.432395Z"
+    },
+    "DKNG": {
+      "earnings": null,
+      "news": {
+        "headline": "Susquehanna Maintains Positive on DraftKings, Lowers Price Target to $31",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Susquehanna Maintains Positive on DraftKings, Lowers Price Target to $31",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60215463/susquehanna-maintains-positive-draftkings-lowers-price-target-31",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 48.78,
+        "week_52_low": 20.46,
+        "week_52_high_date": "2025-09-05",
+        "week_52_low_date": "2026-03-30",
+        "beta": 1.6461053,
+        "pe_ttm": 219.0297,
+        "eps_ttm": 0.09700000000000003,
+        "dividend_yield": null,
+        "market_cap": 12844.775
+      },
+      "fetched_at": "2026-07-06T04:00:24.655497Z"
+    },
+    "SHOP": {
+      "earnings": null,
+      "news": {
+        "headline": "$1000 Invested In Shopify 10 Years Ago Would Be Worth This Much Today",
+        "summary": "Shopify (NASDAQ:SHOP) has outperformed the market over the past 10 years by 30.72% on an annualized basis producing an average annual return of 44.24%. Currently, Shopify has a market capitalization o",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "$1000 Invested In Shopify 10 Years Ago Would Be Worth This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60261435/1000-invested-shopify-10-years-ago-would-be-worth-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 182.19,
+        "week_52_low": 94,
+        "week_52_high_date": "2025-10-29",
+        "week_52_low_date": "2026-05-14",
+        "beta": 2.6039345,
+        "pe_ttm": 116.3797,
+        "eps_ttm": 1.0178,
+        "dividend_yield": null,
+        "market_cap": 155017.81
+      },
+      "fetched_at": "2026-07-06T04:00:24.892235Z"
+    },
+    "TTD": {
+      "earnings": null,
+      "news": {
+        "headline": "The Trade Desk Stock Plummets To 52-Week Low: What's Happening?",
+        "summary": "The Trade Desk shares are edging lower Thursday as traders lean against ad-tech weakness despite the broader risk-on tone.",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "The Trade Desk Stock Plummets To 52-Week Low: What's Happening?",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/movers/26/06/60113294/the-trade-desk-stock-plummets-to-52-week-low-whats-happening",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 91.45,
+        "week_52_low": 16.98,
+        "week_52_high_date": "2025-08-07",
+        "week_52_low_date": "2026-06-25",
+        "beta": 1.0540571,
+        "pe_ttm": 20.755,
+        "eps_ttm": 0.8875,
+        "dividend_yield": null,
+        "market_cap": 8979.077
+      },
+      "fetched_at": "2026-07-06T04:00:25.112544Z"
+    },
+    "ROKU": {
+      "earnings": null,
+      "news": {
+        "headline": "Florida Attorney General James Uthmeier And Roku Announce Resolution Of Digital Privacy Enforcement Action",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Florida Attorney General James Uthmeier And Roku Announce Resolution Of Digital Privacy Enforcement Action",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/government/26/06/60131746/florida-attorney-general-james-uthmeier-and-roku-announce-resolution-digital-privacy-enforcement-act",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 148.88,
+        "week_52_low": 78.53,
+        "week_52_high_date": "2026-06-12",
+        "week_52_low_date": "2026-02-12",
+        "beta": 2.0664313,
+        "pe_ttm": 104.8596,
+        "eps_ttm": 1.3297999999999999,
+        "dividend_yield": null,
+        "market_cap": 21128.373
+      },
+      "fetched_at": "2026-07-06T04:00:25.354472Z"
+    },
+    "PINS": {
+      "earnings": null,
+      "news": {
+        "headline": "Est\u00e9e Lauder Launches AI \"Scent Scanner\" With Jo Malone London On Pinterest",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Est\u00e9e Lauder Launches AI \"Scent Scanner\" With Jo Malone London On Pinterest",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/53248340/est-e-lauder-launches-ai-scent-scanner-with-jo-malone-london-on-pinterest",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 39.93,
+        "week_52_low": 13.84,
+        "week_52_high_date": "2025-07-31",
+        "week_52_low_date": "2026-02-13",
+        "beta": 0.9192012,
+        "pe_ttm": 36.8919,
+        "eps_ttm": 0.3496,
+        "dividend_yield": null,
+        "market_cap": 12334.664
+      },
+      "fetched_at": "2026-07-06T04:00:25.574250Z"
+    },
+    "SNAP": {
+      "earnings": null,
+      "news": {
+        "headline": "Meta, YouTube, TikTok Could Face Millions In Fines Under Australia's Tougher Social Media Law: 'Not Here To Play Games'",
+        "summary": "Australia probes Meta, TikTok and YouTube, proposing $68.2 million fines to tighten enforcement of its under-16 social media ban.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Meta, YouTube, TikTok Could Face Millions In Fines Under Australia's Tougher Social Media Law: 'Not Here To Play Games'",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/social-media/26/06/60154239/meta-youtube-tiktok-could-face-millions-in-fines-under-australias-tougher-social-media-law-not-here-to-play-games",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 10.41,
+        "week_52_low": 3.81,
+        "week_52_high_date": "2025-07-22",
+        "week_52_low_date": "2026-03-27",
+        "beta": 1.0117191,
+        "pe_ttm": null,
+        "eps_ttm": -0.24409999999999998,
+        "dividend_yield": null,
+        "market_cap": 8020.6597
+      },
+      "fetched_at": "2026-07-06T04:00:25.804593Z"
+    },
+    "ABNB": {
+      "earnings": null,
+      "news": {
+        "headline": "Applied Materials To Rally Around 20%? Here Are 10 Top Analyst Forecasts For Monday",
+        "summary": "Top Wall Street analysts upgraded and downgraded several top companies, including Applied Materials, Robinhood, Liquidia, Airbnb, Praxis, Alnylam, and Uniqure.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Applied Materials To Rally Around 20%? Here Are 10 Top Analyst Forecasts For Monday",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/analyst-stock-ratings/price-target/26/06/60154823/applied-materials-to-rally-around-20-here-are-10-top-analyst-forecasts-for-monday",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 150.19,
+        "week_52_low": 110.81,
+        "week_52_high_date": "2026-06-29",
+        "week_52_low_date": "2025-11-20",
+        "beta": 1.1304598,
+        "pe_ttm": 35.6618,
+        "eps_ttm": 4.0568,
+        "dividend_yield": null,
+        "market_cap": 89760.836
+      },
+      "fetched_at": "2026-07-06T04:00:26.039945Z"
+    },
+    "EXPE": {
+      "earnings": null,
+      "news": {
+        "headline": "Wells Fargo Maintains Equal-Weight on Expedia Group, Lowers Price Target to $303",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Wells Fargo Maintains Equal-Weight on Expedia Group, Lowers Price Target to $303",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60188955/wells-fargo-maintains-equal-weight-expedia-group-lowers-price-target-303",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 303.8,
+        "week_52_low": 169.23,
+        "week_52_high_date": "2026-01-09",
+        "week_52_low_date": "2025-07-02",
+        "beta": 1.2615176,
+        "pe_ttm": 21.6725,
+        "eps_ttm": 11.3543,
+        "dividend_yield": 0.7145781383750791,
+        "market_cap": 32248.611
+      },
+      "fetched_at": "2026-07-06T04:00:26.295656Z"
+    },
+    "SPOT": {
+      "earnings": null,
+      "news": {
+        "headline": "Spotify Stock is Down 38% From All-Time High, But One Analyst Sees a 40% Upside",
+        "summary": "Spotify stock has dropped by 38% from its highest point in 2025, but one Bank of America analyst predicts that it will surge 40%",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Spotify Stock is Down 38% From All-Time High, But One Analyst Sees a 40% Upside",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269832/spotify-stock-is-down-38-from-all-time-high-but-one-analyst-sees-a-40-upside",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 748.3,
+        "week_52_low": 405,
+        "week_52_high_date": "2025-08-15",
+        "week_52_low_date": "2026-02-05",
+        "beta": 1.5946132,
+        "pe_ttm": 32.2691,
+        "eps_ttm": 12.8187,
+        "dividend_yield": null,
+        "market_cap": 100028.44
+      },
+      "fetched_at": "2026-07-06T04:00:26.510686Z"
+    },
+    "ELF": {
+      "earnings": null,
+      "news": {
+        "headline": "If You Invested $100 In e.l.f. Beauty Stock 5 Years Ago, You Would Have This Much Today",
+        "summary": "e.l.f. Beauty (NYSE:ELF) has outperformed the market over the past 5 years by 11.79% on an annualized basis producing an average annual return of 23.29%. Currently, e.l.f. Beauty has a market capitali",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "If You Invested $100 In e.l.f. Beauty Stock 5 Years Ago, You Would Have This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60249665/if-you-invested-100-e-l-f-beauty-stock-5-years-ago-you-would-have-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 150.99,
+        "week_52_low": 48.82,
+        "week_52_high_date": "2025-09-17",
+        "week_52_low_date": "2026-06-05",
+        "beta": 1.5836749,
+        "pe_ttm": 172.5984,
+        "eps_ttm": 0.44610000000000005,
+        "dividend_yield": null,
+        "market_cap": 4542.4453
+      },
+      "fetched_at": "2026-07-06T04:00:28.761791Z"
+    },
+    "APP": {
+      "earnings": null,
+      "news": {
+        "headline": "Here\u2019s How Much You Would Have Made Owning AppLovin Stock In The Last 5 Years",
+        "summary": "AppLovin (NASDAQ:APP) has outperformed the market over the past 5 years by 39.13% on an annualized basis producing an average annual return of 50.59%. Currently, AppLovin has a market capitalization o",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here\u2019s How Much You Would Have Made Owning AppLovin Stock In The Last 5 Years",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60267753/here-s-how-much-you-would-have-made-owning-applovin-stock-last-5-years",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 745.61,
+        "week_52_low": 325.58,
+        "week_52_high_date": "2025-09-29",
+        "week_52_low_date": "2025-07-03",
+        "beta": 2.5370593,
+        "pe_ttm": 44.679,
+        "eps_ttm": 11.6477,
+        "dividend_yield": null,
+        "market_cap": 177060.53
+      },
+      "fetched_at": "2026-07-06T04:00:28.994720Z"
+    },
+    "DUOL": {
+      "earnings": null,
+      "news": {
+        "headline": "Micron Rallies 15%, Apple Sinks 6% On Memory Costs: Stock Market Today",
+        "summary": "Micron&#39;s blowout earnings powered memory and chip stocks higher, but the broad stock market rally stalled by midday as S&amp;P 500 slipped.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Micron Rallies 15%, Apple Sinks 6% On Memory Costs: Stock Market Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/06/60108692/micron-rallies-apple-sinks-stock-market-thursday",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 468,
+        "week_52_low": 87.89,
+        "week_52_high_date": "2025-08-07",
+        "week_52_low_date": "2026-04-09",
+        "beta": 0.86059594,
+        "pe_ttm": 13.8724,
+        "eps_ttm": 8.6407,
+        "dividend_yield": null,
+        "market_cap": 5859.551
+      },
+      "fetched_at": "2026-07-06T04:00:29.216148Z"
+    },
+    "CHWY": {
+      "earnings": null,
+      "news": {
+        "headline": "Chewy Stock Is Moving Higher Today: What's Going On?",
+        "summary": "Chewy Inc (NYSE: CHWY) shares are surging on Wednesday. Goldman Sachs maintained its Buy rating. Here&#39;s what you need to know.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Chewy Stock Is Moving Higher Today: What's Going On?",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/movers/26/06/60082856/chewy-stock-is-moving-higher-today-whats-going-on",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 43.5,
+        "week_52_low": 17.4,
+        "week_52_high_date": "2025-09-08",
+        "week_52_low_date": "2026-06-22",
+        "beta": 1.4115802,
+        "pe_ttm": 33.4903,
+        "eps_ttm": 0.6025,
+        "dividend_yield": null,
+        "market_cap": 8546.73
+      },
+      "fetched_at": "2026-07-06T04:00:29.446341Z"
+    },
+    "ETSY": {
+      "earnings": null,
+      "news": {
+        "headline": "America's Child Care Crisis Could Cost The Economy $329 Billion\u2014 Why Congress Wants More Businesses To Use An Overlooked Tax Credit",
+        "summary": "Child care shortages may cost the U.S. economy $329 billion as lawmakers push tax relief measures.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "America's Child Care Crisis Could Cost The Economy $329 Billion\u2014 Why Congress Wants More Businesses To Use An Overlooked Tax Credit",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/personal-finance/tax/26/06/60039494/americas-child-care-crisis-could-cost-the-economy-329-billion-why-congress-wants-more-businesses-to-use-an-overlooked-tax-credit",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 80.41,
+        "week_52_low": 44,
+        "week_52_high_date": "2026-06-29",
+        "week_52_low_date": "2026-02-18",
+        "beta": 1.8330259,
+        "pe_ttm": 25.6504,
+        "eps_ttm": 2.175,
+        "dividend_yield": null,
+        "market_cap": 7304.163
+      },
+      "fetched_at": "2026-07-06T04:00:29.660973Z"
+    },
+    "LULU": {
+      "earnings": null,
+      "news": {
+        "headline": "Top Three Likely Outperformers BTIG Analysts Expect to Jump This Year",
+        "summary": "Here are three US stocks that BTIG analysts believe will go parabolic in the second half of the year.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Top Three Likely Outperformers BTIG Analysts Expect to Jump This Year",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60270058/top-three-likely-outperformers-btig-analysts-expect-to-jump-this-year",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 252.24,
+        "week_52_low": 104.44,
+        "week_52_high_date": "2025-07-02",
+        "week_52_low_date": "2026-06-22",
+        "beta": 0.8591298,
+        "pe_ttm": 9.6283,
+        "eps_ttm": 12.3839,
+        "dividend_yield": null,
+        "market_cap": 14054.082
+      },
+      "fetched_at": "2026-07-06T04:00:29.890121Z"
+    },
+    "NKE": {
+      "earnings": null,
+      "news": {
+        "headline": "Top Three Likely Outperformers BTIG Analysts Expect to Jump This Year",
+        "summary": "Here are three US stocks that BTIG analysts believe will go parabolic in the second half of the year.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Top Three Likely Outperformers BTIG Analysts Expect to Jump This Year",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60270058/top-three-likely-outperformers-btig-analysts-expect-to-jump-this-year",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 80.17,
+        "week_52_low": 40,
+        "week_52_high_date": "2025-08-25",
+        "week_52_low_date": "2026-06-26",
+        "beta": 1.1286608,
+        "pe_ttm": 29.0188,
+        "eps_ttm": 1.5201,
+        "dividend_yield": 3.7196643229757314,
+        "market_cap": 65292.32
+      },
+      "fetched_at": "2026-07-06T04:00:30.149629Z"
+    },
+    "COST": {
+      "earnings": null,
+      "news": {
+        "headline": "If You Invested $1000 In Costco Wholesale Stock 10 Years Ago, You Would Have This Much Today",
+        "summary": "Costco Wholesale (NASDAQ:COST) has outperformed the market over the past 10 years by 5.72% on an annualized basis producing an average annual return of 19.25%. Currently, Costco Wholesale has a market",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "If You Invested $1000 In Costco Wholesale Stock 10 Years Ago, You Would Have This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60266090/if-you-invested-1000-costco-wholesale-stock-10-years-ago-you-would-have-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 1096.5,
+        "week_52_low": 844.06,
+        "week_52_high_date": "2026-05-19",
+        "week_52_low_date": "2025-12-16",
+        "beta": 0.8684063,
+        "pe_ttm": 47.7535,
+        "eps_ttm": 19.882199999999997,
+        "dividend_yield": 0.6178612334107411,
+        "market_cap": 422045.47
+      },
+      "fetched_at": "2026-07-06T04:00:30.365637Z"
+    },
+    "WMT": {
+      "earnings": null,
+      "news": {
+        "headline": "Stock Market Open on July 3? What US Investors Need to Know About NYSE, Nasdaq and Bank Holiday Hours for the Fourth of July Weekend",
+        "summary": "Is the market open on July 3? Here is your guide to what&#39;s open and shut for America&#39;s 250th birthday weekend, including stocks and banks.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Stock Market Open on July 3? What US Investors Need to Know About NYSE, Nasdaq and Bank Holiday Hours for the Fourth of July Weekend",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/market-summary/26/07/60264249/stock-market-open-on-july-3-what-us-investors-need-to-know-about-nyse-nasdaq-and-bank-holiday-hours-for-the-fourth-of-july-weekend",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 135.16,
+        "week_52_low": 94.23,
+        "week_52_high_date": "2026-05-19",
+        "week_52_low_date": "2025-07-11",
+        "beta": 0.60684013,
+        "pe_ttm": 39.5187,
+        "eps_ttm": 2.8386,
+        "dividend_yield": 0.7596102202102354,
+        "market_cap": 898497
+      },
+      "fetched_at": "2026-07-06T04:00:30.576755Z"
+    },
+    "HD": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Consumer Discretionary Stocks With Whale Alerts In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Consumer Discretionary Stocks With Whale Alerts In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60254267/10-consumer-discretionary-stocks-whale-alerts-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 426.75,
+        "week_52_low": 289.1,
+        "week_52_high_date": "2025-09-17",
+        "week_52_low_date": "2026-05-19",
+        "beta": 0.95246994,
+        "pe_ttm": 25.4687,
+        "eps_ttm": 14.076,
+        "dividend_yield": 2.604079351774239,
+        "market_cap": 356868.06
+      },
+      "fetched_at": "2026-07-06T04:00:30.805337Z"
+    },
+    "TSLA": {
+      "earnings": null,
+      "news": {
+        "headline": "Rivian Stock: This Tesla Rival is Soaring as Some Analysts See More Gains",
+        "summary": "Rivian stock is soaring this year and is up by nearly 50% from its lowest point this year, with analysts predicting more upside ahead.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Rivian Stock: This Tesla Rival is Soaring as Some Analysts See More Gains",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269868/rivian-stock-this-tesla-rival-is-soaring-as-some-analysts-see-more-gains",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 498.83,
+        "week_52_low": 288.77,
+        "week_52_high_date": "2025-12-22",
+        "week_52_low_date": "2025-07-07",
+        "beta": 1.8059733,
+        "pe_ttm": 382.6228,
+        "eps_ttm": 1.0943,
+        "dividend_yield": null,
+        "market_cap": 1477689.4
+      },
+      "fetched_at": "2026-07-06T04:00:33.068442Z"
+    },
+    "RIVN": {
+      "earnings": null,
+      "news": {
+        "headline": "Rivian Stock: This Tesla Rival is Soaring as Some Analysts See More Gains",
+        "summary": "Rivian stock is soaring this year and is up by nearly 50% from its lowest point this year, with analysts predicting more upside ahead.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Rivian Stock: This Tesla Rival is Soaring as Some Analysts See More Gains",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269868/rivian-stock-this-tesla-rival-is-soaring-as-some-analysts-see-more-gains",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 22.69,
+        "week_52_low": 11.57,
+        "week_52_high_date": "2025-12-22",
+        "week_52_low_date": "2025-08-06",
+        "beta": 1.602535,
+        "pe_ttm": null,
+        "eps_ttm": -2.9205,
+        "dividend_yield": null,
+        "market_cap": 23481.584
+      },
+      "fetched_at": "2026-07-06T04:00:33.292286Z"
+    },
+    "LCID": {
+      "earnings": null,
+      "news": {
+        "headline": "Consumer Tech (June 29-July 2): Microsoft Announces Layoffs, Meta & Google Sued In Several States & More",
+        "summary": "Catch this week&#39;s biggest market-moving stories, including Nvidia&#39;s AI startup initiative, Tesla deliveries, Meta&#39;s legal challenges, Microsoft&#39;s layoffs, and Amazon&#39;s expanding AI",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Consumer Tech (June 29-July 2): Microsoft Announces Layoffs, Meta & Google Sued In Several States & More",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60269593/consumer-tech-june-29-july-2-microsoft-announces-layoffs-meta-google-sued-in-several-states-more",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 33.7,
+        "week_52_low": 4.47,
+        "week_52_high_date": "2025-07-17",
+        "week_52_low_date": "2026-06-11",
+        "beta": 0.8801329,
+        "pe_ttm": null,
+        "eps_ttm": -10.55,
+        "dividend_yield": null,
+        "market_cap": 2372.7615
+      },
+      "fetched_at": "2026-07-06T04:00:33.549427Z"
+    },
+    "NIO": {
+      "earnings": null,
+      "news": {
+        "headline": "Lucid Shares Sink After CFO Change Despite Higher Vehicle Deliveries",
+        "summary": "Lucid shares decline despite reporting higher Q2 production and deliveries, as investors focused on the company&#39;s CFO change.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Lucid Shares Sink After CFO Change Despite Higher Vehicle Deliveries",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/movers/26/07/60251695/lucid-shares-sink-after-cfo-change-despite-higher-vehicle-deliveries",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 8.02,
+        "week_52_low": 3.38,
+        "week_52_high_date": "2025-10-02",
+        "week_52_low_date": "2025-07-08",
+        "beta": 0.92488873,
+        "pe_ttm": null,
+        "eps_ttm": -3.9573,
+        "dividend_yield": null,
+        "market_cap": 11135.275
+      },
+      "fetched_at": "2026-07-06T04:00:33.792114Z"
+    },
+    "XPEV": {
+      "earnings": null,
+      "news": {
+        "headline": "Rivian Raises 2026 Delivery Outlook, Stock Jumps",
+        "summary": "Rivian ($RIVN) stock jumps 10%+ after beating Q2 delivery goals and raising its full-year 2026 delivery guidance.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Rivian Raises 2026 Delivery Outlook, Stock Jumps",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/large-cap/26/07/60251006/rivian-raises-2026-delivery-outlook-stock-jumps",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 28.235,
+        "week_52_low": 11.77,
+        "week_52_high_date": "2025-11-11",
+        "week_52_low_date": "2026-06-26",
+        "beta": 1.1143838,
+        "pe_ttm": null,
+        "eps_ttm": -1.1837999999999997,
+        "dividend_yield": null,
+        "market_cap": 11836.316
+      },
+      "fetched_at": "2026-07-06T04:00:34.050005Z"
+    },
+    "UNH": {
+      "earnings": null,
+      "news": {
+        "headline": "UNH, Humana, CVS Soar, and Wall Street Analysts Take Note",
+        "summary": "Top healthcare insurance stocks like UNH, CVS, and Humana stocks are rising after the Medicare advantage payment hike and analysts are taking note.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "UNH, Humana, CVS Soar, and Wall Street Analysts Take Note",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60268885/unh-humana-cvs-soar-and-wall-street-analysts-take-note",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 430.2,
+        "week_52_low": 234.6,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2025-08-01",
+        "beta": 0.62946206,
+        "pe_ttm": 32.0731,
+        "eps_ttm": 13.2409,
+        "dividend_yield": 2.181681399285311,
+        "market_cap": 386288.28
+      },
+      "fetched_at": "2026-07-06T04:00:34.315032Z"
+    },
+    "LLY": {
+      "earnings": null,
+      "news": {
+        "headline": "Warren Says Trump's Law Pushed 2 Million-Plus Children Off Medicaid, CHIP Across States",
+        "summary": "Elizabeth Warren warns Trump&#39;s law pushed children off Medicaid and CHIP in many states, while also challenging TrumpRx&#39;s impact on drug costs.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Warren Says Trump's Law Pushed 2 Million-Plus Children Off Medicaid, CHIP Across States",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/health-care/26/07/60269822/warren-says-trumps-law-pushed-2-million-plus-children-off-medicaid-chip-across-states",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 1238,
+        "week_52_low": 623.78,
+        "week_52_high_date": "2026-06-29",
+        "week_52_low_date": "2025-08-08",
+        "beta": 0.50307554,
+        "pe_ttm": 45.227,
+        "eps_ttm": 28.148100000000003,
+        "dividend_yield": 0.5700587358206127,
+        "market_cap": 1143189.4
+      },
+      "fetched_at": "2026-07-06T04:00:34.557016Z"
+    },
+    "JNJ": {
+      "earnings": null,
+      "news": {
+        "headline": "'White House Adds Pandemic Response Staff as Ebola Cases Rise' - Bloomberg News",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "'White House Adds Pandemic Response Staff as Ebola Cases Rise' - Bloomberg News",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/general/biotech/26/07/60224337/white-house-adds-pandemic-response-staff-ebola-cases-rise-bloomberg-news",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 263.1,
+        "week_52_low": 154.21,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2025-07-08",
+        "beta": 0.22643846,
+        "pe_ttm": 30.0948,
+        "eps_ttm": 8.645199999999999,
+        "dividend_yield": 2.037712895377129,
+        "market_cap": 633194.4
+      },
+      "fetched_at": "2026-07-06T04:00:34.783224Z"
+    },
+    "PFE": {
+      "earnings": null,
+      "news": {
+        "headline": "Warren Says Trump's Law Pushed 2 Million-Plus Children Off Medicaid, CHIP Across States",
+        "summary": "Elizabeth Warren warns Trump&#39;s law pushed children off Medicaid and CHIP in many states, while also challenging TrumpRx&#39;s impact on drug costs.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Warren Says Trump's Law Pushed 2 Million-Plus Children Off Medicaid, CHIP Across States",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/health-care/26/07/60269822/warren-says-trumps-law-pushed-2-million-plus-children-off-medicaid-chip-across-states",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 28.75,
+        "week_52_low": 23.11,
+        "week_52_high_date": "2026-04-02",
+        "week_52_low_date": "2025-08-01",
+        "beta": 0.28330526,
+        "pe_ttm": 18.5036,
+        "eps_ttm": 1.3089,
+        "dividend_yield": 7.072368421052631,
+        "market_cap": 138610.47
+      },
+      "fetched_at": "2026-07-06T04:00:35.025989Z"
+    },
+    "ABBV": {
+      "earnings": null,
+      "news": {
+        "headline": "Here's How Much $1000 Invested In AbbVie 5 Years Ago Would Be Worth Today",
+        "summary": "AbbVie (NYSE:ABBV) has outperformed the market over the past 5 years by 5.03% on an annualized basis producing an average annual return of 16.59%. Currently, AbbVie has a market capitalization of $442",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here's How Much $1000 Invested In AbbVie 5 Years Ago Would Be Worth Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60222155/here-s-how-much-1000-invested-abbvie-5-years-ago-would-be-worth-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 261.635,
+        "week_52_low": 184.63,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2025-07-21",
+        "beta": 0.2688032,
+        "pe_ttm": 126.8932,
+        "eps_ttm": 2.0488999999999997,
+        "dividend_yield": 2.6506300992071092,
+        "market_cap": 461256.62
+      },
+      "fetched_at": "2026-07-06T04:00:35.260022Z"
+    },
+    "MRK": {
+      "earnings": null,
+      "news": {
+        "headline": "B of A Securities Maintains Buy on Merck & Co, Raises Price Target to $141",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "B of A Securities Maintains Buy on Merck & Co, Raises Price Target to $141",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60197472/b-securities-maintains-buy-merck-co-raises-price-target-141",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 130.29,
+        "week_52_low": 76.66,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-07-29",
+        "beta": 0.20909217,
+        "pe_ttm": 35.8131,
+        "eps_ttm": 3.5542,
+        "dividend_yield": 2.624266748996604,
+        "market_cap": 319990.44
+      },
+      "fetched_at": "2026-07-06T04:00:37.518790Z"
+    },
+    "TMO": {
+      "earnings": null,
+      "news": {
+        "headline": "Arcturus Picks Thermo Fisher To Support Cystic Fibrosis Therapy",
+        "summary": "Arcturus partners with Thermo Fisher to support Phase 3 development and potential commercialization of ARCT-032 for cystic fibrosis.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Arcturus Picks Thermo Fisher To Support Cystic Fibrosis Therapy",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/health-care/26/07/60249788/arcturus-picks-thermo-fisher-to-support-cystic-fibrosis-therapy",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 643.99,
+        "week_52_low": 403.36,
+        "week_52_high_date": "2026-01-22",
+        "week_52_low_date": "2025-07-21",
+        "beta": 0.8571679,
+        "pe_ttm": 28.4139,
+        "eps_ttm": 18.169700000000002,
+        "dividend_yield": 0.3591624637016658,
+        "market_cap": 194521.53
+      },
+      "fetched_at": "2026-07-06T04:00:37.741170Z"
+    },
+    "VRTX": {
+      "earnings": null,
+      "news": {
+        "headline": "Vertex Says Casgevy Label Expansion Opens Treatment to 5,500 More Us Children",
+        "summary": "FDA expands Vertex Casgevy label to patients aged 2 and older, making about 5,500 more U.S. children eligible for the therapy.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Vertex Says Casgevy Label Expansion Opens Treatment to 5,500 More Us Children",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/fda/26/07/60242363/vertex-says-casgevy-label-expansion-opens-treatment-to-5500-more-us-children",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 529.14,
+        "week_52_low": 362.5,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2025-08-11",
+        "beta": 0.2884433,
+        "pe_ttm": 30.3784,
+        "eps_ttm": 16.8667,
+        "dividend_yield": null,
+        "market_cap": 131790.44
+      },
+      "fetched_at": "2026-07-06T04:00:37.980553Z"
+    },
+    "BMY": {
+      "earnings": null,
+      "news": {
+        "headline": "U.S. House Committee Sends Letters To Pfizer, Eli Lilly & Bristol Myers Squibb Probing China Drug Trials",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "U.S. House Committee Sends Letters To Pfizer, Eli Lilly & Bristol Myers Squibb Probing China Drug Trials",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/general/biotech/26/06/60186664/u-s-house-committee-sends-letters-pfizer-eli-lilly-bristol-myers-squibb-probing-china-drug-trials",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 62.89,
+        "week_52_low": 42.52,
+        "week_52_high_date": "2026-03-02",
+        "week_52_low_date": "2025-10-29",
+        "beta": 0.23441523,
+        "pe_ttm": 19.8613,
+        "eps_ttm": 3.3635,
+        "dividend_yield": 4.335110958197144,
+        "market_cap": 118705.61
+      },
+      "fetched_at": "2026-07-06T04:00:38.212563Z"
+    },
+    "REGN": {
+      "earnings": null,
+      "news": {
+        "headline": "Eli Lilly, Regeneron Join FDA Pilot Designed To Accelerate US Manufacturing Readiness",
+        "summary": "FDA names seven companies to its PreCheck pilot to speed U.S. drug manufacturing reviews after receiving more than 80 applications.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Eli Lilly, Regeneron Join FDA Pilot Designed To Accelerate US Manufacturing Readiness",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/fda/26/06/60188502/eli-lilly-regeneron-join-fda-pilot-designed-to-accelerate-us-manufacturing-readiness",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 821.11,
+        "week_52_low": 529.69,
+        "week_52_high_date": "2026-01-09",
+        "week_52_low_date": "2025-07-02",
+        "beta": 0.20444794,
+        "pe_ttm": 15.5069,
+        "eps_ttm": 41.0277,
+        "dividend_yield": 0.5746862915921561,
+        "market_cap": 68593.03
+      },
+      "fetched_at": "2026-07-06T04:00:38.445171Z"
+    },
+    "GILD": {
+      "earnings": null,
+      "news": {
+        "headline": "If You Invested $1000 In Gilead Sciences Stock 20 Years Ago, You Would Have This Much Today",
+        "summary": "Gilead Sciences (NASDAQ:GILD) has outperformed the market over the past 20 years by 2.07% on an annualized basis producing an average annual return of 11.3%. Currently, Gilead Sciences has a market ca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "If You Invested $1000 In Gilead Sciences Stock 20 Years Ago, You Would Have This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60266384/if-you-invested-1000-gilead-sciences-stock-20-years-ago-you-would-have-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 157.29,
+        "week_52_low": 107.75,
+        "week_52_high_date": "2026-02-11",
+        "week_52_low_date": "2025-07-21",
+        "beta": 0.34280515,
+        "pe_ttm": 17.6826,
+        "eps_ttm": 7.3515,
+        "dividend_yield": 2.498666869810314,
+        "market_cap": 162980.88
+      },
+      "fetched_at": "2026-07-06T04:00:38.704668Z"
+    },
+    "ISRG": {
+      "earnings": null,
+      "news": {
+        "headline": "8 Health Care Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "8 Health Care Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60266616/8-health-care-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 603.88,
+        "week_52_low": 396.68,
+        "week_52_high_date": "2026-01-07",
+        "week_52_low_date": "2026-06-02",
+        "beta": 1.448198,
+        "pe_ttm": 50.6451,
+        "eps_ttm": 8.2443,
+        "dividend_yield": null,
+        "market_cap": 150876.92
+      },
+      "fetched_at": "2026-07-06T04:00:38.930574Z"
+    },
+    "ZBH": {
+      "earnings": null,
+      "news": {
+        "headline": "Reported Earlier: 'Medical device maker Zimmer Biomet to hire 500 in 3 years for tech centre in India' - Reuters",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Reported Earlier: 'Medical device maker Zimmer Biomet to hire 500 in 3 years for tech centre in India' - Reuters",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60240908/reported-earlier-medical-device-maker-zimmer-biomet-hire-500-3-years-tech-centre-india-reuters",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 108.29,
+        "week_52_low": 79.12,
+        "week_52_high_date": "2025-08-26",
+        "week_52_low_date": "2026-05-11",
+        "beta": 0.47327065,
+        "pe_ttm": 22.696,
+        "eps_ttm": 3.8507,
+        "dividend_yield": 1.0361576,
+        "market_cap": 17267.135
+      },
+      "fetched_at": "2026-07-06T04:00:39.144114Z"
+    },
+    "ILMN": {
+      "earnings": null,
+      "news": {
+        "headline": "Piper Sandler Maintains Overweight on Illumina, Raises Price Target to $200",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Piper Sandler Maintains Overweight on Illumina, Raises Price Target to $200",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60212395/piper-sandler-maintains-overweight-illumina-raises-price-target-200",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 189.46,
+        "week_52_low": 88,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2025-10-14",
+        "beta": 1.467403,
+        "pe_ttm": 33.4669,
+        "eps_ttm": 5.523899999999999,
+        "dividend_yield": null,
+        "market_cap": 28547.283
+      },
+      "fetched_at": "2026-07-06T04:00:39.383131Z"
+    },
+    "SGEN": {
+      "earnings": null,
+      "news": {
+        "headline": "Outdoing Cancer Requires Pharma To Go Beyond Merely Revolutionizing Existing Treatment",
+        "summary": "Pfizer Inc (NYSE: PFE) is among the many pharmaceutical companies that turned to oncology in response to sinking demand for its COVID-19 products and near patent expiration dates for its several top-s",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Outdoing Cancer Requires Pharma To Go Beyond Merely Revolutionizing Existing Treatment",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/penny-stocks/24/02/37267007/outdoing-cancer-requires-pharma-to-go-beyond-merely-revolutionizing-existing-treatment",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 217.51,
+        "week_52_low": 116.08,
+        "week_52_high_date": "2023-10-25",
+        "week_52_low_date": "2022-12-06",
+        "beta": 0.43539646,
+        "pe_ttm": null,
+        "eps_ttm": -4.0057,
+        "dividend_yield": null,
+        "market_cap": 39202.832
+      },
+      "fetched_at": "2026-07-06T04:00:39.593370Z"
+    },
+    "XOM": {
+      "earnings": null,
+      "news": {
+        "headline": "TD Cowen Maintains Buy on Exxon Mobil, Lowers Price Target to $155",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "TD Cowen Maintains Buy on Exxon Mobil, Lowers Price Target to $155",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60251177/td-cowen-maintains-buy-exxon-mobil-lowers-price-target-155",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 176.41,
+        "week_52_low": 105.53,
+        "week_52_high_date": "2026-03-30",
+        "week_52_low_date": "2025-08-11",
+        "beta": 0.19312342,
+        "pe_ttm": 22.5265,
+        "eps_ttm": 5.9269,
+        "dividend_yield": 2.521882842627165,
+        "market_cap": 570235.44
+      },
+      "fetched_at": "2026-07-06T04:00:41.840585Z"
+    },
+    "CVX": {
+      "earnings": null,
+      "news": {
+        "headline": "Bernie Sanders Slams Trump on 250th Anniversary of US Independence, Says His Administration Is Not \u2018America First\u2019",
+        "summary": "Sanders accuses Trump of self-interest and corruption, citing wealth tied to government power and concerns over climate impacts and private enrichment.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Bernie Sanders Slams Trump on 250th Anniversary of US Independence, Says His Administration Is Not \u2018America First\u2019",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/politics/26/07/60269884/bernie-sanders-slams-trump-on-250th-anniversary-of-us-independence-says-his-administration-is-not-america-first",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 214.71,
+        "week_52_low": 145.47,
+        "week_52_high_date": "2026-03-30",
+        "week_52_low_date": "2025-07-02",
+        "beta": 0.51495105,
+        "pe_ttm": 30.6094,
+        "eps_ttm": 5.7604,
+        "dividend_yield": 4.208037825059102,
+        "market_cap": 336978.34
+      },
+      "fetched_at": "2026-07-06T04:00:42.059426Z"
+    },
+    "COP": {
+      "earnings": null,
+      "news": {
+        "headline": "Morgan Stanley Maintains Overweight on ConocoPhillips, Lowers Price Target to $146",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Morgan Stanley Maintains Overweight on ConocoPhillips, Lowers Price Target to $146",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60166174/morgan-stanley-maintains-overweight-conocophillips-lowers-price-target-146",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 135.87,
+        "week_52_low": 85.57,
+        "week_52_high_date": "2026-03-30",
+        "week_52_low_date": "2025-11-06",
+        "beta": 0.1479616,
+        "pe_ttm": 17.4258,
+        "eps_ttm": 5.902100000000001,
+        "dividend_yield": 3.2082497851618443,
+        "market_cap": 127591.93
+      },
+      "fetched_at": "2026-07-06T04:00:42.296100Z"
+    },
+    "SLB": {
+      "earnings": null,
+      "news": {
+        "headline": "Oil Crash Masks A 2030 Supply Shock",
+        "summary": "Not so long ago, oil prices were firmly in the triple digits, with investors stressing over their further prospects and inflationary effects.\n\n\n\nYet, as of the start of Q3, the benchmark crude has sli",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Oil Crash Masks A 2030 Supply Shock",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/markets/commodities/26/07/60266393/oil-crash-masks-a-2030-supply-shock",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 58.8199,
+        "week_52_low": 31.64,
+        "week_52_high_date": "2026-05-26",
+        "week_52_low_date": "2025-10-17",
+        "beta": 0.77226436,
+        "pe_ttm": 20.2679,
+        "eps_ttm": 2.2824,
+        "dividend_yield": 2.6146687347662305,
+        "market_cap": 67471.95
+      },
+      "fetched_at": "2026-07-06T04:00:42.528654Z"
+    },
+    "EOG": {
+      "earnings": null,
+      "news": {
+        "headline": "UBS Maintains Buy on EOG Resources, Lowers Price Target to $158",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "UBS Maintains Buy on EOG Resources, Lowers Price Target to $158",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60243485/ubs-maintains-buy-eog-resources-lowers-price-target-158",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 151.87,
+        "week_52_low": 101.59,
+        "week_52_high_date": "2026-03-30",
+        "week_52_low_date": "2025-12-19",
+        "beta": 0.3028075,
+        "pe_ttm": 12.6718,
+        "eps_ttm": 10.1664,
+        "dividend_yield": 3.1197430799816486,
+        "market_cap": 69657.15
+      },
+      "fetched_at": "2026-07-06T04:00:42.740489Z"
+    },
+    "PSX": {
+      "earnings": null,
+      "news": {
+        "headline": "TD Cowen Maintains Buy on Phillips 66, Raises Price Target to $220",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "TD Cowen Maintains Buy on Phillips 66, Raises Price Target to $220",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60166885/td-cowen-maintains-buy-phillips-66-raises-price-target-220",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 190.61,
+        "week_52_low": 118.07,
+        "week_52_high_date": "2026-03-30",
+        "week_52_low_date": "2025-08-11",
+        "beta": 0.7235169,
+        "pe_ttm": 17.1557,
+        "eps_ttm": 10.104000000000001,
+        "dividend_yield": 2.8794921210747084,
+        "market_cap": 70732.95
+      },
+      "fetched_at": "2026-07-06T04:00:42.975901Z"
+    },
+    "MPC": {
+      "earnings": null,
+      "news": {
+        "headline": "TD Cowen Maintains Buy on Marathon Petroleum, Lowers Price Target to $315",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "TD Cowen Maintains Buy on Marathon Petroleum, Lowers Price Target to $315",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60166987/td-cowen-maintains-buy-marathon-petroleum-lowers-price-target-315",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 272.46,
+        "week_52_low": 158,
+        "week_52_high_date": "2026-06-03",
+        "week_52_low_date": "2025-08-13",
+        "beta": 0.53359413,
+        "pe_ttm": 16.787,
+        "eps_ttm": 15.3164,
+        "dividend_yield": 1.501783367749202,
+        "market_cap": 77757.32
+      },
+      "fetched_at": "2026-07-06T04:00:43.207392Z"
+    },
+    "OXY": {
+      "earnings": null,
+      "news": {
+        "headline": "Morgan Stanley Maintains Equal-Weight on Occidental Petroleum, Lowers Price Target to $68",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Morgan Stanley Maintains Equal-Weight on Occidental Petroleum, Lowers Price Target to $68",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/news/26/06/60167661/morgan-stanley-maintains-equal-weight-occidental-petroleum-lowers-price-target-68",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 67.45,
+        "week_52_low": 38.8,
+        "week_52_high_date": "2026-03-31",
+        "week_52_low_date": "2025-12-16",
+        "beta": 0.18762097,
+        "pe_ttm": 10.274,
+        "eps_ttm": 4.7059999999999995,
+        "dividend_yield": 2.1263545287262318,
+        "market_cap": 48647.582
+      },
+      "fetched_at": "2026-07-06T04:00:43.439269Z"
+    },
+    "GE": {
+      "earnings": null,
+      "news": {
+        "headline": "Jefferies Maintains Buy on GE Aerospace, Raises Price Target to $455",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Jefferies Maintains Buy on GE Aerospace, Raises Price Target to $455",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60242059/jefferies-maintains-buy-ge-aerospace-raises-price-target-455",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 382.97,
+        "week_52_low": 243.34,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2025-07-08",
+        "beta": 1.3936107,
+        "pe_ttm": 45.6409,
+        "eps_ttm": 8.1249,
+        "dividend_yield": 0.4979868616232253,
+        "market_cap": 393880.7
+      },
+      "fetched_at": "2026-07-06T04:00:43.668339Z"
+    },
+    "CAT": {
+      "earnings": null,
+      "news": {
+        "headline": "Benzinga Bulls and Bears: AeroVironment, Reddit, Oracle \u2014 And Stocks End Week on High Note",
+        "summary": "Benzinga examined the prospects for many investors\u2019 favorite stocks over the last week \u2014 here\u2019s a look at some of our top stories.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Benzinga Bulls and Bears: AeroVironment, Reddit, Oracle \u2014 And Stocks End Week on High Note",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/market-summary/26/07/60268467/benzinga-bulls-and-bears-aerovironment-reddit-oracle-and-stocks-end-week-on-high-note",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 1073.46,
+        "week_52_low": 388.09,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-07-07",
+        "beta": 1.5891865,
+        "pe_ttm": 47.0666,
+        "eps_ttm": 20.1005,
+        "dividend_yield": 0.6766784635662615,
+        "market_cap": 443837.6
+      },
+      "fetched_at": "2026-07-06T04:00:43.901576Z"
+    },
+    "UNP": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Industrials Stocks With Whale Alerts In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Industrials Stocks With Whale Alerts In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/06/60167719/10-industrials-stocks-whale-alerts-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 282.8,
+        "week_52_low": 210.84,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2025-09-10",
+        "beta": 0.97491294,
+        "pe_ttm": 23.2324,
+        "eps_ttm": 12.1475,
+        "dividend_yield": 1.9557130203720106,
+        "market_cap": 167575.55
+      },
+      "fetched_at": "2026-07-06T04:00:46.129971Z"
+    },
+    "HON": {
+      "earnings": null,
+      "news": {
+        "headline": "Citigroup Maintains Buy on Honeywell Intl, Lowers Price Target to $260",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Citigroup Maintains Buy on Honeywell Intl, Lowers Price Target to $260",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60222942/citigroup-maintains-buy-honeywell-intl-lowers-price-target-260",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 496.36,
+        "week_52_low": 219.33,
+        "week_52_high_date": "2026-03-02",
+        "week_52_low_date": "2026-06-30",
+        "beta": 0.9436277,
+        "pe_ttm": 16.144,
+        "eps_ttm": 7.0545,
+        "dividend_yield": 4.14165144000696,
+        "market_cap": 72825.76
+      },
+      "fetched_at": "2026-07-06T04:00:46.357492Z"
+    },
+    "UPS": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Industrials Stocks Whale Activity In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Industrials Stocks Whale Activity In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60266615/10-industrials-stocks-whale-activity-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 122.41,
+        "week_52_low": 82,
+        "week_52_high_date": "2026-02-12",
+        "week_52_low_date": "2025-10-14",
+        "beta": 1.0396128,
+        "pe_ttm": 17.9199,
+        "eps_ttm": 6.176900000000001,
+        "dividend_yield": 5.928067955900958,
+        "market_cap": 94061.695
+      },
+      "fetched_at": "2026-07-06T04:00:46.579175Z"
+    },
+    "RTX": {
+      "earnings": null,
+      "news": {
+        "headline": "Trump Faces New Questions As Report Says Boeing, Lockheed, Palantir and Other Federal Contractors Supported Both America250 and His Freedom 250 Initiative",
+        "summary": "CNBC found 14 major companies backed both Trump&#39;s Freedom 250 and America250, raising ethics concerns over corporate access.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Trump Faces New Questions As Report Says Boeing, Lockheed, Palantir and Other Federal Contractors Supported Both America250 and His Freedom 250 Initiative",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/politics/26/07/60268100/trump-faces-new-questions-as-report-says-boeing-lockheed-palantir-and-other-federal-contractors-supported-both-america250-and-his-freedom-250-initiative",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 214.5,
+        "week_52_low": 142.96,
+        "week_52_high_date": "2026-03-03",
+        "week_52_low_date": "2025-07-02",
+        "beta": 0.3077958,
+        "pe_ttm": 36.9707,
+        "eps_ttm": 5.335999999999999,
+        "dividend_yield": 1.465495608531995,
+        "market_cap": 268259.3
+      },
+      "fetched_at": "2026-07-06T04:00:46.801751Z"
+    },
+    "LMT": {
+      "earnings": null,
+      "news": {
+        "headline": "Trump Faces New Questions As Report Says Boeing, Lockheed, Palantir and Other Federal Contractors Supported Both America250 and His Freedom 250 Initiative",
+        "summary": "CNBC found 14 major companies backed both Trump&#39;s Freedom 250 and America250, raising ethics concerns over corporate access.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Trump Faces New Questions As Report Says Boeing, Lockheed, Palantir and Other Federal Contractors Supported Both America250 and His Freedom 250 Initiative",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/politics/26/07/60268100/trump-faces-new-questions-as-report-says-boeing-lockheed-palantir-and-other-federal-contractors-supported-both-america250-and-his-freedom-250-initiative",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 692,
+        "week_52_low": 410.11,
+        "week_52_high_date": "2026-03-02",
+        "week_52_low_date": "2025-07-22",
+        "beta": 0.12220892,
+        "pe_ttm": 26.2606,
+        "eps_ttm": 20.6536,
+        "dividend_yield": 2.5278892125075565,
+        "market_cap": 125866.98
+      },
+      "fetched_at": "2026-07-06T04:00:47.022808Z"
+    },
+    "DE": {
+      "earnings": null,
+      "news": {
+        "headline": "Trump Faces New Questions As Report Says Boeing, Lockheed, Palantir and Other Federal Contractors Supported Both America250 and His Freedom 250 Initiative",
+        "summary": "CNBC found 14 major companies backed both Trump&#39;s Freedom 250 and America250, raising ethics concerns over corporate access.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Trump Faces New Questions As Report Says Boeing, Lockheed, Palantir and Other Federal Contractors Supported Both America250 and His Freedom 250 Initiative",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/politics/26/07/60268100/trump-faces-new-questions-as-report-says-boeing-lockheed-palantir-and-other-federal-contractors-supported-both-america250-and-his-freedom-250-initiative",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 674.19,
+        "week_52_low": 433,
+        "week_52_high_date": "2026-02-19",
+        "week_52_low_date": "2025-10-14",
+        "beta": 0.8956619,
+        "pe_ttm": 35.0625,
+        "eps_ttm": 17.6467,
+        "dividend_yield": 1.0430247718383312,
+        "market_cap": 167704.03
+      },
+      "fetched_at": "2026-07-06T04:00:47.247251Z"
+    },
+    "JPM": {
+      "earnings": null,
+      "news": {
+        "headline": "Michael Dell Reaffirms $250 Trump Accounts Pledge to 25M Children, Says It Gives Them 'A Real Stake' in America",
+        "summary": "Michael Dell reiterated his $6.25 billion pledge to provide $250 to 25 million children as Trump Accounts launched nationwide.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Michael Dell Reaffirms $250 Trump Accounts Pledge to 25M Children, Says It Gives Them 'A Real Stake' in America",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60270528/michael-dell-reaffirms-250-trump-accounts-pledge-for-25-million-children-says-it-gives-them-a-real-stake-in-america",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 343.4485,
+        "week_52_low": 279.1,
+        "week_52_high_date": "2026-06-25",
+        "week_52_low_date": "2026-03-12",
+        "beta": 0.99212205,
+        "pe_ttm": 15.2162,
+        "eps_ttm": 21.381600000000002,
+        "dividend_yield": 1.793882859449278,
+        "market_cap": 896216.2
+      },
+      "fetched_at": "2026-07-06T04:00:47.464541Z"
+    },
+    "BAC": {
+      "earnings": null,
+      "news": {
+        "headline": "Spotify Stock is Down 38% From All-Time High, But One Analyst Sees a 40% Upside",
+        "summary": "Spotify stock has dropped by 38% from its highest point in 2025, but one Bank of America analyst predicts that it will surge 40%",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Spotify Stock is Down 38% From All-Time High, But One Analyst Sees a 40% Upside",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60269832/spotify-stock-is-down-38-from-all-time-high-but-one-analyst-sees-a-40-upside",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 59.195,
+        "week_52_low": 44.75,
+        "week_52_high_date": "2026-06-25",
+        "week_52_low_date": "2025-08-05",
+        "beta": 1.1891742,
+        "pe_ttm": 13.149,
+        "eps_ttm": 4.1949,
+        "dividend_yield": 1.9070321811680575,
+        "market_cap": 416782.75
+      },
+      "fetched_at": "2026-07-06T04:00:47.691529Z"
+    },
+    "WFC": {
+      "earnings": null,
+      "news": {
+        "headline": "Why Is Avis Budget Group (CAR) Stock Trending Overnight? (CORRECTED)",
+        "summary": "Avis Budget Group shares were unchanged in after-hours trading after gaining 11.23% during the regular session.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Why Is Avis Budget Group (CAR) Stock Trending Overnight? (CORRECTED)",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60263990/why-is-avis-budget-group-car-stock-trending-overnight",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 97.76,
+        "week_52_low": 72.78,
+        "week_52_high_date": "2026-01-05",
+        "week_52_low_date": "2026-05-15",
+        "beta": 0.9375573,
+        "pe_ttm": 12.1111,
+        "eps_ttm": 6.7978,
+        "dividend_yield": 2.2733013387218994,
+        "market_cap": 262773.5
+      },
+      "fetched_at": "2026-07-06T04:00:47.917176Z"
+    },
+    "GS": {
+      "earnings": null,
+      "news": {
+        "headline": "Goldman Sachs Names Top Undervalued Stocks to Buy Today",
+        "summary": "Goldman Sachs analysts have revealed some top undervalued stocks worth buying today, including popular names like NetEase and O&#39;Reilly",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Goldman Sachs Names Top Undervalued Stocks to Buy Today",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/equities/26/07/60270075/goldman-sachs-names-top-undervalued-stocks-to-buy-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 1125,
+        "week_52_low": 691.3,
+        "week_52_high_date": "2026-06-18",
+        "week_52_low_date": "2025-07-16",
+        "beta": 1.3055133,
+        "pe_ttm": 16.6705,
+        "eps_ttm": 57.745400000000004,
+        "dividend_yield": 1.762977473065622,
+        "market_cap": 301202.56
+      },
+      "fetched_at": "2026-07-06T04:00:48.129921Z"
+    },
+    "MS": {
+      "earnings": null,
+      "news": {
+        "headline": "Brent Crude Could Sink to $60 a Barrel by Year-End Despite 'Temporary Flare-Ups' Between US and Iran, Citi Analysts Say",
+        "summary": "Citi sees Brent crude falling to $60 by year-end, saying U.S.-Iran &#39;conflict fatigue&#39; will keep the truce intact.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Brent Crude Could Sink to $60 a Barrel by Year-End Despite 'Temporary Flare-Ups' Between US and Iran, Citi Analysts Say",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/commodities/26/07/60265538/brent-crude-could-sink-to-60-a-barrel-by-year-end-despite-temporary-flare-ups-between-us-and-iran-citi-analysts-say",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 230.47,
+        "week_52_low": 135.26,
+        "week_52_high_date": "2026-06-18",
+        "week_52_low_date": "2025-07-16",
+        "beta": 1.2186946,
+        "pe_ttm": 18.6291,
+        "eps_ttm": 11.4258,
+        "dividend_yield": 1.8697704856728836,
+        "market_cap": 337428.56
+      },
+      "fetched_at": "2026-07-06T04:00:50.381514Z"
+    },
+    "BLK": {
+      "earnings": null,
+      "news": {
+        "headline": "XRP Crashed 70% in 1 Year While Ripple Was Doing Everything Right: What Happened?",
+        "summary": "XRP fell 70% from $3.65 despite Ripple&#39;s institutional wins as macro shocks, whale selling, and Bitcoin&#39;s gravity crushed the fundamentals.",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "XRP Crashed 70% in 1 Year While Ripple Was Doing Everything Right: What Happened?",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/crypto/cryptocurrency/26/07/60266116/xrp-crashed-70-in-1-year-while-ripple-was-doing-everything-right-what-happened",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 1219.94,
+        "week_52_low": 917.39,
+        "week_52_high_date": "2025-10-15",
+        "week_52_low_date": "2026-03-12",
+        "beta": 1.4429706,
+        "pe_ttm": 25.9226,
+        "eps_ttm": 38.4203,
+        "dividend_yield": 2.3018288090144923,
+        "market_cap": 162145.58
+      },
+      "fetched_at": "2026-07-06T04:00:50.599538Z"
+    },
+    "SCHW": {
+      "earnings": null,
+      "news": {
+        "headline": "CORRECTION: Shares of securities trading-related companies are trading higher during the market's regular trading session.",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "CORRECTION: Shares of securities trading-related companies are trading higher during the market's regular trading session.",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/quote/BULL",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 107.5,
+        "week_52_low": 83.96,
+        "week_52_high_date": "2026-02-10",
+        "week_52_low_date": "2026-05-28",
+        "beta": 0.7663044,
+        "pe_ttm": 17.9045,
+        "eps_ttm": 5.2684,
+        "dividend_yield": 1.3195876288659794,
+        "market_cap": 168696.14
+      },
+      "fetched_at": "2026-07-06T04:00:50.859156Z"
+    },
+    "V": {
+      "earnings": null,
+      "news": {
+        "headline": "XRP Crashed 70% in 1 Year While Ripple Was Doing Everything Right: What Happened?",
+        "summary": "XRP fell 70% from $3.65 despite Ripple&#39;s institutional wins as macro shocks, whale selling, and Bitcoin&#39;s gravity crushed the fundamentals.",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "XRP Crashed 70% in 1 Year While Ripple Was Doing Everything Right: What Happened?",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/crypto/cryptocurrency/26/07/60266116/xrp-crashed-70-in-1-year-while-ripple-was-doing-everything-right-what-happened",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 362.13,
+        "week_52_low": 293.89,
+        "week_52_high_date": "2026-07-02",
+        "week_52_low_date": "2026-04-01",
+        "beta": 0.76614314,
+        "pe_ttm": 30.6844,
+        "eps_ttm": 11.4786,
+        "dividend_yield": 0.7400657222544391,
+        "market_cap": 682298.1
+      },
+      "fetched_at": "2026-07-06T04:00:51.082806Z"
+    },
+    "DIS": {
+      "earnings": null,
+      "news": {
+        "headline": "Benzinga Bulls and Bears: AeroVironment, Reddit, Oracle \u2014 And Stocks End Week on High Note",
+        "summary": "Benzinga examined the prospects for many investors\u2019 favorite stocks over the last week \u2014 here\u2019s a look at some of our top stories.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Benzinga Bulls and Bears: AeroVironment, Reddit, Oracle \u2014 And Stocks End Week on High Note",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/market-summary/26/07/60268467/benzinga-bulls-and-bears-aerovironment-reddit-oracle-and-stocks-end-week-on-high-note",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 124.61,
+        "week_52_low": 92.19,
+        "week_52_high_date": "2025-07-07",
+        "week_52_low_date": "2026-03-27",
+        "beta": 1.4049765,
+        "pe_ttm": 15.3941,
+        "eps_ttm": 6.2492,
+        "dividend_yield": 1.507537688442211,
+        "market_cap": 172782.88
+      },
+      "fetched_at": "2026-07-06T04:00:51.304209Z"
+    },
+    "CMCSA": {
+      "earnings": null,
+      "news": {
+        "headline": "Benzinga Bulls and Bears: AeroVironment, Reddit, Oracle \u2014 And Stocks End Week on High Note",
+        "summary": "Benzinga examined the prospects for many investors\u2019 favorite stocks over the last week \u2014 here\u2019s a look at some of our top stories.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Benzinga Bulls and Bears: AeroVironment, Reddit, Oracle \u2014 And Stocks End Week on High Note",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/market-summary/26/07/60268467/benzinga-bulls-and-bears-aerovironment-reddit-oracle-and-stocks-end-week-on-high-note",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 34.11,
+        "week_52_low": 22.125,
+        "week_52_high_date": "2025-07-03",
+        "week_52_low_date": "2026-06-22",
+        "beta": 0.6603197,
+        "pe_ttm": 4.5211,
+        "eps_ttm": 5.0847999999999995,
+        "dividend_yield": 5.548549810844893,
+        "market_cap": 84983.32
+      },
+      "fetched_at": "2026-07-06T04:00:51.527871Z"
+    },
+    "TMUS": {
+      "earnings": null,
+      "news": {
+        "headline": "Elon Musk Calls Report on SpaceX AI Handheld Device \u2018Utterly False\u2019 After Claims of an iPhone Rival Sparks Online Buzz",
+        "summary": "CEO Elon Musk denies reports that SpaceX is developing a handheld AI device, calling the claims \u201cutterly false.&#34;",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Elon Musk Calls Report on SpaceX AI Handheld Device \u2018Utterly False\u2019 After Claims of an iPhone Rival Sparks Online Buzz",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60237828/elon-musk-calls-report-on-spacex-ai-handheld-device-utterly-false-after-claims-of-an-iphone-rival-sparks-online-buzz",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 261.56,
+        "week_52_low": 165.66,
+        "week_52_high_date": "2025-08-20",
+        "week_52_low_date": "2026-06-30",
+        "beta": 0.33850184,
+        "pe_ttm": 18.2219,
+        "eps_ttm": 9.4088,
+        "dividend_yield": 2.298332582244254,
+        "market_cap": 192112.98
+      },
+      "fetched_at": "2026-07-06T04:00:51.748064Z"
+    },
+    "CHTR": {
+      "earnings": null,
+      "news": {
+        "headline": "B of A Securities Maintains Buy on Charter Communications, Lowers Price Target to $200",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "B of A Securities Maintains Buy on Charter Communications, Lowers Price Target to $200",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60214115/b-securities-maintains-buy-charter-communications-lowers-price-target-200",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 422.29,
+        "week_52_low": 124.05,
+        "week_52_high_date": "2025-07-07",
+        "week_52_low_date": "2026-06-22",
+        "beta": 0.6963507,
+        "pe_ttm": 3.8519,
+        "eps_ttm": 37.053000000000004,
+        "dividend_yield": null,
+        "market_cap": 19001.627
+      },
+      "fetched_at": "2026-07-06T04:00:51.974322Z"
+    },
+    "WBD": {
+      "earnings": null,
+      "news": {
+        "headline": "Paramount Skydance Scrambles to Clear EU Hurdle in $110 Billion Warner Bros Discovery Mega-Deal As Review Deadline Gets Extended (UPDATED)",
+        "summary": "Paramount reportedly offers EU concessions to ease antitrust concerns over its $110 billion Warner Bros. Discovery deal.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Paramount Skydance Scrambles to Clear EU Hurdle in $110 Billion Warner Bros Discovery Mega-Deal As Review Deadline Gets Extended (UPDATED)",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/m-a/26/07/60212547/paramount-skydance-scrambles-to-clear-eu-hurdle-in-110-billion-warner-bros-discovery-mega-deal-as-review-deadline-gets-extended",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 30,
+        "week_52_low": 10.76,
+        "week_52_high_date": "2025-12-12",
+        "week_52_low_date": "2025-08-11",
+        "beta": 1.5685089,
+        "pe_ttm": null,
+        "eps_ttm": -0.6990999999999999,
+        "dividend_yield": null,
+        "market_cap": 65434.625
+      },
+      "fetched_at": "2026-07-06T04:00:52.197063Z"
+    },
+    "PARA": {
+      "earnings": null,
+      "news": {
+        "headline": "Benzinga Bulls And Bears: Adobe, Oracle, GameStop \u2014 And DJIA And S&P 500 Hit All-Time Highs",
+        "summary": "Benzinga examined the prospects for many investors&#39; favorite stocks over the last week \u2014 here&#39;s a look at some of our top stories.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Benzinga Bulls And Bears: Adobe, Oracle, GameStop \u2014 And DJIA And S&P 500 Hit All-Time Highs",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/market-summary/25/12/49380509/benzinga-bulls-and-bears-adobe-oracle-gamestop-and-djia-and-sp-500-hit-all-time-highs",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 20.86,
+        "week_52_low": 9.95,
+        "week_52_high_date": "2025-09-23",
+        "week_52_low_date": "2025-08-11",
+        "beta": -0.5815715,
+        "pe_ttm": null,
+        "eps_ttm": -8.225499999999998,
+        "dividend_yield": 1.8115941,
+        "market_cap": 7443.441
+      },
+      "fetched_at": "2026-07-06T04:00:52.423465Z"
+    },
+    "AVGO": {
+      "earnings": null,
+      "news": {
+        "headline": "Jim Cramer on Anthropic's Reported Samsung AI Chip Plans: 'We Really Don't Have Anything But a Rumor'",
+        "summary": "Jim Cramer cast doubt on reports that Anthropic is developing a custom AI chip with Samsung, calling them &#34;nothing but a rumor.&#34;",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Jim Cramer on Anthropic's Reported Samsung AI Chip Plans: 'We Really Don't Have Anything But a Rumor'",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60264029/jim-cramer-on-anthropics-reported-samsung-ai-chip-plans-we-really-dont-have-anything-but-a-rumor",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 495,
+        "week_52_low": 262.73,
+        "week_52_high_date": "2026-06-03",
+        "week_52_low_date": "2025-07-02",
+        "beta": 1.4778131,
+        "pe_ttm": 58.494,
+        "eps_ttm": 6.007099999999999,
+        "dividend_yield": 0.7213205715078375,
+        "market_cap": 1714869.8
+      },
+      "fetched_at": "2026-07-06T04:00:54.657763Z"
+    },
+    "TXN": {
+      "earnings": null,
+      "news": {
+        "headline": "Here\u2019s How Much You Would Have Made Owning Texas Instruments Stock In The Last 15 Years",
+        "summary": "Texas Instruments (NASDAQ:TXN) has outperformed the market over the past 15 years by 3.6% on an annualized basis producing an average annual return of 15.68%. Currently, Texas Instruments has a market",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Here\u2019s How Much You Would Have Made Owning Texas Instruments Stock In The Last 15 Years",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60252571/here-s-how-much-you-would-have-made-owning-texas-instruments-stock-last-15-years",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 334.03,
+        "week_52_low": 152.73,
+        "week_52_high_date": "2026-06-22",
+        "week_52_low_date": "2025-11-20",
+        "beta": 1.3333147,
+        "pe_ttm": 49.6982,
+        "eps_ttm": 5.8793,
+        "dividend_yield": 1.9380373959328512,
+        "market_cap": 266730
+      },
+      "fetched_at": "2026-07-06T04:00:54.888519Z"
+    },
+    "IBM": {
+      "earnings": null,
+      "news": {
+        "headline": "10 Information Technology Stocks With Whale Alerts In Today\u2019s Session",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity sca",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "10 Information Technology Stocks With Whale Alerts In Today\u2019s Session",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/options/26/07/60254265/10-information-technology-stocks-whale-alerts-today-s-session",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 332.46,
+        "week_52_low": 212.34,
+        "week_52_high_date": "2026-06-02",
+        "week_52_low_date": "2026-05-13",
+        "beta": 0.675513,
+        "pe_ttm": 25.3084,
+        "eps_ttm": 11.3066,
+        "dividend_yield": 2.3348991434097814,
+        "market_cap": 272115.56
+      },
+      "fetched_at": "2026-07-06T04:00:55.118071Z"
+    },
+    "INTC": {
+      "earnings": null,
+      "news": {
+        "headline": "EXCLUSIVE: Top 12 Most-Searched Tickers For First Half of 2026 - Where Do Micron, Nvidia, Tesla, SanDisk Rank?",
+        "summary": "A look at the most-searched stock tickers on Benzinga Pro for the first six months of 2026.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "EXCLUSIVE: Top 12 Most-Searched Tickers For First Half of 2026 - Where Do Micron, Nvidia, Tesla, SanDisk Rank?",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/trading-ideas/long-ideas/26/07/60266829/exclusive-top-12-most-searched-tickers-for-first-half-of-2026-where-do-micron-nvidia-tesla-sandisk-rank",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 142.35,
+        "week_52_low": 18.97,
+        "week_52_high_date": "2026-06-30",
+        "week_52_low_date": "2025-08-01",
+        "beta": 2.2233107,
+        "pe_ttm": null,
+        "eps_ttm": -0.6265000000000001,
+        "dividend_yield": 1.1374,
+        "market_cap": 604879.06
+      },
+      "fetched_at": "2026-07-06T04:00:55.342047Z"
+    },
+    "CRM": {
+      "earnings": null,
+      "news": {
+        "headline": "Salesforce CEO Marc Benioff Ignored 53 Emails Before This VC Founder Finally Got a Reply\u2014 Now He Says the Strategy is \u2018Super Learnable\u2019",
+        "summary": "Harry Stebbings successfully secured Salesforce CEO Marc Benioff as a podcast guest through relentless cold emails.",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "Salesforce CEO Marc Benioff Ignored 53 Emails Before This VC Founder Finally Got a Reply\u2014 Now He Says the Strategy is \u2018Super Learnable\u2019",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60268803/salesforce-ceo-marc-benioff-ignored-53-emails-before-this-vc-founder-finally-got-a-reply-now-he-says-the-strategy-is-super-learnable",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 276.8,
+        "week_52_low": 146.32,
+        "week_52_high_date": "2025-07-08",
+        "week_52_low_date": "2026-06-22",
+        "beta": 1.1636757,
+        "pe_ttm": 16.9568,
+        "eps_ttm": 8.6432,
+        "dividend_yield": 1.0595388597917041,
+        "market_cap": 136044.1
+      },
+      "fetched_at": "2026-07-06T04:00:55.605028Z"
+    },
+    "ORCL": {
+      "earnings": null,
+      "news": {
+        "headline": "Data Center Leases Top $850 Billion as Meta, Microsoft, Oracle Lead Record AI Infrastructure Spending",
+        "summary": "U.S. tech companies raised data center lease commitments to over $850 billion in the first quarter of 2026.",
+        "source": "benzinga",
+        "sentiment_label": "bullish",
+        "alpaca_headline": "Data Center Leases Top $850 Billion as Meta, Microsoft, Oracle Lead Record AI Infrastructure Spending",
+        "alpaca_sentiment": "bullish",
+        "alpaca_url": "https://www.benzinga.com/markets/tech/26/07/60269156/data-center-leases-top-850-billion-as-meta-microsoft-oracle-lead-record-ai-infrastructure-spending",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 345.72,
+        "week_52_low": 134.57,
+        "week_52_high_date": "2025-09-10",
+        "week_52_low_date": "2026-04-10",
+        "beta": 1.7141207,
+        "pe_ttm": 23.6463,
+        "eps_ttm": 5.860099999999999,
+        "dividend_yield": 1.4258216297141226,
+        "market_cap": 404043.7
+      },
+      "fetched_at": "2026-07-06T04:00:55.824880Z"
+    },
+    "ADBE": {
+      "earnings": null,
+      "news": {
+        "headline": "If You Invested $1000 In Adobe Stock 20 Years Ago, You Would Have This Much Today",
+        "summary": "Adobe (NASDAQ:ADBE) has outperformed the market over the past 20 years by 1.32% on an annualized basis producing an average annual return of 10.55%. Currently, Adobe has a market capitalization of $87",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "If You Invested $1000 In Adobe Stock 20 Years Ago, You Would Have This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60262902/if-you-invested-1000-adobe-stock-20-years-ago-you-would-have-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 386.88,
+        "week_52_low": 190.12,
+        "week_52_high_date": "2025-07-02",
+        "week_52_low_date": "2026-06-18",
+        "beta": 1.4212964,
+        "pe_ttm": 12.0817,
+        "eps_ttm": 17.474200000000003,
+        "dividend_yield": null,
+        "market_cap": 87338.7
+      },
+      "fetched_at": "2026-07-06T04:00:56.054371Z"
+    },
+    "INTU": {
+      "earnings": null,
+      "news": {
+        "headline": "If You Invested $1000 In Intuit Stock 20 Years Ago, You Would Have This Much Today",
+        "summary": "Intuit (NASDAQ:INTU) has outperformed the market over the past 20 years by 2.56% on an annualized basis producing an average annual return of 11.79%. Currently, Intuit has a market capitalization of $",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "If You Invested $1000 In Intuit Stock 20 Years Ago, You Would Have This Much Today",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/news/26/07/60266506/if-you-invested-1000-intuit-stock-20-years-ago-you-would-have-much-today",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 813.7,
+        "week_52_low": 252.84,
+        "week_52_high_date": "2025-07-30",
+        "week_52_low_date": "2026-06-22",
+        "beta": 0.9668378,
+        "pe_ttm": 16.4307,
+        "eps_ttm": 16.5099,
+        "dividend_yield": 1.7432358816052294,
+        "market_cap": 75318.414
+      },
+      "fetched_at": "2026-07-06T04:00:56.264630Z"
+    },
+    "PYPL": {
+      "earnings": null,
+      "news": {
+        "headline": "As Stablecoins Lead Crypto Investment Themes, Bitcoin Is No Longer The Favorite Child",
+        "summary": "Have stablecoins taken the cryptocurrency story away from Bitcoin for good?",
+        "source": "benzinga",
+        "sentiment_label": "neutral",
+        "alpaca_headline": "As Stablecoins Lead Crypto Investment Themes, Bitcoin Is No Longer The Favorite Child",
+        "alpaca_sentiment": "neutral",
+        "alpaca_url": "https://www.benzinga.com/Opinion/26/06/60200226/as-stablecoins-lead-crypto-investment-themes-bitcoin-is-no-longer-the-favorite-child",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 79.5,
+        "week_52_low": 38.46,
+        "week_52_high_date": "2025-07-28",
+        "week_52_low_date": "2026-02-12",
+        "beta": 1.3130687,
+        "pe_ttm": 7.9283,
+        "eps_ttm": 5.3423,
+        "dividend_yield": 1.231581262370794,
+        "market_cap": 40109.34
+      },
+      "fetched_at": "2026-07-06T04:00:56.472391Z"
+    },
+    "FIS": {
+      "earnings": null,
+      "news": {
+        "headline": "Truist Securities Maintains Hold on Fidelity National Info, Lowers Price Target to $45",
+        "summary": "",
+        "source": "benzinga",
+        "sentiment_label": "bearish",
+        "alpaca_headline": "Truist Securities Maintains Hold on Fidelity National Info, Lowers Price Target to $45",
+        "alpaca_sentiment": "bearish",
+        "alpaca_url": "https://www.benzinga.com/news/26/05/52845901/truist-securities-maintains-hold-on-fidelity-national-info-lowers-price-target-to-45",
+        "alpaca_source": "benzinga"
+      },
+      "recommendation": null,
+      "metrics": {
+        "week_52_high": 82.62,
+        "week_52_low": 37.42,
+        "week_52_high_date": "2025-07-29",
+        "week_52_low_date": "2026-06-22",
+        "beta": 0.8215965,
+        "pe_ttm": 8.092,
+        "eps_ttm": 5.1574,
+        "dividend_yield": 4.210526315789474,
+        "market_cap": 21605.549
+      },
+      "fetched_at": "2026-07-06T04:00:56.702884Z"
+    }
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "timestamp": "2026-07-04T05:53:17.251583Z",
+  "narratives": {
+    "UBER": {
+      "whatItIs": "Ride-hailing and food delivery platform operating globally with expanding freight and advertising businesses.",
+      "whyOnWatchlist": "Dominant two-sided marketplace with real free cash flow generation finally showing up. Autonomous vehicle partnerships could reshape unit economics if they don't cut Uber out entirely.",
+      "whatTriggersBuy": "Break above recent consolidation with volume confirming institutional accumulation, or any clarity on AV partnership economics.",
+      "catalyst": "GAAP profitability inflection and potential 2025 autonomous ride-hail pilots in key cities.",
+      "risk": "Waymo or Tesla could deploy their own fleets and bypass Uber's network. Driver supply shocks from gig-worker reclassification laws crimp margins. Delivery growth maturing faster than expected."
+    },
+    "SNOW": {
+      "whatItIs": "Cloud data warehouse letting companies store and analyze massive datasets without managing infrastructure.",
+      "whyOnWatchlist": "Consumption pricing model means revenue re-accelerates when enterprise AI spending loosens. Margins expanding even as growth moderates, showing operating leverage.",
+      "whatTriggersBuy": "MACD flipping positive with expanding volume on a move through $270, or any quarter showing net revenue retention stabilizing above 120%.",
+      "catalyst": "Enterprises finally moving AI projects from pilot to production, driving query volume and storage consumption higher.",
+      "risk": "Databricks and BigQuery keep eating data workloads. NRR decline means existing customers aren't spending more, a death spiral for consumption models. Guidance cuts if IT budgets stay tight."
+    },
+    "DUOL": {
+      "whatItIs": "Mobile language learning app with freemium subscription model and AI-generated lesson content.",
+      "whyOnWatchlist": "Daily active user engagement keep climbing and AI tools are actually reducing content costs instead of just being marketing fluff. Subscription mix shifting favorably.",
+      "whatTriggersBuy": "Volume spike on break above $130 with confirmation that new AI features are driving paid conversion, not just vanity usage.",
+      "catalyst": "Expansion into math and music lessons opens addressable market beyond language nerds.",
+      "risk": "ChatGPT and Gemini can tutor languages for free, gutting the core value prop. Market for language apps may be nearing saturation in developed markets. Monetization per user might already be maxed out."
+    },
+    "ETSY": {
+      "whatItIs": "Online marketplace connecting handmade and vintage sellers with buyers seeking unique goods.",
+      "whyOnWatchlist": "Brutal post-pandemic normalization mostly priced in at 16x forward earnings. Marketplace flywheel still spins with habitual gift buyers returning seasonally.",
+      "whatTriggersBuy": "Hold above $75 on heavy volume through options expiration week, or any sign that discretionary gifting spend is stabilizing.",
+      "catalyst": "Holiday quarter could surprise on the upside if consumer trade-down favors unique lower-ticket items over mass retail.",
+      "risk": "GMV keeps decelerating as shoppers flee to Amazon Handmade and Temu's ultra-cheap goods. Seller fee hikes triggered exodus to Shopify. Economic softness hits the gift economy hard."
+    },
+    "MDB": {
+      "whatItIs": "Document-oriented database company with managed cloud service Atlas as the growth engine.",
+      "whyOnWatchlist": "Developer-loved NoSQL option with Atlas still growing 30% plus, but stock has gone nowhere as investors fear the deceleration curve.",
+      "whatTriggersBuy": "Not entering now despite watchlist status, need reclaim of 20-day EMA with MACD crossing positive and volume confirming. Below VWAP is institutional distribution, not accumulation.",
+      "catalyst": "AI application boom requires flexible schema databases, pushing developers toward document stores over rigid relational options.",
+      "risk": "Atlas growth decelerating toward 20% would crater multiple. Snowflake and Databricks encroaching on analytics workloads. Developer tastes shift to newer database paradigms."
+    },
+    "UPST": {
+      "whatItIs": "Lending platform using AI models to assess credit risk beyond traditional FICO scores.",
+      "whyOnWatchlist": "Insane credit-cycle leverage means massive upside if Fed cuts spark originations recovery. Neuberger $600M facility shows someone still believes in the model.",
+      "whatTriggersBuy": "No entry zone yet with price below VWAP showing lack of institutional sponsorship. Need reclaim of $38 with volume and positive earnings revision.",
+      "catalyst": "Interest rate cuts reducing funding costs and loan demand rebounding, letting AI underwriting advantage shine in normalized credit environment.",
+      "risk": "Recession hits and loan defaults blow through model assumptions, destroying investor confidence in AI credit assessment. Funding partners pull back again. Regulatory scrutiny on algorithmic lending fairness intensifies."
+    },
+    "NKE": {
+      "whatItIs": "The world's biggest sportswear brand selling shoes, apparel, and gear through wholesale and its own stores and website.",
+      "whyOnWatchlist": "Nike's trying to flip its business model to sell more directly to shoppers and cling to fatter margins, but that shift is bumpy and China keeps throwing curveballs. Charts say it's almost ready but not quite\u2014RSI is subdued and MACD is still negative.",
+      "whatTriggersBuy": "I'd pull the trigger if MACD flips positive with real volume stepping in, especially on a break above the 20-day EMA with China sales showing any pulse.",
+      "catalyst": "Any stabilization in China foot traffic or a clean quarterly beat on DTC margins would wake this stock up fast.",
+      "risk": "China demand could keep softening and inventory might pile up again, forcing markdowns that crush profitability. The DTC pivot sounds great on paper but execution has been messy, and Adidas is hungry for market share again."
+    },
+    "PINS": {
+      "whatItIs": "A visual discovery platform where users bookmark ideas and shop, now pushing harder into social commerce and ads.",
+      "whyOnWatchlist": "Pinterest is riding the ad recovery story with new tools like AI-powered scent matching and its Amazon partnership starting to show real monetization muscle. Momentum is positive but volume hasn't kicked in yet\u2014missing that confirmation keeps me watching instead of buying.",
+      "whatTriggersBuy": "Give me a volume spike above average with the stock holding above VWAP and I'll bite; the Amazon revenue stream needs to show it's scaling, not just experimental.",
+      "catalyst": "The Estee Lauder AI partnership hints at where Pinterest is headed\u2014if more big brands follow with shoppable visual campaigns, CPMs and engagement both lift.",
+      "risk": "User growth has gone flat which limits the total ad pool, and counting on Amazon to deliver revenue is risky when partnerships can sour or stall. The ad market also lives and dies by macro confidence, which isn't exactly roaring."
+    },
+    "SOFI": {
+      "whatItIs": "A digital-only bank offering student loans, personal loans, mortgages, checking, and a tech platform called Galileo that other fintechs run on.",
+      "whyOnWatchlist": "SoFi's been on a tear with nearly 10% momentum in 20 days and RSI pushing toward overheated, but only 4 of 10 confirms are lit and volume isn't backing the move. It's a neobank story I want to own but not chase.",
+      "whatTriggersBuy": "Let RSI cool below 60 with price holding above the EMA and I'll look for entry; need to see deposit growth holding margins too.",
+      "catalyst": "Any policy clarity on student loan refinancing\u2014or a surprise rate cut that juices loan originations\u2014would send this moving.",
+      "risk": "Washington could change student loan rules again and wipe out a core revenue pillar, while fighting for deposits in a high-rate world squeezes spread income. Galileo also leans on a concentrated customer list that could walk."
+    },
+    "NET": {
+      "whatItIs": "A backbone internet company that makes websites load faster, keeps hackers out, and runs code closer to users through its global server network.",
+      "whyOnWatchlist": "Cloudflare is a pure-play on where the internet is heading\u2014edge compute, zero-trust security, AI inference at the edge\u2014but the stock just took an 8.6% haircut in 20 days and only 3 of 10 confirms are green. MACD is negative and it's stuck below VWAP despite holding above longer EMAs.",
+      "whatTriggersBuy": "I need MACD to turn positive with at least a volume confirmation; this stock is too expensive to catch falling knives without evidence the selling is done.",
+      "catalyst": "The whale options activity headline suggests smart money is positioning, and any marquee customer win in AI edge computing or a bounce in cloud spend would flip sentiment.",
+      "risk": "Palo Alto and Zscaler are eating the same lunch in zero-trust security, and a crowded SASE market means pricing pressure. That code-key incident from 2023 still haunts reputation with security buyers who have long memories."
+    },
+    "DDOG": {
+      "whatItIs": "A monitoring and analytics platform that helps engineers track whether cloud apps and servers are healthy or falling over.",
+      "whyOnWatchlist": "Datadog is a quality name in observability with solid total score and positive momentum, but RSI at 68 is getting stretched and volume is absent from the move. Usage-based revenue is double-edged\u2014great when cloud spend grows, painful when customers optimize.",
+      "whatTriggersBuy": "I'm waiting for a pullback toward the 20-day EMA with RSI below 60 and volume drying up into support, not chasing extension.",
+      "catalyst": "The $100 growth headline reminds us this compounder has worked before, and any signal that cloud optimization is easing would reaccelerate usage growth and drive estimate beats.",
+      "risk": "Customers tightening cloud budgets directly hits Datadog's revenue line since they charge partly by consumption, and open-source alternatives like Grafana plus Cisco's Splunk integration create real competitive heat."
+    },
+    "HD": {
+      "whatItIs": "The largest home improvement retailer in North America, selling everything from lumber and appliances to plants and paint to homeowners and contractors.",
+      "whyOnWatchlist": "Home Depot is screaming with 15% momentum in 20 days and RSI at 71, but volume isn't confirming this rally and it's running hot. The stock's pricing in a housing recovery that may not arrive on schedule.",
+      "whatTriggersBuy": "I'd need RSI to cool off below 60 with price holding above VWAP on a retest, or see actual housing turnover data inflect higher, not just hope for rate cuts.",
+      "catalyst": "Any Fed pivot signal or mortgage rate drop toward 6% would ignite the housing cycle and send contractors and DIYers back through those orange doors with bigger projects.",
+      "risk": "Mortgage rates staying elevated keeps housing frozen in place, and the pandemic-era DIY binge isn't coming back. Lumber and commodity volatility also whipsaws margins when hedges slip, and this is already priced like the recovery happened."
+    },
+    "ABNB": {
+      "whatItIs": "An online marketplace connecting travelers with hosts offering short-term stays and experiences.",
+      "whyOnWatchlist": "Host supply growth is pushing take rates higher, and the revenge-spend travel boom created a fat top-line to compare against. Trading at a multiple that assumes travel demand stays permanently elevated.",
+      "whatTriggersBuy": "A sustained break below $140 with volume that flushes out weak holders and resets expectations around cyclical normalization.",
+      "catalyst": "Any guidance cut that finally prices in post-pandemic travel normalization rather than pretending it won't happen.",
+      "risk": "Regulatory crackdowns on short-term rentals in major cities are spreading fast, and hotels have gotten aggressive on pricing to claw back share lost during the pandemic. The stock's still priced like 2022 travel mania is repeatable."
+    },
+    "PATH": {
+      "whatItIs": "A software company selling robotic process automation tools that let companies automate repetitive office tasks.",
+      "whyOnWatchlist": "Growth has slowed to a crawl and the old RPA story is getting eaten by AI agents that don't need pre-built bots. Stock's cheap for a reason, but enterprise automation spend isn't going away.",
+      "whatTriggersBuy": "A credible AI product pivot that shows they can sell something beyond legacy bot licenses, or a flush below $10 that creates real asymmetry.",
+      "catalyst": "Next earnings need to show AI integration driving net new logo growth, not just replacement of dying RPA seats.",
+      "risk": "Microsoft and a dozen startups are giving away AI agent tools that make PATH's core product look like a horse buggy. Profitability path keeps getting pushed right and cash isn't endless."
+    },
+    "SPOT": {
+      "whatItIs": "The dominant global audio streaming platform, making money from premium subscriptions and advertising.",
+      "whyOnWatchlist": "Subscriber growth has been stellar and cost discipline finally showed up, but the stock's run hard and the next phase requires proving the ad tier and podcast bets actually throw off cash.",
+      "whatTriggersBuy": "A pullback to the $440-450 zone where the long-term uptrend meets a price that doesn't assume perfection on every monetization lever.",
+      "catalyst": "Upcoming label renegotiations that could finally improve streaming economics, or proof the ad tier margins aren't permanently dilutive.",
+      "risk": "Music labels hold all the power in renegotiations and will take their pound of flesh. Podcast billions still haven't shown a clear ROI path, and every cheap ad tier sub trades a high-margin premium sub for pennies."
+    },
+    "SHOP": {
+      "whatItIs": "An e-commerce platform letting small and medium businesses set up online stores with payments, logistics, and marketing tools.",
+      "whyOnWatchlist": "Merchant solutions revenue keeps growing and there's a real margin turnaround story playing out after the painful 2022-23 reset. Still the default choice for SMBs who don't want Amazon's stranglehold.",
+      "whatTriggersBuy": "A clean reclaim and hold of $125 with expanding volume that confirms the recent base is accumulation, not distribution.",
+      "catalyst": "Any quarter that proves the margin expansion story has legs despite macro headwinds, or a new product that reignites merchant growth.",
+      "risk": "Amazon keeps creeping downstream into SMB territory, and WooCommerce is free. When the economy hiccups, SMBs fold fast and take their subscription revenue to the grave."
+    },
+    "GTLB": {
+      "whatItIs": "A web-based platform for software development, offering tools for code collaboration, testing, and deployment with AI features baked in.",
+      "whyOnWatchlist": "DevOps spend is sticky and they're the independent alternative to Microsoft's GitHub, but the stock's been a chronic underperformer as the market questions whether independence is sustainable.",
+      "whatTriggersBuy": "A volume-confirmed move through $35 that suggests institutional accumulation, or a washout to $26 that creates a real margin of safety.",
+      "catalyst": "AI-assisted coding features that drive measurable usage growth and upgrade rates, or an enterprise migration win from GitHub that proves the independent story still sells.",
+      "risk": "Microsoft owns the ecosystem that most developers live in daily, and GitHub Copilot is getting scary good. Usage-based revenue swings hard with customer project cycles, and AI monetization is still mostly vaporware here."
+    },
+    "LMND": {
+      "whatItIs": "An insurance company using AI and behavioral data for pricing and claims, selling home, renters, pet, and car coverage.",
+      "whyOnWatchlist": "The stock's absolutely ripping on reinsurance renewal optimism and a 35% move in 20 days, but the underlying insurance economics are finally showing signs of working after years of bleeding.",
+      "whatTriggersBuy": "Wait for the current momentum spike to cool\u2014chasing here is asking to catch a knife when the hot money rotates. Watch for a pullback to $60-62 with volume drying up.",
+      "catalyst": "The reinsurance renewal headlines are real if they cap catastrophic exposure and let the company focus on proving the AI pricing model. Any loss ratio print below 75% would be a game-changer.",
+      "risk": "Insurance is a business of negative surprises, and LMND's had plenty. One bad hurricane season or wildfire year blows through reinsurance caps and the cash runway gets real tight. The AI story doesn't matter if the underwriting doesn't work."
+    },
+    "ROKU": {
+      "whatItIs": "Roku makes streaming sticks and licenses its operating system to TV manufacturers, cashing in on ads across the platform.",
+      "whyOnWatchlist": "Shares have sprinted 16% higher in the past month after putting a Florida privacy lawsuit to bed, but the overall readiness score is still soft and only three of ten supporting signals are in place. It stays on the list until the setup firms up and the price proves it can hold these gains without fading.",
+      "whatTriggersBuy": "I want to see it climb back above the price where the heaviest recent trading happened, backed by real buying interest rather than this sluggish drift.",
+      "catalyst": "Closing the Florida privacy case removes a legal overhang. The upcoming ad sales season will show whether connected-TV advertising revenue is still accelerating.",
+      "risk": "Roku faces a turf war against bigger platforms pushing their own TV software. Ad budgets shrink fast when the economy wobbles. And account growth is maturing, meaning every new user becomes harder and more expensive to win."
+    },
+    "PLTR": {
+      "whatItIs": "Palantir builds data-analytics and AI software for government agencies and large enterprise customers.",
+      "whyOnWatchlist": "It is still one of the most-searched tickers in the market and the price is holding above its longer-term average, but it has lost almost 9% over the past month and fewer than half of our confirmation signals are green. We are watching to see whether new commercial AI deals can offset any lumpiness in federal contract renewals.",
+      "whatTriggersBuy": "I need to see positive momentum return on expanding volume, with the price moving back above the level where the biggest recent volume traded.",
+      "catalyst": "Relentless retail interest in AI keeps the ticker front and center. Any fresh large-scale government or enterprise contract win could shock the stock into a new leg higher.",
+      "risk": "Federal revenue arrives in lumpy and unpredictable chunks tied to budgets. The stock carries a massive valuation premium, so even a small growth miss can spark a harsh selloff. There is essentially no margin for error here."
+    }
+  }
+}

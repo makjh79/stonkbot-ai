@@ -1,0 +1,11 @@
+{
+  "daily_trades": 10,
+  "weekly_trades": 10,
+  "last_trade_date": "2026-06-24",
+  "last_trade_week": "2026-W25",
+  "stop_losses_triggered": [],
+  "take_profits_triggered": [],
+  "rsi_overbought_trims": {},
+  "last_crash_deploy": null,
+  "crash_deploys": {}
+}

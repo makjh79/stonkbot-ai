@@ -1,0 +1,215 @@
+{
+  "start_date": "2025-01-01",
+  "end_date": "2026-07-05",
+  "initial_cash": 100000.0,
+  "final_value": 98452.31088800007,
+  "total_return": -0.015476891119999345,
+  "sharpe_ratio": -0.23278236343655864,
+  "max_drawdown": -0.06546591489786009,
+  "win_rate": 0.0855614973262032,
+  "alpha": -5.068032919641573e-05,
+  "beta": 0.016370533101723612,
+  "trades": 140,
+  "trades_list": [
+    {
+      "date": "2025-01-28",
+      "action": "BUY",
+      "symbol": "PINS",
+      "qty": 364,
+      "price": 32.9,
+      "execution": "T+1 open",
+      "slippage_cost": 9.580479999998715,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-01-29",
+      "action": "SELL",
+      "symbol": "PINS",
+      "qty": 364,
+      "price": 33.22,
+      "execution": "T+1 open",
+      "slippage_cost": 9.673663999999917,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-02-03",
+      "action": "BUY",
+      "symbol": "PATH",
+      "qty": 845,
+      "price": 14.21,
+      "execution": "T+1 open",
+      "slippage_cost": 9.605959999998959,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-02-04",
+      "action": "SELL",
+      "symbol": "PATH",
+      "qty": 845,
+      "price": 14.43,
+      "execution": "T+1 open",
+      "slippage_cost": 9.754680000000008,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-02-11",
+      "action": "BUY",
+      "symbol": "ROKU",
+      "qty": 145,
+      "price": 82.75,
+      "execution": "T+1 open",
+      "slippage_cost": 9.598999999998341,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-02-12",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "qty": 145,
+      "price": 84.78,
+      "execution": "T+1 open",
+      "slippage_cost": 9.83447999999953,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-02-13",
+      "action": "BUY",
+      "symbol": "ROKU",
+      "qty": 138,
+      "price": 86.8,
+      "execution": "T+1 open",
+      "slippage_cost": 9.582719999998517,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-02-18",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "qty": 138,
+      "price": 95.8,
+      "execution": "T+1 open",
+      "slippage_cost": 10.576320000000123,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-02-18",
+      "action": "BUY",
+      "symbol": "PANW",
+      "qty": 58,
+      "price": 208.28,
+      "execution": "T+1 open",
+      "slippage_cost": 9.664191999998366,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-02-19",
+      "action": "SELL",
+      "symbol": "PANW",
+      "qty": 58,
+      "price": 205.19,
+      "execution": "T+1 open",
+      "slippage_cost": 9.520816000000195,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-02-20",
+      "action": "BUY",
+      "symbol": "ROKU",
+      "qty": 131,
+      "price": 92.79,
+      "execution": "T+1 open",
+      "slippage_cost": 9.72439199999826,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-02-20",
+      "action": "BUY",
+      "symbol": "HOOD",
+      "qty": 217,
+      "price": 56.06,
+      "execution": "T+1 open",
+      "slippage_cost": 9.732015999998112,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-02-21",
+      "action": "BUY",
+      "symbol": "RELY",
+      "qty": 510,
+      "price": 23.86,
+      "execution": "T+1 open",
+      "slippage_cost": 9.734879999998157,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-02-24",
+      "action": "SELL",
+      "symbol": "HOOD",
+      "qty": 217,
+      "price": 49.93,
+      "execution": "T+1 open",
+      "slippage_cost": 8.667848000000959,
+      "reason": "hard_cut_-5pct"
+    },
+    {
+      "date": "2025-02-24",
+      "action": "SELL",
+      "symbol": "RELY",
+      "qty": 510,
+      "price": 24.72,
+      "execution": "T+1 open",
+      "slippage_cost": 10.085759999999937,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-02-25",
+      "action": "SELL",
+      "symbol": "ROKU",
+      "qty": 131,
+      "price": 85.76,
+      "execution": "T+1 open",
+      "slippage_cost": 8.987648000000263,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-05-06",
+      "action": "BUY",
+      "symbol": "SPOT",
+      "qty": 18,
+      "price": 632.85,
+      "execution": "T+1 open",
+      "slippage_cost": 9.113039999998364,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-05-07",
+      "action": "SELL",
+      "symbol": "SPOT",
+      "qty": 18,
+      "price": 657.1,
+      "execution": "T+1 open",
+      "slippage_cost": 9.462240000000747,
+      "reason": "tier_demotion"
+    },
+    {
+      "date": "2025-05-13",
+      "action": "BUY",
+      "symbol": "LCID",
+      "qty": 453,
+      "price": 26.5,
+      "execution": "T+1 open",
+      "slippage_cost": 9.60359999999855,
+      "tier": "STRONG_NOW"
+    },
+    {
+      "date": "2025-05-15",
+      "action": "SELL",
+      "symbol": "LCID",
+      "qty": 453,
+      "price": 26.9,
+      "execution": "T+1 open",
+      "slippage_cost": 9.748559999999998,
+      "reason": "tier_demotion"
+    }
+  ]
+}
