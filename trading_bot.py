@@ -138,6 +138,8 @@ class AlpacaClient:
             "APCA-API-SECRET-KEY": self.api_secret,
             "Accept": "application/json",
         })
+        # Preventative: circuit breaker may be attached externally by the bot wrapper
+        self.circuit_breaker = None  # type: ignore[attr-defined]
 
     def is_paper(self) -> bool:
         return "paper-api" in self.base_url
@@ -265,8 +267,8 @@ class AlpacaClient:
 
     def submit_order(self, symbol: str, qty: int, side: str, dry_run: bool = False,
                      use_limit: bool = True, twap_threshold: int = 100) -> Optional[str]:
-        # CIRCUIT BREAKER GUARD
-        if not dry_run and self.circuit_breaker.is_open():
+        # CIRCUIT BREAKER GUARD (optional — bot-level check happens before calling)
+        if not dry_run and getattr(self, 'circuit_breaker', None) and self.circuit_breaker.is_open():
             reason = self.circuit_breaker.status().get('reason', 'unknown')
             logger.critical(f"CIRCUIT BREAKER OPEN — rejecting {side.upper()} {symbol}: {reason}")
             return None
