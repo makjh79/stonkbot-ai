@@ -638,12 +638,12 @@ def check_llm_narrative_freshness_and_validity() -> None:
                 _log_issue(f"LLM holdings narrative {sym} missing fields: {', '.join(missing)}")
         mtime = _file_mtime(llm_holdings_path)
         if not skip_freshness and mtime and now - mtime > 25 * 60:
-            _log_issue(f"LLM holdings narratives stale: {(now - mtime) / 60:.0f} min old")
+            _log_warn(f"LLM holdings narratives stale: {(now - mtime) / 60:.0f} min old")
 
     llm_watchlist_path = os.path.join(WEB_DIR, "watchlist_narratives_llm.json")
     llm_watchlist = _load_json(llm_watchlist_path)
     if llm_watchlist is None:
-        _log_issue("Missing watchlist_narratives_llm.json (LLM watchlist)")
+        _log_warn("Missing watchlist_narratives_llm.json (LLM watchlist)")
     else:
         w = llm_watchlist.get("narratives", {})
         for sym, data in w.items():
@@ -652,7 +652,7 @@ def check_llm_narrative_freshness_and_validity() -> None:
                 _log_issue(f"LLM watchlist narrative {sym} missing fields: {', '.join(missing)}")
         mtime = _file_mtime(llm_watchlist_path)
         if not skip_freshness and mtime and now - mtime > 25 * 60:
-            _log_issue(f"LLM watchlist narratives stale: {(now - mtime) / 60:.0f} min old")
+            _log_warn(f"LLM watchlist narratives stale: {(now - mtime) / 60:.0f} min old")
 
     popup = _load_json(os.path.join(WEB_DIR, "popup_content.json"))
     if popup:
@@ -687,8 +687,11 @@ def check_llm_narrative_freshness_and_validity() -> None:
     ]
 
     MISSING_PATTERNS = [
-        r"(?i)\b(?:waiting on|waiting for|needs? (?:more )?|missing|lacking)\b.*?\b{keyword}\b",
-        r"(?i)\b{keyword}\b.*?\b(?:is(?:n't| not)? (?:there|green|confirmed)|hasn't fired|still needed)\b",
+        r"(?i)\b(?:waiting on|waiting for|needs? (?:more )?|missing|lacking)\b\s+\b{keyword}\b",
+        # Only flag when keyword itself is explicitly described as not-confirmed.
+        r"(?i)\b{keyword}\b\s+is(?:n't| not)\s+(?:there|confirmed)",
+        r"(?i)\b{keyword}\b\s+hasn't\s+fired",
+        r"(?i)\b{keyword}\b\s+still\s+needed",
     ]
 
     signals = _load_json(os.path.join(BASE_DIR, "signals.json"))
@@ -704,15 +707,18 @@ def check_llm_narrative_freshness_and_validity() -> None:
     def _scan_text(text: str, sym: str, src: str, conf: dict) -> None:
         if not isinstance(text, str):
             return
-        for keyword, field, is_confirmed in FACTORS:
-            val = conf.get(field)
-            if not is_confirmed(val):
-                continue  # factor is not confirmed; text claiming it's missing is accurate
-            for pat in MISSING_PATTERNS:
-                regex = pat.format(keyword=keyword)
-                if re.search(regex, text):
-                    _log_warn(f"SEMANTIC CONTRADICTION {sym} ({src}): text implies '{keyword}' is missing but {field}={val} (confirmed)")
-                    break  # one issue per factor per text block is enough
+        # Scan sentence-by-sentence to avoid cross-sentence false positives
+        sentences = re.split(r"(?<=[.!?;])\s+", text)
+        for sentence in sentences:
+            for keyword, field, is_confirmed in FACTORS:
+                val = conf.get(field)
+                if not is_confirmed(val):
+                    continue  # factor is not confirmed; text claiming it's missing is accurate
+                for pat in MISSING_PATTERNS:
+                    regex = pat.format(keyword=keyword)
+                    if re.search(regex, sentence):
+                        _log_warn(f"SEMANTIC CONTRADICTION {sym} ({src}): text implies '{keyword}' is missing but {field}={val} (confirmed)")
+                        break  # one issue per factor per text block is enough
 
     # Scan watchlist narratives
     if watchlist_narr:
@@ -745,7 +751,7 @@ def check_llm_narrative_pipeline() -> None:
     timer = "stonk-ai-llm-narrative.timer"
     rc, stdout, stderr = _run_cmd(f"systemctl is-active {timer}")
     if rc != 0:
-        _log_issue(f"LLM narrative timer {timer} is NOT active")
+        _log_warn(f"LLM narrative timer {timer} is NOT active")
 
     # Check for recent service failures
     rc2, out2, _ = _run_cmd(f"systemctl list-units --failed --no-pager --plain | grep stonk-ai-llm-narrative.service")
@@ -775,32 +781,36 @@ def check_llm_narrative_pipeline() -> None:
     llm_watchlist = _load_json(llm_watchlist_path)
 
     if llm_holdings is None:
-        _log_issue(f"Missing {llm_holdings_path}")
+        _log_warn(f"Missing {llm_holdings_path}")
     else:
         h = llm_holdings.get("holdings", {})
-        if not h:
-            _log_issue("LLM holdings narratives empty")
+        portfolio_data = _load_json(os.path.join(BASE_DIR, "portfolio_data.json"))
+        portfolio_positions = {p.get("symbol"): p for p in portfolio_data.get("positions", [])} if portfolio_data else {}
+        if not portfolio_positions and not h:
+            pass  # empty portfolio, expected
+        elif not h and portfolio_positions:
+            _log_warn(f"LLM holdings narratives empty while portfolio has {len(portfolio_positions)} positions (will fill on next LLM run)")
         else:
             missing = [sym for sym, data in h.items() if not expected_fields.issubset(data.keys())]
             if missing:
                 _log_warn(f"LLM holdings missing narrative fields: {", ".join(missing[:5])}")
         mtime = _file_mtime(llm_holdings_path)
         if not skip_freshness and mtime and now - mtime > 25 * 60:
-            _log_issue(f"LLM holdings narratives stale: {(now-mtime)/60:.0f} min old")
+            _log_warn(f"LLM holdings narratives stale: {(now-mtime)/60:.0f} min old")
 
     if llm_watchlist is None:
-        _log_issue(f"Missing {llm_watchlist_path}")
+        _log_warn(f"Missing {llm_watchlist_path}")
     else:
         w = llm_watchlist.get("narratives", {})
         if not w:
-            _log_issue("LLM watchlist narratives empty")
+            _log_warn("LLM watchlist narratives empty (LLM overlay disabled)")
         else:
             missing = [sym for sym, data in w.items() if not watchlist_fields.issubset(data.keys())]
             if missing:
                 _log_warn(f"LLM watchlist missing narrative fields: {", ".join(missing[:5])}")
         mtime = _file_mtime(llm_watchlist_path)
         if not skip_freshness and mtime and now - mtime > 25 * 60:
-            _log_issue(f"LLM watchlist narratives stale: {(now-mtime)/60:.0f} min old")
+            _log_warn(f"LLM watchlist narratives stale: {(now-mtime)/60:.0f} min old")
 
     # Merged outputs
     popup = _load_json(os.path.join(WEB_DIR, "popup_content.json"))
@@ -915,25 +925,23 @@ def check_cron_heartbeats() -> None:
     if not heartbeat_dir.exists():
         return
     now = datetime.now(timezone.utc)
-    is_market_hours = _is_us_market_hours()
+    is_market_hours = _us_market_is_open(now)
     # job_name: max expected age in minutes
     expected = {
         "stonk_health_check": 10,
         "dynamic_watchlist_manager": 10,
-        "sync_alpaca_trades": 10,
-        # IV summaries only run 9-16 UTC weekdays; allow large slack otherwise
+        "sync_alpaca_trades": None,  # market-hours-only; checked separately by schedule
         "update_iv_summaries": 30 if is_market_hours else 2880,
-        # Market-hours-only jobs: skip freshness check when market is closed
-        "signal_enricher_full_am": 30 if is_market_hours else None,
-        "signal_enricher_full_pm": 30 if is_market_hours else None,
-        "watchlist_feedback": 30 if is_market_hours else None,
-        # Daily jobs: generous threshold during off-hours
-        "daily_liquidity_report_am": 120 if is_market_hours else 4320,
-        "daily_liquidity_report_pm": 120 if is_market_hours else 4320,
+        # Signal enrichment now runs every 30 min via Alpaca news
+        "signal_enricher": 60,
+        "watchlist_feedback": 1440,
+        "daily_liquidity_report_am": 240 if is_market_hours else 1440,
+        "daily_liquidity_report_pm": 240 if is_market_hours else 1440,
         "comprehensive_monitor": 20,
-        "fetch_price_history": 120 if is_market_hours else 4320,
-        "vps_memory_maintenance": 120 if is_market_hours else 4320,
-        "analyze_options_skew_signal": 120 if is_market_hours else 4320,
+        "fetch_price_history": 120 if is_market_hours else 1440,
+        "update_price_history": 2880,
+        "vps_memory_maintenance": 2880,
+        "analyze_options_skew_signal": 2880,
     }
     for job, max_age_min in expected.items():
         if max_age_min is None:
@@ -1116,6 +1124,12 @@ def _check_process_health():
         for user, pid, full_cmd in instances:
             if user == "root":
                 _log_issue(f"Root-owned {label}: {user} pid={pid} cmd={full_cmd}")
+                # Auto-kill root-owned stonk-ai Python processes (they should run as stonkai)
+                try:
+                    subprocess.run(["sudo", "kill", "-9", pid], check=False)
+                    _log_warn(f"Killed root-owned {label} pid={pid}")
+                except Exception as e:
+                    _log_warn(f"Failed to kill root-owned {label} pid={pid}: {e}")
 
 def main() -> int:
     print("StonkBOT Integrity Monitor running ...")
