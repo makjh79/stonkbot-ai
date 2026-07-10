@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster" content="20260627-0007-v112-mkt-closed-fix">
-    <script>(function(){var v='20260627-0007-v112-mkt-closed-fix';var k='stonkbot_v2';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster" content="20260627-2110-factor-tooltips">
+    <script>(function(){var v='20260710-1359';var k='stonkbot_v152';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -237,7 +237,7 @@
             color: var(--text-primary);
             pointer-events: none;
             z-index: 1000;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             display: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
@@ -257,6 +257,57 @@
             font-weight: 500;
         }
         .market-banner.show { display: flex; }
+        /* Regime status pill — in header next to LIVE */
+        .regime-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.58rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: fadeIn 0.4s ease forwards;
+            cursor: default;
+        }
+        .regime-pill.risk-on {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            color: var(--accent-green);
+        }
+        .regime-pill.risk-off {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            color: #fbbf24;
+        }
+        .regime-pill.crisis {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: var(--accent-red);
+        }
+        .regime-pill .regime-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .regime-pill.risk-on .regime-dot { background: var(--accent-green); box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+        .regime-pill.risk-off .regime-dot { background: #fbbf24; box-shadow: 0 0 6px rgba(251,191,36,0.5); }
+        .regime-pill.crisis .regime-dot { background: var(--accent-red); box-shadow: 0 0 6px rgba(239,68,68,0.6); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        .regime-pill .regime-meta {
+            font-weight: 500;
+            opacity: 0.7;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 0.58rem;
+        }
+
         .market-banner-close {
             background: none;
             border: none;
@@ -381,7 +432,7 @@
             font-size: 0.7rem;
             color: var(--text-muted);
             font-weight: 500;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 96px;
@@ -854,7 +905,7 @@
             border-radius: 6px;
             font-size: 0.6rem;
             color: var(--text-secondary);
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             opacity: 0;
             visibility: hidden;
             transition: all 0.2s;
@@ -1421,7 +1472,7 @@
             font-size: 0.75rem;
             color: var(--text-muted);
             max-width: 240px;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -2154,7 +2205,7 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
         }
 
         .holdings-filter-btn:hover {
@@ -2306,7 +2357,7 @@
             border-radius: 8px;
             transition: all 0.2s ease;
             cursor: pointer;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
         }
 
         .nav-link:hover {
@@ -2779,7 +2830,7 @@
             margin-top: 0.1rem;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
         }
         .history-summary-strip {
             display: grid;
@@ -3412,7 +3463,7 @@
             text-transform: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -3626,6 +3677,7 @@
             </div>
             <div class="site-header-actions" style="display: flex; align-items: center; gap: 0.5rem;">
                 <div class="live-indicator" id="liveIndicator" title="Live via Alpaca"><span class="live-dot" id="liveDot"></span><span id="liveText">LIVE</span></div>
+                <div id="regime-pill" class="regime-pill risk-on" title="Market regime status"><span class="regime-dot"></span><span id="regime-label">Normal</span></div>
                 <button class="site-header-action" onclick="toggleMobileMenu();" title="More">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
@@ -3706,7 +3758,7 @@
 
         <!-- TAB PANEL: Holdings -->
         <div id="tab-holdings" class="tab-panel">
-                    <div id="market-banner" class="market-banner">
+    <div id="market-banner" class="market-banner">
                 <span id="market-banner-text">Market closed</span>
                 <button class="market-banner-close" onclick="document.getElementById('market-banner').classList.remove('show');">&times;</button>
             </div>
@@ -3793,26 +3845,19 @@
         <div id="tab-about" class="tab-panel">
         <div id="faq" class="section-anchor"></div>
         <div class="section">
-            <p style="margin: -0.25rem 0 0.75rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;">
-                A real $100K portfolio run by an AI trading bot for 6 months, benchmarked against the S&P 500. Full transparency on every trade, win, and loss.
-            </p>
             <div class="faq-section">
                 <div class="faq-item" id="faq1">
                     <div class="faq-question" onclick="toggleFaq('faq1')">
-                        <span>What's the goal?</span>
+                        <span>What's the story behind this?</span>
                         <span class="faq-chevron">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <div class="faq-answer-text"><strong>6-Month Challenge:</strong> Outperform the S&P 500 benchmark. Every trade logged in real-time with full transparency. Experimental AI trading—not investment advice.</div>
-                    </div>
-                </div>
-                <div class="faq-item" id="faq2">
-                    <div class="faq-question" onclick="toggleFaq('faq2')">
-                        <span>Is this real money?</span>
-                        <span class="faq-chevron">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <div class="faq-answer-text">Yes. $100,000 real portfolio via Alpaca Markets. Every trade, gain, and loss is real. Starting capital: $100K | Duration: 6 months | Goal: Outperform S&P 500.</div>
+                        <div class="faq-answer-text" style="font-size: 0.75rem; line-height: 1.6; color: var(--text-secondary);">
+                            <p style="margin: 0 0 0.75rem 0;">StonkBOT.AI started as a simple question: <em>can a self-taught algorithmic trading bot beat the market?</em></p>
+                            <p style="margin: 0 0 0.75rem 0;">It began as a personal experiment &mdash; someone with a passion for financial markets and a curiosity about AI, wanting to see what happens when you merge the two. No hedge fund background, no quant PhD, no Wall Street resources. Just a builder who wanted to find out if a well-designed system could hold its own against the S&amp;P 500.</p>
+                            <p style="margin: 0 0 0.75rem 0;"><strong style="color: var(--text-primary);">The challenge:</strong> $100,000 capital. 6 months. Beat the benchmark. Every trade logged in real-time with full transparency &mdash; wins, losses, and everything in between.</p>
+                            <p style="margin: 0; font-size: 0.65rem; color: var(--text-muted);">Experimental AI trading. Not investment advice.</p>
+                        </div>
                     </div>
                 </div>
                 <div class="faq-item" id="faq3">
@@ -3822,47 +3867,46 @@
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-text" style="font-size: 0.75rem; line-height: 1.6; color: var(--text-secondary);">
-                            <p style="margin: 0 0 0.75rem 0;">A multi-factor AI scans the market for high-readiness momentum setups and executes trades through Alpaca during US market hours. Each position has an entry thesis with defined exit triggers &mdash; the bot exits when the thesis breaks, not just on price levels.</p>
-                            
+                            <p style="margin: 0 0 0.75rem 0;">StonkBOT.AI uses a proprietary scoring engine that continuously evaluates 130+ stocks across multiple dimensions &mdash; momentum, technicals, sector strength, options activity, and macro regime. The system synthesizes these signals into a single conviction score, then acts when confidence is high enough.</p>
+
                             <div style="margin-bottom: 0.75rem;">
-                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Entry</div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">How It Decides</div>
                                 <div style="padding: 0.5rem 0.625rem; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
-                                    <strong style="color: var(--text-primary);">Readiness Score &ge; 70</strong> with &ge;2 confirmation signals (momentum, volume, MACD, trend, sector). Position size scales with conviction: 1.0&times; at 70-79, 1.25&times; at 80-89, 1.5&times; at 90+.
+                                    Every stock gets scored on a composite of technical, fundamental, and market-context factors. The bot waits for multiple signals to align before entering &mdash; it doesn't trade on a single indicator. Position size scales with conviction. Not every signal gets traded; the bot is selective.
                                 </div>
                             </div>
 
                             <div style="margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Risk Management</div>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Hard stop at <strong>-10%</strong></div>
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trailing stop (ATR-adjusted)</div>
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trim 1/3 at <strong>+25%</strong></div>
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Full exit at <strong>+50%</strong></div>
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">10% cash floor</div>
-                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">20% sector cap, 10% max position</div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Hard stop losses on every trade</div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Trailing stops (volatility-adjusted)</div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Position size capped per holding</div>
+                                    <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Sector diversification enforced</div>
                                 </div>
                             </div>
 
                             <div style="margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Watchlist Tiers</div>
                                 <div style="display: flex; gap: 0.4rem; margin-bottom: 0.35rem;">
-                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(239,68,68,0.12); color: #ef4444; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(239,68,68,0.25);">NOW</span>
+                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(6,182,212,0.15); color: #06b6d4; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(6,182,212,0.25);">STRONG</span>
+                                    <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(34,197,94,0.12); color: #22c55e; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(34,197,94,0.25);">NOW</span>
                                     <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(251,191,36,0.12); color: #fbbf24; border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(251,191,36,0.25);">WATCH</span>
                                     <span style="flex: 1; text-align: center; padding: 0.35rem 0.25rem; background: rgba(255,255,255,0.05); color: var(--text-muted); border-radius: 6px; font-size: 0.65rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);">MONITOR</span>
                                 </div>
                                 <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.5;">
-                                    <strong style="color: #ef4444;">NOW</strong> (readiness &ge;70, entry-eligible) &middot; <strong style="color: #fbbf24;">WATCH</strong> (50-69, monitoring for confirmations) &middot; <strong style="color: var(--text-muted);">MONITOR</strong> (&lt;50, watching for thesis development). Tiers auto-promote/demote as conditions change.
+                                    Stocks are tiered by conviction: <strong style="color: #06b6d4;">STRONG</strong> (highest conviction, maximum allocation) &middot; <strong style="color: #22c55e;">NOW</strong> (entry-eligible) &middot; <strong style="color: #fbbf24;">WATCH</strong> (building confirmations) &middot; <strong style="color: var(--text-muted);">MONITOR</strong> (early stage). Tiers auto-adjust in real time as conditions evolve.
                                 </div>
                             </div>
 
                             <div style="margin-bottom: 0.75rem;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Thesis-Based Exits</div>
                                 <div style="padding: 0.4rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem;">
-                                    Each position has an entry thesis. Bot exits when the thesis breaks &mdash; price falls below 20d EMA, MACD turns negative, or sector momentum reverses. Additional to hard stops and profit targets.
+                                    Every position has a reason for being held. The bot monitors whether that reason still holds &mdash; if the original thesis breaks down, it exits, regardless of price targets. The full(entry/exit) logic is proprietary.
                                 </div>
                             </div>
 
-                            <p style="margin: 0; font-size: 0.65rem; color: var(--text-muted);">Executes during market hours only. Not investment advice.</p>
+                            <p style="margin: 0; font-size: 0.65rem; color: var(--text-muted);">Executes during US market hours only. Not investment advice.</p>
                         </div>
                     </div>
                 </div>
@@ -4009,7 +4053,7 @@
                         <div id="detail-day-change" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
                     </div>
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Days Active <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Days Active:</strong> Calendar days since bot started trading (June 4, 2026).<br><br>Includes weekends. Updates daily at market open.<br><br>Not trading days—total elapsed time.')">ⓘ</span></div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Days Active <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Days Active:</strong> Calendar days since bot started trading (July 7, 2026).<br><br>Includes weekends. Updates daily at market open.<br><br>Not trading days—total elapsed time.')">ⓘ</span></div>
                         <div id="detail-days-active" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
                     </div>
                 </div>
@@ -4057,7 +4101,7 @@
                     <div style="margin-bottom: 1rem; padding: 0.75rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">DJI</span>
+                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">DIA</span>
                                 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">Dow Jones</span>
                                 <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
                             </div>
@@ -4073,7 +4117,7 @@
                     <div style="padding: 0.75rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">IXIC</span>
+                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">QQQ</span>
                                 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">NASDAQ</span>
                                 <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
                             </div>
@@ -4086,7 +4130,7 @@
                     </div>
                     
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.75rem; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px; text-align: center;">
-                        All market indices update live from Yahoo Finance every 30 seconds
+                        All market indices update live from Alpaca every 30 seconds
                     </div>
                 </div>
 
@@ -4374,7 +4418,7 @@
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             flex-shrink: 0;
         }
         .trade-log-filter:hover {
@@ -4575,7 +4619,7 @@
             text-transform: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            white-space: normal; max-width: 220px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -5139,7 +5183,7 @@ function updateDashboard(data) {
             // Update new stats
             const dayCounter = document.getElementById('day-counter');
             if (dayCounter) {
-                const startDate = new Date('2026-06-04');
+                const startDate = new Date('2026-07-07');
                 const today = new Date();
                 const dayNumber = Math.max(1, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1);
                 setValue('day-counter', dayNumber);
@@ -5841,7 +5885,7 @@ function updateDashboard(data) {
                     <div class="activity-item" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem; background: rgba(255,255,255,0.02); border-radius: 10px;">
                         <div class="activity-icon" style="width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; background: rgba(6, 182, 212, 0.15); flex-shrink: 0;">🔄</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div class="activity-title" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Data Refreshed</div>
+                            <div class="activity-title" style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary); white-space: normal; max-width: 220px; overflow: hidden; text-overflow: ellipsis;">Data Refreshed</div>
                             <div class="activity-desc" style="font-size: 0.7rem; color: var(--text-secondary);">Live portfolio sync complete</div>
                         </div>
                         <div class="activity-time" style="font-size: 0.65rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; flex-shrink: 0;">${timeStr}</div>
@@ -5998,6 +6042,40 @@ function updateDashboard(data) {
         // Update market status on load and every minute
         updateMarketStatus();
         setInterval(updateMarketStatus, 30000); // Refresh every 30 seconds
+
+        // Regime status pill (in header)
+        async function updateRegimePill() {
+            try {
+                const res = await fetch('./regime_status.json?t=' + Date.now());
+                if (!res.ok) return;
+                const data = await res.json();
+                const pill = document.getElementById('regime-pill');
+                const labelEl = document.getElementById('regime-label');
+                if (!pill || !labelEl) return;
+
+                const regime = data.regime || 'RISK_ON';
+                const regimeClass = regime.toLowerCase().replace('_', '-');
+                pill.className = 'regime-pill ' + regimeClass;
+
+                // Compact labels for header
+                if (regime === 'RISK_ON') {
+                    labelEl.textContent = 'Normal';
+                    pill.title = 'Market regime: Normal — full position sizes, normal entry';
+                } else if (regime === 'RISK_OFF') {
+                    labelEl.textContent = 'Defensive';
+                    const p = data.params || {};
+                    pill.title = 'Market regime: Defensive — max ' + (p.max_position_pct || 4) + '% per position, ' + (p.cash_floor_pct || 15) + '% cash floor, STRONG_NOW entries only';
+                    if (data.triggers && data.triggers.length) pill.title += '\nTrigger: ' + data.triggers.join(', ');
+                } else {
+                    labelEl.textContent = 'Crisis';
+                    pill.title = 'Market regime: Crisis — no new entries, high cash floor, positions halved';
+                }
+            } catch (e) {
+                // Silent fail
+            }
+        }
+        updateRegimePill();
+        setInterval(updateRegimePill, 30000);
 
         // ============================================
         // UNIFIED MODAL CONTROLLER
@@ -6298,7 +6376,7 @@ function updateDashboard(data) {
             }
             
             // Calculate days active from timestamp
-            const startDate = new Date('2026-06-04');
+            const startDate = new Date('2026-07-07');
             const currentDate = new Date();
             const daysActive = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
 
@@ -6362,8 +6440,8 @@ function updateDashboard(data) {
                     sp500PctEl.textContent = (sp500Num >= 0 ? '+' : '') + sp500Num.toFixed(2) + '%';
                     sp500PctEl.style.color = sp500Num < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
                 }
-                if (dowPctEl) dowPctEl.textContent = (dowNum >= 0 ? '+' : '') + dowNum.toFixed(2) + '%';
-                if (nasdaqPctEl) nasdaqPctEl.textContent = (nasdaqNum >= 0 ? '+' : '') + nasdaqNum.toFixed(2) + '%';
+                if (dowPctEl) { dowPctEl.textContent = (dowNum >= 0 ? '+' : '') + dowNum.toFixed(2) + '%'; dowPctEl.style.color = dowNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)'; }
+                if (nasdaqPctEl) { nasdaqPctEl.textContent = (nasdaqNum >= 0 ? '+' : '') + nasdaqNum.toFixed(2) + '%'; nasdaqPctEl.style.color = nasdaqNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)'; }
 
                 // Update progress bars
                 const stonkBar = document.getElementById('detail-stonk-bar');
@@ -6383,7 +6461,18 @@ function updateDashboard(data) {
                         ? 'var(--accent-red)'
                         : 'var(--accent-green)';
                 }
-                
+                const dowBar = document.getElementById('detail-dow-bar');
+                if (dowBar) {
+                    const dowWidth = Math.max(10, Math.min(90, 50 + (dowNum * 5)));
+                    dowBar.style.width = dowWidth + '%';
+                    dowBar.style.background = dowNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                }
+                const nasdaqBar = document.getElementById('detail-nasdaq-bar');
+                if (nasdaqBar) {
+                    const nasdaqWidth = Math.max(10, Math.min(90, 50 + (nasdaqNum * 5)));
+                    nasdaqBar.style.width = nasdaqWidth + '%';
+                    nasdaqBar.style.background = nasdaqNum < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                }
 
         }
 
@@ -6477,13 +6566,13 @@ function updateDashboard(data) {
                     {
                         type: 'bot',
                         subtype: 'deploy',
-                        timestamp: new Date('2026-06-04T09:00:00'),
+                        timestamp: new Date('2026-07-07T09:00:00'),
                         icon: '↑',
                         title: 'Bot Deployed',
                         description: 'Autonomous trading system active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K initial capital. Strategy: Readiness score entry (≥70 + confirmations), -10% stop loss, trailing stop (ATR), +25% trim, +50% exit, thesis-based exits (recycles capital).'
+                        rationale: 'AI trading bot started with $100K initial capital. Strategy: Readiness score entry (≥72 + 3+ confirmations), -10% stop loss, trailing stop (ATR), +25% trim, +50% exit, thesis-based exits (recycles capital).'
                     }
                 ];
                 
@@ -6992,7 +7081,7 @@ function updateDashboard(data) {
                             html += '<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03);">';
                             html += '<div style="flex: 1; min-width: 0;">';
                             html += '<div style="font-weight: 600; color: var(--text-primary); font-size: 0.75rem;">' + pos.symbol + '</div>';
-                            html += '<div style="font-size: 0.6rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + companyName + ' · ' + pos.qty + ' shares</div>';
+                            html += '<div style="font-size: 0.6rem; color: var(--text-muted); white-space: normal; max-width: 220px; overflow: hidden; text-overflow: ellipsis;">' + companyName + ' · ' + pos.qty + ' shares</div>';
                             html += '</div>';
                             html += '<div style="text-align: right; flex-shrink: 0;">';
                             html += '<div style="font-weight: 500; color: var(--text-primary); font-size: 0.75rem;">$' + pos.market_value.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
@@ -7250,8 +7339,8 @@ function updateDashboard(data) {
                 const checks = historyData.checks || [];
                 const currentValue = currentData.account?.portfolio_value || 0;
 
-                // Calculate days elapsed from fixed experiment start date (June 4, 2026)
-                const experimentStartDate = new Date('2026-06-04T09:00:00');
+                // Calculate days elapsed from fixed experiment start date (July 7, 2026)
+                const experimentStartDate = new Date('2026-07-07T09:00:00');
                 const now = new Date();
                 const diffTime = Math.abs(now - experimentStartDate);
                 const daysElapsed = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
@@ -7342,7 +7431,7 @@ function updateDashboard(data) {
             maxPositionSize: 0.08,      // Max 8% per new entry
             minPositionSize: 0.05,      // Min 5% per entry
             maxDailyEntries: 10,        // Max 10 new positions/day (effectively unlimited)
-            rsiThreshold: 50,           // Readiness score >= 70 with confirmations
+            rsiThreshold: 50,           // Readiness score >= 72 with confirmations
             volumeMultiplier: 1.5,      // 1.5x average volume
             convictionThreshold: 70,    // 70% AI confidence
             sectorLimit: 0.35           // No sector above 35%
@@ -8348,15 +8437,18 @@ function updateDashboard(data) {
             // Get current number of data points
             const numPoints = performanceChart.data.labels.length;
             
-            // Create arrays with 0 at start and current return at end
-            const sp500Data = Array(numPoints).fill(0);
-            sp500Data[numPoints - 1] = sp500Return;
-            
-            const dowData = Array(numPoints).fill(0);
-            dowData[numPoints - 1] = dowReturn;
-            
-            const nasdaqData = Array(numPoints).fill(0);
-            nasdaqData[numPoints - 1] = nasdaqReturn;
+            // Plot indices as straight lines from 0% to current return
+            // (linear interpolation — honest single-point comparison)
+            function linearRamp(numPoints, endValue) {
+                const data = [];
+                for (let i = 0; i < numPoints; i++) {
+                    data.push((endValue * i) / Math.max(numPoints - 1, 1));
+                }
+                return data;
+            }
+            const sp500Data = linearRamp(numPoints, sp500Return);
+            const dowData = linearRamp(numPoints, dowReturn);
+            const nasdaqData = linearRamp(numPoints, nasdaqReturn);
             
             // Update datasets
             performanceChart.data.datasets[1].data = sp500Data;  // S&P 500
@@ -8916,10 +9008,13 @@ function updateDashboard(data) {
             tooltip.className = 'readiness-tooltip';
             
             let label, desc;
-            if (score >= 70) {
+            if (score >= 80) {
+                label = 'Strong conviction';
+                desc = 'Highest conviction — strong momentum, multiple confirmations. 2x position sizing. Maximum entry signal.';
+            } else if (score >= 72) {
                 label = 'High conviction';
                 desc = 'Bot is confident — strong momentum, multiple confirmations. Eligible for new entries.';
-            } else if (score >= 50) {
+            } else if (score >= 55) {
                 label = 'Fading conviction';
                 desc = 'Setup weakening. Bot is watching but won\'t add new positions.';
             } else {
@@ -8930,7 +9025,7 @@ function updateDashboard(data) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.78rem;">Readiness ${score.toFixed(0)}/100 — ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of momentum, RSI, volume, MACD, EMA trend & sector strength.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 9 factors: momentum, RSI, volume, MACD, EMA, sector strength, intraday momentum & options IV.</div>
             `;
             
             document.body.appendChild(tooltip);
@@ -8982,6 +9077,62 @@ function updateDashboard(data) {
             return { text: '🔴 Low conviction — trim candidate', color: '#ef4444' };
         }
 
+        function buildFactorChips(conf, count) {
+            const factors = [
+                { name: 'MOM', val: conf.momentum_score != null ? conf.momentum_score.toFixed(0) : null, ok: conf.momentum_score != null && conf.momentum_score >= 50, tip: 'Momentum: 20-day price momentum score \u2265 50 (0-100 scale)' },
+                { name: 'RSI', val: conf.rsi_signal || null, ok: conf.rsi_signal === 'bullish', warn: conf.rsi_signal === 'bearish', tip: 'RSI: 14-day Relative Strength Index \u2014 bullish (>70) or oversold (<30)' },
+                { name: 'VOL', val: conf.volume_confirmed, ok: conf.volume_confirmed === true, tip: 'Volume: above-average volume on rising prices (buying pressure)' },
+                { name: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true, tip: 'MACD: moving average convergence/divergence turning bullish' },
+                { name: 'EMA', val: conf.above_ema, ok: conf.above_ema === true, tip: 'EMA: price above 20-day exponential moving average' },
+                { name: 'SEC', val: conf.sector_strong, ok: conf.sector_strong === true, tip: 'Sector: stock\'s sector outperforming the broader market' },
+                { name: 'INT', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true, tip: 'Intraday: positive 15-min bar momentum during market hours' },
+                { name: 'OPT', val: conf.options_confirmed, ok: conf.options_confirmed === true, tip: 'Options: implied volatility suggests bullish options positioning' },
+                { name: 'PEAD', val: conf.earnings_confirmed, ok: conf.earnings_confirmed === true, tip: 'PEAD: Post-Earnings Announcement Drift \u2014 stock within 30 days of an earnings beat' },
+            ];
+            const chips = factors.map(f => {
+                const color = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'rgba(255,255,255,0.15)';
+                const textColor = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'var(--text-muted)';
+                const dot = f.val != null && (f.ok || f.warn || f.val === true)
+                    ? `<span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0;"></span>`
+                    : `<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.15);display:inline-block;flex-shrink:0;"></span>`;
+                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};cursor:help;" data-tooltip="${f.tip}">${dot}${f.name}</span>`;
+            }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">\u00b7</span>');
+            return `
+                <div style="margin-bottom: 0.9rem;">
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="Conviction model: 9 factors scored per stock. Green = factor confirmed, gray = not met, red = bearish signal. Hover each chip for details.">Factors <span class="info-icon" style="font-size: 10px; width: 14px; height: 14px; margin-left: 2px;" onclick="showInfoTooltip(event, '<strong>Factors:</strong> 9-factor conviction model scoring each stock.<br><br>Green = factor confirmed, gray = not met, red = bearish signal.<br><br><strong>Factor criteria:</strong><br>• MOM: 20-day momentum score ≥ 50 (0-100)<br>• RSI: 14-day RSI bullish (>70) or oversold (<30)<br>• VOL: above-average volume on rising prices<br>• MACD: moving average convergence/divergence turning bullish<br>• EMA: price above 20-day exponential moving average<br>• SEC: stock sector outperforming the broader market<br>• INT: positive 15-min bar momentum during market hours<br>• OPT: implied volatility suggests bullish positioning<br>• PEAD: within 30 days of an earnings beat (post-earnings drift)<br><br>Hover individual chips for each factor criteria.')">ⓘ</span> <span style="color: var(--text-muted); font-weight: 400;">${count}/9</span></div>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
+                </div>
+            `;
+        }
+
+        function buildWatchlistFactors(count, tierReason) {
+            const cleanReason = (tierReason || '').replace(/^(STRONG NOW|NOW|WATCH|MONITOR):\s*/i, '').replace(/readiness \d+\.?\d*\.?\s*/i, '').trim();
+            const parts = cleanReason.split(/\+|,|\band\b/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 40);
+            const factorMap = {
+                'volume': 'VOL', 'macd': 'MACD', 'ema': 'EMA', 'sector': 'SEC',
+                'intraday': 'INT', 'options': 'OPT', 'momentum': 'MOM', 'rsi': 'RSI', 'earnings': 'PEAD', 'pead': 'PEAD'
+            };
+            const active = new Set();
+            for (const part of parts) {
+                for (const [key, label] of Object.entries(factorMap)) {
+                    if (part.toLowerCase().includes(key)) active.add(label);
+                }
+            }
+            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT', 'PEAD'];
+            const chips = allFactors.map(name => {
+                const ok = active.has(name);
+                const color = ok ? '#22c55e' : 'rgba(255,255,255,0.15)';
+                const textColor = ok ? '#22c55e' : 'var(--text-muted)';
+                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};"><span style="width:6px;height:6px;border-radius:50%;background:${color};display:inline-block;"></span>${name}</span>`;
+            }).join('<span style="color:rgba(255,255,255,0.1);margin:0 2px;">·</span>');
+            return `
+                <div style="margin-bottom: 0.9rem;">
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; cursor: help;" data-tooltip="9-factor conviction model: Momentum, RSI, Volume, MACD, EMA, Sector, Intraday, Options. Green = confirmed, gray = not confirmed, red = bearish signal.">Factors <span style="color: var(--text-muted); font-weight: 400;">${count}/9</span></div>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px;">${chips}</div>
+                </div>
+            `;
+        }
+
         async function showTradeDetails(symbol, isRefresh = false) {
             activePopupSymbol = symbol;
             if (activePopupRefreshInterval) clearInterval(activePopupRefreshInterval);
@@ -9018,43 +9169,19 @@ function updateDashboard(data) {
             const profitTarget = preGenerated.profit50 || (position ? position.avg_entry * 1.50 : 0);
             const targetDist = livePrice > 0 ? ((profitTarget - livePrice) / livePrice * 100).toFixed(1) : 0;
 
-            // Show stop if losing, target if winning, both if neutral
-            let exitHtml = '';
-            if (parseFloat(plValue) < -5) {
-                exitHtml = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0.9rem; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px;">
-                        <span style="font-size: 0.75rem; color: var(--text-secondary);">🛑 Stop loss</span>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ef4444; font-weight: 700;">$${currentStop.toFixed(2)} <span style="font-size: 0.7rem; opacity: 0.7;">(${stopDist}%)</span></span>
-                    </div>`;
-            } else if (parseFloat(plValue) > 5) {
-                exitHtml = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0.9rem; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 10px;">
-                        <span style="font-size: 0.75rem; color: var(--text-secondary);">🎯 Profit target</span>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">$${profitTarget.toFixed(2)} <span style="font-size: 0.7rem; opacity: 0.7;">(+${targetDist}%)</span></span>
-                    </div>`;
-            } else {
-                exitHtml = `
-                    <div style="display: flex; gap: 0.5rem;">
-                        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px;">
-                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Stop</span>
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; font-weight: 600;">$${currentStop.toFixed(0)}</span>
-                        </div>
-                        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); border-radius: 8px;">
-                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Target</span>
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #22c55e; font-weight: 600;">$${profitTarget.toFixed(0)}</span>
-                        </div>
-                    </div>`;
-            }
+            // Factor breakdown data for holdings
+            const conf = preGenerated.confirmations || {};
+            const factorChipsHtml = buildFactorChips(conf, preGenerated.confirmation_count || 0);
 
             // Tier chip
-            const tierColor = tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
-            const tierBg = tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+            const tierColor = tier === 'STRONG_NOW' ? '#06b6d4' : tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
+            const tierBg = tier === 'STRONG_NOW' ? 'rgba(6,182,212,0.15)' : tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
 
             const content = `
                 <div style="padding: 1.25rem;">
 
-                    <!-- Header -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.2rem;">
+                    <!-- Header: symbol + close -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                         <div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">${symbol}</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${companyName}</div>
@@ -9063,46 +9190,90 @@ function updateDashboard(data) {
                     </div>
 
                     ${position ? `
-                    <!-- P&L Hero -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <!-- Price + P&L in one clean row -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.9rem;">
                         <div>
-                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">P&L</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: ${plColor};">${plSign}${plValue}%</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${plSign}$${Math.abs(plDollar).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: var(--text-primary);">$${livePrice.toFixed(2)}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${position.qty} sh · $${position.market_value.toLocaleString(undefined, {maximumFractionDigits: 0})} · entry $${(preGenerated.avgEntry || position.avg_entry || 0).toFixed(2)}</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Value</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">$${position.market_value.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${position.qty} shares · $${livePrice.toFixed(2)}</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: ${plColor};">${plSign}${plValue}%</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${plSign}$${Math.abs(plDollar).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
                         </div>
                     </div>
                     ` : ''}
 
-                    <!-- Status line -->
-                    <div style="background: ${status.color === '#22c55e' ? 'rgba(34,197,94,0.1)' : status.color === '#ef4444' ? 'rgba(239,68,68,0.1)' : 'rgba(251,191,36,0.1)'}; border: 1px solid ${status.color}33; border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <!-- Status pill -->
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.9rem;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${status.color}; flex-shrink: 0;"></span>
                         <span style="font-size: 0.8rem; font-weight: 600; color: ${status.color};">${status.text}</span>
                     </div>
 
+                    <!-- Metrics grid: 3-up, consistent -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.9rem;">
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Readiness</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${readiness.toFixed(0)}</div>
+                            <div style="font-size: 0.55rem; color: ${tierColor}; font-weight: 600; text-transform: uppercase;">${tier === 'STRONG_NOW' ? 'STRONG' : tier}</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">RSI</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${(liveData.rsi || 50).toFixed(0)}</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted);">${(liveData.rsi || 50) <= 35 ? 'OVERSOLD' : (liveData.rsi || 50) >= 70 ? 'OVERBOUGHT' : 'NEUTRAL'}</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? 'IV' : 'VWAP'}</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? (preGenerated.optionsImpliedVol * 100).toFixed(0) + '%' : preGenerated.dailyVwap ? '$' + preGenerated.dailyVwap.toFixed(0) : '—'}</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted);">${preGenerated.optionsImpliedVol && preGenerated.optionsImpliedVol > 0 ? 'implied vol' : preGenerated.dailyVwap ? 'vs $' + livePrice.toFixed(0) : 'no data'}</div>
+                        </div>
+                    </div>
+
+                    <!-- Key levels: always both, same layout -->
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.9rem;">
+                        <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 10px;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🛑 Stop</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ef4444; font-weight: 700;">$${currentStop.toFixed(2)}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">${stopDist}% below</div>
+                        </div>
+                        <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12); border-radius: 10px;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🎯 Target</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">$${profitTarget.toFixed(2)}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">+${targetDist}% upside</div>
+                        </div>
+                    </div>
+
+                    <!-- VWAP stop (only if losing and available) -->
+                    ${parseFloat(plValue) < -5 && preGenerated.vwapStop ? `
+                    <div style="padding: 0.4rem 0.7rem; background: rgba(239,68,68,0.03); border: 1px solid rgba(239,68,68,0.08); border-radius: 8px; margin-bottom: 0.9rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.65rem; color: var(--text-muted);">📊 VWAP stop</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; opacity: 0.8;">$${preGenerated.vwapStop.toFixed(2)}</span>
+                    </div>
+                    ` : ''}
+
+                    <!-- Factor breakdown -->
+                    ${factorChipsHtml}
+
                     <!-- Why we own it -->
-                    <div style="margin-bottom: 1rem;">
+                    <div style="margin-bottom: 0.9rem;">
                         <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why we own it</div>
-                        <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">${thesisShort}</div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6;">${thesisShort}</div>
                     </div>
 
-                    <!-- What to watch -->
-                    <div style="margin-bottom: 1rem;">
-                        <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">What to watch</div>
-                        ${exitHtml}
+                    <!-- Latest news -->
+                    ${preGenerated.alpacaNewsHeadline ? `
+                    <div style="margin-bottom: 0.9rem;">
+                        <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Latest news</div>
+                        <a href="${preGenerated.alpacaNewsUrl || '#'}" ${preGenerated.alpacaNewsUrl ? 'target="_blank" rel="noopener noreferrer"' : ''} style="text-decoration: none; color: inherit; display: block;">
+                            <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;${preGenerated.alpacaNewsUrl ? ' cursor: pointer;' : ''}">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); margin-bottom: 6px;">${preGenerated.alpacaNewsSource || 'Alpaca'}</div>
+                            <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${preGenerated.alpacaNewsHeadline}${preGenerated.alpacaNewsUrl ? ' <span style="font-size: 0.6rem; color: var(--text-muted);">↗</span>' : ''}</div>
+                            </div>
+                        </a>
                     </div>
-
-                    <!-- Signal chip -->
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                        <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
-                        <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
-                    </div>
+                    ` : ''}
 
                 </div>
-            `;
+`;
 
             const modal = document.createElement('div');
             modal.id = 'trade-modal';
@@ -9115,7 +9286,7 @@ function updateDashboard(data) {
 
             modal.innerHTML = `
                 <div style="background: var(--bg-elevated, #1a1a24); border: 1px solid var(--border, rgba(255,255,255,0.1));
-                     border-radius: 20px 20px 0 0; padding: 0; max-width: 460px; width: 100%; max-height: 85vh;
+                     border-radius: 24px 24px 0 0; padding: 0; max-width: 560px; width: 100%; max-height: 92vh;
                      overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); -webkit-overflow-scrolling: touch;
                      transform: translateY(0);">
                     <div style="width: 40px; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; margin: 12px auto 0; flex-shrink: 0;"></div>
@@ -9254,7 +9425,7 @@ function updateDashboard(data) {
                 const worstDay = dailySummaries.reduce((min, d) => d.totalReturn < min.totalReturn ? d : min, dailySummaries[0]);
                 const currentReturn = returns[0];
                 // Calculate days active consistently with main page (calendar days since start)
-                const startDate = new Date('2026-06-04');
+                const startDate = new Date('2026-07-07');
                 const currentDate = new Date();
                 const daysActive = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
 
@@ -10149,6 +10320,8 @@ function updateDashboard(data) {
         // Watchlist Data - Base research list with live price overlay
         // Prices auto-refresh every 30 seconds from Alpaca
         let aiWatchlistPrices = {}; // Live prices fetched from API
+        let signalEnrichmentCache = {}; // News + sentiment from Alpaca
+        let signalEnrichmentLastFetch = 0;
         let lastWatchlistUpdate = null;
         
         // Base research data - will be populated dynamically from ai_watchlist_live.json
@@ -10192,7 +10365,8 @@ function updateDashboard(data) {
         // Fetch company info dynamically from JSON
         async function fetchCompanyInfo() {
             try {
-                const response = await fetch('./company_info.json?t=' + Date.now());
+                // Company info now comes from portfolio_data.json name field
+                return null; // Superseded by Alpaca asset names in portfolio_data
                 if (!response.ok) throw new Error('Failed to fetch company info');
                 const data = await response.json();
                 if (data.stocks && Object.keys(data.stocks).length > 0) {
@@ -10248,7 +10422,8 @@ function updateDashboard(data) {
         // Fetch real crowd sentiment data
         async function fetchCrowdSentiment() {
             try {
-                const response = await fetch('./crowd_sentiment.json?t=' + Date.now());
+                // Crowd sentiment superseded by Alpaca news sentiment in signal_enrichment.json
+                return null; // Removed — using Alpaca paid news API
                 if (!response.ok) throw new Error('Failed to fetch');
                 const data = await response.json();
                 return data.data || {};
@@ -10267,7 +10442,8 @@ function updateDashboard(data) {
         // Fetch trending sentiment data for watchlist (no API registration needed)
         async function fetchTrendingSentiment() {
             try {
-                const response = await fetch('./trending_sentiment.json?t=' + Date.now());
+                // Trending sentiment superseded by Alpaca news
+                return null; // Removed — using Alpaca paid news API
                 if (!response.ok) throw new Error('Failed to fetch trending sentiment');
                 const data = await response.json();
                 trendingSentimentData = data.tickers || {};
@@ -10295,7 +10471,8 @@ function updateDashboard(data) {
         // Fetch earnings dates
         async function fetchEarningsData() {
             try {
-                const response = await fetch('./earnings_data.json?t=' + Date.now());
+                // Earnings data now in signal_enrichment.json from Alpaca
+                return null; // Removed — using Alpaca paid data
                 if (!response.ok) throw new Error('Failed to fetch earnings');
                 const data = await response.json();
                 earningsData = data.earnings || {};
@@ -10340,7 +10517,8 @@ function updateDashboard(data) {
         // Fetch earnings dates
         async function fetchEarningsData() {
             try {
-                const response = await fetch('./earnings_data.json?t=' + Date.now());
+                // Earnings data now in signal_enrichment.json from Alpaca
+                return null; // Removed — using Alpaca paid data
                 if (!response.ok) throw new Error('Failed to fetch earnings');
                 const data = await response.json();
                 earningsData = data.earnings || {};
@@ -10527,6 +10705,7 @@ function updateDashboard(data) {
         
         // Init immediately
         initCrowdSentiment();
+        fetchSignalEnrichment(); // Load Alpaca news + sentiment
         fetchEarningsData();
         fetchSignalAccuracy(); // Load signal accuracy data
         fetchTrendingSentiment(); // Load trending sentiment data
@@ -10620,7 +10799,8 @@ function updateDashboard(data) {
                 
                 // Readiness indicator based on server signal tier
                 let readinessTag = '';
-                if (data.signal_tier === 'NOW') readinessTag = 'READY';
+                if (data.signal_tier === 'STRONG_NOW') readinessTag = 'STRONG';
+                else if (data.signal_tier === 'NOW') readinessTag = 'READY';
                 else if (data.signal_tier === 'WATCH') readinessTag = 'CLOSE';
                 
                 // Generate dynamic descriptions
@@ -10647,6 +10827,19 @@ function updateDashboard(data) {
                     readinessTag: readinessTag,
                     tierReason: data.tier_reason || '',
                     confirmationCount: data.confirmation_count || 0,
+                    confirmations: data.confirmations || {},
+                    // Alpaca paid data fields — passed through to popup
+                    tier: data.signal_tier || 'TRACKING',
+                    signal_tier: data.signal_tier || 'TRACKING',
+                    daily_vwap: data.daily_vwap || null,
+                    prev_close: data.prev_close || null,
+                    options_implied_vol: data.options_implied_vol || null,
+                    options_volume: data.options_volume || null,
+                    momentum_20d: data.momentum_20d || null,
+                    momentum_50d: data.momentum_50d || null,
+                    regime_score: data.regime_score || null,
+                    strategy_type: data.strategy_type || 'momentum',
+                    entry_eligible: data.entry_eligible || false,
                     strategy: dynamicStrategy,
                     catalyst: dynamicCatalyst,
                     risk: dynamicRisk,
@@ -10878,7 +11071,8 @@ function updateDashboard(data) {
             // Use server's signal tier (calculated by AI scoring system)
             const watchlistWithTiers = aiWatchlist.map(stock => {
                 // Map server signal to tier, fallback to calculated if not available
-                const tier = stock.signal === 'NOW' ? 'NOW' :
+                const tier = stock.signal === 'STRONG_NOW' ? 'STRONG_NOW' :
+                             stock.signal === 'NOW' ? 'NOW' :
                              stock.signal === 'WATCH' ? 'WATCH' : 'MONITOR';
                 return {...stock, tier};
             });
@@ -10918,12 +11112,14 @@ function updateDashboard(data) {
             let stocksToShow = watchlistWithTiers;
             
             // Build tier summary
+            const strongNowCount = watchlistWithTiers.filter(s => s.tier === 'STRONG_NOW').length;
             const nowCount = watchlistWithTiers.filter(s => s.tier === 'NOW').length;
             const watchCount = watchlistWithTiers.filter(s => s.tier === 'WATCH').length;
             const monitorCount = watchlistWithTiers.filter(s => s.tier === 'MONITOR').length;
             const trackingCount = watchlistWithTiers.filter(s => !s.isLive || s.price === 0 || s.aiScore <= 40).length;
             
             let html = '<div style="margin-bottom: 0.75rem; padding: 0.625rem; background: rgba(255,255,255,0.03); border-radius: 8px; display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.7rem; align-items: center;">';
+            html += '<span style="color: #06b6d4; font-weight: 700;">STRONG: ' + strongNowCount + '</span>';
             html += '<span style="color: #ef4444; font-weight: 700;"> NOW: ' + nowCount + '</span>';
             html += '<span style="color: #fbbf24; font-weight: 700;">WATCH: ' + watchCount + '</span>';
             html += '<span style="color: var(--text-muted);"> MONITOR: ' + monitorCount + '</span>';
@@ -10947,6 +11143,7 @@ function updateDashboard(data) {
                 
                 // Tier badge styling
                 const tierColors = {
+                    'STRONG_NOW': { bg: 'rgba(6,182,212,0.2)', color: '#06b6d4', icon: '', label: 'STRONG' },
                     'NOW': { bg: '#ef444420', color: '#ef4444', icon: '', label: 'NOW' },
                     'WATCH': { bg: '#fbbf2420', color: '#fbbf24', icon: '', label: 'WATCH' },
                     'MONITOR': { bg: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', icon: '', label: 'MONITOR' },
@@ -10956,7 +11153,7 @@ function updateDashboard(data) {
                 const tierStyle = tierColors[effectiveTier] || tierColors['MONITOR'];
                 
                 // Row styling - grey out tracking stocks
-                const rowBg = stock.tier === 'NOW' ? 'rgba(239,68,68,0.05)' : isTracking ? 'rgba(107,114,128,0.02)' : 'transparent';
+                const rowBg = stock.tier === 'STRONG_NOW' ? 'rgba(6,182,212,0.05)' : stock.tier === 'NOW' ? 'rgba(239,68,68,0.05)' : isTracking ? 'rgba(107,114,128,0.02)' : 'transparent';
                 const rowOpacity = isTracking ? '0.6' : '1';
                 
                 // Format values for display - tracking stocks show placeholder
@@ -10965,7 +11162,7 @@ function updateDashboard(data) {
                 const scoreDisplay = isTracking ? '<span style="color: var(--text-muted); font-size: 11px;">—</span>' : '<span style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px; border: 1px solid ' + aiScoreColor + '40;">' + stock.aiScore + '</span>';
                 const rsiDisplay = isTracking ? '<span style="color: var(--text-muted);">—</span>' : stock.rsi.toFixed(1) + (isOversold ? ' ⚠️' : '');
                 
-                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 10px 4px;"><span style="background: ' + tierStyle.bg + '; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.color + '30;">' + tierStyle.label + '</span></td><td style="padding: 10px 4px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 14px; font-weight: 700;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;">' + stock.company + '</div></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 14px; font-weight: 700;">' + priceDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + changeDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + scoreDisplay + '</td><td style="padding: 10px 4px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 10px 4px; text-align: center;"></tr>';
+                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 10px 4px;"><span style="background: ' + tierStyle.bg + '; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; white-space: normal; max-width: 220px; border: 1px solid ' + tierStyle.color + '30;">' + tierStyle.label + '</span></td><td style="padding: 10px 4px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 14px; font-weight: 700;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;">' + stock.company + '</div></td><td style="padding: 10px 4px; text-align: right; font-family: monospace; font-size: 14px; font-weight: 700;">' + priceDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + changeDisplay + '</td><td style="padding: 10px 4px; text-align: center;">' + scoreDisplay + '</td><td style="padding: 10px 4px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 10px 4px; text-align: center;"></tr>';
             });
             
             html += '</tbody></table></div>';
@@ -11070,16 +11267,20 @@ function updateDashboard(data) {
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 8px; font-size: 0.82rem;">Watchlist Tiers</div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="color: #22c55e; font-weight: 700; min-width: 52px;">NOW</span>
-                        <span style="color: var(--text-muted);">Readiness ≥70 — bot buys</span>
+                        <span style="color: #06b6d4; font-weight: 700; min-width: 72px;">STRONG NOW</span>
+                        <span style="color: var(--text-muted);">≥80 — highest conviction, 2x sizing</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="color: #fbbf24; font-weight: 700; min-width: 52px;">WATCH</span>
-                        <span style="color: var(--text-muted);">50-69 — approaching entry</span>
+                        <span style="color: #22c55e; font-weight: 700; min-width: 72px;">NOW</span>
+                        <span style="color: var(--text-muted);">≥72 — bot buys</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="color: var(--text-muted); font-weight: 700; min-width: 52px;">MONITOR</span>
-                        <span style="color: var(--text-muted);">&lt;50 — not ready yet</span>
+                        <span style="color: #fbbf24; font-weight: 700; min-width: 72px;">WATCH</span>
+                        <span style="color: var(--text-muted);">55-71 — approaching entry</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <span style="color: var(--text-muted); font-weight: 700; min-width: 72px;">MONITOR</span>
+                        <span style="color: var(--text-muted);">&lt;55 — not ready yet</span>
                     </div>
                 </div>
                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.68rem; color: var(--text-muted);">
@@ -11294,6 +11495,7 @@ function updateDashboard(data) {
         }
 
         function getWatchlistStatus(signal, readiness, rsi) {
+            if (signal === 'STRONG_NOW') return { text: 'Strong conviction — maximum entry', color: '#06b6d4' };
             if (signal === 'NOW') return { text: '🟢 Entry signal — buy zone', color: '#22c55e' };
             if (signal === 'WATCH') return { text: '🟡 Approaching entry — watch closely', color: '#fbbf24' };
             if (rsi && rsi <= 35) return { text: '🔵 Oversold — potential bounce', color: '#06b6d4' };
@@ -11349,9 +11551,12 @@ function updateDashboard(data) {
             const targetDist = ((targetPrice - stock.price) / stock.price * 100).toFixed(1);
 
             // Tier chip
-            const tier = stock.tier || 'TRACKING';
-            const tierColor = tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
-            const tierBg = tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+            const tier = stock.tier || stock.signal_tier || 'TRACKING';
+            const tierColor = tier === 'STRONG_NOW' ? '#06b6d4' : tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
+            const tierBg = tier === 'STRONG_NOW' ? 'rgba(6,182,212,0.15)' : tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+
+            // Get options IV from watchlist data (not preGenerated which is holdings-only)
+            const wlOptionsIV = stock.options_implied_vol || null;
 
             const bodyHtml = `
                 <div class="stock-detail-sheet">
@@ -11366,52 +11571,66 @@ function updateDashboard(data) {
                     <div class="stock-detail-body" style="padding: 0 1.25rem 1.5rem;">
 
                         <!-- Price + change -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 1rem 0 0.9rem;">
                             <div>
-                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Price</div>
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">$${stock.price.toFixed(2)}</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.75rem; font-weight: 800; color: var(--text-primary);">$${stock.price.toFixed(2)}</div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Today</div>
                                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: ${changeColor};">${stock.changePct >= 0 ? '▲' : '▼'} ${Math.abs(stock.changePct).toFixed(2)}%</div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">today</div>
                             </div>
                         </div>
 
-                        <!-- Status line -->
-                        <div style="background: ${status.color === '#22c55e' ? 'rgba(34,197,94,0.1)' : status.color === '#fbbf24' ? 'rgba(251,191,36,0.1)' : status.color === '#06b6d4' ? 'rgba(6,182,212,0.1)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${status.color}33; border-radius: 10px; padding: 0.7rem 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                        <!-- Status pill -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.9rem;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: ${status.color}; flex-shrink: 0;"></span>
                             <span style="font-size: 0.8rem; font-weight: 600; color: ${status.color};">${status.text}</span>
                         </div>
 
-                        <!-- Why this stock -->
-                        <div style="margin-bottom: 1rem;">
-                            <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why this stock?</div>
-                            <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">${strategyShort}</div>
-                        </div>
-
-                        <!-- Entry/exit levels -->
-                        <div style="margin-bottom: 1rem;">
-                            <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Key levels</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); border-radius: 8px;">
-                                    <span style="font-size: 0.7rem; color: var(--text-secondary);">Stop</span>
-                                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ef4444; font-weight: 600;">$${stopPrice.toFixed(0)} <span style="font-size: 0.65rem; opacity: 0.7;">(${stopDist}%)</span></span>
-                                </div>
-                                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); border-radius: 8px;">
-                                    <span style="font-size: 0.7rem; color: var(--text-secondary);">Target</span>
-                                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #22c55e; font-weight: 600;">$${targetPrice.toFixed(0)} <span style="font-size: 0.65rem; opacity: 0.7;">(+${targetDist}%)</span></span>
-                                </div>
+                        <!-- Metrics grid: 3-up, consistent -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.9rem;">
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Readiness</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${readiness.toFixed(0)}</div>
+                                <div style="font-size: 0.55rem; color: ${tierColor}; font-weight: 600; text-transform: uppercase;">${tier === 'STRONG_NOW' ? 'STRONG' : tier}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">RSI</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${rsi.toFixed(0)}</div>
+                                <div style="font-size: 0.55rem; color: var(--text-muted);">${rsi <= 35 ? 'OVERSOLD' : rsi >= 70 ? 'OVERBOUGHT' : 'NEUTRAL'}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.7rem 0.5rem; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">${wlOptionsIV && wlOptionsIV > 0 ? 'IV' : 'VWAP'}</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${wlOptionsIV && wlOptionsIV > 0 ? (wlOptionsIV * 100).toFixed(0) + '%' : stock.daily_vwap ? '$' + stock.daily_vwap.toFixed(0) : '—'}</div>
+                                <div style="font-size: 0.55rem; color: var(--text-muted);">${wlOptionsIV && wlOptionsIV > 0 ? 'implied vol' : stock.daily_vwap ? 'vs $' + stock.price.toFixed(0) : 'no data'}</div>
                             </div>
                         </div>
 
-                        <!-- Signal chips -->
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
-                            <span style="background: ${tierBg}; color: ${tierColor}; font-size: 0.65rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">${tier}</span>
-                            <span class="readiness-chip" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;" onclick="showReadinessTooltip(event, ${readiness})">Readiness ${readiness.toFixed(0)}/100</span>
-                            <span style="background: rgba(255,255,255,0.05); color: var(--text-secondary); font-size: 0.65rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;">RSI ${rsi.toFixed(0)}</span>
+                        <!-- Key levels: always both -->
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.9rem;">
+                            <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 10px;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🛑 Stop</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ef4444; font-weight: 700;">$${stopPrice.toFixed(2)}</div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">${stopDist}% below</div>
+                            </div>
+                            <div style="flex: 1; padding: 0.6rem 0.7rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12); border-radius: 10px;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">🎯 Target</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">$${targetPrice.toFixed(2)}</div>
+                                <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 1px;">+${targetDist}% upside</div>
+                            </div>
                         </div>
 
-                        <!-- News sentiment (compact, 1 headline max) -->
-                        <div id="sentiment-section" style="margin-bottom: 0.5rem;">
+                        <!-- Factor breakdown -->
+                        ${buildFactorChips(stock.confirmations || {}, stock.confirmation_count || 0)}
+
+                        <!-- Why this stock -->
+                        <div style="margin-bottom: 0.9rem;">
+                            <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why this stock?</div>
+                            <div style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6;">${strategyShort}</div>
+                        </div>
+
+                        <!-- News: compact -->
+                        <div id="sentiment-section">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Latest news</div>
                             <div id="sentiment-content">
                                 <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.75rem;">
@@ -11422,7 +11641,7 @@ function updateDashboard(data) {
 
                     </div>
                 </div>
-            `;
+`;
 
             modal.innerHTML = bodyHtml;
             document.body.appendChild(modal);
@@ -11453,65 +11672,74 @@ function updateDashboard(data) {
             </svg>`;
         }
 
+        async function fetchSignalEnrichment() {
+            if (Date.now() - signalEnrichmentLastFetch < 60000) return signalEnrichmentCache;
+            try {
+                const res = await fetch('./signal_enrichment.json?t=' + Date.now());
+                if (!res.ok) return signalEnrichmentCache;
+                const data = await res.json();
+                signalEnrichmentCache = data.data || {};
+                signalEnrichmentLastFetch = Date.now();
+                console.log('[Enrichment] Loaded news for', Object.keys(signalEnrichmentCache).length, 'symbols');
+                return signalEnrichmentCache;
+            } catch (e) {
+                console.log('[Enrichment] Not available yet:', e.message);
+                return signalEnrichmentCache;
+            }
+        }
+
         async function loadStockSentiment(symbol, stockData) {
             const container = document.getElementById('sentiment-content');
             if (!container) return;
 
-            // Use provided stockData first, then fall back to aiWatchlistPrices
+            // Ensure enrichment data is loaded
+            if (Object.keys(signalEnrichmentCache).length === 0) {
+                await fetchSignalEnrichment();
+            }
+
+            const enriched = signalEnrichmentCache[symbol];
             const cachedData = aiWatchlistPrices && aiWatchlistPrices[symbol];
-            const sentimentScore = stockData?.sentiment?.bullish ?? cachedData?.sentiment ?? 50;
-            const sentimentLabel = cachedData?.sentiment_label || (sentimentScore >= 60 ? 'Bullish' : sentimentScore <= 40 ? 'Bearish' : 'Neutral');
 
-            // Map sentiment score to tone
-            let tone = 'neutral';
-            if (sentimentScore >= 60) tone = 'bullish';
-            else if (sentimentScore <= 40) tone = 'bearish';
+            // Get headline + URL from enrichment data
+            let headline = null;
+            let headlineSource = null;
+            let headlineUrl = null;
+            if (enriched && enriched.news) {
+                headline = enriched.news.alpaca_headline || enriched.news.sample_headline || (enriched.news.headlines && enriched.news.headlines[0]);
+                headlineSource = enriched.news.alpaca_headline ? (enriched.news.alpaca_source || 'Alpaca') : 'Finnhub';
+                headlineUrl = enriched.news.alpaca_url || '';
+            }
 
-            const toneColor = tone === 'bullish' ? 'var(--accent-green)' : tone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
-            const toneIcon = tone === 'bullish' ? '▲' : tone === 'bearish' ? '▼' : '—';
+            // Also check preGenerated (holdings popup data) for Alpaca news
+            const preGen = (typeof popupContentCache !== 'undefined' && popupContentCache[symbol]) || {};
+            if (!headline && preGen.alpacaNewsHeadline) {
+                headline = preGen.alpacaNewsHeadline;
+                headlineSource = preGen.alpacaNewsSource || 'Alpaca';
+                headlineUrl = preGen.alpacaNewsUrl || '';
+            }
 
-            try {
-                // Try to fetch detailed sentiment data
-                const res = await fetch(`./sentiment/${symbol}.json?t=${Date.now()}`);
-                if (!res.ok) throw new Error('No sentiment data');
-                const data = await res.json();
-
-                // Use fetched data if available
-                const fetchedTone = data.tone || tone;
-                const fetchedToneColor = fetchedTone === 'bullish' ? 'var(--accent-green)' : fetchedTone === 'bearish' ? 'var(--accent-red)' : 'var(--text-secondary)';
-                const fetchedToneIcon = fetchedTone === 'bullish' ? '▲' : fetchedTone === 'bearish' ? '▼' : '—';
-
-                const headlines = (data.headlines || []).slice(0, 1).map(h => `
-                    <a href="${h.url || '#'}" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; color: inherit; padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;">
-                        <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4; margin-bottom: 4px;">${h.title}</div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; color: var(--text-muted);">
-                            <span style="font-weight: 600;">${h.source}</span>
-                            <span>${h.publishedRelative || ''} ↗</span>
-                        </div>
-                    </a>
-                `).join('');
-
+            // Render
+            if (headline) {
+                const linkTag = headlineUrl ? 'a' : 'div';
+                const linkAttr = headlineUrl ? `a href="${headlineUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: block;"` : 'div';
+                const closeTag = headlineUrl ? 'a' : 'div';
                 container.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: ${headlines ? '10px' : '0'};">
-                        <span class="sentiment-tone ${fetchedTone}" style="font-size: 0.7rem; padding: 4px 8px;">${fetchedToneIcon} ${fetchedTone}</span>
-                        <span style="font-size: 0.7rem; color: var(--text-muted);">${data.mentionCount24h || 0} mentions · 24h</span>
-                    </div>
-                    ${headlines}
+                    ${headlineSource ? `<div style="font-size: 0.6rem; color: var(--text-muted); margin-bottom: 6px;">${headlineSource}</div>` : ''}
+                    <${linkAttr}>
+                        <div style="padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; transition: all 0.15s;${headlineUrl ? ' cursor: pointer;' : ''}">
+                            <div style="font-size: 0.78rem; color: var(--text-primary); line-height: 1.4;">${headline}${headlineUrl ? ' <span style="font-size: 0.6rem; color: var(--text-muted);">↗</span>' : ''}</div>
+                        </div>
+                    </${closeTag}>
                 `;
-            } catch (e) {
-                // Fallback to cached data from ai_watchlist_live.json
+            } else if (cachedData) {
                 container.innerHTML = `
-                    <div class="sentiment-header">
-                        <span class="sentiment-tone ${tone}">${toneIcon} ${sentimentLabel}</span>
-                        <span class="sentiment-mentions">Score: <strong>${sentimentScore}</strong>/100</span>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">No recent news headlines available.</div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div style="padding: 0.8rem; text-align: center; color: var(--text-muted); font-size: 0.75rem;">
+                        No news data available for ${symbol}.
                     </div>
-                    <div style="margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
-                            Sentiment data is updated periodically from news analysis.
-                            Current reading: <strong style="color: ${toneColor};">${sentimentLabel}</strong>
-                        </div>
-                    </div>
-                    <div class="sentiment-disclaimer">News sentiment is a secondary indicator, not a trading signal.</div>
                 `;
             }
         }
