@@ -73,7 +73,7 @@ TIER_WATCH_MIN = 55.0   # raised from 50
 # Entry eligibility (tightened 2026-07-04 while live expectancy is negative)
 ENTRY_READINESS_MIN = 77.0  # was 75; raising gate to improve entry quality
 ENTRY_MIN_CONFIRMATIONS = 5  # was 4; require more confirmations for entry
-ENTRY_MIN_HARD_CONFIRMATIONS = 1  # lowered 2026-07-12 — current market rarely shows 2+ canonical hard confirms; keep gate tied to above_ema + total confirmations
+ENTRY_MIN_HARD_CONFIRMATIONS = 2  # require 2+ canonical hard confirms (volume/MACD/intraday/options/relvol) for entry
 
 
 
