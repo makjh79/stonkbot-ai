@@ -9182,7 +9182,7 @@ function buildFactorChips(conf, count, momentumScore) {
             return `
                 <div style="margin-bottom: 0.9rem;">
                     <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors  <span style="color: var(--text-muted); font-weight: 400;">${count}/${factors.length}</span></div>
-                    <div style="display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px;">${chips}</div>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding-bottom: 2px; max-height: 2.2em; overflow: hidden;">${chips}</div>
                 </div>
             `;
         }
@@ -9211,7 +9211,7 @@ function buildFactorChips(conf, count, momentumScore) {
             return `
                 <div style="margin-bottom: 0.9rem;">
                     <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors <span style="color: var(--text-muted); font-weight: 400;">${active.size}/${allFactors.length}</span></div>
-                    <div style="display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px;">${chips}</div>
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding-bottom: 2px; max-height: 2.2em; overflow: hidden;">${chips}</div>
                 </div>
             `;
         }
