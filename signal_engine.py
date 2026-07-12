@@ -660,6 +660,12 @@ DIP_SPY_THRESHOLD_PCT = -1.5     # SPY must be down at least 1.5% from prior clo
 DIP_MAX_DAILY_POSITIONS = 1      # cap dip buys per session
 DIP_HARD_CONF_MIN = 1            # relaxed hard confirmation floor for dip candidates
 
+# Quote spread / execution quality threshold
+BID_ASK_SPREAD_PCT_THRESHOLD = 0.005  # spread > 0.5% is considered wide
+
+# Options enrichment universe size (Alpaca options API volume/perf constraint)
+OPTIONS_ENRICHMENT_UNIVERSE_SIZE = 30
+
 MOMENTUM_WEIGHT = 0.40
 QUALITY_WEIGHT = 0.25
 RISK_WEIGHT = 0.20
@@ -844,7 +850,7 @@ class SignalEngine:
 
         # Fetch options sentiment from Alpaca (implied vol, options volume)
         try:
-            options_data = self._fetch_options_enrichment(self.universe[:30])
+            options_data = self._fetch_options_enrichment(self.universe[:OPTIONS_ENRICHMENT_UNIVERSE_SIZE])
             for sym, opts in options_data.items():
                 if sym not in enrichment:
                     enrichment[sym] = {}
@@ -1092,7 +1098,7 @@ class SignalEngine:
         _spread_ok = True
         if _bid and _ask and _bid > 0:
             _spread_pct = (_ask - _bid) / _bid
-            _wide_spread = _spread_pct > 0.005  # > 0.5%
+            _wide_spread = _spread_pct > BID_ASK_SPREAD_PCT_THRESHOLD  # > 0.5%
             _spread_ok = not _wide_spread
 
         _imbalance = None

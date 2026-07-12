@@ -9192,7 +9192,8 @@ function buildFactorChips(conf, count, momentumScore) {
             const parts = cleanReason.split(/\+|,|\band\b/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 40);
             const factorMap = {
                 'volume': 'VOL', 'macd': 'MACD', 'ema': 'EMA', 'sector': 'SEC',
-                'intraday': 'INT', 'options': 'OPT', 'momentum': 'MOM', 'rsi': 'RSI'
+                'intraday': 'INT', 'options': 'OPT', 'momentum': 'MOM', 'rsi': 'RSI',
+                '5m': '5M', 'flow': 'OF', 'options flow': 'OF', 'spread': 'SPR', 'corporate': 'CA'
             };
             const active = new Set();
             for (const part of parts) {
@@ -9200,7 +9201,7 @@ function buildFactorChips(conf, count, momentumScore) {
                     if (part.toLowerCase().includes(key)) active.add(label);
                 }
             }
-            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT', 'RVOL', 'VWAP'];
+            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT', 'RVOL', 'VWAP', '5M', 'OF', 'SPR', 'CA'];
             const chips = allFactors.map(name => {
                 const ok = active.has(name);
                 const color = ok ? '#22c55e' : 'rgba(255,255,255,0.15)';
@@ -9209,7 +9210,7 @@ function buildFactorChips(conf, count, momentumScore) {
             }).join('');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors <span style="color: var(--text-muted); font-weight: 400;">${active.size}/10</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors <span style="color: var(--text-muted); font-weight: 400;">${active.size}/${allFactors.length}</span></div>
                     <div style="display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px;">${chips}</div>
                 </div>
             `;

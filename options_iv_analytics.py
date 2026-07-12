@@ -383,8 +383,9 @@ def options_flow_signals(symbol: str, cfg: Optional[Dict] = None) -> Dict:
     top_call = sorted(call_strikes.items(), key=lambda x: -x[1])[:3]
     top_put = sorted(put_strikes.items(), key=lambda x: -x[1])[:3]
 
-    # Heuristic unusual volume: total options volume > 5000 contracts
-    options_unusual_volume = total_options_volume > 5000
+    # Heuristic unusual volume: total options volume above this threshold
+    OPTIONS_UNUSUAL_VOLUME_THRESHOLD = 5000
+    options_unusual_volume = total_options_volume > OPTIONS_UNUSUAL_VOLUME_THRESHOLD
 
     # Near-term bullish flow: near-term calls > puts
     near_term_bullish_flow = near_term_call_volume > near_term_put_volume
