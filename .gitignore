@@ -1,0 +1,36 @@
+# Logs
+logs/*.log
+logs/
+
+# Generated data
+signals.json
+ai_watchlist_live.json
+portfolio_data.json
+portfolio_history.json
+trades_log.json
+watchlist_changes.json
+stonkbot.db*
+run/*.pid
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Environment
+.env
+.venv
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
