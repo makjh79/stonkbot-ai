@@ -301,7 +301,128 @@ def _iv_summary_uncached(symbol: str, cfg: Optional[Dict] = None) -> Dict:
     }
 
 
+def options_flow_signals(symbol: str, cfg: Optional[Dict] = None) -> Dict:
+    """
+    Compute options flow signals from Alpaca options snapshots.
+
+    Returns
+    -------
+    dict with keys:
+        total_options_volume: int
+        call_volume: int
+        put_volume: int
+        put_call_ratio: float
+        near_term_call_volume: int (0-30 DTE)
+        near_term_put_volume: int (0-30 DTE)
+        near_term_put_call_ratio: float
+        avg_implied_vol: Optional[float]
+        options_unusual_volume: bool (True if total volume is in top ~20% of observed)
+        near_term_bullish_flow: bool (True if near-term call volume > put volume)
+        top_call_strikes: List[Dict] (strike, volume)
+        top_put_strikes: List[Dict] (strike, volume)
+    """
+    snaps = _fetch_all_options_snapshots(symbol, cfg)
+    if not snaps:
+        return {
+            "total_options_volume": 0,
+            "call_volume": 0,
+            "put_volume": 0,
+            "put_call_ratio": None,
+            "near_term_call_volume": 0,
+            "near_term_put_volume": 0,
+            "near_term_put_call_ratio": None,
+            "avg_implied_vol": None,
+            "options_unusual_volume": False,
+            "near_term_bullish_flow": False,
+            "top_call_strikes": [],
+            "top_put_strikes": [],
+        }
+
+    today = datetime.now()
+    call_volume = 0
+    put_volume = 0
+    near_term_call_volume = 0
+    near_term_put_volume = 0
+    iv_values = []
+    call_strikes: Dict[float, int] = {}
+    put_strikes: Dict[float, int] = {}
+
+    for contract, snap in snaps.items():
+        parsed = _parse_option_contract(contract)
+        if not parsed:
+            continue
+        _, exp, opt_type, strike = parsed
+        dte = max(1, (exp.replace(hour=16, minute=0) - today).days)
+
+        daily = snap.get("dailyBar", {})
+        vol = daily.get("v", 0) or 0
+        iv = snap.get("impliedVolatility")
+
+        if vol <= 0:
+            continue
+
+        if iv is not None and 0 < iv < 10:
+            iv_values.append(iv)
+
+        if opt_type == "call":
+            call_volume += vol
+            call_strikes[strike] = call_strikes.get(strike, 0) + vol
+        else:
+            put_volume += vol
+            put_strikes[strike] = put_strikes.get(strike, 0) + vol
+
+        if dte <= 30:
+            if opt_type == "call":
+                near_term_call_volume += vol
+            else:
+                near_term_put_volume += vol
+
+    total_options_volume = call_volume + put_volume
+
+    # Top 3 strikes by volume
+    top_call = sorted(call_strikes.items(), key=lambda x: -x[1])[:3]
+    top_put = sorted(put_strikes.items(), key=lambda x: -x[1])[:3]
+
+    # Heuristic unusual volume: total options volume > 5000 contracts
+    options_unusual_volume = total_options_volume > 5000
+
+    # Near-term bullish flow: near-term calls > puts
+    near_term_bullish_flow = near_term_call_volume > near_term_put_volume
+
+    put_call_ratio = round(put_volume / call_volume, 3) if call_volume > 0 else None
+    near_term_pcr = round(near_term_put_volume / near_term_call_volume, 3) if near_term_call_volume > 0 else None
+
+    # Simple flow score: 0-100
+    if put_call_ratio is not None and put_call_ratio < 0.5 and near_term_bullish_flow:
+        options_flow_score = 80.0
+    elif put_call_ratio is not None and put_call_ratio < 1.0 and near_term_bullish_flow:
+        options_flow_score = 65.0
+    elif put_call_ratio is not None and put_call_ratio > 1.5:
+        options_flow_score = 30.0
+    else:
+        options_flow_score = 50.0
+
+    return {
+        "total_options_volume": total_options_volume,
+        "call_volume": call_volume,
+        "put_volume": put_volume,
+        "put_call_ratio": put_call_ratio,
+        "options_volume": total_options_volume,
+        "near_term_call_volume": near_term_call_volume,
+        "near_term_put_volume": near_term_put_volume,
+        "near_term_put_call_ratio": near_term_pcr,
+        "avg_implied_vol": round(sum(iv_values) / len(iv_values), 4) if iv_values else None,
+        "options_unusual_volume": options_unusual_volume,
+        "near_term_bullish_flow": near_term_bullish_flow,
+        "options_flow_score": options_flow_score,
+        "top_call_strikes": [{"strike": k, "volume": v} for k, v in top_call],
+        "top_put_strikes": [{"strike": k, "volume": v} for k, v in top_put],
+    }
+
+
 if __name__ == "__main__":
     import sys
     sym = sys.argv[1] if len(sys.argv) > 1 else "AAPL"
     print(json.dumps(iv_summary(sym), indent=2, default=str))
+    print("---")
+    print(json.dumps(options_flow_signals(sym), indent=2, default=str))

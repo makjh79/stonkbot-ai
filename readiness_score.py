@@ -62,7 +62,7 @@ TIER_WATCH_MIN = 55.0   # raised from 50
 # Entry eligibility (tightened 2026-07-04 while live expectancy is negative)
 ENTRY_READINESS_MIN = 77.0  # was 75; raising gate to improve entry quality
 ENTRY_MIN_CONFIRMATIONS = 5  # was 4; require more confirmations for entry
-ENTRY_MIN_HARD_CONFIRMATIONS = 2  # require dynamic volume/MACD/intraday/options/relvol confirms
+ENTRY_MIN_HARD_CONFIRMATIONS = 2  # softened 2026-07-08 — was 2; unlock more entry candidates while keeping quality
 
 
 
@@ -367,10 +367,14 @@ def _intraday_momentum_score(intraday_bars: List[Dict], daily_vwap: Optional[flo
     return score, confirmed
 
 
-def _options_sentiment_score(iv_summary: Optional[Dict]) -> Tuple[float, bool]:
+def _options_sentiment_score(
+    iv_summary: Optional[Dict],
+    options_flow: Optional[Dict] = None,
+) -> Tuple[float, bool]:
     """
-    Score options sentiment from IV summary dict.
+    Score options sentiment from IV summary dict and options flow data.
     Uses 30d ATM IV and IV rank if available; falls back to raw implied_vol field.
+    Incorporates options flow (call/put ratio, near-term bullish flow, unusual volume).
     Returns (score 0-100, confirmed: bool).
 
     Logic:
@@ -380,41 +384,59 @@ def _options_sentiment_score(iv_summary: Optional[Dict]) -> Tuple[float, bool]:
       - IV rank < 0.30 = low IV, bullish complacency → higher
       - If no rank, fall back to absolute 30d IV thresholds
     """
+    # Start with IV-based score
     if iv_summary is None:
-        return 50.0, False
-
-    # Accept either the new summary dict or legacy float
-    if isinstance(iv_summary, dict):
+        iv_score = 50.0
+    elif isinstance(iv_summary, dict):
         iv_30d = iv_summary.get("iv_30d")
         iv_rank = iv_summary.get("iv_rank")
+        if iv_rank is not None and 0 <= iv_rank <= 1:
+            if iv_rank > 0.80:
+                iv_score = 20.0
+            elif iv_rank > 0.60:
+                iv_score = 40.0
+            elif iv_rank > 0.30:
+                iv_score = 60.0
+            elif iv_rank > 0.10:
+                iv_score = 75.0
+            else:
+                iv_score = 85.0
+        elif iv_30d is not None and iv_30d > 0:
+            if iv_30d > 0.8:
+                iv_score = 20.0
+            elif iv_30d > 0.6:
+                iv_score = 35.0
+            elif iv_30d > 0.4:
+                iv_score = 60.0
+            elif iv_30d > 0.25:
+                iv_score = 75.0
+            else:
+                iv_score = 85.0
+        else:
+            iv_score = 50.0
     else:
-        iv_30d = iv_summary
-        iv_rank = None
+        iv_score = 50.0
 
-    if iv_rank is not None and 0 <= iv_rank <= 1:
-        if iv_rank > 0.80:
-            return 20.0, False
-        if iv_rank > 0.60:
-            return 40.0, False
-        if iv_rank > 0.30:
-            return 60.0, False
-        if iv_rank > 0.10:
-            return 75.0, True
-        return 85.0, True
+    # Adjust by options flow if available
+    if not options_flow:
+        return iv_score, iv_score >= 65
 
-    if iv_30d is None or iv_30d <= 0:
-        return 50.0, False
+    flow_score = iv_score
+    if options_flow.get("options_unusual_volume"):
+        # Unusual volume with bullish near-term flow is a strong confirmation
+        if options_flow.get("near_term_bullish_flow"):
+            flow_score = min(100.0, flow_score + 10.0)
+        else:
+            flow_score = max(0.0, flow_score - 10.0)
 
-    # Fallback to absolute 30d IV thresholds
-    if iv_30d > 0.8:
-        return 20.0, False
-    if iv_30d > 0.6:
-        return 35.0, False
-    if iv_30d > 0.4:
-        return 60.0, False
-    if iv_30d > 0.25:
-        return 75.0, True
-    return 85.0, True
+    put_call_ratio = options_flow.get("put_call_ratio")
+    if put_call_ratio is not None:
+        if put_call_ratio < 0.5 and options_flow.get("near_term_bullish_flow"):
+            flow_score = min(100.0, flow_score + 5.0)
+        elif put_call_ratio > 1.5:
+            flow_score = max(0.0, flow_score - 10.0)
+
+    return round(max(0.0, min(100.0, flow_score)), 1), flow_score >= 65
 
 
 
@@ -504,6 +526,7 @@ def compute_readiness(
     daily_vwap: Optional[float] = None,
     prev_close: Optional[float] = None,
     options_implied_vol: Optional[Union[float, Dict]] = None,
+    **kwargs,
 ) -> ReadinessResult:
     """
     Compute the composite readiness score for a single stock.
@@ -567,8 +590,13 @@ def compute_readiness(
         intraday_bars or [], daily_vwap
     )
 
-    # 8. Options sentiment (from IV term structure / rank / 30d IV)
-    options_component, options_confirmed = _options_sentiment_score(options_implied_vol)
+    # 8. Options sentiment (from IV term structure / rank / 30d IV + options flow)
+    options_flow = kwargs.get("options_flow") or {
+        "put_call_ratio": kwargs.get("options_call_put_ratio"),
+        "options_unusual_volume": kwargs.get("options_unusual_volume", False),
+        "near_term_bullish_flow": kwargs.get("near_term_bullish_flow", False),
+    }
+    options_component, options_confirmed = _options_sentiment_score(options_implied_vol, options_flow)
 
     # 9. Relative volume confirmation (already have recent_vol / avg_vol from volume step)
     relvol_component = _relative_volume_score(recent_vol, avg_vol)
@@ -612,7 +640,12 @@ def compute_readiness(
     ) / total_weight
     readiness = round(max(0.0, min(100.0, readiness)), 1)
 
-    # Confirmations dict (6 boolean signals)
+    # Pull explicit 5-minute chips from kwargs (populated by signal_engine)
+    momentum_5m_up = kwargs.get("momentum_5m_up", False)
+    volume_5m_surge = kwargs.get("volume_5m_surge", False)
+    price_above_5m_vwap = kwargs.get("price_above_5m_vwap", False)
+
+    # Confirmations dict (canonical boolean signals)
     confirmations = {
         "momentum_score": round(signal_component, 1),
         "rsi_signal": rsi_signal,
@@ -622,8 +655,25 @@ def compute_readiness(
         "sector_strong": sector_strong,
         "intraday_confirmed": intraday_confirmed,
         "intraday_score": round(intraday_component, 1),
+        "momentum_5m_up": bool(momentum_5m_up),  # new 5-min chips
+        "volume_5m_surge": bool(volume_5m_surge),
+        "price_above_5m_vwap": bool(price_above_5m_vwap),
         "options_confirmed": options_confirmed,
         "options_score": round(options_component, 1),
+        "options_call_put_ratio": options_flow.get("put_call_ratio"),
+        "options_unusual_volume": options_flow.get("options_unusual_volume", False),
+        "near_term_bullish_flow": options_flow.get("near_term_bullish_flow", False),
+        "bid_ask_spread_pct": kwargs.get("bid_ask_spread_pct"),
+        "wide_spread": kwargs.get("wide_spread", False),
+        "spread_ok": kwargs.get("spread_ok", True),
+        "bid_ask_imbalance": kwargs.get("bid_ask_imbalance"),
+        "bid_ask_bullish": kwargs.get("bid_ask_bullish", False),
+        "has_upcoming_dividend": kwargs.get("has_upcoming_dividend", False),
+        "has_upcoming_split": kwargs.get("has_upcoming_split", False),
+        "has_upcoming_merger": kwargs.get("has_upcoming_merger", False),
+        "has_upcoming_spinoff": kwargs.get("has_upcoming_spinoff", False),
+        "corporate_action_risk": kwargs.get("corporate_action_risk", False),
+        "no_corporate_action_risk": not kwargs.get("corporate_action_risk", False),
         "relvol_confirmed": relvol_confirmed,
         "relvol_score": round(relvol_component, 1),
         "vwap_confirmed": vwap_confirmed,
@@ -633,8 +683,33 @@ def compute_readiness(
     # Confirmation count: canonical boolean count (single source of truth)
     confirmation_count = compute_confirmation_count(confirmations)
 
-    # Tier
-    if readiness >= 78.0:
+    # Entry eligibility: only top-readiness symbols can be entry-eligible.
+    # Requires the full confirmation gate (hard confirms + above_ema).
+    hard_confirmations = sum(
+        1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed",
+                    "options_confirmed", "relvol_confirmed")
+        if confirmations.get(k)
+    )
+    # Market-dip opportunity override: during broad pullbacks, allow high-quality
+    # names above their 20d EMA with at least 1 hard confirmation to qualify.
+    dip_override = (
+        kwargs.get("dip_opportunity", False)
+        and confirmations.get("above_ema", False)
+        and hard_confirmations >= DIP_HARD_CONF_MIN
+        and readiness >= ENTRY_READINESS_MIN
+        and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
+    )
+
+    entry_eligible = (
+        readiness >= ENTRY_READINESS_MIN
+        and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
+        and hard_confirmations >= ENTRY_MIN_HARD_CONFIRMATIONS
+        and confirmations.get("above_ema", False)  # strongest live predictor (+0.572 correlation)
+    ) or dip_override
+
+    # Tier: STRONG_NOW now means *tradeable* top-tier, not just readiness ≥78.
+    # A symbol with readiness ≥78 but missing the entry gate stays in NOW.
+    if readiness >= 78.0 and entry_eligible:
         tier = "STRONG_NOW"
     elif readiness >= TIER_NOW_MIN:
         tier = "NOW"
@@ -642,21 +717,6 @@ def compute_readiness(
         tier = "WATCH"
     else:
         tier = "MONITOR"
-
-    # Entry eligibility: only STRONG_NOW tier can be entry-eligible.
-    # NOW tier is non-trading "building" strength.
-    hard_confirmations = sum(
-        1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed",
-                    "options_confirmed", "relvol_confirmed")
-        if confirmations.get(k)
-    )
-    entry_eligible = (
-        tier == "STRONG_NOW"
-        and readiness >= ENTRY_READINESS_MIN
-        and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
-        and hard_confirmations >= ENTRY_MIN_HARD_CONFIRMATIONS
-        and confirmations.get("above_ema", False)  # strongest live predictor (+0.572 correlation)
-    )
 
     # Tier reason
     tier_reason = _build_tier_reason(
@@ -684,13 +744,13 @@ def _build_tier_reason(
     """Human-readable reason for tier assignment."""
     parts = []
     if tier == "STRONG_NOW":
-        parts.append(f"STRONG_NOW: readiness {readiness:.1f} — entry-ready tier")
+        parts.append(f"PRIME: readiness {readiness:.1f} — entry-ready tier")
     elif tier == "NOW":
-        parts.append(f"NOW: readiness {readiness:.1f} — building strength, not yet entry-ready")
+        parts.append(f"BUILDING: readiness {readiness:.1f} — building strength, not yet entry-ready")
     elif tier == "WATCH":
-        parts.append(f"WATCH: readiness {readiness:.1f}")
+        parts.append(f"WATCHING: readiness {readiness:.1f}")
     else:
-        parts.append(f"MONITOR: readiness {readiness:.1f}")
+        parts.append(f"TRACKING: readiness {readiness:.1f}")
 
     reasons = []
     if confirmations.get("volume_confirmed"):

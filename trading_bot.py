@@ -27,17 +27,54 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
+# Safety guards: never run as root; enforce single instance
+if os.geteuid() == 0:
+    print("ERROR: trading_bot.py must not run as root. Use user 'stonkai'.", file=sys.stderr)
+    sys.exit(1)
+
+_RUN_DIR = Path("/opt/stonk-ai/run")
+_RUN_DIR.mkdir(parents=True, exist_ok=True)
+_PID_FILE = _RUN_DIR / "trading_bot.pid"
+
+
+def _acquire_instance_lock() -> bool:
+    import atexit
+    try:
+        if _PID_FILE.exists():
+            pid_text = _PID_FILE.read_text().strip()
+            try:
+                old_pid = int(pid_text)
+                # Check if still alive
+                os.kill(old_pid, 0)
+                print(f"ERROR: trading_bot.py already running (pid {old_pid}). Refusing to start.", file=sys.stderr)
+                return False
+            except (ValueError, OSError, ProcessLookupError):
+                # Stale PID file
+                pass
+        with open(_PID_FILE, "w") as f:
+            f.write(str(os.getpid()))
+        atexit.register(lambda: _PID_FILE.unlink(missing_ok=True))
+        return True
+    except Exception as e:
+        print(f"WARNING: could not manage PID lock: {e}", file=sys.stderr)
+        return True  # don't block startup on lock file issues
+
+
+if not _acquire_instance_lock():
+    sys.exit(1)
+
 from readiness_score import ENTRY_READINESS_MIN, ENTRY_MIN_CONFIRMATIONS, ENTRY_MIN_HARD_CONFIRMATIONS
 
 import requests
 
-from signal_engine import SignalEngine
+from signal_engine import SignalEngine, COMPANY_NAMES, DIP_MAX_DAILY_POSITIONS
 from risk_engine import RiskEngine, RiskConfig, load_high_beta_symbols
 from alpaca_data import get_data_hub
 from stonk_utils import atomic_write_json
 import dynamic_watchlist_manager
 from circuit_breaker import CircuitBreaker
 from intraday_confirm import should_execute_buy as check_intraday_buy
+from alert_logger import log_alert
 from regime_detector import get_regime
 from mean_reversion_signal import compute_mean_reversion
 
@@ -45,7 +82,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("trading_bot.log"),
+        logging.FileHandler("/opt/stonk-ai/logs/trading_bot.log"),
         logging.StreamHandler(sys.stdout),
     ],
 )
@@ -68,7 +105,7 @@ class TradingConfig:
     DRY_RUN: bool = False
 
     # How often the main loop runs during market hours.
-    CYCLE_INTERVAL_SECONDS: int = 300  # 5 minutes
+    CYCLE_INTERVAL_SECONDS: int = 120  # 2 minutes
 
     # How often signals are refreshed.
     SIGNAL_REFRESH_INTERVAL_SECONDS: int = 900  # 15 minutes
@@ -163,6 +200,24 @@ class AlpacaClient:
             logger.warning(f"Could not check market clock: {e}")
         return False
 
+    def _is_us_market_hours(self) -> bool:
+        now = datetime.now(timezone.utc)
+        if now.weekday() >= 5:
+            return False
+        market_open = now.replace(hour=13, minute=30, second=0, microsecond=0)
+        market_close = now.replace(hour=20, minute=0, second=0, microsecond=0)
+        return market_open <= now <= market_close
+
+    def _is_extended_hours(self) -> bool:
+        from datetime import time
+        now = datetime.now(timezone.utc)
+        if now.weekday() >= 5:
+            return False
+        t = now.time()
+        premarket = (t >= time(8, 0) and t < time(13, 30))
+        afterhours = (t >= time(20, 0) and t <= time(23, 59, 59))
+        return premarket or afterhours
+
     def get_latest_quote(self, symbol: str) -> Optional[float]:
         """Fetch latest bid/ask midpoint for limit orders."""
         try:
@@ -209,6 +264,25 @@ class AlpacaClient:
         except Exception as e:
             logger.warning(f"Could not check order {order_id}: {e}")
             return True  # assume filled if we cannot check
+
+    def _get_spread_pct(self, symbol: str) -> Optional[float]:
+        """Return bid-ask spread as percentage of midpoint, or None if unavailable."""
+        try:
+            r = self.session.get(
+                f"{self.data_url}/v2/stocks/quotes/latest",
+                params={"symbols": symbol, "feed": "sip"},
+                timeout=15,
+            )
+            r.raise_for_status()
+            quote = r.json().get("quotes", {}).get(symbol, {})
+            bid = quote.get("bp") or 0
+            ask = quote.get("ap") or 0
+            if bid > 0 and ask > 0:
+                mid = (bid + ask) / 2
+                return (ask - bid) / mid
+        except Exception as e:
+            logger.warning(f"Could not get spread for {symbol}: {e}")
+        return None
 
     def cancel_order(self, order_id: str) -> bool:
         """Cancel an open order."""
@@ -266,7 +340,8 @@ class AlpacaClient:
         return tradable
 
     def submit_order(self, symbol: str, qty: int, side: str, dry_run: bool = False,
-                     use_limit: bool = True, twap_threshold: int = 100) -> Optional[str]:
+                     use_limit: bool = True, twap_threshold: int = 100,
+                     extended_hours: bool = False) -> Optional[str]:
         # CIRCUIT BREAKER GUARD (optional — bot-level check happens before calling)
         if not dry_run and getattr(self, 'circuit_breaker', None) and self.circuit_breaker.is_open():
             reason = self.circuit_breaker.status().get('reason', 'unknown')
@@ -289,7 +364,7 @@ class AlpacaClient:
             chunks = [qty]
 
         for chunk in chunks:
-            payload = self._build_order_payload(symbol, chunk, side_lower, use_limit=use_limit)
+            payload = self._build_order_payload(symbol, chunk, side_lower, use_limit=use_limit, extended_hours=extended_hours)
             if payload is None:
                 continue
             try:
@@ -314,16 +389,19 @@ class AlpacaClient:
         remainder = qty % n
         return [base + 1] * remainder + [base] * (n - remainder)
 
-    def _build_order_payload(self, symbol: str, qty: int, side: str, use_limit: bool = True) -> Optional[dict]:
+    def _build_order_payload(self, symbol: str, qty: int, side: str, use_limit: bool = True, extended_hours: bool = False) -> Optional[dict]:
         """Build order payload — limit at midpoint or market fallback."""
         if not use_limit:
-            return {
+            payload = {
                 "symbol": symbol,
                 "qty": str(qty),
                 "side": side,
                 "type": "market",
                 "time_in_force": "day",
             }
+            if extended_hours:
+                payload["extended_hours"] = True
+            return payload
         midpoint = self.get_latest_quote(symbol)
         if midpoint is None or midpoint <= 0:
             return {
@@ -334,7 +412,7 @@ class AlpacaClient:
                 "time_in_force": "day",
             }
         limit_price = round(midpoint, 2)
-        return {
+        payload = {
             "symbol": symbol,
             "qty": str(qty),
             "side": side,
@@ -342,9 +420,13 @@ class AlpacaClient:
             "time_in_force": "day",
             "limit_price": str(limit_price),
         }
+        if extended_hours:
+            payload["extended_hours"] = True
+        return payload
 
     def submit_tiered_order(self, symbol: str, qty: int, side: str, tier: str = "NOW",
-                            dry_run: bool = False, twap_threshold: int = 100) -> Optional[str]:
+                            dry_run: bool = False, twap_threshold: int = 100,
+                            extended_hours: bool = False) -> Optional[str]:
         """Submit order with tier-aware execution strategy.
 
         STRONG_NOW: Aggressive — cross the spread, marketable limit at ask.
@@ -380,7 +462,7 @@ class AlpacaClient:
             chunks = [qty]
 
         for chunk in chunks:
-            order_id = self._submit_tiered_single(symbol, chunk, side_lower, tier)
+            order_id = self._submit_tiered_single(symbol, chunk, side_lower, tier, extended_hours=extended_hours)
             if order_id:
                 order_ids.append(order_id)
             # Brief pause between TWAP chunks
@@ -390,7 +472,8 @@ class AlpacaClient:
 
         return order_ids[0] if order_ids else None
 
-    def _submit_tiered_single(self, symbol: str, qty: int, side: str, tier: str) -> Optional[str]:
+    def _submit_tiered_single(self, symbol: str, qty: int, side: str, tier: str,
+                                extended_hours: bool = False) -> Optional[str]:
         """Submit a single chunk with tier-aware execution."""
         quote = self.get_latest_quote_full(symbol)
 
@@ -401,6 +484,8 @@ class AlpacaClient:
                 "symbol": symbol, "qty": str(qty), "side": side,
                 "type": "market", "time_in_force": "day",
             }
+            if extended_hours:
+                payload["extended_hours"] = True
             try:
                 r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
                 r.raise_for_status()
@@ -442,6 +527,8 @@ class AlpacaClient:
                 "type": "limit", "time_in_force": "day",
                 "limit_price": str(limit_price),
             }
+            if extended_hours:
+                payload["extended_hours"] = True
             try:
                 r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
                 r.raise_for_status()
@@ -586,6 +673,7 @@ class PortfolioDataStore:
                 uplpc = float(p.get("unrealized_plpc", 0)) * 100
 
                 sector = SignalEngine._sector(symbol)
+                company = COMPANY_NAMES.get(symbol, symbol)
 
                 positions_data.append({
                     "symbol": symbol,
@@ -597,6 +685,8 @@ class PortfolioDataStore:
                     "unrealized_pl": upl,
                     "unrealized_plpc": uplpc,
                     "sector": sector,
+                    "company": company,
+                    "entry_date": self.bot.thesis_manager.theses.get(symbol, {}).get("entry_date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
                 })
 
             # Enrich positions with real-time snapshot data from Alpaca hub
@@ -607,6 +697,12 @@ class PortfolioDataStore:
                 _snaps = _hub.get_snapshots(_symbols)
                 # Auto-fix stock splits before enrichment
                 positions_data = self._detect_and_fix_splits(positions_data, _snaps)
+                # Fetch extended-hours data for all held positions so popups can show pre/after-market %
+                try:
+                    _ext_hours = _hub.get_extended_hours_bars(_symbols)
+                except Exception as _ext_e:
+                    logger.debug(f"Extended hours enrichment failed: {_ext_e}")
+                    _ext_hours = {}
                 for pos_dict in positions_data:
                     _sym = pos_dict["symbol"]
                     _snap = _snaps.get(_sym, {})
@@ -621,6 +717,16 @@ class PortfolioDataStore:
                         if _snap_price and _snap_price > 0:
                             pos_dict["current"] = _snap_price
                             pos_dict["market_value"] = _snap_price * pos_dict["qty"]
+                    # Attach extended-hours fields from the dedicated feed
+                    _ext = _ext_hours.get(_sym, {})
+                    if _ext.get("premarket_change_pct") is not None:
+                        pos_dict["premarket_change_pct"] = _ext["premarket_change_pct"]
+                    if _ext.get("premarket_volume") is not None:
+                        pos_dict["premarket_volume"] = _ext["premarket_volume"]
+                    if _ext.get("afterhours_change_pct") is not None:
+                        pos_dict["afterhours_change_pct"] = _ext["afterhours_change_pct"]
+                    if _ext.get("afterhours_volume") is not None:
+                        pos_dict["afterhours_volume"] = _ext["afterhours_volume"]
             except Exception as _e:
                 logger.debug(f"Snapshot enrichment failed: {_e}")
 
@@ -827,6 +933,10 @@ class STONKAIBot:
         # Regime detection state
         self._regime: str = "RISK_ON"
         self._regime_params: Dict = {"max_position_pct": 8, "cash_floor_pct": 10, "min_tier_for_entry": "NOW"}
+        self._dip_buys_today: int = 0
+        self._dip_buy_date: str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        self._ext_hours_buys_today: int = 0
+        self._ext_hours_buy_date: str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
         if self._dry_run:
             logger.info("Bot is in DRY RUN mode — trades will be logged but not submitted.")
@@ -839,11 +949,17 @@ class STONKAIBot:
 
     def _is_entry_eligible_for_mode(self, sig: dict) -> bool:
         """Entry gate: use signal's entry_eligible flag; fall back only in paper mode.
-        Option B: only STRONG_NOW tier is tradeable; NOW/WATCH/MONITOR are non-trading.
-        Mean reversion signals are watch-only and never entry triggers.
+        All strategies (momentum + mean reversion) compete on the same entry_eligible gate.
         """
-        if sig.get("strategy_type") == "mean_reversion":
+        # MR blanket ban removed 2026-07-08 — MR signals now compete on entry_eligible
+        # Execution quality guard: skip names with wide bid/ask spread
+        if sig.get("wide_spread", False):
             return False
+
+        # Corporate action risk guard: skip names with upcoming dividends/splits/mergers/spinoffs
+        if sig.get("corporate_action_risk", False):
+            return False
+
         if sig.get("entry_eligible", False):
             return True
         if not getattr(self.alpaca, "is_paper", lambda: False)():
@@ -890,26 +1006,39 @@ class STONKAIBot:
             return set()
 
     def _high_beta_buy_blocked(self, symbol: str, cost: float, portfolio_data: Dict, high_beta_symbols: set) -> bool:
-        """Block a new buy if it would push the high-beta basket over its cap."""
+        """Block a new high-beta buy unless it fits under the cap or qualifies for opportunistic headroom.
+
+        Exceptional PRIME candidates (readiness >= 78) may exceed the steady-state cap up to the
+        opportunistic cap, matching the watchlist/website logic in dynamic_watchlist_manager.py.
+        """
         if not self.risk_engine.config.high_beta_basket_cap_enabled or symbol not in high_beta_symbols:
             return False
         account = portfolio_data.get("account", {})
         pv = account.get("portfolio_value", 0)
-        equity = account.get("equity", pv)
-        cash = account.get("cash", 0)
-        deployed = equity - cash
-        if deployed <= 0 or pv <= 0:
+        if pv <= 0:
             return False
         current_high_beta_mv = sum(
             p.get("market_value", 0)
             for p in portfolio_data.get("positions", [])
             if p.get("symbol") in high_beta_symbols
         )
-        new_deployed = deployed + cost
         new_high_beta_mv = current_high_beta_mv + cost
-        cap = self.risk_engine.config.max_high_beta_deployed_pct
-        if new_deployed > 0 and new_high_beta_mv / new_deployed > cap:
-            logger.info(f"Blocking {symbol} buy: would push high-beta basket to {new_high_beta_mv/new_deployed:.1%} (cap {cap:.1%})")
+
+        # Look up the candidate signal to decide if it qualifies for opportunistic headroom.
+        sig = next((s for s in self._signals if s.get("symbol") == symbol), {})
+        tier = sig.get("tier", "")
+        readiness = sig.get("readiness_score", 0)
+        is_exceptional = tier == "STRONG_NOW" and readiness >= 78
+
+        steady_cap = self.risk_engine.config.max_high_beta_deployed_pct
+        opportunistic_cap = getattr(dynamic_watchlist_manager, "OPPORTUNISTIC_HIGH_BETA_CAP", 0.40)
+        effective_cap = opportunistic_cap if is_exceptional else steady_cap
+
+        if new_high_beta_mv / pv > effective_cap:
+            logger.info(
+                f"Blocking {symbol} buy: would push high-beta basket to {new_high_beta_mv/pv:.1%} "
+                f"(cap {effective_cap:.1%}, {'opportunistic' if is_exceptional else 'steady-state'})"
+            )
             return True
         return False
 
@@ -1047,7 +1176,26 @@ class STONKAIBot:
 
     def refresh_signals(self):
         try:
+            # Temporarily extend universe with held positions so they never drop
+            # from signals.json even when borderline — prevents watchlist 0.0 placeholders
+            try:
+                with open("/opt/stonk-ai/portfolio_data.json") as _pf:
+                    _portfolio = json.load(_pf)
+                _held = {p["symbol"] for p in _portfolio.get("positions", []) if p.get("symbol")}
+                _original_universe = list(self.signal_engine.universe)
+                _extra = [s for s in _held if s not in _original_universe]
+                if _extra:
+                    self.signal_engine.universe = _original_universe + _extra
+                    logger.info(f"Held positions added to signal universe: {', '.join(_extra)}")
+            except Exception:
+                _extra = []
+                _original_universe = list(self.signal_engine.universe)
+
             signals = self.signal_engine.generate_signals(lookback_days=120)
+
+            if _extra:
+                self.signal_engine.universe = _original_universe
+
             self.signal_engine.save_signals(signals, TradingConfig.SIGNALS_FILE)
             # Load from file to include mean reversion signals merged during save
             with open(TradingConfig.SIGNALS_FILE) as f:
@@ -1081,6 +1229,15 @@ class STONKAIBot:
                 s for s in self._signals
                 if s.get("symbol") not in self._failed_buy_symbols
             ]
+
+        # Reset daily dip-buy counter at start of each trading cycle
+        today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        if today_str != self._dip_buy_date:
+            self._dip_buy_date = today_str
+            self._dip_buys_today = 0
+        if today_str != self._ext_hours_buy_date:
+            self._ext_hours_buy_date = today_str
+            self._ext_hours_buys_today = 0
 
     # ------------------------------------------------------------------
     # Readiness-based position sizing multiplier
@@ -1121,6 +1278,7 @@ class STONKAIBot:
     # ------------------------------------------------------------------
 
     def run_cycle(self):
+        logger.info("run_cycle() started")
         # CIRCUIT BREAKER CHECK
         if self.circuit_breaker.is_open():
             status = self.circuit_breaker.status()
@@ -1128,8 +1286,34 @@ class STONKAIBot:
             # Optionally still refresh portfolio but skip trades
             return
 
-        if not self.alpaca.is_market_open():
-            logger.debug("Market closed; skipping cycle")
+        # Run during regular hours OR extended hours if enabled
+        market_open = self.alpaca.is_market_open()
+        ext_hours = (self.risk_engine.config.extended_hours_enabled
+                     and self.alpaca._is_extended_hours()
+                     and not self.alpaca._is_us_market_hours())
+        if not market_open and not ext_hours:
+            logger.debug("Market closed and extended hours inactive; skipping cycle")
+            # Off-hours risk check: alert on concentration breaches that cannot be trimmed now
+            try:
+                portfolio_data = self.data_store.fetch()
+                if portfolio_data:
+                    high_beta_symbols = load_high_beta_symbols()
+                    high_beta_trades = self.risk_engine.check_high_beta_basket(portfolio_data, high_beta_symbols)
+                    # Always log off-hours high-beta status for visibility
+                    positions = portfolio_data.get("positions", [])
+                    account = portfolio_data.get("account", {})
+                    pv = account.get("portfolio_value", 0)
+                    hb_mv = sum(p.get("market_value", 0) for p in positions if p.get("symbol") in high_beta_symbols)
+                    logger.info(f"Off-hours high-beta check: {hb_mv / pv:.1%} ({len(high_beta_symbols)} symbols loaded)")
+                    if high_beta_trades:
+                        total_trim = sum(t.get("qty", 0) for t in high_beta_trades)
+                        symbols = ", ".join([t.get("symbol", "?") for t in high_beta_trades])
+                        logger.warning(
+                            f"OFF-HOURS HIGH-BETA BREACH: {total_trim} shares to trim across {symbols}. "
+                            "Trim will execute at next market open."
+                        )
+            except Exception as e:
+                logger.warning(f"Off-hours high-beta check failed: {e}")
             return
 
         # If cash is negative, force cash raise before any new buys
@@ -1189,7 +1373,7 @@ class STONKAIBot:
                 "current_price": p.get("current", 0),
                 "market_value": p.get("market_value", 0),
                 "sector": p.get("sector", "Other"),
-                "entry_date": self.thesis_manager.theses.get(p["symbol"], {}).get("entry_date", ""),
+                "entry_date": p.get("entry_date") or self.thesis_manager.theses.get(p["symbol"], {}).get("entry_date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
             }
             for p in portfolio_data.get("positions", [])
             if p.get("symbol")
@@ -1204,8 +1388,9 @@ class STONKAIBot:
         exit_trades = []
         exit_trades.extend(self.risk_engine.check_exits(portfolio_data))
         exit_trades.extend(self.risk_engine.check_concentration(portfolio_data))
-        # High-beta basket trim is intentionally NOT wired here yet; the first version
-        # only blocks new high-beta buys. Trim logic lives in risk_engine for later.
+        # Symmetric high-beta cap enforcement: trim existing high-beta positions
+        # when the basket exceeds its cap, then block new buys until compliant.
+        exit_trades.extend(self.risk_engine.check_high_beta_basket(portfolio_data, high_beta_symbols))
         exit_trades.extend(self.thesis_manager.check_thesis_exits(portfolio_data, self._signals))
 
         for trade in exit_trades:
@@ -1257,9 +1442,15 @@ class STONKAIBot:
         elif self._regime == "RISK_OFF":
             _min_hold_days = 1
         else:
-            _min_hold_days = 1   # alpha: cut losers fast, recycle into STRONG_NOW
+            _min_hold_days = 2  # RISK_ON: 2-day minimum hold to reduce intraday churn
+
+        # Track which symbols have already had an exit attempt this cycle
+        # to prevent multiple overlapping exit rules firing on the same position.
+        _exited_today = set()
 
         for sym in list(self._positions.keys()):
+            if sym in _exited_today:
+                continue
             pos = self._positions[sym]
             _days = pos.get("_days_held", 0)
 
@@ -1267,18 +1458,21 @@ class STONKAIBot:
             if self._regime == "CRISIS" and sym in _crisis_exit_symbols:
                 logger.info(f"🚨 CRISIS exit: {sym} readiness < 70 (held {_days} days)")
                 self._exit_position(sym, reason="crisis_readiness_below_70")
+                _exited_today.add(sym)
                 continue
 
             # Thesis broken: readiness < 40 = exit immediately, no holding period
             if sym in _thesis_broken_symbols:
                 logger.info(f"💀 Thesis exit: {sym} readiness below 40 (held {_days} days) — immediate exit")
                 self._exit_position(sym, reason="thesis_broken_below_40")
+                _exited_today.add(sym)
                 continue
 
             # Standard readiness-based exit (respecting regime-aware min hold)
             if _days >= _min_hold_days and sym in _low_readiness_symbols:
                 logger.info(f"🔄 Exit signal: {sym} readiness dropped below 55 (held {_days} days, min hold {_min_hold_days})")
                 self._exit_position(sym, reason="readiness_below_55")
+                _exited_today.add(sym)
 
         # 1c. Flat exit: free dead money capital from positions going nowhere
         # If held >= 5 days AND price within ±3% of entry AND readiness < 70, exit
@@ -1286,6 +1480,8 @@ class STONKAIBot:
         _flat_exit_min_days = 7 if self._regime == "RISK_ON" else 5
         if self._regime != "CRISIS":  # CRISIS already handles fast exits
             for sym in list(self._positions.keys()):
+                if sym in _exited_today:
+                    continue
                 pos = self._positions.get(sym, {})
                 _days = pos.get("_days_held", 0)
                 if _days < _flat_exit_min_days:
@@ -1307,20 +1503,34 @@ class STONKAIBot:
                             if _readiness < 70:  # Not strong enough to justify holding dead money
                                 logger.info(f"💤 Flat exit: {sym} held {_days} days, moved only {_move_pct:.1f}%, readiness {_readiness:.0f}")
                                 self._exit_position(sym, reason="flat_dead_money")
-                                continue
+                                _exited_today.add(sym)
 
-        # Hard cut: anything down -5% gets exited regardless of holding period or flatness
+        # Hard cut: anything down -3% gets exited regardless of holding period or flatness
         for sym in list(self._positions.keys()):
+            if sym in _exited_today:
+                continue
             pos = self._positions.get(sym, {})
             _entry = pos.get("avg_entry") or pos.get("cost_basis", 0)
             _current = pos.get("current_price", 0) or (pos.get("market_value", 0) / pos.get("qty", 1))
             if _entry > 0 and _current > 0:
                 _loss_pct = (_current - _entry) / _entry * 100
-                if _loss_pct <= -5.0:
-                    logger.info(f"🛑 Hard cut: {sym} down {_loss_pct:.1f}% — hitting -5% limit")
-                    self._exit_position(sym, reason="hard_stop_5pct")
-                    continue
-        # 1d. Cash-raising: if cash is below the dynamic floor, trim weakest positions
+                if _loss_pct <= -3.0:
+                    logger.info(f"🛑 Hard cut: {sym} down {_loss_pct:.1f}% — hitting -3% limit")
+                    self._exit_position(sym, reason="hard_stop_3pct")
+                    _exited_today.add(sym)
+
+        # 1d. Max-hold exit: prevent long-term bag-holding (14+ days bucket was deeply unprofitable)
+        for sym in list(self._positions.keys()):
+            if sym in _exited_today:
+                continue
+            pos = self._positions.get(sym, {})
+            _days = pos.get("_days_held", 0)
+            if _days >= 14:
+                logger.info(f"⏰ Max-hold exit: {sym} held {_days} days — recycle capital")
+                self._exit_position(sym, reason="max_hold_14d")
+                _exited_today.add(sym)
+
+        # 1e. Cash-raising: if cash is below the dynamic floor, trim weakest positions
         cash_raise_trades = self.risk_engine.check_cash_raise(portfolio_data, self._signals)
         for trade in cash_raise_trades:
             self._execute_sell(trade, portfolio_data)
@@ -1427,7 +1637,7 @@ class STONKAIBot:
             logger.info(f"🚫 MAX_POSITIONS ceiling ({MAX_POSITIONS}) reached: {len(current_symbols)} held. No new entries until positions exit.")
             return
 
-        top_signals = self._signals[: self.risk_engine.config.top_signal_count]
+        top_signals = sorted(self._signals, key=lambda s: s.get("readiness_score", 0), reverse=True)[: self.risk_engine.config.top_signal_count]
 
         # ALIGN BOT TO WATCHLIST: only buy symbols in the curated watchlist
         watchlist_symbols = self._load_watchlist_symbols()
@@ -1463,7 +1673,7 @@ class STONKAIBot:
                 readiness = sig.get("readiness_score", 0)
                 if readiness < _risk_off_min_readiness:
                     continue
-                if not self._is_entry_eligible_for_mode(sig):
+                if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
                     continue
 
                 # CRISIS check
@@ -1529,6 +1739,18 @@ class STONKAIBot:
                 readiness = sig.get("readiness_score", 0)
                 multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
                 multiplier *= self._strategy_sizing_cap(strategy_type)
+                # Scale by hard confirmation count (2026-07-08)
+                _confirms = sig.get("confirmations", {})
+                _hard = sum(1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed", "options_confirmed", "relvol_confirmed") if _confirms.get(k))
+                if _hard >= 3:
+                    _hm = 1.0
+                elif _hard == 2:
+                    _hm = 0.75
+                elif _hard == 1:
+                    _hm = 0.5
+                else:
+                    _hm = 0.33
+                multiplier *= _hm
                 if multiplier <= 0:
                     continue
                 adjusted_qty = max(1, int(sizing.qty * multiplier))
@@ -1560,7 +1782,7 @@ class STONKAIBot:
                 symbol = sig["symbol"]
                 if symbol in current_symbols:
                     continue
-                if not self._is_entry_eligible_for_mode(sig):
+                if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
                     continue
 
                 # Regime-based entry gate
@@ -1634,6 +1856,18 @@ class STONKAIBot:
                 multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
                 strategy_type = sig.get("strategy_type", "momentum")
                 multiplier *= self._strategy_sizing_cap(strategy_type)
+                # Scale by hard confirmation count (2026-07-08)
+                _confirms = sig.get("confirmations", {})
+                _hard = sum(1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed", "options_confirmed", "relvol_confirmed") if _confirms.get(k))
+                if _hard >= 3:
+                    _hm = 1.0
+                elif _hard == 2:
+                    _hm = 0.75
+                elif _hard == 1:
+                    _hm = 0.5
+                else:
+                    _hm = 0.33
+                multiplier *= _hm
                 if multiplier <= 0:
                     continue
                 adjusted_qty = max(1, int(sizing.qty * multiplier))
@@ -1667,6 +1901,59 @@ class STONKAIBot:
 
         # Hard position cap: only top 12 high-conviction ideas
         entry_candidates = entry_candidates[:12]
+        # DIP BUYING OPPORTUNITY: broad market pullback + strong name down with us
+        # Only active in RISK_ON regime, capped at 1 per session, half normal size.
+        if self._regime == "RISK_ON" and self._dip_buys_today < DIP_MAX_DAILY_POSITIONS:
+            for sig in top_signals:
+                if not sig.get("dip_opportunity", False):
+                    continue
+                symbol = sig["symbol"]
+                if symbol in current_symbols:
+                    continue
+                if sig.get("tier") != "STRONG_NOW":
+                    continue
+                price = self.alpaca.get_latest_quote(symbol)
+                if not price or price <= 0:
+                    continue
+                _tier_max_pct = self._tier_max_position_pct("STRONG_NOW", self.risk_engine.config.max_single_position_pct)
+                sizing = self.risk_engine.size_buy(
+                    symbol=symbol,
+                    price=price,
+                    atr=sig.get("atr14", price * 0.02),
+                    portfolio_data=portfolio_data,
+                    current_positions=current_positions,
+                    signal_score=sig.get("total_score", 0),
+                    max_position_pct_override=_tier_max_pct,
+                )
+                if sizing.blocked:
+                    continue
+                adjusted_qty = max(1, int(sizing.qty * 0.5))
+                cost = adjusted_qty * price
+                cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
+                if cost > (portfolio_data["account"]["cash"] - cash_floor):
+                    adjusted_qty = max(0, int((portfolio_data["account"]["cash"] - cash_floor) / price))
+                    cost = adjusted_qty * price
+                if adjusted_qty <= 0:
+                    continue
+                if self._high_beta_buy_blocked(symbol, cost, portfolio_data, high_beta_symbols):
+                    continue
+                readiness_score = sig.get("readiness_score", 0)
+                reason_text = "Dip buy (SPY pullback, readiness " + str(round(readiness_score, 1)) + ") - " + sizing.reason
+                trade = {
+                    "symbol": symbol,
+                    "qty": adjusted_qty,
+                    "action": "BUY",
+                    "reason": reason_text,
+                    "intended_notional": cost,
+                    "readiness_score": readiness_score,
+                    "tier": "STRONG_NOW",
+                    "is_dip_buy": True,
+                }
+                entry_candidates.append(trade)
+                self._dip_buys_today += 1
+                logger.info(f"DIP BUY candidate {symbol}: {adjusted_qty} shares @ ${price:.2f}")
+                break
+
         entry_candidates.sort(key=lambda t: t.get("readiness_score", 0), reverse=True)
 
         # Execute buys in readiness order
@@ -1705,7 +1992,7 @@ class STONKAIBot:
                 continue
             sig = signal_map[symbol]
             # Use mode-aware entry eligibility for averaging in too
-            if not self._is_entry_eligible_for_mode(sig):
+            if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
                 continue
 
             pl_pct = pos.get("unrealized_plpc", 0) or 0.0
@@ -1718,7 +2005,9 @@ class STONKAIBot:
             if price is None or price <= 0:
                 continue
 
-            avg_in_cap = 0.08 if self.alpaca.is_paper() else self.risk_engine.config.max_single_position_pct
+            _tier = sig.get("tier", "NOW")
+            _tier_max_pct = self._tier_max_position_pct(_tier, self.risk_engine.config.max_single_position_pct)
+            avg_in_cap = _tier_max_pct
             sizing = self.risk_engine.size_average_in(
                 symbol=symbol,
                 price=price,
@@ -1748,7 +2037,33 @@ class STONKAIBot:
 
     def _execute_sell(self, trade: Dict, portfolio_data: Dict):
         symbol = trade["symbol"]
-        qty = trade["qty"]
+        requested_qty = trade["qty"]
+
+        # Hard guard: never short-sell. Only sell what we actually own long.
+        long_qty = 0
+        positions = portfolio_data.get("positions", []) if portfolio_data else []
+        for pos in positions:
+            if pos.get("symbol") == symbol:
+                q = pos.get("qty", 0)
+                if isinstance(q, (int, float)) and q > 0:
+                    long_qty = int(q)
+                break
+        # Fallback to internal _positions if portfolio_data was a stub
+        if long_qty <= 0 and hasattr(self, "_positions"):
+            pos = self._positions.get(symbol, {})
+            q = pos.get("qty", 0)
+            if isinstance(q, (int, float)) and q > 0:
+                long_qty = int(q)
+        if long_qty <= 0:
+            logger.warning(f"BLOCKED SELL: no long position in {symbol}; refusing to short")
+            return
+        qty = min(requested_qty, long_qty)
+        if qty <= 0:
+            logger.warning(f"BLOCKED SELL: requested {requested_qty} {symbol} but only {long_qty} long available")
+            return
+        if qty != requested_qty:
+            logger.warning(f"TRIMMED SELL: requested {requested_qty} {symbol}, selling only {qty}")
+
         # Dynamic TWAP threshold for sells too
         twap_threshold = 100
         sig = next((s for s in self._signals if s.get("symbol") == symbol), None)
@@ -1772,6 +2087,15 @@ class STONKAIBot:
         try:
             order_id = self.alpaca.submit_order(symbol, qty, "sell", dry_run=self._dry_run, twap_threshold=twap_threshold)
             self._log_trade(trade, order_id, portfolio_data)
+            log_alert(
+                subtype="exit",
+                title=f"Sold {symbol}",
+                description=f"{qty} shares — {trade.get('reason', '')}",
+                symbol=symbol,
+                severity="warning",
+                rationale=trade.get('reason', ''),
+                bot_response="Position closed as planned by risk rules."
+            )
             logger.info(f"EXECUTED SELL: {qty} {symbol} ({trade['reason']})")
         except Exception as e:
             logger.error(f"Failed to sell {symbol}: {e}", exc_info=True)
@@ -1880,9 +2204,37 @@ class STONKAIBot:
         sig = next((s for s in self._signals if s.get("symbol") == symbol), None)
         if sig and sig.get("avg_volume", 0) > 0:
             twap_threshold = max(100, int(sig["avg_volume"] * 0.001))
+        # Extended-hours entries: smaller size, liquidity/spread checks, explicit flag
+        is_ext_hours = False
+        if self.risk_engine.config.extended_hours_enabled and self.alpaca._is_extended_hours() and not self.alpaca._is_us_market_hours():
+            if sig and sig.get("avg_volume", 0) >= self.risk_engine.config.extended_hours_min_avg_volume:
+                spread = self.alpaca._get_spread_pct(symbol)
+                if spread <= self.risk_engine.config.extended_hours_max_spread_pct:
+                    is_ext_hours = True
+                    qty = max(1, int(qty * 0.5))  # half size for extended hours
+                    trade["qty"] = qty
+                    trade["reason"] = trade.get("reason", "") + " | extended-hours"
+                    logger.info(f"EXTENDED HOURS entry {symbol}: half size {qty}, spread {spread:.2%}")
+                else:
+                    logger.info(f"EXTENDED HOURS SKIP {symbol}: spread {spread:.2%} too wide")
+                    return
+            else:
+                logger.info(f"EXTENDED HOURS SKIP {symbol}: avg volume {sig.get('avg_volume', 0)} below threshold")
+                return
         try:
-            order_id = self.alpaca.submit_tiered_order(symbol, qty, "buy", tier=tier, dry_run=self._dry_run, twap_threshold=twap_threshold)
+            order_id = self.alpaca.submit_tiered_order(symbol, qty, "buy", tier=tier, dry_run=self._dry_run, twap_threshold=twap_threshold, extended_hours=is_ext_hours)
             self._log_trade(trade, order_id, portfolio_data)
+            log_alert(
+                subtype="entry",
+                title=f"Bought {symbol}",
+                description=f"{qty} shares @ ${price:.2f} — {trade.get('reason', '')}",
+                symbol=symbol,
+                value=price,
+                value_label="Entry price",
+                severity="info",
+                rationale=trade.get('reason', ''),
+                bot_response=f"Position opened. Target: trim at +{self.risk_engine.config.trim_profit_pct*100:.0f}%, full exit at +{self.risk_engine.config.full_exit_profit_pct*100:.0f}%."
+            )
             logger.info(f"EXECUTED BUY: {qty} {symbol} tier={tier} ({trade['reason']})")
             # Clear any previous failure flag for this symbol
             self._failed_buy_symbols.discard(symbol)
@@ -1937,7 +2289,7 @@ class STONKAIBot:
         logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
         logger.info(f"Entry gate: readiness >= 77 AND >= 5 confirmations AND above_ema")
         logger.info(f"Position caps: 12% STRONG_NOW / 8% other tiers; 25% sector cap")
-        logger.info(f"Exits: -5% hard cut + ATR trailing stops + readiness < 40")
+        logger.info(f"Exits: -3% hard cut + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON)")
         logger.info(f"Drawdown halt: {self.risk_engine.config.new_entry_max_drawdown_pct:.0%}")
         logger.info("=" * 70)
 
@@ -1959,7 +2311,7 @@ class STONKAIBot:
 import logging as _guard_logging
 _original_submit_order = AlpacaClient.submit_order
 
-def _guarded_submit_order_v2(self, symbol, qty, side, dry_run=False, use_limit=True, twap_threshold=100):
+def _guarded_submit_order_v2(self, symbol, qty, side, dry_run=False, use_limit=True, twap_threshold=100, extended_hours=False):
     if side.lower() == 'sell' and not dry_run:
         try:
             r = self.session.get(
@@ -1990,7 +2342,7 @@ def _guarded_submit_order_v2(self, symbol, qty, side, dry_run=False, use_limit=T
                 "symbol": symbol,
             })()
             return blocked
-    return _original_submit_order(self, symbol, qty, side, dry_run=dry_run, use_limit=use_limit, twap_threshold=twap_threshold)
+    return _original_submit_order(self, symbol, qty, side, dry_run=dry_run, use_limit=use_limit, twap_threshold=twap_threshold, extended_hours=extended_hours)
 
 AlpacaClient.submit_order = _guarded_submit_order_v2
 # --- END 403 GUARD ---
@@ -1999,11 +2351,11 @@ AlpacaClient.submit_order = _guarded_submit_order_v2
 # --- Market-order sell wrapper (re-applied) ---
 _original_build_payload = AlpacaClient._build_order_payload
 
-def _market_on_sell_payload(self, symbol, qty, side, use_limit=True):
+def _market_on_sell_payload(self, symbol, qty, side, use_limit=True, extended_hours=False):
     # Force market orders for all sells (stops/exits must execute; limit orders can go stale above market)
     if side.lower() == 'sell':
-        return _original_build_payload(self, symbol, qty, side, use_limit=False)
-    return _original_build_payload(self, symbol, qty, side, use_limit=use_limit)
+        return _original_build_payload(self, symbol, qty, side, use_limit=False, extended_hours=extended_hours)
+    return _original_build_payload(self, symbol, qty, side, use_limit=use_limit, extended_hours=extended_hours)
 
 AlpacaClient._build_order_payload = _market_on_sell_payload
 

@@ -26,11 +26,17 @@ from typing import Dict, List, Optional
 from alpaca_data import get_data_hub
 from readiness_score import ENTRY_MIN_CONFIRMATIONS, compute_confirmation_count
 from stonk_utils import atomic_write_json
+import argparse
+import logging
+import subprocess
+logger = logging.getLogger(__name__)
 
 TIER_DISPLAY_MAP = {'STRONG_NOW': 'PRIME', 'NOW': 'BUILDING', 'WATCH': 'WATCHING', 'MONITOR': 'TRACKING'}
 
 # High-beta basket config (matches risk_engine.py / trading_bot.py)
 MAX_HIGH_BETA_DEPLOYED_PCT = 0.35
+# Opportunistic headroom: exceptional PRIME candidates can queue above the steady cap.
+OPPORTUNISTIC_HIGH_BETA_CAP = 0.40
 HIGH_BETA_SPY_BETA_THRESHOLD = 1.2
 HIGH_BETA_SPY_CORR_THRESHOLD = 0.70
 CORRELATION_REPORT_PATH = Path("/var/www/hedge-fund-website/correlation_report.json")
@@ -73,7 +79,8 @@ def load_high_beta_symbols() -> set:
             if (beta is not None and beta > HIGH_BETA_SPY_BETA_THRESHOLD) or (corr is not None and corr > HIGH_BETA_SPY_CORR_THRESHOLD):
                 basket.add(symbol)
         return basket
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
         return set()
 
 # Paths
@@ -105,7 +112,8 @@ def load_previous_watchlist() -> List[str]:
         with open(WATCHLIST_CHANGES_FILE) as f:
             data = json.load(f)
         return data.get("new_watchlist", [])
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
         return []
 
 
@@ -121,7 +129,8 @@ def load_previous_tiers() -> Dict[str, str]:
             for s in symbols:
                 tiers[s] = tier_name
         return tiers
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
         return {}
 
 
@@ -146,7 +155,8 @@ def load_tier_history() -> List[Dict]:
     try:
         with open(TIER_HISTORY_FILE) as f:
             return json.load(f)
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
         return []
 
 
@@ -188,6 +198,7 @@ def detect_tier_changes(
 
 
 def build_watchlist(signals: List[Dict]) -> Dict:
+
     """Build the watchlist update payload from ranked signals.
     Always fills to MAX_WATCHLIST_SIZE by backfilling from the universe."""
     from signal_engine import SignalEngine, DEFAULT_UNIVERSE, COMPANY_NAMES
@@ -198,13 +209,98 @@ def build_watchlist(signals: List[Dict]) -> Dict:
 
     current_symbols = [s["symbol"] for s in top]
 
+    # Load held positions so they stay visible on the watchlist
+    held_symbols = set()
+    try:
+        with open('/opt/stonk-ai/portfolio_data.json') as _pf:
+            _portfolio = json.load(_pf)
+        held_symbols = {p["symbol"] for p in _portfolio.get("positions", []) if p.get("symbol")}
+    except Exception as e:
+        logger.warning(f"Portfolio load failed: {type(e).__name__}: {e}")
+        pass
+
+    # Always include held positions in the watchlist
+    # Build a lookup of all signals for held positions
+    _all_signals_lookup = {s["symbol"]: s for s in signals}
+
+    # Load previous watchlist to reuse real signal data for held positions
+    _prev_prices = {}
+    try:
+        # REMOVED inner json import - use module-level json
+        with open("/var/www/hedge-fund-website/ai_watchlist_live.json") as _f:
+            _prev = json.load(_f)
+        _prev_prices = _prev.get("prices", {})
+        # Only reuse if previous data has real readiness_score (>0)
+        _prev_prices = {k: v for k, v in _prev_prices.items() if v.get("readiness_score", 0) > 0}
+    except Exception as e:
+        logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
+        pass
+    for symbol in held_symbols:
+        if symbol not in current_symbols:
+            # Use actual signal data if available, otherwise reuse previous real data
+            sig = _all_signals_lookup.get(symbol, {})
+            if sig:
+                # Copy signal data but mark as held
+                held_sig = dict(sig)
+                held_sig["tier_reason"] = "Held position — kept visible"
+                held_sig["entry_eligible"] = False
+                top.append(held_sig)
+            elif symbol in _prev_prices:
+                # Reuse previous real signal data (prevents 0.0 flapping when signal engine temporarily drops held positions)
+                held_sig = dict(_prev_prices[symbol])
+                held_sig["tier_reason"] = "Held position — kept visible"
+                held_sig["entry_eligible"] = False
+                top.append(held_sig)
+            else:
+                # Last-resort placeholder (no signal data found and no previous data to reuse)
+                top.append({
+                    "symbol": symbol,
+                    "total_score": 0.0,
+                    "readiness_score": 0.0,
+                    "momentum_score": 0.0,
+                    "quality_score": 0.0,
+                    "risk_score": 0.0,
+                    "regime_score": 0.0,
+                    "tier": "MONITOR",
+                    "entry_eligible": False,
+                    "confirmation_count": 0,
+                    "tier_reason": "Held position — kept visible",
+                    "rank": 0,
+                    "price": 0.0,
+                    "atr14": 0.0,
+                    "rsi14": 50.0,
+                    "momentum_20d": 0.0,
+                    "momentum_50d": 0.0,
+                    "volatility_20d": 0.0,
+                    "avg_volume": 0,
+                    "spy_corr_20d": 0.0,
+                    "ai_score": None,
+                    "sector": SignalEngine._sector(symbol),
+                    "company": COMPANY_NAMES.get(symbol, symbol),
+                    "confirmations": {},
+                })
+            current_symbols.append(symbol)
+
+    # ── Validation: held positions must survive ──
+    try:
+        with open('/opt/stonk-ai/portfolio_data.json') as _pf:
+            _portfolio_check = json.load(_pf)
+        _held_check = {p["symbol"] for p in _portfolio_check.get("positions", []) if p.get("symbol")}
+        _watchlist_syms = {s["symbol"] for s in top}
+        _missing = _held_check - _watchlist_syms
+        if _missing:
+            logger.error(f"HELD_POSITION_MISSING: {_missing} — portfolio has them but watchlist dropped them")
+    except Exception as e:
+        logger.warning(f"Held position validation failed: {type(e).__name__}: {e}")
+        pass
+
     # Backfill to ensure exactly MAX_WATCHLIST_SIZE names
     signal_symbols = set(current_symbols)
     backfill_syms = []
     for symbol in DEFAULT_UNIVERSE:
         if len(backfill_syms) >= MAX_WATCHLIST_SIZE - len(top):
             break
-        if symbol in signal_symbols:
+        if symbol in signal_symbols or symbol in held_symbols:
             continue
         backfill_syms.append(symbol)
 
@@ -256,6 +352,15 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         print(f"Extended hours data for {len(ext_hours_data)} symbols")
     except Exception as _e:
         print(f"Warning: could not fetch extended hours data: {_e}")
+
+    # ── Fetch live snapshot data for intraday range/high/low/volume ──
+    snap_data = {}
+    try:
+        _hub_snap = get_data_hub()
+        snap_data = _hub_snap.get_snapshots(current_symbols)
+        print(f"Snapshot data for {len(snap_data)} symbols")
+    except Exception as _e:
+        print(f"Warning: could not fetch snapshot data: {_e}")
 
     previous = load_previous_watchlist()
     previous_tiers = load_previous_tiers()
@@ -321,7 +426,16 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         # Compute action-based tier
         entry_eligible = s.get("entry_eligible", False)
         conf_count = compute_confirmation_count(s.get("confirmations", {}))
-        tier_reason = s.get("tier_reason", f"Readiness {readiness:.1f}")
+        raw_reason = s.get("tier_reason", f"Readiness {readiness:.1f}")
+        tier_reason = raw_reason
+        if tier_reason.startswith("STRONG_NOW:"):
+            tier_reason = "PRIME:" + tier_reason[len("STRONG_NOW:"):]
+        elif tier_reason.startswith("NOW:"):
+            tier_reason = "BUILDING:" + tier_reason[len("NOW:"):]
+        elif tier_reason.startswith("WATCH:"):
+            tier_reason = "WATCHING:" + tier_reason[len("WATCH:"):]
+        elif tier_reason.startswith("MONITOR:"):
+            tier_reason = "TRACKING:" + tier_reason[len("MONITOR:"):]
         tier = assign_tier(s.get("tier", "MONITOR"), entry_eligible)
         # Build council note from action tier
         if not is_scored:
@@ -354,8 +468,14 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "display_tier": tier,
         }
 
-        daily_vwap = s.get("daily_vwap")
-        prev_close = s.get("prev_close")
+        snap = snap_data.get(symbol, {})
+        daily_vwap = s.get("daily_vwap") or snap.get("daily_vwap")
+        daily_high = snap.get("daily_high") or s.get("daily_high")
+        daily_low = snap.get("daily_low") or s.get("daily_low")
+        prev_close = s.get("prev_close") or snap.get("prev_close")
+        if snap.get("daily_volume"):
+            volume = snap["daily_volume"]
+            avg_volume = s.get("avg_volume", 0)
         # If we have prev_close, compute real change from it
         if prev_close and prev_close > 0 and price:
             change_pct = round((price - prev_close) / prev_close * 100, 2)
@@ -387,11 +507,33 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "readiness_score": readiness,
             "momentum_score": s.get("momentum_score", 0),
             "daily_vwap": daily_vwap,
+            "daily_high": daily_high,
+            "daily_low": daily_low,
             "prev_close": prev_close,
             "intraday_vwap": s.get("intraday_vwap"),
             "intraday_vol_ratio": s.get("intraday_vol_ratio"),
+            "momentum_5m_up": s.get("momentum_5m_up", False),
+            "volume_5m_surge": s.get("volume_5m_surge", False),
+            "price_above_5m_vwap": s.get("price_above_5m_vwap", False),
+            "intraday_5m_return": s.get("intraday_5m_return"),
+            "intraday_5m_vwap": s.get("intraday_5m_vwap"),
             "options_implied_vol": s.get("options_implied_vol"),
             "options_volume": s.get("options_volume"),
+            "options_call_put_ratio": s.get("options_call_put_ratio"),
+            "options_unusual_volume": s.get("options_unusual_volume", False),
+            "near_term_bullish_flow": s.get("near_term_bullish_flow", False),
+            "options_flow_score": s.get("options_flow_score", 50.0),
+            "bid_ask_spread_pct": s.get("bid_ask_spread_pct"),
+            "wide_spread": s.get("wide_spread", False),
+            "spread_ok": s.get("spread_ok", True),
+            "bid_ask_imbalance": s.get("bid_ask_imbalance"),
+            "bid_ask_bullish": s.get("bid_ask_bullish", False),
+            "has_upcoming_dividend": s.get("has_upcoming_dividend", False),
+            "has_upcoming_split": s.get("has_upcoming_split", False),
+            "has_upcoming_merger": s.get("has_upcoming_merger", False),
+            "has_upcoming_spinoff": s.get("has_upcoming_spinoff", False),
+            "corporate_action_risk": s.get("corporate_action_risk", False),
+            "no_corporate_action_risk": not s.get("corporate_action_risk", False),
             "momentum_20d": s.get("momentum_20d"),
             "momentum_50d": s.get("momentum_50d"),
             "regime_score": s.get("regime_score"),
@@ -449,19 +591,17 @@ def build_watchlist(signals: List[Dict]) -> Dict:
                 continue
             mv = float(p.get("market_value", 0) or 0)
             portfolio_positions[sym] = {"market_value": mv, "weight": (mv / portfolio_value * 100) if portfolio_value else 0}
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
         pass
-
     # Target weight threshold: under this, a held eligible position is an "add" candidate
     ADD_WEIGHT_THRESHOLD = 6.0  # percent of portfolio
 
     # High-beta basket guard for Next Buys display
     high_beta_symbols = load_high_beta_symbols()
-    cash = portfolio.get("account", {}).get("cash", 0) if portfolio else 0
-    deployed = portfolio_value - cash
-    if deployed > 0:
+    if portfolio_value > 0:
         high_beta_mv = sum(p.get("market_value", 0) for p in portfolio.get("positions", []) if p.get("symbol") in high_beta_symbols)
-        high_beta_pct = high_beta_mv / deployed if deployed > 0 else 0.0
+        high_beta_pct = high_beta_mv / portfolio_value
     else:
         high_beta_pct = 0.0
 
@@ -472,26 +612,39 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             sector = _symbol_sector(p.get("symbol"))
             sector_exposures[sector] = sector_exposures.get(sector, 0.0) + p.get("market_value", 0)
 
+    # Precompute over-cap flag so held high-beta positions can surface it too
+    high_beta_over_cap = high_beta_pct > MAX_HIGH_BETA_DEPLOYED_PCT
+
     buy_candidates = []
     for symbol, pdata in prices.items():
         tier = pdata.get("signal_tier", "TRACKING")
         entry_eligible = pdata.get("entry_eligible", False)
         price = pdata.get("price", 0)
+        readiness = pdata.get("readiness_score", 0)
         held_info = portfolio_positions.get(symbol)
+        is_high_beta = symbol in high_beta_symbols
 
-        if symbol in high_beta_symbols and high_beta_pct >= MAX_HIGH_BETA_DEPLOYED_PCT:
-            status = "high_beta_blocked"
-            reason = f"High-beta basket at {high_beta_pct:.1%} (cap {MAX_HIGH_BETA_DEPLOYED_PCT:.1%})"
-        elif held_info:
+        if held_info:
             if entry_eligible and held_info.get("weight", 0) < ADD_WEIGHT_THRESHOLD:
                 status = "add"
                 reason = f"Held, underweight ({held_info['weight']:.1f}%) and still eligible"
+            elif is_high_beta and high_beta_over_cap:
+                status = "hold"
+                reason = f"Held at {held_info['weight']:.1f}% — high-beta basket over cap ({high_beta_pct:.1%})"
             else:
                 status = "hold"
                 reason = f"Held at {held_info['weight']:.1f}% — no add planned"
+        elif is_high_beta and high_beta_pct >= MAX_HIGH_BETA_DEPLOYED_PCT:
+            # Opportunistic headroom: exceptional PRIME candidates may queue up to the higher cap
+            if tier == "PRIME" and readiness >= 78 and high_beta_pct <= OPPORTUNISTIC_HIGH_BETA_CAP:
+                status = "queued"
+                reason = f"Queued (opportunistic high-beta, basket {high_beta_pct:.1%})"
+            else:
+                status = "high_beta_blocked"
+                reason = f"High-beta basket at {high_beta_pct:.1%} (cap {MAX_HIGH_BETA_DEPLOYED_PCT:.1%})"
         elif not entry_eligible:
             status = "not_ready"
-            reason = f"Readiness {pdata.get('readiness_score', 0):.1f} / {pdata.get('confirmation_count', 0)} confirmations"
+            reason = f"Readiness {readiness:.1f} / {pdata.get('confirmation_count', 0)} confirmations"
         elif tier not in ("PRIME",):
             status = "tier_too_low"
             reason = f"Tier {tier} below entry gate"
@@ -503,15 +656,22 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             reason = "Queued for next cycle"
         buy_candidates.append({
             "symbol": symbol,
-        "display_tier": TIER_DISPLAY_MAP.get(tier, tier),
-        "tier": tier,
+            "display_tier": TIER_DISPLAY_MAP.get(tier, tier),
+            "tier": tier,
             "status": status,
             "reason": reason,
-            "readiness_score": pdata.get("readiness_score", 0),
+            "readiness_score": readiness,
             "confirmation_count": pdata.get("confirmation_count", 0),
             "entry_eligible": entry_eligible,
             "weight_pct": held_info.get("weight", 0) if held_info else 0,
         })
+
+    # Unify buy_status/reason into each symbol's price dict so consumers don't need to cross-reference buy_candidates
+    candidate_status_by_symbol = {c["symbol"]: c for c in buy_candidates}
+    for symbol, pdata in prices.items():
+        cdata = candidate_status_by_symbol.get(symbol, {})
+        pdata["buy_status"] = cdata.get("status")
+        pdata["buy_status_reason"] = cdata.get("reason")
 
     update_log = {
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -549,8 +709,8 @@ def build_watchlist(signals: List[Dict]) -> Dict:
     }
 
 
-def write_outputs(payload: Dict):
-    """Write watchlist files for the website."""
+def write_outputs(payload: Dict, dry_run: bool = False):
+    """Write watchlist files for the website (or skip writes if dry_run)."""
     WATCHLIST_CHANGES_FILE.parent.mkdir(parents=True, exist_ok=True)
     LIVE_WATCHLIST_FILE.parent.mkdir(parents=True, exist_ok=True)
 
@@ -558,17 +718,32 @@ def write_outputs(payload: Dict):
     prices = live_data.get("prices", {})
     if len(prices) > MAX_WATCHLIST_SIZE:
         logger.warning(f"Watchlist has {len(prices)} symbols; truncating to {MAX_WATCHLIST_SIZE}")
-        # Sort by readiness (already in prices dict values as ai_score proxy) and keep top N
-        sorted_syms = sorted(prices.keys(), key=lambda s: prices[s].get("ai_score", 0), reverse=True)
-        live_data["prices"] = {s: prices[s] for s in sorted_syms[:MAX_WATCHLIST_SIZE]}
+        # Protect held positions from being dropped
+        held_symbols = set()
+        try:
+            with open('/opt/stonk-ai/portfolio_data.json') as _pf:
+                _portfolio = json.load(_pf)
+            held_symbols = {p["symbol"] for p in _portfolio.get("positions", []) if p.get("symbol")}
+        except Exception as e:
+            logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
+            pass
+        # Always keep held symbols; fill remaining slots by ai_score
+        non_held = [s for s in prices.keys() if s not in held_symbols]
+        non_held.sort(key=lambda s: prices[s].get("ai_score", 0), reverse=True)
+        remaining_slots = max(0, MAX_WATCHLIST_SIZE - len(held_symbols))
+        kept = list(held_symbols) + non_held[:remaining_slots]
+        live_data["prices"] = {s: prices[s] for s in kept}
         # Also truncate buy_candidates to symbols in kept prices if present
         if "buy_candidates" in live_data:
             live_data["buy_candidates"] = [c for c in live_data["buy_candidates"] if c.get("symbol") in live_data["prices"]]
 
-    with open(WATCHLIST_CHANGES_FILE, "w") as f:
-        json.dump(payload["watchlist_changes"], f, indent=2)
+    if dry_run:
+        print(f"[DRY RUN] Would write {WATCHLIST_CHANGES_FILE}")
+    else:
+        with open(WATCHLIST_CHANGES_FILE, "w") as f:
+            json.dump(payload["watchlist_changes"], f, indent=2)
 
-    # Also write canonical watchlist array for consumers expecting "watchlist" key
+    # Also write canonical watchlist array for consumers expecting \"watchlist\" key
     watchlist_prices = list(live_data["prices"].values())
     for sym, item in zip(live_data["prices"].keys(), watchlist_prices):
         item["symbol"] = sym
@@ -578,13 +753,16 @@ def write_outputs(payload: Dict):
 
     # Atomic write to /opt/stonk-ai/ so downstream consumers (monitor, heartbeat) stay in sync
     OPT_WATCHLIST_FILE = Path("/opt/stonk-ai/ai_watchlist_live.json")
-    try:
-        atomic_write_json(OPT_WATCHLIST_FILE, live_data, owner="stonkai")
-    except Exception as e:
-        print(f"⚠️ Failed to write opt watchlist file: {e}")
+    if dry_run:
+        print(f"[DRY RUN] Would write {LIVE_WATCHLIST_FILE} and {OPT_WATCHLIST_FILE}")
+    else:
+        try:
+            atomic_write_json(OPT_WATCHLIST_FILE, live_data, owner="stonkai")
+        except Exception as e:
+            print(f"⚠️ Failed to write opt watchlist file: {e}")
 
 
-def update_watchlist():
+def update_watchlist(dry_run: bool = False):
     print(f"\n🔄 Watchlist Sync — {datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')}")
     signals = load_signals()
     if not signals:
@@ -592,7 +770,7 @@ def update_watchlist():
         return
 
     payload = build_watchlist(signals)
-    write_outputs(payload)
+    write_outputs(payload, dry_run=dry_run)
 
     wc = payload["watchlist_changes"]
     print(f"📊 Watchlist: {wc['summary']['total']} symbols")
@@ -606,22 +784,30 @@ def update_watchlist():
     if wc.get("tier_changes"):
         for tc in wc["tier_changes"]:
             print(f"  {'⬆️' if tc['change_type'] == 'promote' else '⬇️'} {tc['symbol']}: {tc['from_tier']} → {tc['to_tier']} ({tc['reason']})")
-    print(f"💾 Written to {WATCHLIST_CHANGES_FILE} and {LIVE_WATCHLIST_FILE}\n")
+    if dry_run:
+        print(f"[DRY RUN] Skipped writing to {WATCHLIST_CHANGES_FILE} and {LIVE_WATCHLIST_FILE}\n")
+    else:
+        print(f"💾 Written to {WATCHLIST_CHANGES_FILE} and {LIVE_WATCHLIST_FILE}\n")
 
 
 def _record_heartbeat():
     try:
-        import subprocess
         subprocess.run(
             ["/usr/bin/python3", "/opt/stonk-ai/heartbeat_tracker.py", "dynamic_watchlist_manager"],
             check=False,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-    except Exception:
+    except Exception as e:
+        logger.warning(f"Silent error suppressed: {type(e).__name__}: {e}")
         pass
+def _parse_args():
+    parser = argparse.ArgumentParser(description="Dynamic Watchlist Manager")
+    parser.add_argument("--dry-run", action="store_true", help="Run without writing files")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    update_watchlist()
+    args = _parse_args()
+    update_watchlist(dry_run=args.dry_run)
     _record_heartbeat()

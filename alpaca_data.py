@@ -104,16 +104,22 @@ class AlpacaDataHub:
                 # Alpaca v2 snapshots returns symbols at top level (not nested under "snapshots")
                 snaps_dict = data.get("snapshots", data) if isinstance(data, dict) else {}
                 for sym, snap in snaps_dict.items():
-                    if not isinstance(snap, dict) or "dailyBar" not in snap and "latestQuote" not in snap:
+                    if not isinstance(snap, dict):
+                        continue
+                    # Accept either old format (dailyBar) or new flat daily_high/low + any trade/quote
+                    has_daily_data = "dailyBar" in snap or "daily_high" in snap or "daily_close" in snap
+                    has_trade_data = "latestTrade" in snap or (snap.get("latestTrade") and snap["latestTrade"].get("p"))
+                    has_quote_data = "latestQuote" in snap or (snap.get("latestQuote") and snap["latestQuote"].get("bp"))
+                    if not (has_daily_data or has_trade_data or has_quote_data):
                         continue
                     results[sym] = {
-                        "price": snap.get("latestTrade", {}).get("p") or snap.get("dailyBar", {}).get("c"),
-                        "daily_open": snap.get("dailyBar", {}).get("o"),
-                        "daily_high": snap.get("dailyBar", {}).get("h"),
-                        "daily_low": snap.get("dailyBar", {}).get("l"),
-                        "daily_close": snap.get("dailyBar", {}).get("c"),
-                        "daily_volume": snap.get("dailyBar", {}).get("v"),
-                        "daily_vwap": snap.get("dailyBar", {}).get("vw"),
+                        "price": snap.get("latestTrade", {}).get("p") or snap.get("dailyBar", {}).get("c") or snap.get("daily_close") or snap.get("price"),
+                        "daily_open": snap.get("dailyBar", {}).get("o") or snap.get("daily_open") or snap.get("price"),
+                        "daily_high": snap.get("dailyBar", {}).get("h") or snap.get("daily_high") or snap.get("price"),
+                        "daily_low": snap.get("dailyBar", {}).get("l") or snap.get("daily_low") or snap.get("price"),
+                        "daily_close": snap.get("dailyBar", {}).get("c") or snap.get("daily_close") or snap.get("price"),
+                        "daily_volume": snap.get("dailyBar", {}).get("v") or snap.get("daily_volume") or snap.get("volume") or (snap.get("minuteBar", {}).get("v") if isinstance(snap.get("minuteBar"), dict) else 0),
+                        "daily_vwap": snap.get("dailyBar", {}).get("vw") or snap.get("daily_vwap") or snap.get("minuteBar", {}).get("vw") if isinstance(snap.get("minuteBar"), dict) else (snap.get("vwap") or 0),
                         "prev_close": snap.get("prevDailyBar", {}).get("c"),
                         "minute_open": snap.get("minuteBar", {}).get("o"),
                         "minute_high": snap.get("minuteBar", {}).get("h"),
@@ -402,6 +408,36 @@ class AlpacaDataHub:
         market_close_utc = now.replace(hour=21, minute=0, second=0, microsecond=0)
         return market_open_utc <= now <= market_close_utc
 
+    def _is_us_market_hours(self) -> bool:
+        now = datetime.now(timezone.utc)
+        if now.weekday() >= 5:
+            return False
+        market_open = now.replace(hour=13, minute=30, second=0, microsecond=0)
+        market_close = now.replace(hour=20, minute=0, second=0, microsecond=0)
+        return market_open <= now <= market_close
+
+    def _is_extended_hours(self) -> bool:
+        now = datetime.now(timezone.utc)
+        if now.weekday() >= 5:
+            return False
+        t = now.time()
+        premarket = (t >= time(8, 0) and t < time(13, 30))
+        afterhours = (t >= time(20, 0) and t <= time(23, 59, 59))
+        return premarket or afterhours
+
+    def _get_spread_pct(self, symbol: str) -> float:
+        try:
+            q = self.get_latest_quote(symbol, full=True)
+            if not q:
+                return 1.0
+            bid = q.get('bid_price', 0) or q.get('bp', 0)
+            ask = q.get('ask_price', 0) or q.get('ap', 0)
+            if bid and ask and bid > 0:
+                return (ask - bid) / bid
+        except Exception:
+            pass
+        return 1.0
+
     def get_market_clock(self) -> Optional[Dict]:
         """Get detailed market clock info."""
         import requests
@@ -459,8 +495,9 @@ class AlpacaDataHub:
         today = now.strftime("%Y-%m-%d")
         result = {sym: {} for sym in symbols}
         
-        # Get prev_close and latest price from snapshot for fallback
+        # Get prev_close, regular-session close, and latest price from snapshot
         prev_closes = {}
+        daily_closes = {}
         latest_prices = {}
         try:
             snaps = self.get_snapshots(symbols)
@@ -468,6 +505,9 @@ class AlpacaDataHub:
                 pc = snap.get("prev_close")
                 if pc:
                     prev_closes[sym] = pc
+                dc = snap.get("daily_close")
+                if dc:
+                    daily_closes[sym] = dc
                 price = snap.get("price")
                 if price:
                     latest_prices[sym] = price
@@ -490,7 +530,21 @@ class AlpacaDataHub:
         try:
             r = requests.get(url, params=pre_params, headers=headers, timeout=20)
             if r.status_code == 200:
-                for sym, bars in r.json().get("bars", {}).items():
+                pre_json = r.json()
+                bars_payload = pre_json.get("bars", {})
+                # Alpaca paginates large symbol lists; fetch all pages.
+                page_token = pre_json.get("next_page_token")
+                while page_token:
+                    page_params = dict(pre_params, page_token=page_token)
+                    pr = requests.get(url, params=page_params, headers=headers, timeout=20)
+                    if pr.status_code != 200:
+                        break
+                    pr_json = pr.json()
+                    for sym, bars in pr_json.get("bars", {}).items():
+                        if bars:
+                            bars_payload.setdefault(sym, []).extend(bars)
+                    page_token = pr_json.get("next_page_token")
+                for sym, bars in bars_payload.items():
                     if not bars:
                         continue
                     open_price = bars[0]["o"]
@@ -500,9 +554,10 @@ class AlpacaDataHub:
                     result[sym]["premarket_open"] = open_price
                     result[sym]["premarket_close"] = close_price
                     result[sym]["premarket_volume"] = volume
-                    # Pre-market change from first bar open to last bar close
-                    if open_price and close_price and open_price > 0:
-                        result[sym]["premarket_change_pct"] = round((close_price - open_price) / open_price * 100, 2)
+                    # Pre-market change is vs yesterday's close (the "gap"), not vs session open
+                    pc = prev_closes.get(sym)
+                    if pc and close_price and pc > 0:
+                        result[sym]["premarket_change_pct"] = round((close_price - pc) / pc * 100, 2)
         except Exception as e:
             logger.debug(f"Pre-market bars error: {e}")
         
@@ -520,7 +575,21 @@ class AlpacaDataHub:
         try:
             r = requests.get(url, params=ah_params, headers=headers, timeout=20)
             if r.status_code == 200:
-                for sym, bars in r.json().get("bars", {}).items():
+                ah_json = r.json()
+                bars_payload = ah_json.get("bars", {})
+                # Alpaca paginates large symbol lists; fetch all pages.
+                page_token = ah_json.get("next_page_token")
+                while page_token:
+                    page_params = dict(ah_params, page_token=page_token)
+                    pr = requests.get(url, params=page_params, headers=headers, timeout=20)
+                    if pr.status_code != 200:
+                        break
+                    pr_json = pr.json()
+                    for sym, bars in pr_json.get("bars", {}).items():
+                        if bars:
+                            bars_payload.setdefault(sym, []).extend(bars)
+                    page_token = pr_json.get("next_page_token")
+                for sym, bars in bars_payload.items():
                     if not bars:
                         continue
                     open_price = bars[0]["o"]
@@ -530,8 +599,10 @@ class AlpacaDataHub:
                     result[sym]["afterhours_open"] = open_price
                     result[sym]["afterhours_close"] = close_price
                     result[sym]["afterhours_volume"] = volume
-                    if close_price and volume > 0:
-                        result[sym]["afterhours_change_pct"] = round((close_price - open_price) / open_price * 100, 2) if open_price else None
+                    # After-hours change is vs today's regular-session close (dailyBar.c)
+                    dc = daily_closes.get(sym) or prev_closes.get(sym)
+                    if dc and close_price and dc > 0:
+                        result[sym]["afterhours_change_pct"] = round((close_price - dc) / dc * 100, 2)
         except Exception as e:
             logger.debug(f"After-hours bars error: {e}")
         
@@ -550,10 +621,12 @@ class AlpacaDataHub:
                     result[sym]["premarket_change_pct"] = round((price - pc) / pc * 100, 2)
                     result[sym]["premarket_close"] = price
                     result[sym]["premarket_volume"] = result[sym].get("premarket_volume", 0)
-                # After-hours fallback (20:00-23:59 UTC)
+                # After-hours fallback (20:00-23:59 UTC) uses latest snapshot price vs today's regular close
                 if now.hour >= 20 and "afterhours_change_pct" not in result.get(sym, {}):
                     result.setdefault(sym, {})
-                    result[sym]["afterhours_change_pct"] = round((price - pc) / pc * 100, 2)
+                    dc = daily_closes.get(sym) or pc
+                    if dc > 0:
+                        result[sym]["afterhours_change_pct"] = round((price - dc) / dc * 100, 2)
                     result[sym]["afterhours_close"] = price
                     result[sym]["afterhours_volume"] = result[sym].get("afterhours_volume", 0)
         
@@ -576,6 +649,64 @@ class AlpacaDataHub:
 
     # ── Composite: Full Market Picture ─────────────────────────────────
 
+    def get_corporate_actions(self, symbols: List[str], days_forward: int = 30, days_back: int = 1) -> Dict[str, Dict]:
+        """
+        Fetch upcoming corporate actions for multiple symbols.
+        Returns per-symbol: {has_dividend, has_split, has_merger, has_spinoff, actions}.
+        """
+        import requests
+
+        end = datetime.now(timezone.utc) + timedelta(days=days_forward)
+        start = datetime.now(timezone.utc) - timedelta(days=days_back)
+        results = {}
+        BATCH = 100
+        symbol_list = list(symbols)
+        for i in range(0, len(symbol_list), BATCH):
+            batch = symbol_list[i:i + BATCH]
+            params = {
+                "symbols": ",".join(batch),
+                "start": start.strftime("%Y-%m-%d"),
+                "end": end.strftime("%Y-%m-%d"),
+            }
+            url = f"{self._data_url}/v1beta1/corporate-actions"
+            try:
+                resp = requests.get(url, params=params, headers=self._headers, timeout=15)
+                if resp.status_code != 200:
+                    logger.warning(f"Corporate actions batch {i} error: {resp.status_code}")
+                    continue
+                data = resp.json().get("corporate_actions", {})
+                for action_type, actions in data.items():
+                    for action in actions:
+                        sym = action.get("symbol")
+                        if not sym:
+                            continue
+                        if sym not in results:
+                            results[sym] = {
+                                "has_dividend": False,
+                                "has_split": False,
+                                "has_merger": False,
+                                "has_spinoff": False,
+                                "actions": [],
+                            }
+                        results[sym]["actions"].append({
+                            "type": action_type,
+                            "ex_date": action.get("ex_date"),
+                            "payable_date": action.get("payable_date"),
+                            "rate": action.get("rate"),
+                            "description": action.get("description"),
+                        })
+                        if action_type == "cash_dividends":
+                            results[sym]["has_dividend"] = True
+                        elif action_type == "stock_splits":
+                            results[sym]["has_split"] = True
+                        elif action_type == "mergers":
+                            results[sym]["has_merger"] = True
+                        elif action_type == "spinoffs":
+                            results[sym]["has_spinoff"] = True
+            except Exception as e:
+                logger.warning(f"Corporate actions batch {i} failed: {e}")
+        return results
+
     def get_market_data(self, symbols: List[str], lookback_days: int = 120) -> Dict:
         """
         One-call composite: daily bars + snapshots + intraday bars.
@@ -593,7 +724,7 @@ class AlpacaDataHub:
             }
             for key, future in futures.items():
                 try:
-                    result[key] = future.result(timeout=30)
+                    result[key] = future.result(timeout=60)
                 except Exception as e:
                     logger.warning(f"get_market_data/{key} failed: {e}")
                     result[key] = {}

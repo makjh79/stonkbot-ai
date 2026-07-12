@@ -30,40 +30,512 @@ from alpaca_data import get_data_hub
 # Intraday data cache (populated during generate_signals)
 _intraday_cache: Dict = {}
 _snapshot_cache: Dict = {}
+_corporate_actions_cache: Dict = {}
 
 logger = logging.getLogger(__name__)
 
 # Liquid US growth/momentum universe. ~60 names, no ETFs, no micro-caps.
 DEFAULT_UNIVERSE = [
-    # Tech Giants
-    "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "NFLX",
-    # Semiconductors / Hardware
-    "AMD", "MU", "LRCX", "AMAT", "KLAC", "SNPS", "CDNS", "MRVL", "NXPI", "QCOM", "SWKS", "TER", "ON",
-    # Cybersecurity / Enterprise Software
-    "CRWD", "PANW", "ZS", "NET", "DDOG", "OKTA", "FTNT", "CYBR", "S", "PATH", "PLTR",
-    # Cloud / Data / SaaS
-    "SNOW", "MDB", "GTLB", "CFLT", "ESTC", "PSTG", "DOCN", "VEEV", "TEAM", "NOW",
-    # Fintech
-    "HOOD", "COIN", "SQ", "UPST", "AFRM", "SOFI", "PAYO", "LMND", "RELY",
-    # Consumer / Platform / E-commerce
-    "UBER", "DKNG", "SHOP", "TTD", "ROKU", "PINS", "SNAP", "ABNB", "EXPE", "SPOT",
-    # Retail / Lifestyle / Growth
-    "ELF", "APP", "DUOL", "CHWY", "ETSY", "LULU", "NKE", "COST", "WMT", "HD",
-    # EV / Mobility
-    "TSLA", "RIVN", "LCID", "NIO", "XPEV",
-    # Healthcare / Biotech
-    "UNH", "LLY", "JNJ", "PFE", "ABBV", "MRK", "TMO", "VRTX", "BMY", "REGN",
-    "GILD", "ISRG", "ZBH", "ILMN", "SGEN",
-    # Energy
-    "XOM", "CVX", "COP", "SLB", "EOG", "PSX", "MPC", "OXY",
-    # Industrials
-    "GE", "CAT", "UNP", "HON", "UPS", "RTX", "LMT", "DE",
-    # Financials / Banks
-    "JPM", "BAC", "WFC", "GS", "MS", "BLK", "SCHW", "V",
-    # Communications / Media
-    "DIS", "CMCSA", "TMUS", "CHTR", "WBD", "PARA",
-    # Tech Expansion
-    "AVGO", "TXN", "IBM", "INTC", "CRM", "ORCL", "ADBE", "INTU", "PYPL", "FIS",
+    "AAPL",
+    "MSFT",
+    "GOOGL",
+    "AMZN",
+    "META",
+    "NVDA",
+    "NFLX",
+    "AMD",
+    "MU",
+    "LRCX",
+    "AMAT",
+    "KLAC",
+    "SNPS",
+    "CDNS",
+    "MRVL",
+    "NXPI",
+    "QCOM",
+    "SWKS",
+    "TER",
+    "ON",
+    "CRWD",
+    "PANW",
+    "ZS",
+    "NET",
+    "DDOG",
+    "OKTA",
+    "FTNT",
+    "CYBR",
+    "S",
+    "PATH",
+    "PLTR",
+    "SNOW",
+    "MDB",
+    "GTLB",
+    "CFLT",
+    "ESTC",
+    "PSTG",
+    "DOCN",
+    "VEEV",
+    "TEAM",
+    "NOW",
+    "HOOD",
+    "COIN",
+    "SQ",
+    "UPST",
+    "AFRM",
+    "SOFI",
+    "PAYO",
+    "LMND",
+    "RELY",
+    "UBER",
+    "DKNG",
+    "SHOP",
+    "TTD",
+    "ROKU",
+    "PINS",
+    "SNAP",
+    "ABNB",
+    "EXPE",
+    "SPOT",
+    "ELF",
+    "APP",
+    "DUOL",
+    "CHWY",
+    "ETSY",
+    "LULU",
+    "NKE",
+    "COST",
+    "WMT",
+    "HD",
+    "TSLA",
+    "RIVN",
+    "LCID",
+    "NIO",
+    "XPEV",
+    "UNH",
+    "LLY",
+    "JNJ",
+    "PFE",
+    "ABBV",
+    "MRK",
+    "TMO",
+    "VRTX",
+    "BMY",
+    "REGN",
+    "GILD",
+    "ISRG",
+    "ZBH",
+    "ILMN",
+    "SGEN",
+    "XOM",
+    "CVX",
+    "COP",
+    "SLB",
+    "EOG",
+    "PSX",
+    "MPC",
+    "OXY",
+    "GE",
+    "CAT",
+    "UNP",
+    "HON",
+    "UPS",
+    "RTX",
+    "LMT",
+    "DE",
+    "JPM",
+    "BAC",
+    "WFC",
+    "GS",
+    "MS",
+    "BLK",
+    "SCHW",
+    "V",
+    "DIS",
+    "CMCSA",
+    "TMUS",
+    "CHTR",
+    "WBD",
+    "PARA",
+    "AVGO",
+    "TXN",
+    "IBM",
+    "INTC",
+    "CRM",
+    "ORCL",
+    "ADBE",
+    "INTU",
+    "PYPL",
+    "FIS",
+    "MMM",
+    "AOS",
+    "ABT",
+    "ACN",
+    "AES",
+    "AFL",
+    "A",
+    "APD",
+    "AKAM",
+    "ALB",
+    "ARE",
+    "ALGN",
+    "ALLE",
+    "LNT",
+    "ALL",
+    "GOOG",
+    "MO",
+    "AMCR",
+    "AEE",
+    "AEP",
+    "AXP",
+    "AIG",
+    "AMT",
+    "AWK",
+    "AMP",
+    "AME",
+    "AMGN",
+    "APH",
+    "ADI",
+    "AON",
+    "APA",
+    "APO",
+    "APTV",
+    "ACGL",
+    "ADM",
+    "ARES",
+    "ANET",
+    "AJG",
+    "AIZ",
+    "T",
+    "ATO",
+    "ADSK",
+    "ADP",
+    "AZO",
+    "AVB",
+    "AVY",
+    "AXON",
+    "BKR",
+    "BALL",
+    "BAX",
+    "BDX",
+    "BRK.B",
+    "BBY",
+    "TECH",
+    "BIIB",
+    "BX",
+    "XYZ",
+    "BNY",
+    "BA",
+    "BKNG",
+    "BSX",
+    "BR",
+    "BRO",
+    "BF.B",
+    "BLDR",
+    "BG",
+    "BXP",
+    "CHRW",
+    "CPT",
+    "COF",
+    "CAH",
+    "CCL",
+    "CARR",
+    "CVNA",
+    "CASY",
+    "CBOE",
+    "CBRE",
+    "CDW",
+    "COR",
+    "CNC",
+    "CNP",
+    "CF",
+    "CRL",
+    "CMG",
+    "CB",
+    "CHD",
+    "CIEN",
+    "CI",
+    "CINF",
+    "CTAS",
+    "CSCO",
+    "C",
+    "CFG",
+    "CLX",
+    "CME",
+    "CMS",
+    "KO",
+    "CTSH",
+    "COHR",
+    "CL",
+    "FIX",
+    "ED",
+    "STZ",
+    "CEG",
+    "COO",
+    "CPRT",
+    "GLW",
+    "CPAY",
+    "CTVA",
+    "CSGP",
+    "CRH",
+    "CCI",
+    "CSX",
+    "CMI",
+    "CVS",
+    "DHR",
+    "DRI",
+    "DVA",
+    "DECK",
+    "DELL",
+    "DAL",
+    "DVN",
+    "DXCM",
+    "FANG",
+    "DLR",
+    "DG",
+    "DLTR",
+    "D",
+    "DPZ",
+    "DASH",
+    "DOV",
+    "DOW",
+    "DHI",
+    "DTE",
+    "DUK",
+    "DD",
+    "ETN",
+    "EBAY",
+    "ECHO",
+    "ECL",
+    "EIX",
+    "EW",
+    "EA",
+    "ELV",
+    "EME",
+    "EMR",
+    "ETR",
+    "EQT",
+    "EFX",
+    "EQIX",
+    "EQR",
+    "ERIE",
+    "ESS",
+    "EL",
+    "EG",
+    "EVRG",
+    "ES",
+    "EXC",
+    "EXE",
+    "EXPD",
+    "EXR",
+    "FFIV",
+    "FDS",
+    "FICO",
+    "FAST",
+    "FRT",
+    "FDX",
+    "FDXF",
+    "FITB",
+    "FSLR",
+    "FE",
+    "FISV",
+    "FLEX",
+    "F",
+    "FTV",
+    "FOXA",
+    "FOX",
+    "BEN",
+    "FCX",
+    "GRMN",
+    "IT",
+    "GEHC",
+    "GEV",
+    "GEN",
+    "GNRC",
+    "GD",
+    "GIS",
+    "GM",
+    "GPC",
+    "GPN",
+    "GL",
+    "GDDY",
+    "HAL",
+    "HIG",
+    "HAS",
+    "HCA",
+    "DOC",
+    "HSIC",
+    "HSY",
+    "HPE",
+    "HLT",
+    "HONA",
+    "HRL",
+    "HST",
+    "HWM",
+    "HPQ",
+    "HUBB",
+    "HUM",
+    "HBAN",
+    "HII",
+    "IEX",
+    "IDXX",
+    "ITW",
+    "INCY",
+    "IR",
+    "PODD",
+    "IBKR",
+    "ICE",
+    "IFF",
+    "IP",
+    "IVZ",
+    "INVH",
+    "IQV",
+    "IRM",
+    "JBHT",
+    "JBL",
+    "JKHY",
+    "J",
+    "JCI",
+    "KVUE",
+    "KDP",
+    "KEY",
+    "KEYS",
+    "KMB",
+    "KIM",
+    "KMI",
+    "KKR",
+    "KHC",
+    "KR",
+    "LHX",
+    "LH",
+    "LVS",
+    "LDOS",
+    "LEN",
+    "LII",
+    "LIN",
+    "LYV",
+    "L",
+    "LOW",
+    "LITE",
+    "LYB",
+    "MTB",
+    "MAR",
+    "MRSH",
+    "MLM",
+    "MAS",
+    "MA",
+    "MKC",
+    "MCD",
+    "MCK",
+    "MDT",
+    "MET",
+    "MTD",
+    "MGM",
+    "MCHP",
+    "MAA",
+    "MRNA",
+    "TAP",
+    "MDLZ",
+    "MPWR",
+    "MNST",
+    "MCO",
+    "MOS",
+    "MSI",
+    "MSCI",
+    "NDAQ",
+    "NTAP",
+    "NEM",
+    "NWSA",
+    "NWS",
+    "NEE",
+    "NI",
+    "NDSN",
+    "NSC",
+    "NTRS",
+    "NOC",
+    "NCLH",
+    "NRG",
+    "NUE",
+    "NVR",
+    "ORLY",
+    "ODFL",
+    "OMC",
+    "OKE",
+    "OTIS",
+    "PCAR",
+    "PKG",
+    "PSKY",
+    "PH",
+    "PAYX",
+    "PNR",
+    "PEP",
+    "PCG",
+    "PM",
+    "PNW",
+    "PNC",
+    "PPG",
+    "PPL",
+    "PFG",
+    "PG",
+    "PGR",
+    "PLD",
+    "PRU",
+    "PEG",
+    "PTC",
+    "PSA",
+    "PHM",
+    "PWR",
+    "DGX",
+    "Q",
+    "RL",
+    "RJF",
+    "O",
+    "REG",
+    "RF",
+    "RSG",
+    "RMD",
+    "RVTY",
+    "ROK",
+    "ROL",
+    "ROP",
+    "ROST",
+    "RCL",
+    "SPGI",
+    "SNDK",
+    "SBAC",
+    "STX",
+    "SRE",
+    "SHW",
+    "SPG",
+    "SJM",
+    "SW",
+    "SNA",
+    "SOLV",
+    "SO",
+    "LUV",
+    "SWK",
+    "SBUX",
+    "STT",
+    "STLD",
+    "STE",
+    "SYK",
+    "SMCI",
+    "SYF",
+    "SYY",
+    "TROW",
+    "TTWO",
+    "TPR",
+    "TRGP",
+    "TGT",
+    "TEL",
+    "TDY",
+    "TPL",
+    "TXT",
+    "TJX",
+    "TKO",
+    "TSCO",
+    "TT",
+    "TDG",
+    "TRV"
 ]
 
 COMPANY_NAMES = {
@@ -184,10 +656,58 @@ MIN_AVG_VOLUME = 50_000
 REGIME_SYMBOLS = ["SPY", "QQQ", "VIXY", "SHY", "TLT", "LQD", "HYG"]
 
 # Score weights
+DIP_SPY_THRESHOLD_PCT = -1.5     # SPY must be down at least 1.5% from prior close to trigger dip mode
+DIP_MAX_DAILY_POSITIONS = 1      # cap dip buys per session
+DIP_HARD_CONF_MIN = 1            # relaxed hard confirmation floor for dip candidates
+
 MOMENTUM_WEIGHT = 0.40
 QUALITY_WEIGHT = 0.25
 RISK_WEIGHT = 0.20
 REGIME_WEIGHT = 0.15
+
+
+def _compute_5min_signals(intraday_bars: List[Dict]) -> Dict:
+    """
+    Compute explicit 5-minute intraday signals.
+    Returns booleans for momentum, volume surge, and VWAP position.
+    """
+    if not intraday_bars or len(intraday_bars) < 5:
+        return {
+            "momentum_5m_up": False,
+            "volume_5m_surge": False,
+            "price_above_5m_vwap": False,
+            "intraday_5m_return": None,
+            "intraday_5m_vwap": None,
+        }
+
+    # Momentum: last 3-5 bars trending up
+    recent = intraday_bars[-5:]
+    first_close = recent[0].get("c", 0)
+    last_close = recent[-1].get("c", 0)
+    momentum_return = (last_close - first_close) / first_close if first_close > 0 else 0.0
+    momentum_5m_up = momentum_return > 0
+
+    # 5-minute VWAP
+    total_pv = sum(b.get("c", 0) * b.get("v", 0) for b in intraday_bars)
+    total_v = sum(b.get("v", 0) for b in intraday_bars)
+    vwap_5m = total_pv / total_v if total_v > 0 else None
+    price_above_5m_vwap = last_close > vwap_5m if vwap_5m else False
+
+    # Volume surge: last bar vs prior 3-bar average
+    if len(intraday_bars) >= 4:
+        last_vol = intraday_bars[-1].get("v", 0)
+        avg_prior_vol = sum(b.get("v", 0) for b in intraday_bars[-4:-1]) / 3
+        volume_5m_surge = last_vol > avg_prior_vol * 1.5 if avg_prior_vol > 0 else False
+    else:
+        volume_5m_surge = False
+
+    return {
+        "momentum_5m_up": momentum_5m_up,
+        "volume_5m_surge": volume_5m_surge,
+        "price_above_5m_vwap": price_above_5m_vwap,
+        "intraday_5m_return": round(momentum_return * 100, 2),
+        "intraday_5m_vwap": round(vwap_5m, 2) if vwap_5m else None,
+    }
 
 
 @dataclass
@@ -230,12 +750,32 @@ class Signal:
     sector_strong: bool = False
     intraday_vwap: Optional[float] = None
     intraday_vol_ratio: Optional[float] = None
+    momentum_5m_up: bool = False
+    volume_5m_surge: bool = False
+    price_above_5m_vwap: bool = False
+    intraday_5m_return: Optional[float] = None
+    intraday_5m_vwap: Optional[float] = None
     daily_vwap: Optional[float] = None
     prev_close: Optional[float] = None
     options_implied_vol: Optional[float] = None
     options_volume: Optional[int] = None
+    options_call_put_ratio: Optional[float] = None
+    options_unusual_volume: bool = False
+    near_term_bullish_flow: bool = False
+    options_flow_score: float = 50.0
+    bid_ask_spread_pct: Optional[float] = None
+    wide_spread: bool = False
+    spread_ok: bool = True
+    bid_ask_imbalance: Optional[float] = None
+    bid_ask_bullish: bool = False
+    has_upcoming_dividend: bool = False
+    has_upcoming_split: bool = False
+    has_upcoming_merger: bool = False
+    has_upcoming_spinoff: bool = False
+    corporate_action_risk: bool = False
     strategy_type: str = "momentum"
     factor_breakdown: Optional[Dict] = None
+    dip_opportunity: bool = False
 
     def to_dict(self) -> Dict:
         d = asdict(self)
@@ -274,6 +814,26 @@ class SignalEngine:
     # Public API
     # ------------------------------------------------------------------
 
+
+    def detect_market_dip(self, regime_data: Dict) -> Tuple[bool, float]:
+        """Detect broad market dip based on SPY change from prior close."""
+        try:
+            spy_bars = regime_data.get("SPY")
+            if not spy_bars or len(spy_bars.get("closes", [])) < 2:
+                return False, 0.0
+            closes = spy_bars["closes"]
+            current = closes[-1]
+            prev_close = spy_bars.get("prev_close") or closes[-2]
+            if prev_close <= 0 or current <= 0:
+                return False, 0.0
+            change_pct = (current - prev_close) / prev_close * 100.0
+            ema20 = self._ema_val(closes, 20)
+            dip_active = change_pct <= DIP_SPY_THRESHOLD_PCT and current > ema20
+            return dip_active, change_pct
+        except Exception as e:
+            logger.debug(f"Market dip detection failed: {e}")
+            return False, 0.0
+
     def generate_signals(self, lookback_days: int = 120, enrichment: Optional[Dict[str, Dict]] = None) -> List[Signal]:
         """Generate scored signals for the universe."""
         logger.info(f"Generating signals for {len(self.universe)} symbols...")
@@ -303,6 +863,14 @@ class SignalEngine:
         _intraday_cache.clear()
         _intraday_cache.update(market_data["intraday"])
 
+        # Fetch corporate actions once per signal generation
+        try:
+            _corporate_actions_cache.clear()
+            _corporate_actions_cache.update(self._hub.get_corporate_actions(all_symbols))
+        except Exception as e:
+            logger.warning(f"Failed to fetch corporate actions: {e}")
+            _corporate_actions_cache.clear()
+
         if not raw_data:
             raise RuntimeError("No price data retrieved from Alpaca; cannot generate signals.")
 
@@ -318,13 +886,20 @@ class SignalEngine:
         all_bars = dict(raw_data)
         all_bars.update(regime_data)
 
+        # Detect broad market dip BEFORE scoring symbols
+        dip_active, spy_change_pct = self.detect_market_dip(regime_data)
+        if dip_active:
+            logger.info(f"MARKET DIP MODE: SPY {spy_change_pct:.1f}% from prior close")
+        else:
+            logger.debug(f"No market dip: SPY {spy_change_pct:.1f}%")
+
         signals: List[Signal] = []
         for symbol in self.universe:
             bars = raw_data.get(symbol)
             if not bars:
                 continue
             try:
-                signal = self._score_symbol(symbol, bars, regime_data, all_bars, enrichment)
+                signal = self._score_symbol(symbol, bars, regime_data, all_bars, enrichment, dip_active=dip_active)
                 if signal:
                     signals.append(signal)
             except Exception as e:
@@ -344,11 +919,13 @@ class SignalEngine:
             path = Path(__file__).parent / "signals.json"
 
         # Merge mean reversion signals
+        # Batch fetch daily bars once for mean reversion to avoid N sequential API calls
+        mr_symbols = [s.symbol for s in signals]
+        mr_bars_map = self._hub.get_daily_bars(mr_symbols, 120)
         mr_signals = []
         for s in signals:
             sym = s.symbol
-            raw = self._hub.get_daily_bars([sym], 120)
-            bars = raw.get(sym)
+            bars = mr_bars_map.get(sym)
             if not bars:
                 continue
             mr = compute_mean_reversion(sym, bars["closes"], bars["volumes"], s.price, s.rsi14)
@@ -441,6 +1018,7 @@ class SignalEngine:
         regime_data: Dict[str, Dict],
         all_bars: Dict[str, Dict],
         enrichment: Optional[Dict[str, Dict]] = None,
+        dip_active: bool = False,
     ) -> Optional[Signal]:
         closes = bars["closes"]
         volumes = bars["volumes"]
@@ -504,7 +1082,49 @@ class SignalEngine:
         _daily_vwap = _snap.get("daily_vwap")
         _prev_close = _snap.get("prev_close")
 
-        _opts_iv = e.get("options", {}).get("avg_implied_vol")
+        # Compute quote spread / imbalance signals
+        _bid = _snap.get("bid")
+        _ask = _snap.get("ask")
+        _bid_size = _snap.get("bid_size") or 0
+        _ask_size = _snap.get("ask_size") or 0
+        _spread_pct = None
+        _wide_spread = False
+        _spread_ok = True
+        if _bid and _ask and _bid > 0:
+            _spread_pct = (_ask - _bid) / _bid
+            _wide_spread = _spread_pct > 0.005  # > 0.5%
+            _spread_ok = not _wide_spread
+
+        _imbalance = None
+        _bid_ask_bullish = False
+        if _bid_size is not None and _ask_size is not None and (_bid_size + _ask_size) > 0:
+            _imbalance = (_bid_size - _ask_size) / (_bid_size + _ask_size)
+            _bid_ask_bullish = _imbalance > 0.2
+
+        # Corporate action risk flags
+        _ca = _corporate_actions_cache.get(symbol, {})
+        _has_dividend = _ca.get("has_dividend", False)
+        _has_split = _ca.get("has_split", False)
+        _has_merger = _ca.get("has_merger", False)
+        _has_spinoff = _ca.get("has_spinoff", False)
+        _corporate_action_risk = _has_dividend or _has_split or _has_merger or _has_spinoff
+
+        _opts_flow = e.get("options", {}) or {}
+        _opts_iv = _opts_flow  # pass full options dict to readiness; it handles dict or float
+        _options_call_put_ratio = _opts_flow.get("put_call_ratio")
+        _options_unusual_volume = _opts_flow.get("options_unusual_volume", False)
+        _near_term_bullish_flow = _opts_flow.get("near_term_bullish_flow", False)
+        _options_flow_score = _opts_flow.get("options_flow_score", 50.0)
+
+        # Compute explicit 5-minute intraday chips (used by readiness + Signal output)
+        _5min_signals = _compute_5min_signals(_intraday)
+
+        # Dip opportunity: stock down >=1% today but still above 20d EMA during market pullback
+        dip_opportunity = False
+        if dip_active and _prev_close and price:
+            stock_change_pct = (price - _prev_close) / _prev_close * 100.0
+            if stock_change_pct <= -1.0 and above_ema20:
+                dip_opportunity = True
 
         readiness = compute_readiness(
             symbol=symbol,
@@ -519,6 +1139,24 @@ class SignalEngine:
             daily_vwap=_daily_vwap,
             prev_close=_prev_close,
             options_implied_vol=_opts_iv,
+            options_call_put_ratio=_options_call_put_ratio,
+            options_unusual_volume=_options_unusual_volume,
+            near_term_bullish_flow=_near_term_bullish_flow,
+            options_flow_score=_options_flow_score,
+            bid_ask_spread_pct=_spread_pct,
+            wide_spread=_wide_spread,
+            spread_ok=_spread_ok,
+            bid_ask_imbalance=_imbalance,
+            bid_ask_bullish=_bid_ask_bullish,
+            has_upcoming_dividend=_has_dividend,
+            has_upcoming_split=_has_split,
+            has_upcoming_merger=_has_merger,
+            has_upcoming_spinoff=_has_spinoff,
+            corporate_action_risk=_corporate_action_risk,
+            dip_opportunity=dip_opportunity,
+            momentum_5m_up=_5min_signals["momentum_5m_up"],
+            volume_5m_surge=_5min_signals["volume_5m_surge"],
+            price_above_5m_vwap=_5min_signals["price_above_5m_vwap"],
         )
 
         # MACD histogram value for storage
@@ -583,6 +1221,7 @@ class SignalEngine:
             entry_eligible=readiness.entry_eligible,
             tier_reason=readiness.tier_reason,
             factor_breakdown=readiness.factor_breakdown,
+            dip_opportunity=dip_opportunity,
             relative_strength_20d=round(relative_strength_20d, 4),
             macd_hist=macd_hist,
             volume_ratio=vol_ratio,
@@ -590,10 +1229,29 @@ class SignalEngine:
             sector_strong=readiness.confirmations.get("sector_strong", False),
             intraday_vwap=round(intraday_vwap, 2) if intraday_vwap else None,
             intraday_vol_ratio=intraday_vol_ratio,
+            momentum_5m_up=_5min_signals["momentum_5m_up"],
+            volume_5m_surge=_5min_signals["volume_5m_surge"],
+            price_above_5m_vwap=_5min_signals["price_above_5m_vwap"],
+            intraday_5m_return=_5min_signals["intraday_5m_return"],
+            intraday_5m_vwap=_5min_signals["intraday_5m_vwap"],
             daily_vwap=round(snap.get("daily_vwap", 0) or 0, 2) if snap.get("daily_vwap") else None,
             prev_close=round(prev_close, 2) if prev_close else None,
             options_implied_vol=e.get("options", {}),
             options_volume=e.get("options", {}).get("options_volume") if e.get("options") else None,
+            options_call_put_ratio=_options_call_put_ratio,
+            options_unusual_volume=_options_unusual_volume,
+            near_term_bullish_flow=_near_term_bullish_flow,
+            options_flow_score=_options_flow_score,
+            bid_ask_spread_pct=round(_spread_pct, 4) if _spread_pct is not None else None,
+            wide_spread=_wide_spread,
+            spread_ok=_spread_ok,
+            bid_ask_imbalance=round(_imbalance, 3) if _imbalance is not None else None,
+            bid_ask_bullish=_bid_ask_bullish,
+            has_upcoming_dividend=_has_dividend,
+            has_upcoming_split=_has_split,
+            has_upcoming_merger=_has_merger,
+            has_upcoming_spinoff=_has_spinoff,
+            corporate_action_risk=_corporate_action_risk,
         )
 
     def _momentum_score(self, roc20: float, roc50: float, spy_corr: float) -> float:
@@ -879,7 +1537,7 @@ class SignalEngine:
             return {}
 
     def _fetch_options_enrichment(self, symbols: List[str]) -> Dict[str, Dict]:
-        """Fetch options sentiment data (IV term structure / rank / skew) from Alpaca."""
+        """Fetch options sentiment and flow data (IV, skew, call/put volume) from Alpaca."""
         result = {}
         # Load pre-computed summaries from cron if available
         try:
@@ -903,6 +1561,13 @@ class SignalEngine:
                 summary = options_iv_analytics.iv_summary(symbol)
                 if summary and summary.get("iv_30d") is not None:
                     result[symbol] = summary
+                # Always attach options flow signals if available
+                try:
+                    flow = options_iv_analytics.options_flow_signals(symbol)
+                    if flow:
+                        result.setdefault(symbol, {}).update(flow)
+                except Exception as e:
+                    logger.debug(f"Options flow error for {symbol}: {e}")
         except Exception as e:
             logger.debug(f"Options enrichment error: {e}")
         return result
