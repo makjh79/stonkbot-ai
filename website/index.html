@@ -9209,6 +9209,7 @@ function updateDashboard(data) {
                 { name: '5M', val: conf.momentum_5m_up, ok: conf.momentum_5m_up === true, tip: '5-minute: recent 5-min bars showing positive momentum' },
                 { name: 'OF', val: conf.near_term_bullish_flow, ok: conf.near_term_bullish_flow === true, tip: 'Options Flow: near-term call volume outweighs put volume' },
                 { name: 'SPR', val: conf.spread_ok, ok: conf.spread_ok === true, warn: conf.spread_ok === false, tip: 'Spread: bid/ask spread is narrow enough for clean execution' },
+                { name: 'QBI', val: conf.bid_ask_bullish, ok: conf.bid_ask_bullish === true, warn: conf.bid_ask_bullish === false, tip: 'Quote Imbalance: more bid size than ask size (bullish flow)' },
                 { name: 'CA', val: conf.no_corporate_action_risk, ok: conf.no_corporate_action_risk === true, warn: conf.corporate_action_risk === true, tip: 'Corporate Action: no upcoming dividend/split/merger event' },
             ];
             const chips = factors.map(f => {
@@ -9233,7 +9234,8 @@ function updateDashboard(data) {
             const factorMap = {
                 'volume': 'VOL', 'macd': 'MACD', 'ema': 'EMA', 'sector': 'SEC',
                 'intraday': 'INT', 'options': 'OPT', 'momentum': 'MOM', 'rsi': 'RSI',
-                '5m': '5M', 'flow': 'OF', 'options flow': 'OF', 'spread': 'SPR', 'corporate': 'CA'
+                '5m': '5M', 'flow': 'OF', 'options flow': 'OF', 'spread': 'SPR', 'corporate': 'CA',
+                'quote imbalance': 'QBI', 'bid ask': 'QBI', 'bid-ask': 'QBI'
             };
             const active = new Set();
             for (const part of parts) {
@@ -9241,7 +9243,7 @@ function updateDashboard(data) {
                     if (part.toLowerCase().includes(key)) active.add(label);
                 }
             }
-            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT', 'VWAP', 'RVOL', '5M', 'OF', 'SPR', 'CA'];
+            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT', 'VWAP', 'RVOL', '5M', 'OF', 'SPR', 'QBI', 'CA'];
             const chips = allFactors.map(name => {
                 const ok = active.has(name);
                 const color = ok ? '#22c55e' : 'rgba(255,255,255,0.15)';

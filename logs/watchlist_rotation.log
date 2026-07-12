@@ -1,0 +1,234 @@
+
+🔄 Watchlist Sync — 2026-07-12T09:50:01.631839Z
+Extended hours data for 20 symbols
+Snapshot data for 20 symbols
+⚠️ Could not save tier history: [Errno 13] Permission denied: '/opt/stonk-ai/tier_history.json'
+📊 Watchlist: 20 symbols
+  🚀 PRIME (0): None
+  🔥 BUILDING (7): ETSY, CRWD, PANW, ROKU, SOFI, DDOG, HOOD
+  🔍 TRACKING (0): None
+  ⬇️ ETSY: BUILDING → NOW (BUILDING: readiness 76.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ CRWD: BUILDING → NOW (BUILDING: readiness 74.1 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ PANW: BUILDING → NOW (BUILDING: readiness 73.7 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ ROKU: BUILDING → NOW (BUILDING: readiness 73.5 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ SOFI: BUILDING → NOW (BUILDING: readiness 73.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ DDOG: BUILDING → NOW (BUILDING: readiness 72.5 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + low IV (bullish options) + RSI overbought (caution).)
+  ⬇️ HOOD: BUILDING → NOW (BUILDING: readiness 72.0 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ EXPE: WATCHING → WATCH (WATCHING: readiness 71.6. above 20d EMA + sector strength.)
+  ⬇️ ZS: WATCHING → WATCH (WATCHING: readiness 71.5. above 20d EMA + sector strength + low IV (bullish options).)
+  ⬇️ ABNB: WATCHING → WATCH (WATCHING: readiness 71.3. above 20d EMA + sector strength.)
+  ⬇️ S: WATCHING → WATCH (WATCHING: readiness 71.3. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ LMND: WATCHING → WATCH (WATCHING: readiness 71.1. above 20d EMA + sector strength.)
+  ⬇️ AFRM: WATCHING → WATCH (WATCHING: readiness 70.8. above 20d EMA + sector strength.)
+  ⬇️ SHOP: WATCHING → WATCH (WATCHING: readiness 70.6. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ UBER: WATCHING → WATCH (WATCHING: readiness 70.2. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ RELY: WATCHING → WATCH (WATCHING: readiness 70.1. above 20d EMA + sector strength.)
+  ⬇️ PAYO: WATCHING → WATCH (WATCHING: readiness 69.1. above 20d EMA + sector strength.)
+  ⬇️ GTLB: WATCHING → WATCH (WATCHING: readiness 68.7. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ SNOW: WATCHING → WATCH (WATCHING: readiness 67.6. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ ELF: WATCHING → WATCH (WATCHING: readiness 67.5. above 20d EMA + sector strength + RSI overbought (caution).)
+💾 Written to /var/www/hedge-fund-website/watchlist_changes.json and /var/www/hedge-fund-website/ai_watchlist_live.json
+
+
+🔄 Watchlist Sync — 2026-07-12T09:55:01.339048Z
+Extended hours data for 20 symbols
+Snapshot data for 20 symbols
+⚠️ Could not save tier history: [Errno 13] Permission denied: '/opt/stonk-ai/tier_history.json'
+📊 Watchlist: 20 symbols
+  🚀 PRIME (0): None
+  🔥 BUILDING (7): ETSY, CRWD, PANW, ROKU, SOFI, DDOG, HOOD
+  🔍 TRACKING (0): None
+  ⬇️ ETSY: BUILDING → NOW (BUILDING: readiness 76.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ CRWD: BUILDING → NOW (BUILDING: readiness 74.1 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ PANW: BUILDING → NOW (BUILDING: readiness 73.7 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ ROKU: BUILDING → NOW (BUILDING: readiness 73.5 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ SOFI: BUILDING → NOW (BUILDING: readiness 73.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ DDOG: BUILDING → NOW (BUILDING: readiness 72.5 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + low IV (bullish options) + RSI overbought (caution).)
+  ⬇️ HOOD: BUILDING → NOW (BUILDING: readiness 72.0 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ EXPE: WATCHING → WATCH (WATCHING: readiness 71.6. above 20d EMA + sector strength.)
+  ⬇️ ZS: WATCHING → WATCH (WATCHING: readiness 71.5. above 20d EMA + sector strength + low IV (bullish options).)
+  ⬇️ ABNB: WATCHING → WATCH (WATCHING: readiness 71.3. above 20d EMA + sector strength.)
+  ⬇️ S: WATCHING → WATCH (WATCHING: readiness 71.3. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ LMND: WATCHING → WATCH (WATCHING: readiness 71.1. above 20d EMA + sector strength.)
+  ⬇️ AFRM: WATCHING → WATCH (WATCHING: readiness 70.8. above 20d EMA + sector strength.)
+  ⬇️ SHOP: WATCHING → WATCH (WATCHING: readiness 70.6. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ UBER: WATCHING → WATCH (WATCHING: readiness 70.2. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ RELY: WATCHING → WATCH (WATCHING: readiness 70.1. above 20d EMA + sector strength.)
+  ⬇️ PAYO: WATCHING → WATCH (WATCHING: readiness 69.1. above 20d EMA + sector strength.)
+  ⬇️ GTLB: WATCHING → WATCH (WATCHING: readiness 68.7. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ SNOW: WATCHING → WATCH (WATCHING: readiness 67.6. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ ELF: WATCHING → WATCH (WATCHING: readiness 67.5. above 20d EMA + sector strength + RSI overbought (caution).)
+💾 Written to /var/www/hedge-fund-website/watchlist_changes.json and /var/www/hedge-fund-website/ai_watchlist_live.json
+
+
+🔄 Watchlist Sync — 2026-07-12T10:00:02.052932Z
+Traceback (most recent call last):
+  File "/opt/stonk-ai/dynamic_watchlist_manager.py", line 812, in <module>
+    update_watchlist(dry_run=args.dry_run)
+  File "/opt/stonk-ai/dynamic_watchlist_manager.py", line 767, in update_watchlist
+    signals = load_signals()
+              ^^^^^^^^^^^^^^
+  File "/opt/stonk-ai/dynamic_watchlist_manager.py", line 103, in load_signals
+    data = json.load(f)
+           ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 8780 column 262 (char 279022)
+
+🔄 Watchlist Sync — 2026-07-12T10:05:01.748274Z
+Extended hours data for 20 symbols
+Snapshot data for 20 symbols
+⚠️ Could not save tier history: [Errno 13] Permission denied: '/opt/stonk-ai/tier_history.json'
+📊 Watchlist: 20 symbols
+  🚀 PRIME (0): None
+  🔥 BUILDING (7): ETSY, CRWD, PANW, ROKU, SOFI, DDOG, HOOD
+  🔍 TRACKING (0): None
+  ⬇️ ETSY: BUILDING → NOW (BUILDING: readiness 76.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ CRWD: BUILDING → NOW (BUILDING: readiness 74.1 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ PANW: BUILDING → NOW (BUILDING: readiness 73.7 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ ROKU: BUILDING → NOW (BUILDING: readiness 73.5 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ SOFI: BUILDING → NOW (BUILDING: readiness 73.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ DDOG: BUILDING → NOW (BUILDING: readiness 72.5 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + low IV (bullish options) + RSI overbought (caution).)
+  ⬇️ HOOD: BUILDING → NOW (BUILDING: readiness 72.0 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ EXPE: WATCHING → WATCH (WATCHING: readiness 71.6. above 20d EMA + sector strength.)
+  ⬇️ ZS: WATCHING → WATCH (WATCHING: readiness 71.5. above 20d EMA + sector strength + low IV (bullish options).)
+  ⬇️ ABNB: WATCHING → WATCH (WATCHING: readiness 71.3. above 20d EMA + sector strength.)
+  ⬇️ S: WATCHING → WATCH (WATCHING: readiness 71.3. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ LMND: WATCHING → WATCH (WATCHING: readiness 71.1. above 20d EMA + sector strength.)
+  ⬇️ AFRM: WATCHING → WATCH (WATCHING: readiness 70.8. above 20d EMA + sector strength.)
+  ⬇️ SHOP: WATCHING → WATCH (WATCHING: readiness 70.6. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ UBER: WATCHING → WATCH (WATCHING: readiness 70.2. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ RELY: WATCHING → WATCH (WATCHING: readiness 70.1. above 20d EMA + sector strength.)
+  ⬇️ PAYO: WATCHING → WATCH (WATCHING: readiness 69.1. above 20d EMA + sector strength.)
+  ⬇️ GTLB: WATCHING → WATCH (WATCHING: readiness 68.7. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ SNOW: WATCHING → WATCH (WATCHING: readiness 67.6. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ ELF: WATCHING → WATCH (WATCHING: readiness 67.5. above 20d EMA + sector strength + RSI overbought (caution).)
+💾 Written to /var/www/hedge-fund-website/watchlist_changes.json and /var/www/hedge-fund-website/ai_watchlist_live.json
+
+
+🔄 Watchlist Sync — 2026-07-12T10:10:01.519223Z
+Extended hours data for 20 symbols
+Snapshot data for 20 symbols
+⚠️ Could not save tier history: [Errno 13] Permission denied: '/opt/stonk-ai/tier_history.json'
+📊 Watchlist: 20 symbols
+  🚀 PRIME (0): None
+  🔥 BUILDING (7): ETSY, CRWD, PANW, ROKU, SOFI, DDOG, HOOD
+  🔍 TRACKING (0): None
+  ⬇️ ETSY: BUILDING → NOW (BUILDING: readiness 76.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ CRWD: BUILDING → NOW (BUILDING: readiness 74.1 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ PANW: BUILDING → NOW (BUILDING: readiness 73.7 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ ROKU: BUILDING → NOW (BUILDING: readiness 73.5 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ SOFI: BUILDING → NOW (BUILDING: readiness 73.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ DDOG: BUILDING → NOW (BUILDING: readiness 72.5 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + low IV (bullish options) + RSI overbought (caution).)
+  ⬇️ HOOD: BUILDING → NOW (BUILDING: readiness 72.0 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ EXPE: WATCHING → WATCH (WATCHING: readiness 71.6. above 20d EMA + sector strength.)
+  ⬇️ ZS: WATCHING → WATCH (WATCHING: readiness 71.5. above 20d EMA + sector strength + low IV (bullish options).)
+  ⬇️ ABNB: WATCHING → WATCH (WATCHING: readiness 71.3. above 20d EMA + sector strength.)
+  ⬇️ S: WATCHING → WATCH (WATCHING: readiness 71.3. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ LMND: WATCHING → WATCH (WATCHING: readiness 71.1. above 20d EMA + sector strength.)
+  ⬇️ AFRM: WATCHING → WATCH (WATCHING: readiness 70.8. above 20d EMA + sector strength.)
+  ⬇️ SHOP: WATCHING → WATCH (WATCHING: readiness 70.6. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ UBER: WATCHING → WATCH (WATCHING: readiness 70.2. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ RELY: WATCHING → WATCH (WATCHING: readiness 70.1. above 20d EMA + sector strength.)
+  ⬇️ PAYO: WATCHING → WATCH (WATCHING: readiness 69.1. above 20d EMA + sector strength.)
+  ⬇️ GTLB: WATCHING → WATCH (WATCHING: readiness 68.7. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ SNOW: WATCHING → WATCH (WATCHING: readiness 67.6. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ ELF: WATCHING → WATCH (WATCHING: readiness 67.5. above 20d EMA + sector strength + RSI overbought (caution).)
+💾 Written to /var/www/hedge-fund-website/watchlist_changes.json and /var/www/hedge-fund-website/ai_watchlist_live.json
+
+
+🔄 Watchlist Sync — 2026-07-12T10:15:01.302447Z
+Traceback (most recent call last):
+  File "/opt/stonk-ai/dynamic_watchlist_manager.py", line 812, in <module>
+    update_watchlist(dry_run=args.dry_run)
+  File "/opt/stonk-ai/dynamic_watchlist_manager.py", line 767, in update_watchlist
+    signals = load_signals()
+              ^^^^^^^^^^^^^^
+  File "/opt/stonk-ai/dynamic_watchlist_manager.py", line 103, in load_signals
+    data = json.load(f)
+           ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 1274 column 30 (char 41092)
+
+🔄 Watchlist Sync — 2026-07-12T10:20:01.734109Z
+Extended hours data for 20 symbols
+Snapshot data for 20 symbols
+⚠️ Could not save tier history: [Errno 13] Permission denied: '/opt/stonk-ai/tier_history.json'
+📊 Watchlist: 20 symbols
+  🚀 PRIME (0): None
+  🔥 BUILDING (7): ETSY, CRWD, PANW, ROKU, SOFI, DDOG, HOOD
+  🔍 TRACKING (0): None
+  ⬇️ ETSY: BUILDING → NOW (BUILDING: readiness 76.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ CRWD: BUILDING → NOW (BUILDING: readiness 74.1 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ PANW: BUILDING → NOW (BUILDING: readiness 73.7 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ ROKU: BUILDING → NOW (BUILDING: readiness 73.5 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ SOFI: BUILDING → NOW (BUILDING: readiness 73.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ DDOG: BUILDING → NOW (BUILDING: readiness 72.5 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + low IV (bullish options) + RSI overbought (caution).)
+  ⬇️ HOOD: BUILDING → NOW (BUILDING: readiness 72.0 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ EXPE: WATCHING → WATCH (WATCHING: readiness 71.6. above 20d EMA + sector strength.)
+  ⬇️ ZS: WATCHING → WATCH (WATCHING: readiness 71.5. above 20d EMA + sector strength + low IV (bullish options).)
+  ⬇️ ABNB: WATCHING → WATCH (WATCHING: readiness 71.3. above 20d EMA + sector strength.)
+  ⬇️ S: WATCHING → WATCH (WATCHING: readiness 71.3. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ LMND: WATCHING → WATCH (WATCHING: readiness 71.1. above 20d EMA + sector strength.)
+  ⬇️ AFRM: WATCHING → WATCH (WATCHING: readiness 70.8. above 20d EMA + sector strength.)
+  ⬇️ SHOP: WATCHING → WATCH (WATCHING: readiness 70.6. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ UBER: WATCHING → WATCH (WATCHING: readiness 70.2. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ RELY: WATCHING → WATCH (WATCHING: readiness 70.1. above 20d EMA + sector strength.)
+  ⬇️ PAYO: WATCHING → WATCH (WATCHING: readiness 69.1. above 20d EMA + sector strength.)
+  ⬇️ GTLB: WATCHING → WATCH (WATCHING: readiness 68.7. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ SNOW: WATCHING → WATCH (WATCHING: readiness 67.6. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ ELF: WATCHING → WATCH (WATCHING: readiness 67.5. above 20d EMA + sector strength + RSI overbought (caution).)
+💾 Written to /var/www/hedge-fund-website/watchlist_changes.json and /var/www/hedge-fund-website/ai_watchlist_live.json
+
+
+🔄 Watchlist Sync — 2026-07-12T10:25:01.493842Z
+Extended hours data for 20 symbols
+Snapshot data for 20 symbols
+⚠️ Could not save tier history: [Errno 13] Permission denied: '/opt/stonk-ai/tier_history.json'
+📊 Watchlist: 20 symbols
+  🚀 PRIME (0): None
+  🔥 BUILDING (7): ETSY, CRWD, PANW, ROKU, SOFI, DDOG, HOOD
+  🔍 TRACKING (0): None
+  ⬇️ ETSY: BUILDING → NOW (BUILDING: readiness 76.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ CRWD: BUILDING → NOW (BUILDING: readiness 74.1 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ PANW: BUILDING → NOW (BUILDING: readiness 73.7 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ ROKU: BUILDING → NOW (BUILDING: readiness 73.5 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ SOFI: BUILDING → NOW (BUILDING: readiness 73.0 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ DDOG: BUILDING → NOW (BUILDING: readiness 72.5 — building strength, not yet entry-ready. MACD turning positive + above 20d EMA + sector strength + low IV (bullish options) + RSI overbought (caution).)
+  ⬇️ HOOD: BUILDING → NOW (BUILDING: readiness 72.0 — building strength, not yet entry-ready. above 20d EMA + sector strength.)
+  ⬇️ EXPE: WATCHING → WATCH (WATCHING: readiness 71.6. above 20d EMA + sector strength.)
+  ⬇️ ZS: WATCHING → WATCH (WATCHING: readiness 71.5. above 20d EMA + sector strength + low IV (bullish options).)
+  ⬇️ ABNB: WATCHING → WATCH (WATCHING: readiness 71.3. above 20d EMA + sector strength.)
+  ⬇️ S: WATCHING → WATCH (WATCHING: readiness 71.3. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ LMND: WATCHING → WATCH (WATCHING: readiness 71.1. above 20d EMA + sector strength.)
+  ⬇️ AFRM: WATCHING → WATCH (WATCHING: readiness 70.8. above 20d EMA + sector strength.)
+  ⬇️ SHOP: WATCHING → WATCH (WATCHING: readiness 70.6. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ UBER: WATCHING → WATCH (WATCHING: readiness 70.2. MACD turning positive + above 20d EMA + sector strength.)
+  ⬇️ RELY: WATCHING → WATCH (WATCHING: readiness 70.1. above 20d EMA + sector strength.)
+  ⬇️ PAYO: WATCHING → WATCH (WATCHING: readiness 69.1. above 20d EMA + sector strength.)
+  ⬇️ GTLB: WATCHING → WATCH (WATCHING: readiness 68.7. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ SNOW: WATCHING → WATCH (WATCHING: readiness 67.6. MACD turning positive + above 20d EMA + sector strength + RSI overbought (caution).)
+  ⬇️ ELF: WATCHING → WATCH (WATCHING: readiness 67.5. above 20d EMA + sector strength + RSI overbought (caution).)
+💾 Written to /var/www/hedge-fund-website/watchlist_changes.json and /var/www/hedge-fund-website/ai_watchlist_live.json
+

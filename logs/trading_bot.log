@@ -1,0 +1,172 @@
+2026-07-12 17:48:13,633 - __main__ - INFO - Loaded Alpaca config from /opt/stonk-ai/alpaca_config.json
+2026-07-12 17:48:13,634 - __main__ - INFO - Circuit breaker initialized
+2026-07-12 17:48:13,634 - __main__ - INFO - Bot is connected to Alpaca PAPER trading — fake money orders will be submitted.
+2026-07-12 17:48:13,634 - __main__ - INFO - ======================================================================
+2026-07-12 17:48:13,634 - __main__ - INFO - STONK.AI Trading Bot v2.5 Starting
+2026-07-12 17:48:13,634 - __main__ - INFO - Mode: PAPER (fake money)
+2026-07-12 17:48:13,634 - __main__ - INFO - Dry run: False
+2026-07-12 17:48:13,634 - __main__ - INFO - Strategy: readiness-driven quality-momentum with thesis exits
+2026-07-12 17:48:13,634 - __main__ - INFO - Entry gate: readiness >= 77 AND >= 5 confirmations AND above_ema
+2026-07-12 17:48:13,635 - __main__ - INFO - Position caps: 12% STRONG_NOW / 8% other tiers; 25% sector cap
+2026-07-12 17:48:13,635 - __main__ - INFO - Exits: -3% hard cut + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON)
+2026-07-12 17:48:13,635 - __main__ - INFO - Drawdown halt: -10%
+2026-07-12 17:48:13,635 - __main__ - INFO - ======================================================================
+2026-07-12 17:48:13,635 - signal_engine - INFO - Generating signals for 500 symbols...
+2026-07-12 17:50:25,445 - signal_engine - INFO - Loaded options sentiment for 30 symbols
+2026-07-12 17:50:46,516 - signal_engine - INFO - Generated 493 signals. Top: ETSY (readiness=76.0)
+2026-07-12 17:51:05,660 - signal_engine - INFO - Signal merge: 493 momentum + 0 mean reversion = 493 total (removed 0 duplicates)
+2026-07-12 17:51:05,662 - signal_engine - WARNING - DB write failed, falling back to JSON: attempt to write a readonly database
+2026-07-12 17:51:05,808 - signal_engine - INFO - Saved 493 signals to /opt/stonk-ai/signals.json (fallback)
+2026-07-12 17:51:05,974 - __main__ - INFO - Refreshed signals: 493 candidates (493 momentum, 0 mean reversion)
+2026-07-12 17:51:06,938 - __main__ - INFO - run_cycle() started
+2026-07-12 17:51:07,145 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 17:53:07,149 - __main__ - INFO - run_cycle() started
+2026-07-12 17:53:07,371 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 17:55:07,375 - __main__ - INFO - run_cycle() started
+2026-07-12 17:55:07,584 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 17:57:07,588 - __main__ - INFO - run_cycle() started
+2026-07-12 17:57:07,798 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 17:59:07,804 - __main__ - INFO - run_cycle() started
+2026-07-12 17:59:08,020 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:01:08,024 - __main__ - INFO - run_cycle() started
+2026-07-12 18:01:08,257 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:03:08,261 - __main__ - INFO - run_cycle() started
+2026-07-12 18:03:08,465 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:05:08,471 - __main__ - INFO - run_cycle() started
+2026-07-12 18:05:08,680 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:07:08,685 - signal_engine - INFO - Generating signals for 500 symbols...
+2026-07-12 18:09:24,744 - signal_engine - INFO - Loaded options sentiment for 30 symbols
+2026-07-12 18:09:47,182 - signal_engine - INFO - Generated 493 signals. Top: ETSY (readiness=76.0)
+2026-07-12 18:10:07,186 - signal_engine - INFO - Signal merge: 493 momentum + 0 mean reversion = 493 total (removed 0 duplicates)
+2026-07-12 18:10:07,187 - signal_engine - WARNING - DB write failed, falling back to JSON: attempt to write a readonly database
+2026-07-12 18:10:07,310 - signal_engine - INFO - Saved 493 signals to /opt/stonk-ai/signals.json (fallback)
+2026-07-12 18:10:07,469 - __main__ - INFO - Refreshed signals: 493 candidates (493 momentum, 0 mean reversion)
+2026-07-12 18:10:08,542 - __main__ - INFO - run_cycle() started
+2026-07-12 18:10:08,750 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:12:08,755 - __main__ - INFO - run_cycle() started
+2026-07-12 18:12:09,014 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:14:09,020 - __main__ - INFO - run_cycle() started
+2026-07-12 18:14:09,246 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:16:09,251 - __main__ - INFO - run_cycle() started
+2026-07-12 18:16:09,460 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:18:09,465 - __main__ - INFO - run_cycle() started
+2026-07-12 18:18:09,674 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:20:09,679 - __main__ - INFO - run_cycle() started
+2026-07-12 18:20:09,896 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:22:09,900 - __main__ - INFO - run_cycle() started
+2026-07-12 18:22:10,123 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:24:10,129 - __main__ - INFO - run_cycle() started
+2026-07-12 18:24:10,355 - __main__ - ERROR - Error in main loop: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+Traceback (most recent call last):
+  File "/opt/stonk-ai/trading_bot.py", line 2301, in run
+    self.run_cycle()
+  File "/opt/stonk-ai/trading_bot.py", line 1291, in run_cycle
+    ext_hours = (self.risk_engine.config.extended_hours_enabled
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'RiskConfig' object has no attribute 'extended_hours_enabled'
+2026-07-12 18:26:10,361 - signal_engine - INFO - Generating signals for 500 symbols...

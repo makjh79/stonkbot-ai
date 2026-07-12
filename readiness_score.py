@@ -58,6 +58,7 @@ WEIGHT_5M_VWAP = 0.01
 WEIGHT_OPTIONS_FLOW = 0.02
 WEIGHT_SPREAD_OK = 0.02
 WEIGHT_NO_CORPORATE_ACTION = 0.02
+WEIGHT_BID_ASK_IMBALANCE = 0.02  # NEW: quote bid/ask size imbalance
 
 # Tier thresholds
 TIER_NOW_MIN = 72.0   # raised from 70 for higher quality entries
@@ -620,6 +621,7 @@ def compute_readiness(
     price_above_5m_vwap = kwargs.get("price_above_5m_vwap", False)
     near_term_bullish_flow = options_flow.get("near_term_bullish_flow", False)
     spread_ok = kwargs.get("spread_ok", True)
+    bid_ask_bullish = kwargs.get("bid_ask_bullish", False)
     corporate_action_risk = kwargs.get("corporate_action_risk", False)
 
     # Weighted composite (11 factors + 6 new confirmation chips; sum-of-weights normalised to avoid inflation)
@@ -628,7 +630,7 @@ def compute_readiness(
         + WEIGHT_SECTOR + WEIGHT_INTRADAY + WEIGHT_OPTIONS
         + WEIGHT_REL_VOLUME + WEIGHT_VWAP_DEV + WEIGHT_RELATIVE_STRENGTH
         + WEIGHT_5M_MOMENTUM + WEIGHT_5M_VOLUME_SURGE + WEIGHT_5M_VWAP
-        + WEIGHT_OPTIONS_FLOW + WEIGHT_SPREAD_OK + WEIGHT_NO_CORPORATE_ACTION
+        + WEIGHT_OPTIONS_FLOW + WEIGHT_SPREAD_OK + WEIGHT_NO_CORPORATE_ACTION + WEIGHT_BID_ASK_IMBALANCE
     )
     factor_breakdown = {
         "signal":    {"raw": round(signal_component, 2),    "weight_pct": round(WEIGHT_SIGNAL/total_weight*100, 1),    "contribution": round(WEIGHT_SIGNAL    * signal_component / total_weight, 2)},
@@ -648,6 +650,7 @@ def compute_readiness(
         "options_flow":       {"raw": bool(near_term_bullish_flow),"weight_pct": round(WEIGHT_OPTIONS_FLOW/total_weight*100, 1),     "contribution": round(WEIGHT_OPTIONS_FLOW     * (100 if near_term_bullish_flow else 0) / total_weight, 2)},
         "spread_ok":          {"raw": bool(spread_ok),          "weight_pct": round(WEIGHT_SPREAD_OK/total_weight*100, 1),        "contribution": round(WEIGHT_SPREAD_OK        * (100 if spread_ok else 0) / total_weight, 2)},
         "no_corporate_action":{"raw": not corporate_action_risk,"weight_pct": round(WEIGHT_NO_CORPORATE_ACTION/total_weight*100, 1),"contribution": round(WEIGHT_NO_CORPORATE_ACTION * (100 if not corporate_action_risk else 0) / total_weight, 2)},
+        "bid_ask_bullish":    {"raw": bool(bid_ask_bullish),    "weight_pct": round(WEIGHT_BID_ASK_IMBALANCE/total_weight*100, 1), "contribution": round(WEIGHT_BID_ASK_IMBALANCE * (100 if bid_ask_bullish else 0) / total_weight, 2)},
     }
     readiness = (
         WEIGHT_SIGNAL * signal_component
@@ -667,6 +670,7 @@ def compute_readiness(
         + WEIGHT_OPTIONS_FLOW * (100 if near_term_bullish_flow else 0)
         + WEIGHT_SPREAD_OK * (100 if spread_ok else 0)
         + WEIGHT_NO_CORPORATE_ACTION * (100 if not corporate_action_risk else 0)
+        + WEIGHT_BID_ASK_IMBALANCE * (100 if bid_ask_bullish else 0)
     ) / total_weight
     readiness = round(max(0.0, min(100.0, readiness)), 1)
 
