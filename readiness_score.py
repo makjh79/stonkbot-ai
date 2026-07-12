@@ -51,6 +51,14 @@ WEIGHT_VWAP_DEV = 0.05   # NEW — VWAP deviation momentum signal
 
 WEIGHT_RELATIVE_STRENGTH = 0.08  # NEW — stock vs SPY 20-day alpha; replaces EMA weight
 
+# NEW confirmation chips (added to readiness score to align tiering with UI)
+WEIGHT_5M_MOMENTUM = 0.03
+WEIGHT_5M_VOLUME_SURGE = 0.01
+WEIGHT_5M_VWAP = 0.01
+WEIGHT_OPTIONS_FLOW = 0.02
+WEIGHT_SPREAD_OK = 0.02
+WEIGHT_NO_CORPORATE_ACTION = 0.02
+
 # Tier thresholds
 TIER_NOW_MIN = 72.0   # raised from 70 for higher quality entries
 TIER_WATCH_MIN = 55.0   # raised from 50
@@ -606,11 +614,21 @@ def compute_readiness(
     vwap_component = _vwap_deviation_score(price, daily_vwap)
     vwap_confirmed = vwap_component >= 60.0  # price above VWAP or close
 
-    # Weighted composite (11 factors; sum-of-weights normalised to avoid inflation)
+    # Pull explicit 5-minute / options / spread / corporate-action chips from kwargs (populated by signal_engine)
+    momentum_5m_up = kwargs.get("momentum_5m_up", False)
+    volume_5m_surge = kwargs.get("volume_5m_surge", False)
+    price_above_5m_vwap = kwargs.get("price_above_5m_vwap", False)
+    near_term_bullish_flow = options_flow.get("near_term_bullish_flow", False)
+    spread_ok = kwargs.get("spread_ok", True)
+    corporate_action_risk = kwargs.get("corporate_action_risk", False)
+
+    # Weighted composite (11 factors + 6 new confirmation chips; sum-of-weights normalised to avoid inflation)
     total_weight = (
         WEIGHT_SIGNAL + WEIGHT_RSI + WEIGHT_VOLUME + WEIGHT_MACD + WEIGHT_EMA
         + WEIGHT_SECTOR + WEIGHT_INTRADAY + WEIGHT_OPTIONS
         + WEIGHT_REL_VOLUME + WEIGHT_VWAP_DEV + WEIGHT_RELATIVE_STRENGTH
+        + WEIGHT_5M_MOMENTUM + WEIGHT_5M_VOLUME_SURGE + WEIGHT_5M_VWAP
+        + WEIGHT_OPTIONS_FLOW + WEIGHT_SPREAD_OK + WEIGHT_NO_CORPORATE_ACTION
     )
     factor_breakdown = {
         "signal":    {"raw": round(signal_component, 2),    "weight_pct": round(WEIGHT_SIGNAL/total_weight*100, 1),    "contribution": round(WEIGHT_SIGNAL    * signal_component / total_weight, 2)},
@@ -624,6 +642,12 @@ def compute_readiness(
         "rel_volume":{"raw": round(relvol_component, 2),   "weight_pct": round(WEIGHT_REL_VOLUME/total_weight*100, 1),"contribution": round(WEIGHT_REL_VOLUME* relvol_component / total_weight, 2)},
         "vwap":      {"raw": round(vwap_component, 2),       "weight_pct": round(WEIGHT_VWAP_DEV/total_weight*100, 1),  "contribution": round(WEIGHT_VWAP_DEV  * vwap_component / total_weight, 2)},
         "relative_strength": {"raw": round(rs_component, 2),   "weight_pct": round(WEIGHT_RELATIVE_STRENGTH/total_weight*100, 1), "contribution": round(WEIGHT_RELATIVE_STRENGTH * rs_component / total_weight, 2)},
+        "momentum_5m":        {"raw": bool(momentum_5m_up),        "weight_pct": round(WEIGHT_5M_MOMENTUM/total_weight*100, 1),       "contribution": round(WEIGHT_5M_MOMENTUM       * (100 if momentum_5m_up else 0) / total_weight, 2)},
+        "volume_5m_surge":    {"raw": bool(volume_5m_surge),    "weight_pct": round(WEIGHT_5M_VOLUME_SURGE/total_weight*100, 1),   "contribution": round(WEIGHT_5M_VOLUME_SURGE   * (100 if volume_5m_surge else 0) / total_weight, 2)},
+        "price_above_5m_vwap":{"raw": bool(price_above_5m_vwap),"weight_pct": round(WEIGHT_5M_VWAP/total_weight*100, 1),           "contribution": round(WEIGHT_5M_VWAP          * (100 if price_above_5m_vwap else 0) / total_weight, 2)},
+        "options_flow":       {"raw": bool(near_term_bullish_flow),"weight_pct": round(WEIGHT_OPTIONS_FLOW/total_weight*100, 1),     "contribution": round(WEIGHT_OPTIONS_FLOW     * (100 if near_term_bullish_flow else 0) / total_weight, 2)},
+        "spread_ok":          {"raw": bool(spread_ok),          "weight_pct": round(WEIGHT_SPREAD_OK/total_weight*100, 1),        "contribution": round(WEIGHT_SPREAD_OK        * (100 if spread_ok else 0) / total_weight, 2)},
+        "no_corporate_action":{"raw": not corporate_action_risk,"weight_pct": round(WEIGHT_NO_CORPORATE_ACTION/total_weight*100, 1),"contribution": round(WEIGHT_NO_CORPORATE_ACTION * (100 if not corporate_action_risk else 0) / total_weight, 2)},
     }
     readiness = (
         WEIGHT_SIGNAL * signal_component
@@ -637,13 +661,14 @@ def compute_readiness(
         + WEIGHT_REL_VOLUME * relvol_component
         + WEIGHT_VWAP_DEV * vwap_component
         + WEIGHT_RELATIVE_STRENGTH * rs_component
+        + WEIGHT_5M_MOMENTUM * (100 if momentum_5m_up else 0)
+        + WEIGHT_5M_VOLUME_SURGE * (100 if volume_5m_surge else 0)
+        + WEIGHT_5M_VWAP * (100 if price_above_5m_vwap else 0)
+        + WEIGHT_OPTIONS_FLOW * (100 if near_term_bullish_flow else 0)
+        + WEIGHT_SPREAD_OK * (100 if spread_ok else 0)
+        + WEIGHT_NO_CORPORATE_ACTION * (100 if not corporate_action_risk else 0)
     ) / total_weight
     readiness = round(max(0.0, min(100.0, readiness)), 1)
-
-    # Pull explicit 5-minute chips from kwargs (populated by signal_engine)
-    momentum_5m_up = kwargs.get("momentum_5m_up", False)
-    volume_5m_surge = kwargs.get("volume_5m_surge", False)
-    price_above_5m_vwap = kwargs.get("price_above_5m_vwap", False)
 
     # Confirmations dict (canonical boolean signals)
     confirmations = {
