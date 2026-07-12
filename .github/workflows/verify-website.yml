@@ -1,0 +1,19 @@
+name: Verify Website Build
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Verify website/index.html contains required features
+      run: |
+        chmod +x scripts/verify_website.sh
+        scripts/verify_website.sh website/index.html
