@@ -9166,6 +9166,10 @@ function buildFactorChips(conf, count, momentumScore) {
                 { name: 'OPT', val: conf.options_confirmed, ok: conf.options_confirmed === true, tip: 'Options: implied volatility suggests bullish options positioning' },
                 { name: 'RVOL', val: conf.relvol_confirmed, ok: conf.relvol_confirmed === true, tip: 'Relative Volume: surge above 20-day average signals buying pressure' },
                 { name: 'VWAP', val: conf.vwap_confirmed, ok: conf.vwap_confirmed === true, tip: 'VWAP: price above daily VWAP means buyers in control' },
+                { name: '5M', val: conf.momentum_5m_up, ok: conf.momentum_5m_up === true, tip: '5-minute: recent 5-min bars showing positive momentum' },
+                { name: 'OF', val: conf.near_term_bullish_flow, ok: conf.near_term_bullish_flow === true, tip: 'Options Flow: near-term call volume outweighs put volume' },
+                { name: 'SPR', val: conf.spread_ok, ok: conf.spread_ok === true, warn: conf.spread_ok === false, tip: 'Spread: bid/ask spread is narrow enough for clean execution' },
+                { name: 'CA', val: conf.no_corporate_action_risk, ok: conf.no_corporate_action_risk === true, warn: conf.corporate_action_risk === true, tip: 'Corporate Action: no upcoming dividend/split/merger event' },
             ];
             const chips = factors.map(f => {
                 const color = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'rgba(255,255,255,0.15)';
@@ -9177,7 +9181,7 @@ function buildFactorChips(conf, count, momentumScore) {
             }).join('');
             return `
                 <div style="margin-bottom: 0.9rem;">
-                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors  <span style="color: var(--text-muted); font-weight: 400;">${count}/10</span></div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Factors  <span style="color: var(--text-muted); font-weight: 400;">${count}/${factors.length}</span></div>
                     <div style="display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px;">${chips}</div>
                 </div>
             `;
