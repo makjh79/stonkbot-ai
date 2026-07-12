@@ -52,15 +52,17 @@ WEIGHT_VWAP_DEV = 0.05   # NEW — VWAP deviation momentum signal
 WEIGHT_RELATIVE_STRENGTH = 0.08  # NEW — stock vs SPY 20-day alpha; replaces EMA weight
 
 # NEW confirmation chips (added to readiness score to align tiering with UI)
-WEIGHT_5M_MOMENTUM = 0.03
-WEIGHT_5M_VOLUME_SURGE = 0.01
-WEIGHT_5M_VWAP = 0.01
-WEIGHT_OPTIONS_FLOW = 0.02
-WEIGHT_SPREAD_OK = 0.02
-WEIGHT_NO_CORPORATE_ACTION = 0.02
-WEIGHT_BID_ASK_IMBALANCE = 0.02  # NEW: quote bid/ask size imbalance
+# Halved 2026-07-12 to reduce scale shift / keep PRIME bar at historical ~78.
+WEIGHT_5M_MOMENTUM = 0.015
+WEIGHT_5M_VOLUME_SURGE = 0.005
+WEIGHT_5M_VWAP = 0.005
+WEIGHT_OPTIONS_FLOW = 0.01
+WEIGHT_SPREAD_OK = 0.01
+WEIGHT_NO_CORPORATE_ACTION = 0.01
+WEIGHT_BID_ASK_IMBALANCE = 0.01  # NEW: quote bid/ask size imbalance
 
 # Tier thresholds
+TIER_STRONG_NOW_MIN = 78.0   # top-tier / tradeable tier
 TIER_NOW_MIN = 72.0   # raised from 70 for higher quality entries
 TIER_WATCH_MIN = 55.0   # raised from 50
 
@@ -71,7 +73,7 @@ TIER_WATCH_MIN = 55.0   # raised from 50
 # Entry eligibility (tightened 2026-07-04 while live expectancy is negative)
 ENTRY_READINESS_MIN = 77.0  # was 75; raising gate to improve entry quality
 ENTRY_MIN_CONFIRMATIONS = 5  # was 4; require more confirmations for entry
-ENTRY_MIN_HARD_CONFIRMATIONS = 2  # softened 2026-07-08 — was 2; unlock more entry candidates while keeping quality
+ENTRY_MIN_HARD_CONFIRMATIONS = 1  # lowered 2026-07-12 — current market rarely shows 2+ canonical hard confirms; keep gate tied to above_ema + total confirmations
 
 
 
@@ -738,7 +740,7 @@ def compute_readiness(
 
     # Tier: STRONG_NOW now means *tradeable* top-tier, not just readiness ≥78.
     # A symbol with readiness ≥78 but missing the entry gate stays in NOW.
-    if readiness >= 78.0 and entry_eligible:
+    if readiness >= TIER_STRONG_NOW_MIN and entry_eligible:
         tier = "STRONG_NOW"
     elif readiness >= TIER_NOW_MIN:
         tier = "NOW"

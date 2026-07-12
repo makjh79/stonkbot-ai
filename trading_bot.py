@@ -12,7 +12,7 @@ Design principles:
 - Paper-safe: defaults to paper-only; live mode requires explicit config flag.
 
 v2.5 changes:
-  - Entry: only STRONG_NOW tier is tradeable (readiness >= 78, gate >= 77, >= 5 conf, above_ema)
+  - Entry: only STRONG_NOW tier is tradeable (readiness >= TIER_STRONG_NOW_MIN, gate, >= 5 conf, above_ema)
   - NOW tier is non-trading "building" strength
   - Mean reversion signals are watch-only, never entry triggers
   - Reduced sizing multipliers while live expectancy is negative
@@ -63,7 +63,12 @@ def _acquire_instance_lock() -> bool:
 if not _acquire_instance_lock():
     sys.exit(1)
 
-from readiness_score import ENTRY_READINESS_MIN, ENTRY_MIN_CONFIRMATIONS, ENTRY_MIN_HARD_CONFIRMATIONS
+from readiness_score import (
+    ENTRY_READINESS_MIN,
+    ENTRY_MIN_CONFIRMATIONS,
+    ENTRY_MIN_HARD_CONFIRMATIONS,
+    TIER_STRONG_NOW_MIN,
+)
 
 import requests
 
@@ -1008,7 +1013,7 @@ class STONKAIBot:
     def _high_beta_buy_blocked(self, symbol: str, cost: float, portfolio_data: Dict, high_beta_symbols: set) -> bool:
         """Block a new high-beta buy unless it fits under the cap or qualifies for opportunistic headroom.
 
-        Exceptional PRIME candidates (readiness >= 78) may exceed the steady-state cap up to the
+        Exceptional PRIME candidates (readiness >= TIER_STRONG_NOW_MIN) may exceed the steady-state cap up to the
         opportunistic cap, matching the watchlist/website logic in dynamic_watchlist_manager.py.
         """
         if not self.risk_engine.config.high_beta_basket_cap_enabled or symbol not in high_beta_symbols:
@@ -1028,7 +1033,7 @@ class STONKAIBot:
         sig = next((s for s in self._signals if s.get("symbol") == symbol), {})
         tier = sig.get("tier", "")
         readiness = sig.get("readiness_score", 0)
-        is_exceptional = tier == "STRONG_NOW" and readiness >= 78
+        is_exceptional = tier == "STRONG_NOW" and readiness >= TIER_STRONG_NOW_MIN
 
         steady_cap = self.risk_engine.config.max_high_beta_deployed_pct
         opportunistic_cap = getattr(dynamic_watchlist_manager, "OPPORTUNISTIC_HIGH_BETA_CAP", 0.40)

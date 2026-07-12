@@ -24,7 +24,11 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from alpaca_data import get_data_hub
-from readiness_score import ENTRY_MIN_CONFIRMATIONS, compute_confirmation_count
+from readiness_score import (
+    ENTRY_MIN_CONFIRMATIONS,
+    TIER_STRONG_NOW_MIN,
+    compute_confirmation_count,
+)
 from stonk_utils import atomic_write_json
 import argparse
 import logging
@@ -636,7 +640,7 @@ def build_watchlist(signals: List[Dict]) -> Dict:
                 reason = f"Held at {held_info['weight']:.1f}% — no add planned"
         elif is_high_beta and high_beta_pct >= MAX_HIGH_BETA_DEPLOYED_PCT:
             # Opportunistic headroom: exceptional PRIME candidates may queue up to the higher cap
-            if tier == "PRIME" and readiness >= 78 and high_beta_pct <= OPPORTUNISTIC_HIGH_BETA_CAP:
+            if tier == "PRIME" and readiness >= TIER_STRONG_NOW_MIN and high_beta_pct <= OPPORTUNISTIC_HIGH_BETA_CAP:
                 status = "queued"
                 reason = f"Queued (opportunistic high-beta, basket {high_beta_pct:.1%})"
             else:
