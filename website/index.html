@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20260712-v204">
-    <script>(function(){var v='20260712-v204';var k='stonkbot_v197';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20260712-v205">
+    <script>(function(){var v='20260712-v205';var k='stonkbot_v197';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -10974,11 +10974,12 @@ function updateDashboard(data) {
                 const sentiment = data.sentiment || 50;
                 const sentimentLabel = data.sentiment_label || 'Neutral';
                 
-                // Readiness indicator based on server signal tier
+                // Readiness indicator based on server backend tier
                 let readinessTag = '';
-                if (data.signal_tier === 'STRONG_NOW') readinessTag = 'STRONG';
-                else if (data.signal_tier === 'NOW') readinessTag = 'READY';
-                else if (data.signal_tier === 'WATCH') readinessTag = 'CLOSE';
+                const backendTier = data.backend_tier || data.signal_tier || 'TRACKING';
+                if (backendTier === 'STRONG_NOW') readinessTag = 'STRONG';
+                else if (backendTier === 'NOW') readinessTag = 'READY';
+                else if (backendTier === 'WATCH') readinessTag = 'CLOSE';
                 
                 // Generate dynamic descriptions
                 const dynamicStrategy = generateDynamicStrategy(symbol, rsi, changePct, aiScore, info.company);
@@ -11006,8 +11007,9 @@ function updateDashboard(data) {
                     confirmationCount: data.confirmation_count || 0,
                     confirmations: data.confirmations || {},
                     // Alpaca paid data fields — passed through to popup
-                    tier: data.signal_tier || 'TRACKING',
-                    signal_tier: data.signal_tier || 'TRACKING',
+                    tier: data.display_tier || data.signal_tier || 'TRACKING',
+                    signal_tier: data.display_tier || data.signal_tier || 'TRACKING',
+                    backend_tier: data.backend_tier || data.signal_tier || 'TRACKING',
                     daily_vwap: data.daily_vwap || null,
                     prev_close: data.prev_close || null,
                     options_implied_vol: data.options_implied_vol || null,
@@ -11026,7 +11028,7 @@ function updateDashboard(data) {
                     stopLoss: targets.stop_loss,
                     profit25: targets.profit_25,
                     profit50: targets.profit_50,
-                    signal: data.signal_tier || targets.signal || 'WATCH',
+                    signal: data.display_tier || targets.signal || 'WATCH',
                     aiNote: targets.council_note || targets.ai_note,
                     premarket_change_pct: data.premarket_change_pct != null ? data.premarket_change_pct : null,
                     premarket_volume: data.premarket_volume != null ? data.premarket_volume : null,

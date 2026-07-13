@@ -554,6 +554,7 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "signal_tier": tier,
             "signal": tier,
             "display_tier": display_tier_name,
+            "backend_tier": s.get("tier", "MONITOR"),
             "entry_eligible": entry_eligible,
             "confirmation_count": conf_count,
             "confirmations": s.get("confirmations", {}),
