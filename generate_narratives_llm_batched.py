@@ -16,6 +16,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import requests
+
 # Import canonical confirmation counter
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from readiness_score import compute_confirmation_count
@@ -32,7 +34,7 @@ WATCHLIST_NARRATIVES_FILE = Path(os.environ.get("STONKBOT_WATCHLIST_NARRATIVES_F
 _COMPANY_KNOWLEDGE_FILE = Path(os.environ.get("STONKBOT_KNOWLEDGE_FILE", BOT_DIR / "company_knowledge.json"))
 
 # Model selection
-DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "openrouter/moonshotai/kimi-k2.6")
+DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "openrouter/deepseek/deepseek-chat")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_NARRATIVE_TIMEOUT", "180"))
 BATCH_SIZE = int(os.environ.get("STONKBOT_NARRATIVE_BATCH_SIZE", "6"))
 
@@ -110,8 +112,49 @@ def _extract_json(text: str) -> dict:
     raise json.JSONDecodeError("No valid JSON object found", text, 0)
 
 
+def _load_openrouter_key() -> str | None:
+    auth_file = Path(os.environ.get("HOME", "/home/stonkai")) / ".openclaw" / "agents" / "main" / "agent" / "auth-profiles.json"
+    try:
+        data = json.loads(auth_file.read_text(encoding="utf-8"))
+        return data.get("profiles", {}).get("openrouter:default", {}).get("key")
+    except Exception:
+        return None
+
+
 def llm_generate_json(prompt: str, model: str = DEFAULT_MODEL) -> dict:
-    """Call openclaw with a hard timeout wrapper."""
+    """Call LLM with JSON output. Uses direct OpenRouter API for openrouter/* models
+    to avoid openclaw max_tokens/context-length defaults that exceed provider limits."""
+
+    # Direct OpenRouter path
+    if model.startswith("openrouter/"):
+        provider_model = model.split("/", 1)[1]
+        api_key = _load_openrouter_key()
+        if not api_key:
+            raise RuntimeError("OpenRouter API key not found in auth-profiles.json")
+        resp = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://stonkbot.ai",
+                "X-Title": "StonkBOT.AI",
+            },
+            json={
+                "model": provider_model,
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {"type": "json_object"},
+                "max_tokens": 4096,
+                "temperature": 0.7,
+            },
+            timeout=LLM_TIMEOUT,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        choices = data.get("choices", [{}])
+        content = choices[0].get("message", {}).get("content", "") if choices else ""
+        return _extract_json(content)
+
+    # Fallback to openclaw for other providers
     cmd = [
         "timeout", "-s", "KILL", str(LLM_TIMEOUT),
         "openclaw",
