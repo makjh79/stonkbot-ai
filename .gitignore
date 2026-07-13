@@ -38,3 +38,4 @@ tier_history.json
 data_fetcher.log
 stonkbot.db-shm
 stonkbot.db-wal
+stonkbot.db

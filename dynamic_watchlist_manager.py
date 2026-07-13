@@ -720,6 +720,9 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             status = "queued"
             reason = "Queued for next cycle"
         target_sizing = {}
+        plan_price = None
+        hard_stop = None
+        trailing_stop = None
         if status in ("queued", "add") and portfolio_value > 0 and price > 0:
             target_sizing = _compute_target_sizing(
                 tier=tier,
@@ -729,6 +732,10 @@ def build_watchlist(signals: List[Dict]) -> Dict:
                 portfolio_value=portfolio_value,
                 is_add=(status == "add"),
             )
+            # Trading plan estimates for Orders tab (no live ATR in signals yet)
+            plan_price = round(price, 2)
+            hard_stop = round(price * 0.93, 2)
+            trailing_stop = round(price * 0.90, 2)
 
         buy_candidates.append({
             "symbol": symbol,
@@ -743,6 +750,9 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "target_pct": target_sizing.get("target_pct", 0.0),
             "target_notional": target_sizing.get("target_notional", 0.0),
             "target_shares": target_sizing.get("target_shares", 0),
+            "plan_price": plan_price,
+            "hard_stop": hard_stop,
+            "trailing_stop": trailing_stop,
         })
 
     # Unify buy_status/reason into each symbol's price dict so consumers don't need to cross-reference buy_candidates
@@ -754,6 +764,9 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         pdata["target_pct"] = cdata.get("target_pct", 0.0)
         pdata["target_notional"] = cdata.get("target_notional", 0.0)
         pdata["target_shares"] = cdata.get("target_shares", 0)
+        pdata["plan_price"] = cdata.get("plan_price")
+        pdata["hard_stop"] = cdata.get("hard_stop")
+        pdata["trailing_stop"] = cdata.get("trailing_stop")
 
     update_log = {
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
