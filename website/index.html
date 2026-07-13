@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1248-orders-mobile -->
+    <!-- CACHE BUST: v=20260713-1253-orders-card -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11382,45 +11382,64 @@ function updateDashboard(data) {
             let html = '';
 
             if (readyToBuy.length > 0) {
-                // Header row
-                html += '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">';
-                html += '<div>Stock</div>';
-                html += '<div style="text-align: center;">Plan</div>';
-                html += '<div style="text-align: right;">Target / Why</div>';
-                html += '</div>';
-
                 readyToBuy.forEach(function(stock) {
                     const planPrice = stock.plan_price || stock.price || 0;
                     const hardStop = stock.hard_stop || 0;
                     const trailStop = stock.trailing_stop || 0;
                     const targetPct = stock.target_pct || 0;
-                    const whyText = stock.buy_status_reason || 'Queued';
+                    const targetNotional = stock.target_notional || 0;
+                    const whyText = stock.buy_status_reason || 'Queued for next cycle';
 
-                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background=\'rgba(6,182,212,0.06)\'" onmouseout="this.style.background=\'transparent\'">';
+                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="padding: 14px 16px; margin-bottom: 12px; background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.15); border-radius: 16px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background=\'rgba(6,182,212,0.10)\';this.style.borderColor=\'rgba(6,182,212,0.25)\'" onmouseout="this.style.background=\'rgba(6,182,212,0.06)\';this.style.borderColor=\'rgba(6,182,212,0.15)\'">';
 
-                    // Column 1: Stock
-                    html += '<div style="min-width: 0;">';
-                    html += '<div style="font-family: monospace; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; color: var(--text-primary);">' + stock.symbol + '</div>';
-                    html += '<div style="font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + (stock.company || '') + '</div>';
+                    // Header: symbol + price on left, readiness chip on right
+                    html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">';
+                    html += '<div>';
+                    html += '<span style="font-family: monospace; font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px;">' + stock.symbol + '</span>';
+                    html += '<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">' + (stock.company || '') + '</div>';
                     html += '</div>';
-
-                    // Column 2: Plan (entry / stop / trail stacked)
-                    html += '<div style="text-align: center; font-family: monospace; font-size: 12px; line-height: 1.5;">';
-                    html += '<div style="font-weight: 600; color: var(--text-primary);">' + (planPrice ? '$' + planPrice.toFixed(2) : '—') + '</div>';
-                    if (hardStop) {
-                        html += '<div style="font-size: 10px; color: #f87171;">↓ $' + hardStop.toFixed(2) + '</div>';
-                    }
-                    if (trailStop) {
-                        html += '<div style="font-size: 10px; color: #fbbf24;">⇣ $' + trailStop.toFixed(2) + '</div>';
-                    }
-                    html += '</div>';
-
-                    // Column 3: Target / Why
                     html += '<div style="text-align: right;">';
+                    html += '<div style="font-family: monospace; font-size: 16px; font-weight: 700; color: var(--text-primary);">' + (planPrice ? '$' + planPrice.toFixed(2) : '—') + '</div>';
+                    html += '<div style="font-size: 10px; color: #22c55e; margin-top: 2px;">Ready ' + (stock.readinessScore || 0).toFixed(1) + '</div>';
+                    html += '</div>';
+                    html += '</div>';
+
+                    // Divider
+                    html += '<div style="height: 1px; background: rgba(255,255,255,0.06); margin: 10px 0;"></div>';
+
+                    // Plan stats: stop, trail, target
+                    html += '<div style="display: flex; justify-content: space-between; gap: 8px; margin-bottom: 10px;">';
+
+                    // Stop
+                    html += '<div style="flex: 1; min-width: 0;">';
+                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Hard Stop</div>';
+                    html += '<div style="font-family: monospace; font-size: 13px; font-weight: 600; color: #f87171;">' + (hardStop ? '$' + hardStop.toFixed(2) : '—') + '</div>';
+                    html += '</div>';
+
+                    // Trail
+                    html += '<div style="flex: 1; min-width: 0; text-align: center;">';
+                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Trailing Stop</div>';
+                    html += '<div style="font-family: monospace; font-size: 13px; font-weight: 600; color: #fbbf24;">' + (trailStop ? '$' + trailStop.toFixed(2) : '—') + '</div>';
+                    html += '</div>';
+
+                    // Target
+                    html += '<div style="flex: 1; min-width: 0; text-align: right;">';
+                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Position</div>';
                     if (targetPct > 0) {
-                        html += '<div style="font-size: 11px; font-weight: 700; color: #06b6d4; background: rgba(6,182,212,0.10); padding: 3px 6px; border-radius: 8px; border: 1px solid rgba(6,182,212,0.25); display: inline-block; margin-bottom: 4px;">' + targetPct.toFixed(1) + '%</div>';
+                        html += '<div style="font-family: monospace; font-size: 13px; font-weight: 700; color: #06b6d4;">' + targetPct.toFixed(1) + '%</div>';
+                    } else {
+                        html += '<div style="font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text-muted);">—</div>';
                     }
-                    html += '<div style="font-size: 9px; color: var(--text-muted); line-height: 1.3;">' + whyText + '</div>';
+                    html += '</div>';
+
+                    html += '</div>';
+
+                    // Why row
+                    html += '<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">';
+                    html += '<div style="font-size: 10px; color: var(--text-muted); line-height: 1.35;">' + whyText + '</div>';
+                    if (targetNotional > 0) {
+                        html += '<div style="font-family: monospace; font-size: 10px; color: var(--text-muted); white-space: nowrap;">~$' + targetNotional.toLocaleString() + '</div>';
+                    }
                     html += '</div>';
 
                     html += '</div>';
