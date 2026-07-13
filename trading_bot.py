@@ -650,6 +650,12 @@ class PortfolioDataStore:
             pos["market_value"] = new_mv
             pos["unrealized_pl"] = new_upl
             pos["unrealized_plpc"] = new_uplpc
+            # Reset split-adjusted trailing-stop high-water mark so a 4:1 split
+            # doesn't leave a pre-split peak that immediately triggers stops.
+            try:
+                self.bot.risk_engine.position_high_water_marks[sym] = new_avg
+            except Exception:
+                pass
             # Also adjust snapshot-derived historical bar data so enrichment doesn't overwrite with pre-split values
             for snap_key in ["prev_close", "daily_vwap", "daily_open", "daily_high", "daily_low", "daily_close"]:
                 val = snap.get(snap_key)
