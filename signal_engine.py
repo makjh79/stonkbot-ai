@@ -942,6 +942,25 @@ class SignalEngine:
             s.rank = i
             s.updated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
+        # Hysteresis: don't demote a symbol until it drops a full point below the
+        # threshold it was promoted at. Prevents borderline names from flickering
+        # between STRONG_NOW/NOW every refresh.
+        previous_tiers = {}
+        try:
+            prior = json.loads(Path(__file__).parent.joinpath("signals.json").read_text())
+            previous_tiers = {s["symbol"]: s.get("tier") for s in prior.get("signals", [])}
+        except Exception:
+            pass
+
+        TIER_HYSTERESIS = 1.0  # must drop 1 full readiness point below threshold to demote
+        for s in signals:
+            prev_tier = previous_tiers.get(s.symbol)
+            if prev_tier == "STRONG_NOW" and 77.0 - TIER_HYSTERESIS <= s.readiness_score < TIER_STRONG_NOW_MIN:
+                s.tier = "STRONG_NOW"
+                s.tier_reason = s.tier_reason.replace("BUILDING:", "PRIME:")
+            elif prev_tier == "NOW" and 72.0 - TIER_HYSTERESIS <= s.readiness_score < TIER_NOW_MIN:
+                s.tier = "NOW"
+
         logger.info(f"Generated {len(signals)} signals. Top: {signals[0].symbol if signals else 'none'} (readiness={signals[0].readiness_score if signals else 0:.1f})")
         return signals
 
