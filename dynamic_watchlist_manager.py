@@ -732,10 +732,14 @@ def build_watchlist(signals: List[Dict]) -> Dict:
                 portfolio_value=portfolio_value,
                 is_add=(status == "add"),
             )
-            # Trading plan estimates for Orders tab (no live ATR in signals yet)
+            # ATR-based trading plan for Orders tab (mirrors risk_engine.py stop logic)
+            atr14 = pdata.get("atr14") or pdata.get("atr_14", 0)
+            atr_pct = (atr14 / price) if atr14 and price > 0 else 0.0
             plan_price = round(price, 2)
-            hard_stop = round(price * 0.93, 2)
-            trailing_stop = round(price * 0.90, 2)
+            raw_hard_pct = max(min(atr_pct * 1.5, 0.08), 0.03)
+            raw_trail_pct = max(min(atr_pct * 2.0, 0.10), 0.03)
+            hard_stop = round(price * (1 - raw_hard_pct), 2)
+            trailing_stop = round(price * (1 - raw_trail_pct), 2)
 
         buy_candidates.append({
             "symbol": symbol,
