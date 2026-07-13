@@ -125,23 +125,30 @@ def llm_generate_json(prompt: str, model: str = DEFAULT_MODEL) -> dict:
     """Call LLM with JSON output. Uses direct OpenRouter API for openrouter/* models
     to avoid openclaw max_tokens/context-length defaults that exceed provider limits."""
 
-    # Direct OpenRouter path
+    # Ollama path with retry/backoff to handle Ollama Cloud 429 rate limits
     if model.startswith("ollama/"):
         provider_model = model.split("/", 1)[1]
-        resp = requests.post(
-            "http://localhost:11434/api/chat",
-            json={
-                "model": provider_model,
-                "messages": [{"role": "user", "content": prompt}],
-                "stream": False,
-                "options": {"temperature": 0.7},
-            },
-            timeout=LLM_TIMEOUT,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        content = data.get("message", {}).get("content", "")
-        return _extract_json(content)
+        for attempt in range(5):
+            resp = requests.post(
+                "http://localhost:11434/api/chat",
+                json={
+                    "model": provider_model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "stream": False,
+                    "options": {"temperature": 0.7},
+                },
+                timeout=LLM_TIMEOUT,
+            )
+            if resp.status_code == 429:
+                wait = 5 * (2 ** attempt)
+                print(f"[WARN] Ollama 429, retrying in {wait}s...", file=sys.stderr)
+                time.sleep(wait)
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+            content = data.get("message", {}).get("content", "")
+            return _extract_json(content)
+        raise RuntimeError("Ollama rate-limited after 5 attempts")
 
     if model.startswith("openrouter/"):
         provider_model = model.split("/", 1)[1]
@@ -401,7 +408,8 @@ def _normalize_watchlist_result(result: Any, chunk_symbols: list[str]) -> dict[s
     return normalized
 
 
-def generate_holdings_narratives(holdings: dict[str, dict], chunk_size: int = BATCH_SIZE) -> dict:
+def generate_holdings_narratives(holdings: dict[str, dict], chunk_size: int = None) -> dict:
+    chunk_size = chunk_size or BATCH_SIZE
     results: dict[str, dict] = {}
     chunks = _chunk_dict(holdings, chunk_size)
     for idx, chunk in enumerate(chunks, 1):
@@ -419,7 +427,8 @@ def generate_holdings_narratives(holdings: dict[str, dict], chunk_size: int = BA
     return results
 
 
-def generate_watchlist_narratives(items: dict[str, dict], chunk_size: int = BATCH_SIZE) -> dict:
+def generate_watchlist_narratives(items: dict[str, dict], chunk_size: int = None) -> dict:
+    chunk_size = chunk_size or BATCH_SIZE
     results: dict[str, dict] = {}
     chunks = _chunk_dict(items, chunk_size)
     for idx, chunk in enumerate(chunks, 1):
@@ -454,7 +463,10 @@ def load_contexts() -> tuple[dict, list, dict, dict]:
 
 
 def main() -> None:
+    global BATCH_SIZE
     signals_map, positions, watchlist, risk_config = load_contexts()
+    if DEFAULT_MODEL.startswith("ollama/"):
+        BATCH_SIZE = 1
     print(f"[LLM] Loaded {len(signals_map)} signals, {len(positions)} positions, {len(watchlist)} watchlist symbols.", file=sys.stderr)
     print(f"[LLM] Using model {DEFAULT_MODEL} with timeout {LLM_TIMEOUT}s, batch size {BATCH_SIZE}", file=sys.stderr)
 
