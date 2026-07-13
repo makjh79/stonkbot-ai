@@ -39,3 +39,4 @@ data_fetcher.log
 stonkbot.db-shm
 stonkbot.db-wal
 stonkbot.db
+alert_log.json
