@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1239-orders-plan -->
+    <!-- CACHE BUST: v=20260713-1248-orders-mobile -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11382,64 +11382,49 @@ function updateDashboard(data) {
             let html = '';
 
             if (readyToBuy.length > 0) {
-                html += '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">';
-                html += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
-                html += '<thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">';
-                html += '<th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Stock</th>';
-                html += '<th style="text-align: right; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Plan</th>';
-                html += '<th style="text-align: right; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Stop</th>';
-                html += '<th class="wl-hide-mobile" style="text-align: right; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Trail</th>';
-                html += '<th class="wl-hide-mobile" style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Target</th>';
-                html += '<th class="wl-hide-mobile" style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Why</th>';
-                html += '</tr></thead><tbody>';
+                // Header row
+                html += '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">';
+                html += '<div>Stock</div>';
+                html += '<div style="text-align: center;">Plan</div>';
+                html += '<div style="text-align: right;">Target / Why</div>';
+                html += '</div>';
 
                 readyToBuy.forEach(function(stock) {
                     const planPrice = stock.plan_price || stock.price || 0;
-                    const hardStop = stock.hard_stop || (planPrice * 0.93);
-                    const trailStop = stock.trailing_stop || (planPrice * 0.90);
+                    const hardStop = stock.hard_stop || 0;
+                    const trailStop = stock.trailing_stop || 0;
                     const targetPct = stock.target_pct || 0;
-                    const whyText = stock.buy_status_reason || 'Queued for next cycle';
+                    const whyText = stock.buy_status_reason || 'Queued';
 
-                    html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: rgba(6,182,212,0.02);" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'rgba(6,182,212,0.02)\'">';
+                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background=\'rgba(6,182,212,0.06)\'" onmouseout="this.style.background=\'transparent\'">';
 
-                    // Symbol + company
-                    html += '<td style="padding: 8px 8px;">';
-                    html += '<div style="display: flex; align-items: center;">';
-                    html += '<span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px;">' + stock.symbol + '</span>';
+                    // Column 1: Stock
+                    html += '<div style="min-width: 0;">';
+                    html += '<div style="font-family: monospace; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; color: var(--text-primary);">' + stock.symbol + '</div>';
+                    html += '<div style="font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + (stock.company || '') + '</div>';
                     html += '</div>';
-                    html += '<div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px;">' + (stock.company || '') + '</div>';
-                    html += '</td>';
 
-                    // Plan price
-                    html += '<td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px;">' + (planPrice ? '$' + planPrice.toFixed(2) : '—') + '</td>';
-
-                    // Hard stop
-                    html += '<td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; color: #f87171;">' + (hardStop ? '$' + hardStop.toFixed(2) : '—') + '</td>';
-
-                    // Trailing stop (mobile hidden)
-                    html += '<td class="wl-hide-mobile" style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; color: #fbbf24;">' + (trailStop ? '$' + trailStop.toFixed(2) : '—') + '</td>';
-
-                    // Target %
-                    html += '<td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">';
-                    if (targetPct > 0) {
-                        html += '<span style="font-size: 11px; font-weight: 700; color: #06b6d4; background: rgba(6,182,212,0.10); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(6,182,212,0.25);">' + targetPct.toFixed(1) + '%</span>';
-                    } else {
-                        html += '<span style="color: var(--text-muted); font-size: 11px;">—</span>';
+                    // Column 2: Plan (entry / stop / trail stacked)
+                    html += '<div style="text-align: center; font-family: monospace; font-size: 12px; line-height: 1.5;">';
+                    html += '<div style="font-weight: 600; color: var(--text-primary);">' + (planPrice ? '$' + planPrice.toFixed(2) : '—') + '</div>';
+                    if (hardStop) {
+                        html += '<div style="font-size: 10px; color: #f87171;">↓ $' + hardStop.toFixed(2) + '</div>';
                     }
-                    html += '</td>';
+                    if (trailStop) {
+                        html += '<div style="font-size: 10px; color: #fbbf24;">⇣ $' + trailStop.toFixed(2) + '</div>';
+                    }
+                    html += '</div>';
 
-                    // Why
-                    html += '<td class="wl-hide-mobile" style="padding: 8px 8px; text-align: left;">';
-                    html += '<span style="font-size: 10px; color: var(--text-muted); line-height: 1.3; display: block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + whyText + '</span>';
-                    html += '</td>';
+                    // Column 3: Target / Why
+                    html += '<div style="text-align: right;">';
+                    if (targetPct > 0) {
+                        html += '<div style="font-size: 11px; font-weight: 700; color: #06b6d4; background: rgba(6,182,212,0.10); padding: 3px 6px; border-radius: 8px; border: 1px solid rgba(6,182,212,0.25); display: inline-block; margin-bottom: 4px;">' + targetPct.toFixed(1) + '%</div>';
+                    }
+                    html += '<div style="font-size: 9px; color: var(--text-muted); line-height: 1.3;">' + whyText + '</div>';
+                    html += '</div>';
 
-                    html += '</tr>';
+                    html += '</div>';
                 });
-
-                html += '</tbody></table></div>';
-
-                // Mobile-only: horizontal scroll note if table overflows
-                html += '<div class="wl-hide-desktop" style="font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 8px; opacity: 0.7;">← scroll for full plan →</div>';
             } else {
                 html += '<div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">';
                 html += '<div style="font-size: 32px; margin-bottom: 16px;">📭</div>';
