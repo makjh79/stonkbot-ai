@@ -34,7 +34,7 @@ WATCHLIST_NARRATIVES_FILE = Path(os.environ.get("STONKBOT_WATCHLIST_NARRATIVES_F
 _COMPANY_KNOWLEDGE_FILE = Path(os.environ.get("STONKBOT_KNOWLEDGE_FILE", BOT_DIR / "company_knowledge.json"))
 
 # Model selection
-DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "ollama/kimi-k2.7-code:cloud")
+DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "openrouter/deepseek/deepseek-chat")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_NARRATIVE_TIMEOUT", "180"))
 BATCH_SIZE = int(os.environ.get("STONKBOT_NARRATIVE_BATCH_SIZE", "6"))
 
@@ -306,7 +306,9 @@ TIER: {signal.get('display_tier') or signal.get('tier', 'MONITOR')}
 P&L%: {position.get('unrealized_plpc', 0):.2f}% | Price: ${position.get('current', 0):.2f} | Entry: ${position.get('avg_entry', 0):.2f}
 Stop: ${stops['hard_stop']:.2f} | Trailing: ${stops['trailing_stop']:.2f} | VWAP: {f"${stops['vwap']:.2f}" if stops.get('vwap') else "n/a"}
 Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | MACD: {'+ve' if conf.get('macd_turning') else '-ve'} | Vol: {'yes' if conf.get('volume_confirmed') else 'no'} | RVOL: {'yes' if conf.get('relvol_confirmed') else 'no'} | EMA: {'above' if conf.get('above_ema') else 'below'} | VWAP: {'above' if conf.get('vwap_confirmed') else 'below'}
-Readiness: {signal.get('readiness_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels}) | Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
+Readiness: {signal.get('readiness_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels})
+NOTE: Only mention the ACTIVE factors listed above. Do not discuss inactive factors. | Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
+NOTE: Only mention the ACTIVE factors listed above. Do not discuss inactive factors.
 Headline: {headline or 'None'}
 Note: {_company_note(symbol)}
 Risk: {_company_risk(symbol)}
@@ -325,6 +327,7 @@ COMPANY: {signal.get('company') or watch.get('company') or symbol}
 SECTOR: {signal.get('sector') or watch.get('sector', 'Other')}
 TIER: {watch.get('display_tier') or watch.get('signal_tier') or signal.get('display_tier') or signal.get('tier', 'MONITOR')} | Entry eligible: {'yes' if watch.get('entry_eligible') or signal.get('entry_eligible') else 'no'}
 Price: ${price:.2f} | Readiness: {signal.get('readiness_score', 0):.1f} | Total: {signal.get('total_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels})
+NOTE: Only mention the ACTIVE factors listed above. Do not discuss inactive factors.
 Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | MACD: {'+ve' if conf.get('macd_turning') else '-ve'} | Vol: {'yes' if conf.get('volume_confirmed') else 'no'} | RVOL: {'yes' if conf.get('relvol_confirmed') else 'no'} | EMA: {'above' if conf.get('above_ema') else 'below'} | VWAP: {'above' if conf.get('vwap_confirmed') else 'below'}
 Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
 Headline: {headline or 'None'}
