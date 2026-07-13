@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1506-buy-gate -->
+    <!-- CACHE BUST: v=20260713-1511-no-alerts -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -4293,7 +4293,7 @@ function toggleAboutSection(header) {
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <button onclick="filterActivityLog('all')" id="filter-all" class="activity-filter active" style="padding: 0.35rem 0.75rem; font-size: 0.7rem; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-secondary); cursor: pointer; transition: all 0.2s;">All</button>
                     <button onclick="filterActivityLog('trades')" id="filter-trades" class="activity-filter" style="padding: 0.35rem 0.75rem; font-size: 0.7rem; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-secondary); cursor: pointer; transition: all 0.2s;">Trades</button>
-                    <button onclick="filterActivityLog('alerts')" id="filter-alerts" class="activity-filter" style="padding: 0.35rem 0.75rem; font-size: 0.7rem; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-secondary); cursor: pointer; transition: all 0.2s;">Alerts</button>
+
                     <button class="chart-modal-close" onclick="closeActivityLog()">✕</button>
                 </div>
             </div>
@@ -4309,8 +4309,7 @@ function toggleAboutSection(header) {
                         <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Trades</div>
                     </div>
                     <div style="text-align: center; padding: 0.5rem;">
-                        <div id="stat-alerts" style="font-size: 1.1rem; font-weight: 700; color: var(--accent-blue);">0</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Alerts</div>
+
                     </div>
                     <div style="text-align: center; padding: 0.5rem;">
                         <div id="stat-bot" style="font-size: 1.1rem; font-weight: 700; color: var(--accent-purple);">0</div>
@@ -9831,114 +9830,6 @@ function updateDashboard(data, marketStatus) {
                     console.log('Could not load trades_log.json:', e);
                 }
 
-                // 3. Add static activity data as fallback
-                const tradeActivities = [
-                    {
-                        type: 'trade',
-                        subtype: 'buy',
-                        icon: '',
-                        title: 'Bought AAPL',
-                        description: '25 shares @ $313.97 • Strategy: Mega-cap exposure',
-                        timestamp: new Date('2026-06-05T09:30:00Z'),
-                        badge: 'Buy',
-                        badgeClass: 'buy',
-                        details: { quantity: 25, price: '313.97', total: '7,849.19' },
-                        rationale: 'Portfolio lacked mega-cap tech exposure. Apple provides stability with AI iPhone cycle catalyst. Target allocation: 8% of portfolio. Reduces concentration risk in pure-play AI names while maintaining growth exposure.',
-                        marketContext: 'AAPL trading near 52-week highs but valuation reasonable at 28x forward P/E. Bank of America recently named it a top pick for AI edge computing.'
-                    },
-                    {
-                        type: 'trade',
-                        subtype: 'buy',
-                        icon: '',
-                        title: 'Bought MSFT',
-                        description: '10 shares @ $428.80 • Strategy: AI infrastructure',
-                        timestamp: new Date('2026-06-05T09:31:00Z'),
-                        badge: 'Buy',
-                        badgeClass: 'buy',
-                        details: { quantity: 10, price: '428.80', total: '4,288.00' },
-                        rationale: 'Core AI infrastructure play. Azure growth accelerating with AI workload adoption. Most stable compounder in portfolio. Provides ballast against high-beta positions.',
-                        marketContext: 'MSFT remains the enterprise AI leader. Copilot monetization showing traction. Recession-resistant revenue streams from Office 365 and Azure.'
-                    },
-                    {
-                        type: 'trade',
-                        subtype: 'buy',
-                        icon: '',
-                        title: 'Bought GOOGL',
-                        description: '15 shares @ $367.54 • Strategy: AI search play',
-                        timestamp: new Date('2026-06-05T09:32:00Z'),
-                        badge: 'Buy',
-                        badgeClass: 'buy',
-                        details: { quantity: 15, price: '367.54', total: '5,513.07' },
-                        rationale: 'Undervalued vs peers on P/E basis. AI search integration (Gemini) creating new monetization opportunities. YouTube growth stabilizing.',
-                        marketContext: 'GOOGL trading at discount to MSFT/AAPL despite comparable growth. Antitrust overhang priced in. Cloud profitability improving.'
-                    },
-                    {
-                        type: 'trade',
-                        subtype: 'buy',
-                        icon: '',
-                        title: 'Bought AMD',
-                        description: '10 shares @ $517.49 • Target: +25% | Trim: RSI>75 | Stop: -15%',
-                        timestamp: new Date('2026-06-05T16:16:00Z'),
-                        badge: 'Buy',
-                        badgeClass: 'buy',
-                        details: { quantity: 10, price: '517.49', total: '5,174.90' },
-                        rationale: 'Averaging down on high-conviction AI position. MI300 chips gaining traction in data center. Temporary pullback (-6.7%) presents opportunity. Diamond hands on core thesis.',
-                        marketContext: 'AMD down on broader tech weakness, not company-specific news. GPU demand remains strong. Market share gains from Intel continuing.'
-                    },
-                    {
-                        type: 'trade',
-                        subtype: 'buy',
-                        icon: '',
-                        title: 'Bought PLTR',
-                        description: '15 shares @ $142.52 • Target: +25% | Trim: RSI>75 | Stop: -15%',
-                        timestamp: new Date('2026-06-05T16:18:00Z'),
-                        badge: 'Buy',
-                        badgeClass: 'buy',
-                        details: { quantity: 15, price: '142.52', total: '2,137.80' },
-                        rationale: 'Adding to government AI contracts position. AIP (Artificial Intelligence Platform) commercial adoption accelerating. Recent -4.7% pullback is noise, not thesis change.',
-                        marketContext: 'PLTR volatile but fundamentals intact. Government revenue provides floor. Commercial segment growing 40%+ YoY.'
-                    },
-                    {
-                        type: 'bot',
-                        subtype: 'cancel',
-                        icon: '',
-                        title: 'Cancelled Sell Orders',
-                        description: 'Prevented liquidation of 11 positions during -2.76% drawdown',
-                        timestamp: new Date('2026-06-05T16:18:30Z'),
-                        badge: 'Bot',
-                        badgeClass: 'bot',
-                        rationale: 'Detected open sell orders for all positions (full liquidation). Bot logic determined this was not an emergency - portfolio down only -2.76%, well above -15% stop loss threshold. Diamond hands protocol activated: cancelled all sells and deployed additional cash into highest-conviction names.',
-                        marketContext: 'Day 1 volatility is normal. Thesis intact for AI positions. No fundamental catalysts for exit. Bot maintaining disciplined position sizing.'
-                    },
-                    {
-                        type: 'bot',
-                        subtype: 'deploy',
-                        icon: '↑',
-                        title: 'Bot Deployed',
-                        description: 'Autonomous trading system active • Strategy: AI-designed',
-                        timestamp: new Date('2026-06-06T15:27:00Z'),
-                        badge: 'System',
-                        badgeClass: 'bot',
-                        rationale: 'Autonomous trading bot deployed with AI-designed strategy. Bot monitors portfolio 24/7 during market hours. Executes stop losses at -15%, takes profits at +25%/+50%, trims overbought positions at RSI >75 to recycle capital, and rebalances when needed. All trades logged in real-time. Human intervention only for emergencies.',
-                        marketContext: 'Markets closed Saturday. Bot will begin active monitoring Monday 9:30 AM ET. Initial cash deployment: 35% invested, 65% dry powder for opportunities.'
-                    },
-                    {
-                        type: 'alert',
-                        subtype: 'critical',
-                        icon: '',
-                        title: 'Holdings Alert',
-                        description: 'Holdings down -4.26% from $100K start • Monitoring for recovery',
-                        timestamp: new Date('2026-06-06T15:50:00Z'),
-                        badge: 'Alert',
-                        badgeClass: 'alert',
-                        rationale: 'Holdings declined -4.26% since inception. This is within expected Day 1 volatility range for a high-growth tech portfolio. No stop losses triggered (all positions above -15%). Bot is monitoring for any positions approaching exit thresholds.',
-                        botResponse: 'System continuing to monitor all positions. No automatic sell triggers activated. Maintaining current allocation. Will alert if any position reaches -15% stop loss.',
-                        recommendation: 'Hold current positions. Thesis intact for AI infrastructure plays. Consider deploying additional cash on further weakness. Review stop loss levels on individual names.'
-                    }
-                ];
-
-                activities.push(...tradeActivities);
-
                 // Sort by timestamp (newest first)
                 activities.sort((a, b) => b.timestamp - a.timestamp);
                 
@@ -9951,14 +9842,13 @@ function updateDashboard(data, marketStatus) {
                 const stats = {
                     total: activities.length,
                     trades: activities.filter(a => a.type === 'trade').length,
-                    alerts: activities.filter(a => a.type === 'alert').length,
+                    
                     bot: activities.filter(a => a.type === 'bot').length
                 };
 
                 document.getElementById('stat-total').textContent = stats.total;
                 document.getElementById('stat-trades').textContent = stats.trades;
-                document.getElementById('stat-alerts').textContent = stats.alerts;
-                document.getElementById('stat-bot').textContent = stats.bot;
+                                document.getElementById('stat-bot').textContent = stats.bot;
 
                 renderActivityLog(activities, currentActivityFilter);
 
