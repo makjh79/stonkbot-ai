@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1259-orders-target-fix -->
+    <!-- CACHE BUST: v=20260713-1301-orders-profit-target-label -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11410,7 +11410,7 @@ function updateDashboard(data) {
 
                     // Conservative target
                     html += '<div style="flex: 1; min-width: 0;">';
-                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Target</div>';
+                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Profit Target</div>';
                     if (conservativeTarget > 0) {
                         html += '<div style="font-family: monospace; font-size: 13px; font-weight: 700; color: #22c55e;">$' + conservativeTarget.toFixed(2) + '</div>';
                     } else {
