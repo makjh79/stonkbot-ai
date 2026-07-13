@@ -1,3 +1,28 @@
+# Defensive: prevent stale bytecode from masking live code changes
+import os
+os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+
+import sys
+from pathlib import Path
+
+def _clear_own_pycache():
+    """Remove compiled bytecode for this module and readiness_score.py so edits take effect immediately."""
+    here = Path(__file__).resolve().parent
+    for stem in ("signal_engine", "readiness_score"):
+        for pyc in here.glob(f"__pycache__/{stem}.*.pyc"):
+            try:
+                pyc.unlink()
+            except Exception:
+                pass
+        # Also remove any .pyc next to source (less common on py3.12 but safe)
+        for pyc in here.glob(f"{stem}*.pyc"):
+            try:
+                pyc.unlink()
+            except Exception:
+                pass
+
+_clear_own_pycache()
+
 """
 STONK.AI Signal Engine v2.1
 

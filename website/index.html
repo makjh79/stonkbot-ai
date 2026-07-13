@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1153-orders-card-layout-fix -->
+    <!-- CACHE BUST: v=20260713-1212-orders-simple-row -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11377,111 +11377,69 @@ function updateDashboard(data) {
 
             const readyToBuy = primeStocks.filter(s => s.buy_status === 'queued' || s.buy_status === 'add');
             const held = primeStocks.filter(s => s.buy_status === 'hold');
-            const blocked = primeStocks.filter(s => s.buy_status !== 'queued' && s.buy_status !== 'add' && s.buy_status !== 'hold');
 
             let html = '';
 
-            // Hero card for queued / add candidates (A+C)
+            // Active orders (queued / add)
             if (readyToBuy.length > 0) {
-                html += '<div style="margin-bottom: 20px;">';
-                html += '<div style="font-size: 10px; font-weight: 700; color: #22c55e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Ready to Buy</div>';
                 readyToBuy.forEach(function(stock) {
                     const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
                     const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
                     const targetPct = stock.target_pct || 0;
-                    const targetNotional = stock.target_notional || 0;
-                    const targetShares = stock.target_shares || 0;
 
-                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="padding: 14px 16px; background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.2); border-radius: 16px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background=\'rgba(6,182,212,0.12)\';this.style.borderColor=\'rgba(6,182,212,0.35)\'" onmouseout="this.style.background=\'rgba(6,182,212,0.08)\';this.style.borderColor=\'rgba(6,182,212,0.2)\'">';
+                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer;">';
 
-                    // Top row: symbol/company left, price/change right
-                    html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">';
-                    html += '<div style="display: flex; align-items: center; gap: 10px; min-width: 0;">';
-                    html += '<span style="font-family: monospace; font-size: 17px; font-weight: 800; color: var(--text-primary); flex-shrink: 0;">' + stock.symbol + '</span>';
-                    html += '<span style="font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + (stock.company || '') + '</span>';
-                    html += '</div>';
-                    html += '<div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">';
-                    html += '<span style="font-family: monospace; font-size: 15px; font-weight: 700; color: var(--text-primary);">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</span>';
-                    if (stock.isLive && stock.price > 0) {
-                        html += '<span style="font-size: 12px; color: ' + changeColor + '; font-weight: 700;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
-                    }
-                    html += '</div>';
-                    html += '</div>';
-
-                    // Bottom row: pills
-                    html += '<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">';
-                    html += '<span style="font-size: 11px; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.10); padding: 4px 8px; border-radius: 8px;">R ' + (stock.readinessScore || 0).toFixed(1) + '</span>';
+                    html += '  <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">';
+                    html += '    <span style="font-family: monospace; font-size: 16px; font-weight: 800; color: var(--text-primary); flex-shrink: 0;">' + stock.symbol + '</span>';
                     if (targetPct > 0) {
-                        html += '<span style="font-size: 11px; font-weight: 700; color: #06b6d4; background: rgba(6,182,212,0.12); padding: 4px 8px; border-radius: 8px;">Target ' + targetPct.toFixed(1) + '%</span>';
+                        html += '    <span style="font-size: 11px; font-weight: 700; color: #06b6d4; background: rgba(6,182,212,0.10); padding: 3px 7px; border-radius: 6px; flex-shrink: 0;">Target ' + targetPct.toFixed(1) + '%</span>';
                     }
-                    if (targetNotional > 0) {
-                        html += '<span style="font-size: 11px; font-weight: 600; color: var(--text-muted); background: rgba(255,255,255,0.04); padding: 4px 8px; border-radius: 8px;">~$' + targetNotional.toLocaleString() + '</span>';
+                    html += '    <span style="font-size: 11px; color: #22c55e; font-weight: 700; flex-shrink: 0;">R ' + (stock.readinessScore || 0).toFixed(1) + '</span>';
+                    html += '  </div>';
+
+                    html += '  <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; text-align: right;">';
+                    html += '    <span style="font-family: monospace; font-size: 14px; font-weight: 700; color: var(--text-primary);">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</span>';
+                    if (stock.isLive && stock.price > 0) {
+                        html += '    <span style="font-size: 11px; color: ' + changeColor + '; font-weight: 700; min-width: 48px;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
                     }
-                    html += '</div>';
+                    html += '  </div>';
+
                     html += '</div>';
                 });
-                html += '</div>';
             }
 
-            // Held section (compact cards)
+            // Held (smaller, muted)
             if (held.length > 0) {
-                html += '<div style="margin-bottom: 20px;">';
-                html += '<div style="font-size: 10px; font-weight: 700; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Held</div>';
+                html += '<div style="margin-top: 20px;">';
+                html += '<div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Held</div>';
                 held.forEach(function(stock) {
-                    const reasonText = stock.buy_status_reason || 'Position at target size';
                     const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
                     const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
                     const addPct = stock.target_pct || 0;
 
-                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="padding: 12px 14px; background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.12); border-radius: 14px; cursor: pointer; transition: all 0.2s; margin-bottom: 8px;" onmouseover="this.style.background=\'rgba(251,191,36,0.09)\';this.style.borderColor=\'rgba(251,191,36,0.2)\'" onmouseout="this.style.background=\'rgba(251,191,36,0.05)\';this.style.borderColor=\'rgba(251,191,36,0.12)\'">';
-                    html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">';
-                    html += '<div style="display: flex; align-items: center; gap: 10px; min-width: 0;">';
-                    html += '<span style="font-family: monospace; font-size: 15px; font-weight: 800; color: var(--text-primary); flex-shrink: 0;">' + stock.symbol + '</span>';
-                    html += '<span style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + (stock.company || '') + '</span>';
-                    html += '</div>';
-                    html += '<div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">';
-                    html += '<span style="font-family: monospace; font-size: 13px; font-weight: 700; color: var(--text-primary);">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</span>';
-                    if (stock.isLive && stock.price > 0) {
-                        html += '<span style="font-size: 11px; color: ' + changeColor + '; font-weight: 700;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
-                    }
-                    html += '</div>';
-                    html += '</div>';
+                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; opacity: 0.85;">';
 
-                    html += '<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">';
-                    html += '<span style="font-size: 10px; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.10); padding: 3px 7px; border-radius: 6px;">R ' + (stock.readinessScore || 0).toFixed(1) + '</span>';
+                    html += '  <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">';
+                    html += '    <span style="font-family: monospace; font-size: 14px; font-weight: 700; color: var(--text-primary); flex-shrink: 0;">' + stock.symbol + '</span>';
                     if (addPct > 0) {
-                        html += '<span style="font-size: 10px; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.10); padding: 3px 7px; border-radius: 6px;">Add ~' + addPct.toFixed(1) + '%</span>';
+                        html += '    <span style="font-size: 10px; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.10); padding: 2px 6px; border-radius: 5px; flex-shrink: 0;">Add ~' + addPct.toFixed(1) + '%</span>';
                     }
-                    html += '<span style="font-size: 10px; color: var(--text-muted); background: rgba(255,255,255,0.04); padding: 3px 7px; border-radius: 6px;">' + reasonText + '</span>';
-                    html += '</div>';
+                    html += '    <span style="font-size: 10px; color: #fbbf24; font-weight: 700; flex-shrink: 0;">R ' + (stock.readinessScore || 0).toFixed(1) + '</span>';
+                    html += '  </div>';
+
+                    html += '  <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0; text-align: right;">';
+                    html += '    <span style="font-family: monospace; font-size: 13px; font-weight: 700; color: var(--text-primary);">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</span>';
+                    if (stock.isLive && stock.price > 0) {
+                        html += '    <span style="font-size: 10px; color: ' + changeColor + '; font-weight: 700; min-width: 44px;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
+                    }
+                    html += '  </div>';
+
                     html += '</div>';
                 });
                 html += '</div>';
             }
 
-            // Blocked section (minimal rows)
-            if (blocked.length > 0) {
-                html += '<div style="margin-bottom: 20px;">';
-                html += '<div style="font-size: 10px; font-weight: 700; color: #f87171; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Blocked</div>';
-                html += '<div style="display: flex; flex-direction: column; gap: 8px;">';
-                blocked.forEach(function(stock) {
-                    const reasonText = stock.buy_status_reason || stock.buy_status.replace(/_/g, ' ');
-                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.12); border-radius: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background=\'rgba(239,68,68,0.08)\';this.style.borderColor=\'rgba(239,68,68,0.2)\'" onmouseout="this.style.background=\'rgba(239,68,68,0.04)\';this.style.borderColor=\'rgba(239,68,68,0.12)\'">';
-                    html += '<div style="display: flex; align-items: center; gap: 10px; min-width: 0;">';
-                    html += '<span style="font-family: monospace; font-size: 14px; font-weight: 800; color: var(--text-primary); flex-shrink: 0;">' + stock.symbol + '</span>';
-                    html += '<span style="font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + (stock.company || '') + '</span>';
-                    html += '</div>';
-                    html += '<div style="text-align: right; flex-shrink: 0;">';
-                    html += '<span style="font-size: 10px; color: #f87171; font-weight: 600;">' + reasonText + '</span>';
-                    html += '</div>';
-                    html += '</div>';
-                });
-                html += '</div>';
-                html += '</div>';
-            }
-
-            // Empty state
-            if (readyToBuy.length === 0 && held.length === 0 && blocked.length === 0) {
+            if (readyToBuy.length === 0 && held.length === 0) {
                 html += '<div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">';
                 html += '<div style="font-size: 32px; margin-bottom: 16px;">📭</div>';
                 html += '<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">No PRIME candidates</div>';
