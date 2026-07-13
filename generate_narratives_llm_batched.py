@@ -34,7 +34,7 @@ WATCHLIST_NARRATIVES_FILE = Path(os.environ.get("STONKBOT_WATCHLIST_NARRATIVES_F
 _COMPANY_KNOWLEDGE_FILE = Path(os.environ.get("STONKBOT_KNOWLEDGE_FILE", BOT_DIR / "company_knowledge.json"))
 
 # Model selection
-DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "openrouter/deepseek/deepseek-chat")
+DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "ollama/kimi-k2.7-code:cloud")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_NARRATIVE_TIMEOUT", "180"))
 BATCH_SIZE = int(os.environ.get("STONKBOT_NARRATIVE_BATCH_SIZE", "6"))
 
@@ -126,6 +126,23 @@ def llm_generate_json(prompt: str, model: str = DEFAULT_MODEL) -> dict:
     to avoid openclaw max_tokens/context-length defaults that exceed provider limits."""
 
     # Direct OpenRouter path
+    if model.startswith("ollama/"):
+        provider_model = model.split("/", 1)[1]
+        resp = requests.post(
+            "http://localhost:11434/api/chat",
+            json={
+                "model": provider_model,
+                "messages": [{"role": "user", "content": prompt}],
+                "stream": False,
+                "options": {"temperature": 0.7},
+            },
+            timeout=LLM_TIMEOUT,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        content = data.get("message", {}).get("content", "")
+        return _extract_json(content)
+
     if model.startswith("openrouter/"):
         provider_model = model.split("/", 1)[1]
         api_key = _load_openrouter_key()
