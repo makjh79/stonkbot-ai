@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20260712-v205">
-    <script>(function(){var v='20260712-v205';var k='stonkbot_v197';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20260712-v206">
+    <script>(function(){var v='20260712-v206';var k='stonkbot_v197';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -9270,12 +9270,10 @@ function updateDashboard(data) {
             const companyName = position?.name || position?.company || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
             const livePrice = liveData.price || (position ? position.current : 0) || preGenerated.price || 0;
             const readiness = preGenerated.readiness_score != null ? preGenerated.readiness_score : 50;
-            // Align tier with watchlist signal if known, otherwise infer from P&L to match card visuals
+            // Align tier with backend tier from preGenerated popup data or watchlist backend_tier
             const watchlistItem = typeof aiWatchlist !== 'undefined' ? aiWatchlist.find(s => s.symbol === symbol) : null;
-            const tier = (watchlistItem && watchlistItem.signal === 'STRONG_NOW') ? 'STRONG_NOW' :
-                         (watchlistItem && watchlistItem.signal === 'NOW') ? 'NOW' :
-                         (watchlistItem && watchlistItem.signal === 'WATCH') ? 'WATCH' :
-                         (position && position.unrealized_plpc >= 0 ? 'NOW' : 'WATCH');
+            const backendTier = preGenerated.backend_tier || (watchlistItem && watchlistItem.backend_tier) || 'WATCH';
+            const tier = backendTier;
             const displayTierName = tier === 'STRONG_NOW' ? 'PRIME' : tier === 'NOW' ? 'BUILDING' : tier === 'WATCH' ? 'WATCHING' : 'TRACKING';
 
             const isPositive = position ? position.unrealized_plpc >= 0 : (liveData.change_pct || 0) >= 0;
