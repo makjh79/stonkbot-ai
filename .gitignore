@@ -35,3 +35,4 @@ venv/
 .DS_Store
 Thumbs.db
 tier_history.json
+data_fetcher.log

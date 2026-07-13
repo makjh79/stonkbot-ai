@@ -198,9 +198,11 @@ def assign_tier(backend_tier: str, entry_eligible: bool = False) -> str:
     """Map backend signal tier to website display tier.
 
     Deterministic mapping so the watchlist, monitor, and frontend all agree.
+    Decoupled from entry_eligible (2026-07-13): tier reflects model conviction
+    (readiness), while entry_eligible / buy_status drive actual trading intent.
     """
     mapping = {
-        "STRONG_NOW": "PRIME" if entry_eligible else "BUILDING",
+        "STRONG_NOW": "PRIME",
         "NOW": "BUILDING",
         "WATCH": "WATCHING",
         "MONITOR": "TRACKING",
