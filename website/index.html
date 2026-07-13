@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1255-orders-card-buy-target -->
+    <!-- CACHE BUST: v=20260713-1259-orders-target-fix -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11389,7 +11389,7 @@ function updateDashboard(data) {
                     const targetPct = stock.target_pct || 0;
                     const targetNotional = stock.target_notional || 0;
                     const whyText = stock.buy_status_reason || 'Queued for next cycle';
-                    const conservativeTarget = stock.targets ? (stock.targets.conservative_target || stock.targets.profit_25 || 0) : 0;
+                    const conservativeTarget = stock.targetConservative || stock.profit25 || 0;
 
                     html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="padding: 14px 16px; margin-bottom: 12px; background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.15); border-radius: 16px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background=\'rgba(6,182,212,0.10)\';this.style.borderColor=\'rgba(6,182,212,0.25)\'" onmouseout="this.style.background=\'rgba(6,182,212,0.06)\';this.style.borderColor=\'rgba(6,182,212,0.15)\'">';
 
