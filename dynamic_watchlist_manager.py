@@ -554,7 +554,7 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "signal_tier": tier,
             "signal": tier,
             "display_tier": display_tier_name,
-            "backend_tier": s.get("tier", "MONITOR"),
+            "backend_tier": s.get("tier") or "MONITOR",
             "entry_eligible": entry_eligible,
             "confirmation_count": conf_count,
             "confirmations": s.get("confirmations", {}),
@@ -567,10 +567,12 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "afterhours_volume": afterhours_vol,
         }
 
-    # Ensure display_tier is set on all price dicts (frontend fallback)
+    # Ensure display_tier / backend_tier are set on all price dicts (frontend fallback)
     for symbol, pdata in prices.items():
         if "display_tier" not in pdata:
             pdata["display_tier"] = pdata.get("signal_tier", "TRACKING")
+        if "backend_tier" not in pdata or pdata["backend_tier"] is None:
+            pdata["backend_tier"] = assign_tier(pdata.get("signal_tier"), pdata.get("entry_eligible", False))
 
     # Compute buy candidates: mirrors the bot's first-order entry gate
     # Load current portfolio positions and weights
