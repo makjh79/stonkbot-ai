@@ -41,7 +41,7 @@ WEIGHT_SIGNAL = 0.20  # reduced to make room for rel_volume + vwap_dev   # momen
 WEIGHT_RSI = 0.10      # kept — weakly correlated, not pure trend
 WEIGHT_VOLUME = 0.05   # kept — negatively correlated, small weight
 WEIGHT_MACD = 0.08     # reduced from 10% — collinear with EMA
-WEIGHT_EMA = 0.04      # reduced from 12% — collinear with momentum/signal; fund relative strength
+WEIGHT_EMA = 0.10      # restored toward 12% — strongest live predictor (+0.572 corr); keep RS too
 WEIGHT_SECTOR = 0.30   # raised from 25% — best non-price predictor (+0.459 corr), PEAD dropped
 WEIGHT_INTRADAY = 0.10 # NEW — intraday flow/VWAP (not price-derivative)
 WEIGHT_OPTIONS = 0.05  # NEW — options IV sentiment (not price-derivative)
@@ -49,20 +49,21 @@ WEIGHT_REL_VOLUME = 0.00  # kept as boolean confirmation chip only; volume score
 
 WEIGHT_VWAP_DEV = 0.05   # NEW — VWAP deviation momentum signal
 
-WEIGHT_RELATIVE_STRENGTH = 0.08  # NEW — stock vs SPY 20-day alpha; replaces EMA weight
+WEIGHT_RELATIVE_STRENGTH = 0.04  # NEW — stock vs SPY 20-day alpha; complements EMA, not replaces
 
 # NEW confirmation chips (added to readiness score to align tiering with UI)
-# Halved 2026-07-12 to reduce scale shift / keep PRIME bar at historical ~78.
-WEIGHT_5M_MOMENTUM = 0.015
-WEIGHT_5M_VOLUME_SURGE = 0.005
-WEIGHT_5M_VWAP = 0.005
-WEIGHT_OPTIONS_FLOW = 0.01
-WEIGHT_SPREAD_OK = 0.01
-WEIGHT_NO_CORPORATE_ACTION = 0.01
-WEIGHT_BID_ASK_IMBALANCE = 0.01  # NEW: quote bid/ask size imbalance
+# Halved AGAIN 2026-07-13: these are binary 0/100 and were compressing the composite
+# when intraday/options/spread data is patchy. Keep factors, reduce scale impact.
+WEIGHT_5M_MOMENTUM = 0.0075
+WEIGHT_5M_VOLUME_SURGE = 0.0025
+WEIGHT_5M_VWAP = 0.0025
+WEIGHT_OPTIONS_FLOW = 0.005
+WEIGHT_SPREAD_OK = 0.005
+WEIGHT_NO_CORPORATE_ACTION = 0.005
+WEIGHT_BID_ASK_IMBALANCE = 0.005  # quote bid/ask size imbalance
 
 # Tier thresholds
-TIER_STRONG_NOW_MIN = 78.0   # top-tier / tradeable tier
+TIER_STRONG_NOW_MIN = 77.0   # lowered from 78.0 2026-07-13 after recalibration; keeps PRIME reachable
 TIER_NOW_MIN = 72.0   # raised from 70 for higher quality entries
 TIER_WATCH_MIN = 55.0   # raised from 50
 
@@ -70,10 +71,10 @@ TIER_WATCH_MIN = 55.0   # raised from 50
 # To revert: change ENTRY_READINESS_MIN back to 75.0, ENTRY_MIN_CONFIRMATIONS to 4,
 # and reduce STRONG_NOW sizing multiplier.
 
-# Entry eligibility (tightened 2026-07-04 while live expectancy is negative)
-ENTRY_READINESS_MIN = 77.0  # was 75; raising gate to improve entry quality
+# Entry eligibility (tightened 2026-07-04; relaxed 2026-07-13 to restore tradeable range)
+ENTRY_READINESS_MIN = 75.0  # restored to 75 after score recalibration; gate stays high-quality
 ENTRY_MIN_CONFIRMATIONS = 5  # was 4; require more confirmations for entry
-ENTRY_MIN_HARD_CONFIRMATIONS = 2  # require 2+ canonical hard confirms (volume/MACD/intraday/options/relvol) for entry
+ENTRY_MIN_HARD_CONFIRMATIONS = 1  # relaxed to 1 canonical hard confirm when total confirmations >= 7 (enforced below)
 
 
 
@@ -714,13 +715,19 @@ def compute_readiness(
     # Confirmation count: canonical boolean count (single source of truth)
     confirmation_count = compute_confirmation_count(confirmations)
 
-    # Entry eligibility: only top-readiness symbols can be entry-eligible.
-    # Requires the full confirmation gate (hard confirms + above_ema).
     hard_confirmations = sum(
         1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed",
                     "options_confirmed", "relvol_confirmed")
         if confirmations.get(k)
     )
+
+    # Entry gate: high-quality setup + trend confirm.
+    # Relaxed 2026-07-13: 1 hard confirmation is enough if total chips are strong (>=7),
+    # otherwise require 2 hard confirmations as before.
+    effective_hard_min = (
+        1 if confirmation_count >= 7 else ENTRY_MIN_HARD_CONFIRMATIONS
+    )
+
     # Market-dip opportunity override: during broad pullbacks, allow high-quality
     # names above their 20d EMA with at least 1 hard confirmation to qualify.
     dip_override = (
@@ -734,13 +741,13 @@ def compute_readiness(
     entry_eligible = (
         readiness >= ENTRY_READINESS_MIN
         and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
-        and hard_confirmations >= ENTRY_MIN_HARD_CONFIRMATIONS
+        and hard_confirmations >= effective_hard_min
         and confirmations.get("above_ema", False)  # strongest live predictor (+0.572 correlation)
     ) or dip_override
 
-    # Tier: STRONG_NOW now means *tradeable* top-tier, not just readiness ≥78.
-    # A symbol with readiness ≥78 but missing the entry gate stays in NOW.
-    if readiness >= TIER_STRONG_NOW_MIN and entry_eligible:
+    # Tier: decoupled from entry eligibility (2026-07-13).
+    # STRONG_NOW is the top readiness tier; entry_eligible is a separate trading gate.
+    if readiness >= TIER_STRONG_NOW_MIN:
         tier = "STRONG_NOW"
     elif readiness >= TIER_NOW_MIN:
         tier = "NOW"

@@ -99,6 +99,62 @@ MAX_WATCHLIST_SIZE = 20
 TIER_BUILDING_MIN = 55.0  # floor for BUILDING tier
 
 
+
+
+def _readiness_sizing_multiplier(readiness: float) -> float:
+    """Scale position size by readiness conviction (mirrors trading_bot.py v2.5)."""
+    if readiness >= 80:
+        return 2.0
+    if readiness >= 75:
+        return 1.0
+    if readiness >= 72:
+        return 0.5
+    return 0.0
+
+
+def _tier_position_cap(tier: str) -> float:
+    """Max position % cap by tier (mirrors trading_bot.py)."""
+    if tier == "PRIME":
+        return 0.12
+    return 0.08
+
+
+def _compute_target_sizing(
+    tier: str,
+    readiness: float,
+    price: float,
+    current_weight_pct: float,
+    portfolio_value: float,
+    is_add: bool,
+) -> dict:
+    """Compute display-only target position size for queued/add candidates.
+
+    Returns dict with target_pct, target_notional, target_shares.
+    Values are approximate and may change with live prices / risk rules.
+    """
+    if portfolio_value <= 0 or price <= 0:
+        return {"target_pct": 0.0, "target_notional": 0.0, "target_shares": 0}
+
+    cap = _tier_position_cap(tier)
+    multiplier = _readiness_sizing_multiplier(readiness)
+    raw_target_pct = min(cap * multiplier, 0.12)  # global 12% hard ceiling
+
+    if is_add:
+        target_pct = max(0.0, raw_target_pct - current_weight_pct / 100.0) * 100.0
+    else:
+        target_pct = raw_target_pct * 100.0
+
+    target_notional = portfolio_value * target_pct / 100.0
+    target_shares = int(round(target_notional / price))
+
+    return {
+        "target_pct": round(target_pct, 1),
+        "target_notional": round(target_notional, 0),
+        "target_shares": target_shares,
+    }
+
+
+
 def load_signals() -> List[Dict]:
     """Load signals from the trading bot's signal engine output."""
     if not SIGNALS_FILE.exists():
@@ -661,6 +717,17 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         else:
             status = "queued"
             reason = "Queued for next cycle"
+        target_sizing = {}
+        if status in ("queued", "add") and portfolio_value > 0 and price > 0:
+            target_sizing = _compute_target_sizing(
+                tier=tier,
+                readiness=readiness,
+                price=price,
+                current_weight_pct=held_info.get("weight", 0) if held_info else 0,
+                portfolio_value=portfolio_value,
+                is_add=(status == "add"),
+            )
+
         buy_candidates.append({
             "symbol": symbol,
             "display_tier": TIER_DISPLAY_MAP.get(tier, tier),
@@ -671,6 +738,9 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "confirmation_count": pdata.get("confirmation_count", 0),
             "entry_eligible": entry_eligible,
             "weight_pct": held_info.get("weight", 0) if held_info else 0,
+            "target_pct": target_sizing.get("target_pct", 0.0),
+            "target_notional": target_sizing.get("target_notional", 0.0),
+            "target_shares": target_sizing.get("target_shares", 0),
         })
 
     # Unify buy_status/reason into each symbol's price dict so consumers don't need to cross-reference buy_candidates
@@ -679,6 +749,9 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         cdata = candidate_status_by_symbol.get(symbol, {})
         pdata["buy_status"] = cdata.get("status")
         pdata["buy_status_reason"] = cdata.get("reason")
+        pdata["target_pct"] = cdata.get("target_pct", 0.0)
+        pdata["target_notional"] = cdata.get("target_notional", 0.0)
+        pdata["target_shares"] = cdata.get("target_shares", 0)
 
     update_log = {
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
