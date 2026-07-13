@@ -49,6 +49,9 @@ def load_high_beta_symbols(
 
 @dataclass
 class RiskConfig:
+    # --- Market hours / extended hours ---
+    extended_hours_enabled: bool = False          # default: do not trade extended hours
+
     # --- Cash & deployment guardrails ---
     allow_margin: bool = False                    # never use margin; cash-only orders
     min_cash_absolute: float = 2000.0            # hard floor, regardless of portfolio size

@@ -128,7 +128,7 @@ def save_signals(
                     "readiness_score": rec.get("readiness_score"),
                     "backend_tier": tier,
                     "frontend_tier": frontend_tier,
-                    "status": rec.get("status", ""),
+                    "status": rec.get("status") or "not_ready",
                     "confirm_signal": int(confirmations.get("signal", False)),
                     "confirm_sector": int(confirmations.get("sector", False)),
                     "confirm_ema": int(confirmations.get("ema", False)),

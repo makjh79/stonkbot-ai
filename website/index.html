@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1212-orders-simple-row -->
+    <!-- CACHE BUST: v=20260713-1234-orders-table -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11380,63 +11380,114 @@ function updateDashboard(data) {
 
             let html = '';
 
-            // Active orders (queued / add)
+            // Main orders table (matches watchlist styling)
+            html += '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">';
+            html += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+            html += '<thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">';
+            html += '<th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Stock</th>';
+            html += '<th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Target</th>';
+            html += '<th class="wl-hide-mobile" style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Ready</th>';
+            html += '<th style="text-align: right; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Price</th>';
+            html += '<th style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Chg</th>';
+            html += '</tr></thead><tbody>';
+
             if (readyToBuy.length > 0) {
                 readyToBuy.forEach(function(stock) {
                     const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
                     const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
                     const targetPct = stock.target_pct || 0;
 
-                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer;">';
+                    html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: rgba(6,182,212,0.02);" onmouseover="this.style.background="rgba(255,255,255,0.05)"" onmouseout="this.style.background="rgba(6,182,212,0.02)"">';
 
-                    html += '  <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">';
-                    html += '    <span style="font-family: monospace; font-size: 16px; font-weight: 800; color: var(--text-primary); flex-shrink: 0;">' + stock.symbol + '</span>';
-                    if (targetPct > 0) {
-                        html += '    <span style="font-size: 11px; font-weight: 700; color: #06b6d4; background: rgba(6,182,212,0.10); padding: 3px 7px; border-radius: 6px; flex-shrink: 0;">Target ' + targetPct.toFixed(1) + '%</span>';
-                    }
-                    html += '    <span style="font-size: 11px; color: #22c55e; font-weight: 700; flex-shrink: 0;">R ' + (stock.readinessScore || 0).toFixed(1) + '</span>';
-                    html += '  </div>';
-
-                    html += '  <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; text-align: right;">';
-                    html += '    <span style="font-family: monospace; font-size: 14px; font-weight: 700; color: var(--text-primary);">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</span>';
-                    if (stock.isLive && stock.price > 0) {
-                        html += '    <span style="font-size: 11px; color: ' + changeColor + '; font-weight: 700; min-width: 48px;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
-                    }
-                    html += '  </div>';
-
+                    // Symbol + company
+                    html += '<td style="padding: 8px 8px;">';
+                    html += '<div style="display: flex; align-items: center;">';
+                    html += '<span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px;">' + stock.symbol + '</span>';
                     html += '</div>';
+                    html += '<div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px;">' + (stock.company || '') + '</div>';
+                    html += '</td>';
+
+                    // Target
+                    html += '<td style="padding: 8px 8px; text-align: left;">';
+                    if (targetPct > 0) {
+                        html += '<span style="font-size: 11px; font-weight: 700; color: #06b6d4; background: rgba(6,182,212,0.10); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(6,182,212,0.25);">' + targetPct.toFixed(1) + '%</span>';
+                    } else {
+                        html += '<span style="color: var(--text-muted); font-size: 11px;">—</span>';
+                    }
+                    html += '</td>';
+
+                    // Readiness (hidden on very small screens)
+                    html += '<td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">';
+                    html += '<span style="font-family: monospace; font-size: 12px; font-weight: 600; color: #22c55e;">' + (stock.readinessScore || 0).toFixed(1) + '</span>';
+                    html += '</td>';
+
+                    // Price
+                    html += '<td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px;">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</td>';
+
+                    // Change
+                    html += '<td style="padding: 8px 8px; text-align: center;">';
+                    if (stock.isLive && stock.price > 0) {
+                        html += '<span style="font-size: 11px; color: ' + changeColor + '; font-weight: 600;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
+                    } else {
+                        html += '<span style="color: var(--text-muted); font-size: 11px;">—</span>';
+                    }
+                    html += '</td>';
+
+                    html += '</tr>';
                 });
             }
 
-            // Held (smaller, muted)
+            html += '</tbody></table></div>';
+
+            // Held table (smaller, consistent styling)
             if (held.length > 0) {
                 html += '<div style="margin-top: 20px;">';
-                html += '<div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Held</div>';
+                html += '<div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Held</div>';
+                html += '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">';
+                html += '<table style="width: 100%; border-collapse: collapse; font-size: 12px; opacity: 0.85;">';
+                html += '<thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">';
+                html += '<th style="text-align: left; padding: 0.5rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3px;">Stock</th>';
+                html += '<th style="text-align: left; padding: 0.5rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3px;">Add</th>';
+                html += '<th class="wl-hide-mobile" style="text-align: center; padding: 0.5rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3px;">Ready</th>';
+                html += '<th style="text-align: right; padding: 0.5rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3px;">Price</th>';
+                html += '<th style="text-align: center; padding: 0.5rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3px;">Chg</th>';
+                html += '</tr></thead><tbody>';
+
                 held.forEach(function(stock) {
                     const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
                     const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
                     const addPct = stock.target_pct || 0;
 
-                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; opacity: 0.85;">';
+                    html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.02); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background="rgba(255,255,255,0.04)"" onmouseout="this.style.background="transparent"">';
 
-                    html += '  <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">';
-                    html += '    <span style="font-family: monospace; font-size: 14px; font-weight: 700; color: var(--text-primary); flex-shrink: 0;">' + stock.symbol + '</span>';
+                    html += '<td style="padding: 6px 8px;">';
+                    html += '<span style="font-family: monospace; font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums;">' + stock.symbol + '</span>';
+                    html += '</td>';
+
+                    html += '<td style="padding: 6px 8px; text-align: left;">';
                     if (addPct > 0) {
-                        html += '    <span style="font-size: 10px; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.10); padding: 2px 6px; border-radius: 5px; flex-shrink: 0;">Add ~' + addPct.toFixed(1) + '%</span>';
+                        html += '<span style="font-size: 10px; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.10); padding: 2px 5px; border-radius: 6px; border: 1px solid rgba(251,191,36,0.2);">' + addPct.toFixed(1) + '%</span>';
+                    } else {
+                        html += '<span style="color: var(--text-muted); font-size: 10px;">—</span>';
                     }
-                    html += '    <span style="font-size: 10px; color: #fbbf24; font-weight: 700; flex-shrink: 0;">R ' + (stock.readinessScore || 0).toFixed(1) + '</span>';
-                    html += '  </div>';
+                    html += '</td>';
 
-                    html += '  <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0; text-align: right;">';
-                    html += '    <span style="font-family: monospace; font-size: 13px; font-weight: 700; color: var(--text-primary);">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</span>';
+                    html += '<td class="wl-hide-mobile" style="padding: 6px 8px; text-align: center; font-family: monospace; font-size: 11px; font-weight: 600; color: #fbbf24;">' + (stock.readinessScore || 0).toFixed(1) + '</td>';
+
+                    html += '<td style="padding: 6px 8px; text-align: right; font-family: monospace; font-size: 12px; font-weight: 500;">' + (stock.price ? '$' + stock.price.toFixed(2) : '—') + '</td>';
+
+                    html += '<td style="padding: 6px 8px; text-align: center;">';
                     if (stock.isLive && stock.price > 0) {
-                        html += '    <span style="font-size: 10px; color: ' + changeColor + '; font-weight: 700; min-width: 44px;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
+                        html += '<span style="font-size: 10px; color: ' + changeColor + '; font-weight: 600;">' + changeIcon + ' ' + Math.abs(stock.changePct).toFixed(1) + '%</span>';
+                    } else {
+                        html += '<span style="color: var(--text-muted); font-size: 10px;">—</span>';
                     }
-                    html += '  </div>';
+                    html += '</td>';
 
-                    html += '</div>';
+                    html += '</tr>';
                 });
-                html += '</div>';
+
+                html += '</tbody></table></div></div>';
             }
 
             if (readyToBuy.length === 0 && held.length === 0) {
