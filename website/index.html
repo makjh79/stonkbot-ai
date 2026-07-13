@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1335-orders-position-compact -->
+    <!-- CACHE BUST: v=20260713-1420-market-status-server -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -5041,16 +5041,16 @@ function toggleAboutSection(header) {
             
             // Try fetch first
             if (window.fetch) {
-                fetch(url)
-                    .then(r => {
+                Promise.all([fetch(url), fetch('./market_status.json?t=' + Date.now())])
+                    .then(([r, msR]) => {
                         console.log('Response:', r.status);
                         if (!r.ok) throw new Error('HTTP ' + r.status);
-                        return r.json();
+                        return Promise.all([r.json(), msR.ok ? msR.json() : null]);
                     })
-                    .then(data => {
+                    .then(([data, marketStatus]) => {
                         console.log('Data loaded:', data.positions.length, 'positions');
                         window.lastPortfolioData = data;
-                        updateDashboard(data);
+                        updateDashboard(data, marketStatus);
                         updateHoldingsCards(data.positions);
                         updateRaceValues().catch(e => console.error('updateRaceValues failed:', e)); // Also update experiment section
                         // Also fetch popup content for holdings
@@ -5172,14 +5172,21 @@ function toggleAboutSection(header) {
             }
 
             // Market closed banner
-            function updateMarketBanner(data) {
+            function updateMarketBanner(data, marketStatus) {
                 const banner = document.getElementById('market-banner');
                 if (!banner) return;
-                const now = new Date();
-                const et = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
-                const day = et.getDay();
-                const hours = et.getHours() + et.getMinutes() / 60;
-                const isMarketOpen = day >= 1 && day <= 5 && hours >= 9.5 && hours < 16;
+                let isMarketOpen = false;
+                let marketSource = 'server';
+                if (marketStatus && typeof marketStatus.is_open === 'boolean') {
+                    isMarketOpen = marketStatus.is_open;
+                } else {
+                    marketSource = 'local';
+                    const now = new Date();
+                    const et = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+                    const day = et.getDay();
+                    const hours = et.getHours() + et.getMinutes() / 60;
+                    isMarketOpen = day >= 1 && day <= 5 && hours >= 9.5 && hours < 16;
+                }
 
                 if (!isMarketOpen) {
                     const ts = data.timestamp ? new Date(data.timestamp) : null;
@@ -5214,10 +5221,10 @@ function toggleAboutSection(header) {
                 }
             }
 
-function updateDashboard(data) {
+function updateDashboard(data, marketStatus) {
             // Store for fallback use in modals
             window.currentPortfolioData = data;
-            updateMarketBanner(data);
+            updateMarketBanner(data, marketStatus);
 
             // Helper to populate an element and remove skeleton state
             function setValue(id, value) {

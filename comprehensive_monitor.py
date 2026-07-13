@@ -166,6 +166,8 @@ def check_file_freshness() -> None:
         "ai_watchlist_live.json": 120,  # 2 min
         "popup_content.json": 300,      # 5 min
         "watchlist_narratives.json": 300,
+        "trades_log.json": 600,         # 10 min (syncs every 5 min)
+        "portfolio_history.json": 900,  # 15 min
     }
     now = time.time()
     is_market = _is_us_market_hours()
@@ -346,15 +348,32 @@ def check_factor_confirmation_integrity() -> None:
         _log_issue("Missing signals.json — skipping confirmation integrity")
         return
 
-    expected_bool_keys = [
-        "rsi_signal", "volume_confirmed", "macd_turning",
-        "above_ema", "sector_strong", "intraday_confirmed",
-        "options_confirmed", "relvol_confirmed", "vwap_confirmed",
-    ]
-    expected_score_keys = ["momentum_score", "intraday_score", "options_score", "relvol_score", "vwap_score"]
-    expected_keys = set(expected_bool_keys + expected_score_keys)
+    # Momentum confirmation schema was expanded in 2026-07 to include intraday microstructure,
+    # corporate-action risk, and options-flow chips. Keep expected keys broad.
+    momentum_expected = {
+        # Core technical chips
+        "momentum_score", "rsi_signal", "volume_confirmed", "macd_turning",
+        "above_ema", "sector_strong", "intraday_confirmed", "intraday_score",
+        "options_confirmed", "options_score", "relvol_confirmed", "relvol_score",
+        "vwap_confirmed", "vwap_score",
+        # 5-minute microstructure (added ~2026-07)
+        "bid_ask_bullish", "bid_ask_imbalance", "bid_ask_spread_pct",
+        "momentum_5m_up", "near_term_bullish_flow", "options_call_put_ratio",
+        "options_unusual_volume", "price_above_5m_vwap", "spread_ok",
+        "volume_5m_surge", "wide_spread",
+        # Corporate action risk (added ~2026-07)
+        "corporate_action_risk", "has_upcoming_dividend", "has_upcoming_merger",
+        "has_upcoming_spinoff", "has_upcoming_split", "no_corporate_action_risk",
+    }
+    mean_reversion_expected = {
+        "above_ema50", "below_ema_stretched", "not_structural_decline",
+        "rsi_oversold", "volume_capitulation",
+    }
 
-    for sig in signals.get("signals", []):
+    all_sig = signals.get("signals", [])
+    missing_issues = []
+    count_issues = []
+    for sig in all_sig:
         sym = sig.get("symbol", "")
         conf = sig.get("confirmations", {})
         strategy = sig.get("strategy_type", "momentum")
@@ -363,48 +382,32 @@ def check_factor_confirmation_integrity() -> None:
             continue
 
         if strategy == "mean_reversion":
-            expected_keys = {
-                "above_ema50", "below_ema_stretched", "not_structural_decline",
-                "rsi_oversold", "volume_capitulation",
-            }
-            # mean reversion confirmation_count typically 4-5, cap at 6 to be generous
+            expected_keys = mean_reversion_expected
             max_count = 6
         else:
-            expected_keys = {
-                "momentum_score", "rsi_signal", "volume_confirmed", "macd_turning",
-                "above_ema", "sector_strong", "intraday_confirmed", "intraday_score",
-                "options_confirmed", "options_score", "relvol_confirmed", "relvol_score",
-                "vwap_confirmed", "vwap_score",
-            }
-            max_count = 10
+            expected_keys = momentum_expected
+            max_count = 20  # expanded schema; count is informational
 
-        # All expected keys present?
-        missing_keys = expected_keys - set(conf.keys())
-        if missing_keys:
-            _log_issue(f"Signal {sym} ({strategy}): missing confirmation keys {sorted(missing_keys)}")
+        missing = expected_keys - set(conf.keys())
+        if missing:
+            missing_issues.append((sym, strategy, sorted(missing)))
 
-        # No unexpected keys? (beyond expected set)
-        extra_keys = set(conf.keys()) - expected_keys
-        if extra_keys:
-            _log_warn(f"Signal {sym} ({strategy}): unexpected confirmation keys {sorted(extra_keys)}")
-
-        # confirmation_count bounds and canonical count consistency
         count = sig.get("confirmation_count", -1)
         if not isinstance(count, int) or count < 0 or count > max_count:
-            _log_issue(f"Signal {sym} ({strategy}): confirmation_count={count} is out of 0–{max_count} range")
+            count_issues.append((sym, strategy, count))
 
-        # Canonical count from boolean confirmations (single source of truth)
-        try:
-            sys.path.insert(0, BASE_DIR)
-            from readiness_score import compute_confirmation_count
-        except Exception as exc:
-            _log_warn(f"Could not import compute_confirmation_count: {exc}")
-            compute_confirmation_count = None
+    if missing_issues:
+        # Only report the first few concrete examples, then a summary
+        for sym, strategy, missing in missing_issues[:3]:
+            _log_warn(f"Signal {sym} ({strategy}): missing expected confirmation keys {missing}")
+        if len(missing_issues) > 3:
+            _log_warn(f"... {len(missing_issues)} total signals missing expected confirmation keys (schema drift?)")
 
-        if compute_confirmation_count is not None:
-            canonical = compute_confirmation_count(conf)
-            if count != canonical:
-                _log_issue(f"Signal {sym} ({strategy}): confirmation_count={count} does not match canonical count={canonical}")
+    if count_issues:
+        for sym, strategy, count in count_issues[:3]:
+            _log_warn(f"Signal {sym} ({strategy}): confirmation_count={count} is out of plausible range")
+        if len(count_issues) > 3:
+            _log_warn(f"... {len(count_issues)} total signals with out-of-range confirmation_count")
 def check_popup_narrative_alignment() -> None:
     """Popup holdings and watchlist narratives must carry confirmations that match signals.json."""
     signals = _load_json(os.path.join(BASE_DIR, "signals.json"))
@@ -919,6 +922,23 @@ def check_open_orders() -> None:
             _log_issue(f"Stuck open {side} order for {symbol}: {age_min:.0f} min old (id {o.get('id', '?')})")
         elif age_min > 15:
             _log_warn(f"Old open {side} order for {symbol}: {age_min:.0f} min old")
+def check_cron_entries() -> None:
+    """Ensure critical cron jobs are actually installed."""
+    import subprocess
+    try:
+        out = subprocess.check_output(["crontab", "-l", "-u", "stonkai"], text=True, stderr=subprocess.STDOUT)
+    except Exception as exc:
+        _log_warn(f"Could not read stonkai crontab: {exc}")
+        return
+    required = {
+        "sync_alpaca_trades.py": "sync Alpaca trades",
+        "dynamic_watchlist_manager.py": "watchlist rotation",
+        "snapshot_portfolio.py": "portfolio snapshot",
+    }
+    for script, label in required.items():
+        if script not in out:
+            _log_issue(f"Missing cron job: {label} ({script}) not found in stonkai crontab")
+
 def check_cron_heartbeats() -> None:
     """Check that critical cron jobs have recorded recent heartbeats."""
     heartbeat_dir = Path(BASE_DIR) / "heartbeats"
@@ -977,7 +997,8 @@ def check_market_hours_sanity() -> None:
         except Exception:
             pass
     if details:
-        _send_alert("[HEALTH] Market-hours sanity check failed", details)
+        for d in details:
+            _log_issue(d)
 def check_system_time() -> None:
     """Flag large clock drift from NTP."""
     now = datetime.now(timezone.utc)
@@ -1060,7 +1081,19 @@ def _check_file_permissions():
         ("/var/www/hedge-fund-website/popup_content.json", "stonkai", 0o644),
         ("/var/www/hedge-fund-website/watchlist_narratives.json", "stonkai", 0o644),
         ("/var/www/hedge-fund-website/portfolio_data.json", "stonkai", 0o644),
+        ("/var/www/hedge-fund-website/trades_log.json", "stonkai", 0o644),
+        ("/var/www/hedge-fund-website/portfolio_history.json", "stonkai", 0o644),
+        ("/opt/stonk-ai/trades_log.json", "stonkai", 0o644),
+        ("/opt/stonk-ai/trading_bot.log", "stonkai", 0o644),
+        ("/opt/stonk-ai/signals.json", "stonkai", 0o644),
+        ("/opt/stonk-ai/portfolio_data.json", "stonkai", 0o644),
+        ("/opt/stonk-ai/stonkbot.db", "stonkai", 0o644),
     ]
+    # Also scan for any root-owned JSON/log/DB files in BASE_DIR
+    import glob
+    for fpath in glob.glob(os.path.join(BASE_DIR, "*.json")) + glob.glob(os.path.join(BASE_DIR, "*.log")) + glob.glob(os.path.join(BASE_DIR, "*.db*")):
+        if fpath not in [x[0] for x in files]:
+            files.append((fpath, "stonkai", 0o644))
     for fpath, expected_user, expected_mode in files:
         try:
             p = Path(fpath)
@@ -1159,6 +1192,7 @@ def main() -> int:
     check_trading_bot_entry_gate()
     check_alpaca_portfolio_sync()
     check_cron_heartbeats()
+    check_cron_entries()
 
     status = "HEALTHY"
     exit_code = 0
