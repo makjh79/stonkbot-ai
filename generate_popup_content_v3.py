@@ -687,7 +687,9 @@ def generate_dynamic_narrative(symbol, position, watchlist_data, signal_data, ri
     confirmation_count = signal_data.get("confirmation_count", 0)
     tier_reason = signal_data.get("tier_reason", "")
     confirmations = signal_data.get("confirmations", {})
-    tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "MONITOR")
+    tier = signal_data.get("tier", "MONITOR")
+    signal_tier = watchlist_data.get("signal_tier") or tier
+    display_tier = watchlist_data.get("display_tier") or signal_tier
     signal = signal_label(pl_percent, total_score, tier)
 
     result = {
@@ -698,7 +700,10 @@ def generate_dynamic_narrative(symbol, position, watchlist_data, signal_data, ri
         "risk": risk,
         "confidence": confidence,
         "signal": signal,
-        "tier": tier,
+        "tier": display_tier,
+        "signal_tier": signal_tier,
+        "display_tier": display_tier,
+        "backend_tier": tier,
         "readiness_score": round(readiness, 1) if readiness else None,
         "entry_eligible": entry_eligible,
         "confirmation_count": confirmation_count,
