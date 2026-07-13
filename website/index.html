@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260713-1420-market-status-server -->
+    <!-- CACHE BUST: v=20260713-1506-buy-gate -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11935,7 +11935,14 @@ function updateDashboard(data, marketStatus) {
                             </div>
                         </div>
 
-    
+                        ${(tier === 'PRIME' && !stock.entry_eligible) ? `<!-- Buy gate explanation -->
+                        <div style="background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; padding: 10px 12px; margin: 0.6rem 0; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 0.9rem;">🚦</span>
+                            <div>
+                                <div style="font-size: 0.7rem; color: #fbbf24; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">Buy gate</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">PRIME conviction, but not yet entry-eligible. Needs 2+ hard confirmations (momentum, volume, MACD).</div>
+                            </div>
+                        </div>` : ''}
 
                         <!-- Metrics grid: 3-up, consistent -->
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 0.9rem; align-items: stretch;">
