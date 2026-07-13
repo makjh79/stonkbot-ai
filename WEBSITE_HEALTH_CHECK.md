@@ -1,0 +1,126 @@
+# StonkBOT.AI Website Health Check
+
+**Date:** 2026-07-13 UTC  
+**Scope:** Live website, deploy pipeline, data freshness, consistency
+
+---
+
+## Summary
+
+**Status:** ✅ Healthy, with one cosmetic tier-label inconsistency.
+
+- Website loads: HTTP 200 in 0.14s
+- TLS certificate valid until 2026-09-10
+- All required UI features present in `website/index.html`
+- Live data files are fresh (all updated within last 2 minutes except LLM narratives)
+- Holdings popups and `signals.json` are fully consistent
+- Watchlist display tiers intentionally differ from backend tiers (by design)
+
+---
+
+## 1. Repository / Deploy Pipeline
+
+| Check | Result |
+|---|---|
+| Git status | Clean (no uncommitted changes) |
+| GitHub sync | VPS is in sync with `origin/master` |
+| Latest commit | `4135cda fix: align holdings popup tier fields with watchlist` |
+| `verify_website.sh` | All 9 checks passed |
+| Generated files untracked | ✅ `signals.json` and `ai_watchlist_live.json` not in git |
+| Web root `index.html` | Immutable flag set (`+i`) to prevent accidental overwrite |
+| Cache buster | `v='20260712-v204'` in both repo and live site |
+
+---
+
+## 2. Live Data Files
+
+| File | Mtime (UTC) | Age (min) | JSON timestamp | Status |
+|---|---|---|---|---|
+| `index.html` | 01:34:34 | 1.6 | — | ✅ Fresh |
+| `ai_watchlist_live.json` | 01:35:02 | 1.1 | 01:35:02Z | ✅ Fresh |
+| `popup_content.json` | 01:34:18 | 1.8 | 01:34:18Z | ✅ Fresh |
+| `watchlist_narratives.json` | 01:34:18 | 1.8 | 01:34:18Z | ✅ Fresh |
+| `popup_narratives.json` | 00:54:58 | 41.2 | 00:54:58Z | ⚠️ Stale (LLM narratives off-hours) |
+| `watchlist_narratives_llm.json` | 00:54:58 | 41.2 | 00:54:58Z | ⚠️ Stale (LLM narratives off-hours) |
+
+**Note:** LLM narrative files are stale because markets are closed. This is expected — `llm_narrative_scheduler.py` only runs during market hours.
+
+---
+
+## 3. Timers / Cron
+
+| Job | Type | Last run | Next run | Status |
+|---|---|---|---|---|
+| `stonk-ai-popup-v6.timer` | systemd | 09:34 HKT | 09:36 HKT | ✅ Active |
+| `stonk-ai-signal-update.timer` | systemd | 09:32 HKT | 09:37 HKT | ✅ Active |
+| `stonk-ai-llm-narrative.timer` | systemd | 08:54 HKT | 09:54 HKT | ✅ Off-hours skip |
+| `dynamic_watchlist_manager.py` | cron */5 | 09:35 HKT | 09:40 HKT | ✅ Active |
+| `signal_tracker.py` | cron */15 | 09:30 HKT | 09:45 HKT | ✅ Active |
+
+---
+
+## 4. Data Consistency
+
+### Holdings popups vs `signals.json`
+- **Symbols:** 5
+- **Readiness mismatches:** 0
+- **Tier mismatches:** 0
+- **Confirmation count mismatches:** 0
+- **Entry eligibility mismatches:** 0
+
+### Watchlist vs `signals.json`
+- **Symbols:** 20
+- **Readiness mismatches:** 0
+- **Tier mismatches:** 20
+
+**Important:** The watchlist intentionally maps backend tier to display tier:
+- `STRONG_NOW` → `PRIME`
+- `NOW` → `BUILDING`
+- `WATCH` → `WATCHING`
+- `MONITOR` → `TRACKING`
+
+The watchlist stores `signal_tier` as the *display* tier (e.g., `BUILDING`) rather than the raw backend tier (`NOW`). This is by design in the frontend but is semantically confusing. `signals.json` has all 20 watchlist symbols at `NOW`/`WATCH`; the watchlist file labels them as `BUILDING`/`WATCHING`.
+
+This is **not a bug** in terms of UI display, but it is a **data-model inconsistency** that can cause confusion (e.g., when comparing values across files).
+
+---
+
+## 5. External Checks
+
+| Check | Result |
+|---|---|
+| `https://stonkbot.ai/` | 200 OK, 0.14s |
+| `https://stonkbot.ai/signals.json` | 200 OK |
+| `https://stonkbot.ai/ai_watchlist_live.json` | 200 OK |
+| `https://stonkbot.ai/popup_content.json` | 200 OK |
+| TLS certificate expiry | 2026-09-10 (valid) |
+
+---
+
+## 6. Issues Found
+
+### Issue 1: Watchlist `signal_tier` field is overloaded (cosmetic / confusion risk)
+- **Severity:** Low
+- **Details:** `ai_watchlist_live.json` stores the *display* tier in `signal_tier` instead of the backend tier. This conflicts with `signals.json` and `popup_content.json` where `signal_tier` = backend tier.
+- **Impact:** Developers comparing files may be confused. UI displays correctly.
+- **Recommendation:** Rename the watchlist field to `backend_tier` for raw tier and keep `display_tier` for UI label. Alternatively, store both consistently.
+
+### Issue 2: LLM narratives stale off-hours
+- **Severity:** Low
+- **Details:** `popup_narratives.json` and `watchlist_narratives_llm.json` are 41 minutes old.
+- **Impact:** Popup copy during off-hours is stale. This is by design.
+- **Recommendation:** No action unless you want LLM narratives during off-hours.
+
+---
+
+## 7. Recommendations
+
+1. **Fix tier field naming** in `ai_watchlist_live.json` to align with other files (low priority).
+2. **Consider adding a `backend_tier` field** to `ai_watchlist_live.json` for clarity.
+3. **Keep immutable flag** on live `index.html` to prevent accidental reversion.
+4. **Keep `signals.json` / `ai_watchlist_live.json` untracked** in git.
+5. **Monitor deploy workflow** after next website change to ensure pre/post-deploy checks still pass.
+
+---
+
+*Report generated by Einstein on 2026-07-13.*
