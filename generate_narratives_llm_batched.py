@@ -242,6 +242,29 @@ def _get_confirmations(signal: dict) -> tuple[dict, int]:
     count = compute_confirmation_count(conf)
     return conf, count
 
+
+def _factor_chip_summary(conf: dict) -> tuple[int, int, str]:
+    """Return (active, total, label_string) matching the popup factor chips."""
+    factors = [
+        ("MOM", (conf.get("momentum_score") or 0) >= 50),
+        ("RSI", conf.get("rsi_signal") in ("bullish", "neutral", "oversold")),
+        ("VOL", bool(conf.get("volume_confirmed"))),
+        ("MACD", bool(conf.get("macd_turning"))),
+        ("EMA", bool(conf.get("above_ema"))),
+        ("SEC", bool(conf.get("sector_strong"))),
+        ("INT", bool(conf.get("intraday_confirmed"))),
+        ("OPT", bool(conf.get("options_confirmed"))),
+        ("VWAP", bool(conf.get("vwap_confirmed"))),
+        ("RVOL", bool(conf.get("relvol_confirmed"))),
+        ("5M", bool(conf.get("momentum_5m_up"))),
+        ("OF", bool(conf.get("near_term_bullish_flow"))),
+        ("SPR", bool(conf.get("spread_ok"))),
+        ("QBI", bool(conf.get("bid_ask_bullish"))),
+        ("CA", bool(conf.get("no_corporate_action_risk"))),
+    ]
+    active = [name for name, ok in factors if ok]
+    return len(active), len(factors), ", ".join(active)
+
 def _company_note(symbol: str) -> str:
     if symbol not in _COMPANY_NOTES:
         note, _ = _lookup_company(symbol)
@@ -272,6 +295,7 @@ def _stops_for_symbol(position: dict, signal_data: dict, risk_config: dict) -> d
 def _build_holdings_block(symbol: str, position: dict, signal: dict, risk_config: dict) -> str:
     stops = _stops_for_symbol(position, signal, risk_config)
     conf, conf_count = _get_confirmations(signal)
+    active_count, total_count, active_labels = _factor_chip_summary(conf)
     iv = iv_scalar(signal.get("options_implied_vol"))
     news = signal.get("news") or {}
     headline = news.get("alpaca_headline") or news.get("headline") or ""
@@ -282,7 +306,7 @@ TIER: {signal.get('display_tier') or signal.get('tier', 'MONITOR')}
 P&L%: {position.get('unrealized_plpc', 0):.2f}% | Price: ${position.get('current', 0):.2f} | Entry: ${position.get('avg_entry', 0):.2f}
 Stop: ${stops['hard_stop']:.2f} | Trailing: ${stops['trailing_stop']:.2f} | VWAP: {f"${stops['vwap']:.2f}" if stops.get('vwap') else "n/a"}
 Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | MACD: {'+ve' if conf.get('macd_turning') else '-ve'} | Vol: {'yes' if conf.get('volume_confirmed') else 'no'} | RVOL: {'yes' if conf.get('relvol_confirmed') else 'no'} | EMA: {'above' if conf.get('above_ema') else 'below'} | VWAP: {'above' if conf.get('vwap_confirmed') else 'below'}
-Readiness: {signal.get('readiness_score', 0):.1f} | Confirms: {conf_count}/10 | Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
+Readiness: {signal.get('readiness_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels}) | Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
 Headline: {headline or 'None'}
 Note: {_company_note(symbol)}
 Risk: {_company_risk(symbol)}
@@ -291,6 +315,7 @@ Risk: {_company_risk(symbol)}
 
 def _build_watchlist_block(symbol: str, signal: dict, watch: dict) -> str:
     conf, conf_count = _get_confirmations(signal)
+    active_count, total_count, active_labels = _factor_chip_summary(conf)
     iv = iv_scalar(signal.get("options_implied_vol"))
     news = signal.get("news") or {}
     headline = news.get("alpaca_headline") or news.get("headline") or ""
@@ -299,7 +324,7 @@ def _build_watchlist_block(symbol: str, signal: dict, watch: dict) -> str:
 COMPANY: {signal.get('company') or watch.get('company') or symbol}
 SECTOR: {signal.get('sector') or watch.get('sector', 'Other')}
 TIER: {watch.get('display_tier') or watch.get('signal_tier') or signal.get('display_tier') or signal.get('tier', 'MONITOR')} | Entry eligible: {'yes' if watch.get('entry_eligible') or signal.get('entry_eligible') else 'no'}
-Price: ${price:.2f} | Readiness: {signal.get('readiness_score', 0):.1f} | Total: {signal.get('total_score', 0):.1f} | Confirms: {conf_count}/10
+Price: ${price:.2f} | Readiness: {signal.get('readiness_score', 0):.1f} | Total: {signal.get('total_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels})
 Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | MACD: {'+ve' if conf.get('macd_turning') else '-ve'} | Vol: {'yes' if conf.get('volume_confirmed') else 'no'} | RVOL: {'yes' if conf.get('relvol_confirmed') else 'no'} | EMA: {'above' if conf.get('above_ema') else 'below'} | VWAP: {'above' if conf.get('vwap_confirmed') else 'below'}
 Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
 Headline: {headline or 'None'}
