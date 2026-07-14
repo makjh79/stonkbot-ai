@@ -102,6 +102,8 @@ def atomic_write_json(
             json.dump(data, f, indent=2)
         os.rename(tmp_path, str(path))
         os.chmod(str(path), mode)
+        # Update mtime so freshness checks reflect the actual write, not the temp file's birth time
+        os.utime(str(path), None)
         if owner:
             import shutil
             shutil.chown(str(path), user=owner, group=owner)
