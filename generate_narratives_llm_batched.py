@@ -34,7 +34,7 @@ WATCHLIST_NARRATIVES_FILE = Path(os.environ.get("STONKBOT_WATCHLIST_NARRATIVES_F
 _COMPANY_KNOWLEDGE_FILE = Path(os.environ.get("STONKBOT_KNOWLEDGE_FILE", BOT_DIR / "company_knowledge.json"))
 
 # Model selection
-DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "openrouter/deepseek/deepseek-chat")
+DEFAULT_MODEL = os.environ.get("STONKBOT_NARRATIVE_MODEL", "ollama/kimi-k2.7-code:cloud")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_NARRATIVE_TIMEOUT", "180"))
 BATCH_SIZE = int(os.environ.get("STONKBOT_NARRATIVE_BATCH_SIZE", "6"))
 
@@ -410,6 +410,8 @@ def _normalize_watchlist_result(result: Any, chunk_symbols: list[str]) -> dict[s
 
 def generate_holdings_narratives(holdings: dict[str, dict], chunk_size: int = None) -> dict:
     chunk_size = chunk_size or BATCH_SIZE
+    if DEFAULT_MODEL.startswith("ollama/"):
+        chunk_size = 1
     results: dict[str, dict] = {}
     chunks = _chunk_dict(holdings, chunk_size)
     for idx, chunk in enumerate(chunks, 1):
@@ -424,11 +426,15 @@ def generate_holdings_narratives(holdings: dict[str, dict], chunk_size: int = No
                 print(f"[WARN] Holdings batch {idx} returned no usable symbol-keyed narratives", file=sys.stderr)
         except Exception as exc:
             print(f"[ERROR] Holdings batch {idx} failed: {exc}", file=sys.stderr)
+        if DEFAULT_MODEL.startswith("ollama/"):
+            time.sleep(1)
     return results
 
 
 def generate_watchlist_narratives(items: dict[str, dict], chunk_size: int = None) -> dict:
     chunk_size = chunk_size or BATCH_SIZE
+    if DEFAULT_MODEL.startswith("ollama/"):
+        chunk_size = 1
     results: dict[str, dict] = {}
     chunks = _chunk_dict(items, chunk_size)
     for idx, chunk in enumerate(chunks, 1):
@@ -443,6 +449,8 @@ def generate_watchlist_narratives(items: dict[str, dict], chunk_size: int = None
                 print(f"[WARN] Watchlist batch {idx} returned no usable symbol-keyed narratives", file=sys.stderr)
         except Exception as exc:
             print(f"[ERROR] Watchlist batch {idx} failed: {exc}", file=sys.stderr)
+        if DEFAULT_MODEL.startswith("ollama/"):
+            time.sleep(1)
     return results
 
 
