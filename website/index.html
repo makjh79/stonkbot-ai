@@ -11272,13 +11272,17 @@ function updateDashboard(data, marketStatus) {
                 };
                 const effectiveTier = stock.tier || (isTracking ? 'TRACKING' : 'MONITOR');
                 const tierStyle = tierColors[effectiveTier] || tierColors['MONITOR'];
-                
+
+                // Entry-gate chip: terse, surfaces tier vs. entry-eligibility split
+                const entryGate = getEntryGateChip(stock);
+                const entryGateHtml = entryGate.label ? `<span title="${entryGate.title}" style="display: inline-block; background: ${entryGate.bg}; color: ${entryGate.color}; font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 3px; border: 1px solid ${entryGate.border}; margin-left: 4px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">${entryGate.label}</span>` : '';
+
                 // Row styling - grey out tracking stocks
                 const primeNow = stock.tier === 'PRIME' || stock.tier === 'STRONG_NOW';
                 const buildingNow = stock.tier === 'BUILDING' || stock.tier === 'NOW';
                 const rowBg = primeNow ? 'rgba(6,182,212,0.02)' : buildingNow ? 'rgba(34,197,94,0.02)' : isNoPrice ? 'rgba(107,114,128,0.01)' : 'transparent';
                 const rowOpacity = isNoPrice ? '0.6' : '1';
-                
+
                 // Format values for display - tracking stocks show placeholder
                 const priceDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 12px;">—</span>' : '$' + stock.price.toFixed(2);
                 const changeDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 11px;">—</span>' : '<span style="color: ' + changeColor + '; font-weight: 600; font-size: 11px;">' + (stock.changePct >= 0 ? '+' : '-') + Math.abs(stock.changePct).toFixed(1) + '%</span>';
@@ -11286,12 +11290,36 @@ function updateDashboard(data, marketStatus) {
 
                 const rsiDisplay = isNoPrice ? '<span style="color: var(--text-muted);">—</span>' : '<span class="wl-hide-mobile">' + stock.rsi.toFixed(0) + '</span>';
                 
-                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 8px 8px;"><span style="background: transparent; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; padding: 2px 4px; border-radius: 4px; white-space: normal; max-width: 220px; border: 1px solid ' + tierStyle.borderColor + '; text-transform: uppercase;">' + tierStyle.label + '</span></td><td style="padding: 8px 8px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px; font-size: 10px;">' + stock.company + '</div></td><td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + priceDisplay + '</td><td style="padding: 8px 8px; text-align: center;">' + changeDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">' + scoreDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 8px 8px; text-align: center;"></tr>';
+                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 8px 8px; vertical-align: middle;"><div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px;"><span style="background: transparent; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; padding: 2px 4px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.borderColor + '; text-transform: uppercase;">' + tierStyle.label + '</span>' + entryGateHtml + '</div></td><td style="padding: 8px 8px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px; font-size: 10px;">' + stock.company + '</div></td><td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + priceDisplay + '</td><td style="padding: 8px 8px; text-align: center;">' + changeDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">' + scoreDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 8px 8px; text-align: center;"></tr>';
             });
             
             html += '</tbody></table></div>';
             
             container.innerHTML = html;
+        }
+
+        // Terse entry-gate chip for watchlist rows
+        function getEntryGateChip(stock) {
+            const tier = stock.tier || stock.signal_tier || 'MONITOR';
+            const eligible = stock.entry_eligible || false;
+            const hard = stock.hard_confirmation_count || 0;
+            const reason = stock.entry_gate_reason || '';
+            const conf = stock.confirmationCount || 0;
+
+            if (tier === 'STRONG_NOW' || tier === 'PRIME') {
+                return eligible
+                    ? { label: 'NEXT BUY', title: 'PRIME + entry gate passed', bg: 'rgba(6,182,212,0.15)', color: '#06b6d4', border: 'rgba(6,182,212,0.4)' }
+                    : { label: 'NEEDS CONFIRM', title: 'PRIME but needs a hard confirmation (volume/MACD/intraday/options/relative volume)', bg: 'rgba(251,191,36,0.12)', color: '#fbbf24', border: 'rgba(251,191,36,0.35)' };
+            }
+            if (tier === 'NOW' || tier === 'BUILDING') {
+                return eligible
+                    ? { label: 'TIER LOW', title: 'Entry gate passed, but bot only buys PRIME names', bg: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', border: 'rgba(255,255,255,0.12)' }
+                    : { label: '', title: '', bg: 'transparent', color: 'var(--text-muted)', border: 'transparent' };
+            }
+            if (tier === 'WATCH' || tier === 'WATCHING') {
+                return { label: 'WATCH', title: 'Approaching entry but below PRIME/BUILDING threshold', bg: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', border: 'rgba(255,255,255,0.12)' };
+            }
+            return { label: '', title: '', bg: 'transparent', color: 'var(--text-muted)', border: 'transparent' };
         }
         
         // Render dedicated Orders tab

@@ -15,7 +15,7 @@ from typing import Any, Dict, Iterable, Optional
 # -----------------------------------------------------------------------------
 # Tier thresholds (backend names)
 # -----------------------------------------------------------------------------
-TIER_STRONG_NOW_MIN = 77.0   # lowered from 78.0 2026-07-13; keeps PRIME reachable
+TIER_STRONG_NOW_MIN = 76.0   # lowered from 77.0 2026-07-14; PRIME cohort too thin at 77
 TIER_NOW_MIN = 72.0          # raised from 70 for higher-quality entries
 TIER_WATCH_MIN = 55.0        # raised from 50
 

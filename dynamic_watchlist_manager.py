@@ -28,7 +28,10 @@ from signal_rules import (
     assign_tier,
     compute_confirmation_count,
     expected_display_tier_for_signal,
+    hard_confirmation_count,
     is_entry_eligible,
+    ENTRY_READINESS_MIN,
+    ENTRY_MIN_CONFIRMATIONS,
     TIER_BUILDING_MIN,
     TIER_DISPLAY_MAP,
     TIER_STRONG_NOW_MIN,
@@ -118,6 +121,23 @@ def _tier_position_cap(tier: str) -> float:
     if tier == "PRIME":
         return 0.12
     return 0.08
+
+
+def _entry_gate_reason(s: dict, conf_count: int, hard_count: int) -> str:
+    """Short reason why a symbol is or is not entry-eligible."""
+    readiness = s.get("readiness_score", 0) or 0
+    above_ema = s.get("confirmations", {}).get("above_ema", False)
+    if is_entry_eligible(readiness, conf_count, above_ema, hard_count):
+        return "eligible"
+    if not above_ema:
+        return "below_ema"
+    if readiness < ENTRY_READINESS_MIN:
+        return f"readiness_{readiness:.0f}"
+    if conf_count < ENTRY_MIN_CONFIRMATIONS:
+        return f"conf_{conf_count}"
+    if hard_count < 1:
+        return "needs_hard_confirm"
+    return "not_eligible"
 
 
 def _entry_eligible_from_signal(s: dict) -> bool:
@@ -490,6 +510,8 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         # Compute action-based tier using canonical rules from signal_rules.py.
         entry_eligible = s.get("entry_eligible", _entry_eligible_from_signal(s))
         conf_count = compute_confirmation_count(s.get("confirmations", {}))
+        hard_count = hard_confirmation_count(s.get("confirmations", {}))
+        entry_gate_reason = _entry_gate_reason(s, conf_count, hard_count)
         raw_reason = s.get("tier_reason", f"Readiness {readiness:.1f}")
         # Map backend prefix in tier_reason to frontend prefix in one pass.
         backend_prefix = s.get("tier", "MONITOR")
@@ -504,13 +526,13 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         if not is_scored:
             council_note = "Universe tracking"
         elif tier == "PRIME":
-            council_note = f"PRIME | Readiness {readiness:.1f} | {conf_count}/10 conf | ENTRY READY"
+            council_note = f"PRIME | Readiness {readiness:.1f} | {conf_count}/15 conf | ENTRY READY"
         elif tier == "BUILDING":
-            council_note = f"BUILDING | Readiness {readiness:.1f} | {conf_count}/10 conf | building strength, not entry eligible"
+            council_note = f"BUILDING | Readiness {readiness:.1f} | {conf_count}/15 conf | building strength, not entry eligible"
         elif tier == "WATCHING":
-            council_note = f"WATCHING | Readiness {readiness:.1f} | {conf_count}/10 conf | watching, not entry eligible"
+            council_note = f"WATCHING | Readiness {readiness:.1f} | {conf_count}/15 conf | watching, not entry eligible"
         else:
-            council_note = f"TRACKING | Readiness {readiness:.1f} | {conf_count}/10 conf | below watching threshold"
+            council_note = f"TRACKING | Readiness {readiness:.1f} | {conf_count}/15 conf | below watching threshold"
 
         targets = {
             "target": symbol,
@@ -615,6 +637,8 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "signal": tier,
             "display_tier": display_tier_name,
             "backend_tier": s.get("tier") or "MONITOR",
+            "hard_confirmation_count": hard_count,
+            "entry_gate_reason": entry_gate_reason,
             "entry_eligible": entry_eligible,
             "confirmation_count": conf_count,
             "confirmations": s.get("confirmations", {}),
