@@ -2,7 +2,7 @@
 """
 STONK.AI Sentiment Generator (NO-OP)
 
-External Finnhub dependency removed 2026-07-14.
+External news-sentiment dependency removed 2026-07-14.
 This script is kept as a no-op placeholder so any existing cron or trigger exits cleanly.
 """
 

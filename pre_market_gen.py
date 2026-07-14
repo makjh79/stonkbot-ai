@@ -56,14 +56,13 @@ else:
 
 # 5. Update signal enrichment (news-only, fresh Alpaca headlines)
 print("\n--- 5. Signal Enrichment (news refresh) ---")
-from signal_enricher import enrich_symbol, load_finnhub_key, load_enrichment, save_enrichment
-api_key = load_finnhub_key()
+from signal_enricher import enrich_symbol, load_enrichment, save_enrichment
 enrichment = load_enrichment()
 # Only refresh top 20 symbols to be quick
 top_syms = [s.symbol for s in signals[:20]]
 for sym in top_syms:
     try:
-        result = enrich_symbol(sym, api_key, news_only=True)
+        result = enrich_symbol(sym, news_only=True)
         enrichment[sym]["news"] = result.get("news")
         enrichment[sym]["fetched_at"] = result.get("fetched_at")
     except Exception as e:

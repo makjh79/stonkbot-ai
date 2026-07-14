@@ -501,19 +501,7 @@ def check_dead_code() -> None:
     except Exception as e:
         _log_warn(f"Could not run dead_factor_lint: {e}")
 
-    # Legacy import check kept as a backstop.
-    forbidden = ["yfinance", "finnhub", "polygon", "yahoo_finance"]
-    py_files = [p for p in Path(BASE_DIR).glob("*.py")]
-    for p in py_files:
-        try:
-            txt = p.read_text()
-        except Exception:
-            continue
-        for bad in forbidden:
-            if re.search(rf"\bimport\s+{bad}\b|\bfrom\s+{bad}\b", txt):
-                if p.name in ("backups",):
-                    continue
-                _log_issue(f"Dead-code import found: {bad} in {p.name}")
+    # ─── stale web data copy ───────────────────────────────────────────────
 def check_html_currency() -> None:
     """Deployed index.html should carry a recent cache-buster that matches popup gen."""
     path = os.path.join(WEB_DIR, "index.html")

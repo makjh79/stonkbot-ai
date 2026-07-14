@@ -21,7 +21,7 @@ critical file has exactly one writer. Readers are allowed from anywhere.
 | `/var/www/hedge-fund-website/popup_content.json` | Popup Generator | `generate_popup_content_narrative_v6_server.py` | v6 narrative merge |
 | `/var/www/hedge-fund-website/watchlist_narratives.json` | LLM Narrative Generator | `generate_narratives_llm_batched.py` | Batched LLM narratives |
 | `/opt/stonk-ai/signal_rules.py` | Shared rules module | n/a (import-only) | Single source of truth for tiers/entry; edit intentionally |
-| `/opt/stonk-ai/dead_factor_lint.py` | Maintenance lint | cron or manual | Detects zombie PEAD/Finnhub/Yahoo/Polygon references |
+| `/opt/stonk-ai/dead_factor_lint.py` | Maintenance lint | cron or manual | Detects zombie references to removed data sources (PEAD and the 3 deprecated external APIs) |
 
 ## Shared Write Helper
 

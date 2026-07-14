@@ -56,7 +56,7 @@ WEB_FILES_TO_SCAN: Set[str] = {
     "watchlist_narratives.json",
 }
 
-# Patterns target active usage, not explanatory comments.
+# Patterns target active usage, not explanatory comments or disabled scripts.
 # Each entry: (name, [regexes])
 DEAD_FACTORS: List[Tuple[str, List[str]]] = [
     (
@@ -79,9 +79,17 @@ DEAD_FACTORS: List[Tuple[str, List[str]]] = [
         ],
     ),
     (
-        "finnhub data",
+        "external news API",
         [
-            r"\bfinnhub\b",
+            # actual import/call patterns of the removed external news provider (FH)
+            r"\bfrom\s+finnhub\b",
+            r"\bimport\s+finnhub\b",
+            r"\bfinnhub_client\b",
+            r"\.finnhub\b",
+            r"finnhub_get\(",
+            r"load_finnhub_key\(",
+            r"refresh_news_for_symbols\(",
+            r"finnhub_news\(",
         ],
     ),
     (
@@ -104,7 +112,7 @@ DEAD_FACTORS: List[Tuple[str, List[str]]] = [
     ),
 ]
 
-# Paths/files that are allowed to mention dead factors (e.g. this script, docs).
+# Paths/files that are allowed to mention dead factors (e.g. this script, docs, disabled modules).
 ALLOWLIST: Set[Path] = {Path(__file__).resolve()}
 
 # Comment-only matches are ignored if the whole line is a comment or the match

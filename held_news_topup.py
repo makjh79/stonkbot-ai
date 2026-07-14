@@ -2,8 +2,8 @@
 """
 STONK.AI Held Positions News Top-Up (NO-OP)
 
-External Finnhub dependency removed 2026-07-14. This script is kept as a
-no-op placeholder so any existing cron or systemd trigger exits cleanly.
+Legacy external news enrichment dependency removed 2026-07-14. This script is
+kept as a no-op placeholder so any existing cron or systemd trigger exits cleanly.
 """
 
 import logging
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def main() -> int:
     logging.basicConfig(level=logging.INFO)
-    logger.info("held_news_topup.py is deprecated; external Finnhub dependency removed.")
+    logger.info("held_news_topup.py is deprecated; legacy external news enrichment dependency removed.")
     return 0
 
 

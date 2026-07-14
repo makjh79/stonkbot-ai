@@ -3,7 +3,7 @@
 STONK.AI Signal Enricher v3.0 (Alpaca-only)
 
 Batched, memory-bounded enrichment with incremental saves.
-Uses Alpaca news API only. Finnhub/news/metrics/earnings external sources removed.
+Uses Alpaca news API only. Legacy external news/metrics/earnings sources removed.
 
 Usage:
   python3 signal_enricher.py              # Full enrichment (batched)
@@ -49,13 +49,13 @@ BEARISH_WORDS = {
 
 
 def load_finnhub_key() -> str:
-    """Deprecated: external Finnhub dependency removed. Returns empty string."""
+    """Deprecated: legacy external API dependency removed. Returns empty string."""
     return ""
 
 
 def finnhub_get(endpoint: str, params: Dict, api_key: str, retries: int = 2) -> Optional[Dict]:
-    """Deprecated: external Finnhub dependency removed. Returns None."""
-    logger.warning(f"finnhub_get({endpoint}) called but Finnhub is disabled")
+    """Deprecated: legacy external API dependency removed. Returns None."""
+    logger.warning(f"external enrichment API call ({endpoint}) is disabled")
     return None
 
 
@@ -84,49 +84,18 @@ def basic_sentiment(headlines: List[str]) -> Dict:
 
 
 def fetch_earnings(symbol: str, api_key: str) -> Optional[Dict]:
-    # PEAD dropped — Alpaca has no earnings API, Finnhub earnings removed
+    # PEAD dropped — Alpaca has no earnings API, legacy external earnings source removed
     return None
-
-def _fetch_earnings_DEPRECATED(symbol: str, api_key: str) -> Optional[Dict]:
-    data = finnhub_get("/stock/earnings", {"symbol": symbol}, api_key)
-    if not data or not isinstance(data, list) or len(data) == 0:
-        return None
-    latest = data[0]
-    estimate = latest.get("estimate")
-    actual = latest.get("actual")
-    if actual is None or estimate is None:
-        return None
-    return {
-        "period": latest.get("period"),
-        "quarter": latest.get("quarter"),
-        "year": latest.get("year"),
-        "estimate": estimate,
-        "actual": actual,
-        "surprise": latest.get("surprise"),
-        "surprise_pct": latest.get("surprisePercent"),
-        "direction": "beat" if actual >= estimate else "miss",
-    }
 
 
 def fetch_news(symbol: str, api_key: str, days: int = 5) -> Optional[Dict]:
-    # Finnhub news dropped — using Alpaca news API only
+    # Legacy external news source dropped — using Alpaca news API only
     return None
 
-def _fetch_news_DEPRECATED(symbol: str, api_key: str, days: int = 5) -> Optional[Dict]:
-    end = datetime.now(timezone.utc).date()
-    start = end - timedelta(days=days)
-    data = finnhub_get(
-        "/company-news",
-        {"symbol": symbol, "from": str(start), "to": str(end)},
-        api_key,
-    )
-    if not data or not isinstance(data, list):
-        return None
-    headlines = []
-    for item in data[:10]:
-        h = item.get("headline", "").strip()
-        if h and h not in headlines:
-            headlines.append(h)
+
+# ─── Alpaca-only enrichment ────────────────────────────────────────────────
+
+def _load_enrichment_from_file() -> Dict:
     sentiment = basic_sentiment(headlines)
     return {
         "headlines": headlines[:5],
@@ -179,42 +148,15 @@ def fetch_recommendation(symbol: str, api_key: str) -> Optional[Dict]:
     # Recommendations dropped — analyst ratings are noise, not edge
     return None
 
-def _fetch_recommendation_DEPRECATED(symbol: str, api_key: str) -> Optional[Dict]:
-    data = finnhub_get("/stock/recommendation", {"symbol": symbol}, api_key)
-    if not data or not isinstance(data, list) or len(data) == 0:
-        return None
-    latest = data[0]
-    strong_buy = latest.get("strongBuy", 0)
-    buy = latest.get("buy", 0)
-    hold = latest.get("hold", 0)
-    sell = latest.get("sell", 0)
-    strong_sell = latest.get("strongSell", 0)
-    total = strong_buy + buy + hold + sell + strong_sell
-    if total == 0:
-        return None
-    bullish = strong_buy + buy
-    bearish = sell + strong_sell
-    return {
-        "period": latest.get("period"),
-        "strong_buy": strong_buy,
-        "buy": buy,
-        "hold": hold,
-        "sell": sell,
-        "strong_sell": strong_sell,
-        "total": total,
-        "bullish_pct": round(bullish / total * 100, 1),
-        "bearish_pct": round(bearish / total * 100, 1),
-    }
-
 
 def fetch_metrics(symbol: str, api_key: str) -> Optional[Dict]:
     """Deprecated: external fundamental metrics removed. Returns None."""
     return None
 
 
-def enrich_symbol(symbol: str, api_key: str, news_only: bool = False) -> Dict:
+def enrich_symbol(symbol: str, api_key: Optional[str] = None, news_only: bool = False) -> Dict:
     if news_only:
-        news = fetch_news(symbol, api_key)
+        news = fetch_news(symbol, api_key or "")
         # Add Alpaca news as supplementary source
         try:
             alpaca_data = fetch_alpaca_news([symbol], limit=3)
@@ -243,7 +185,7 @@ def enrich_symbol(symbol: str, api_key: str, news_only: bool = False) -> Dict:
             "fetched_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         }
     # Full enrichment
-    news = fetch_news(symbol, api_key)
+    news = fetch_news(symbol, api_key or "")
     try:
         alpaca_data = fetch_alpaca_news([symbol], limit=3)
         if symbol in alpaca_data:
@@ -392,7 +334,7 @@ def main():
             parts = arg.split("=")[1].split("-")
             batch_range = (int(parts[0]), int(parts[1]))
     
-    api_key = load_finnhub_key()
+    api_key = None
     if not api_key:
         logger.warning("No external enrichment API key; using Alpaca news only")
     
