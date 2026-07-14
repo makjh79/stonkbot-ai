@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Daily script to update signal performance
-Run by cron daily at market close to check if targets were hit
+Daily script to update signal performance.
+Run by cron daily at market close to check if targets were hit.
 
-Updated 2026-06-27: Uses alpaca_data hub instead of yfinance
+Uses Alpaca data hub only. No external data sources.
 """
 
 import json

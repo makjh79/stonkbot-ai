@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 """
-STONK.AI Signal Enricher v2.0
+STONK.AI Signal Enricher v3.0 (Alpaca-only)
 
 Batched, memory-bounded enrichment with incremental saves.
-- Processes symbols in small batches (10 at a time)
-- Saves after each batch so progress is never lost
-- Respects Finnhub rate limits with proper spacing
-- Skips symbols already enriched recently (configurable TTL)
-- Can run in --news-only mode for lightweight intraday top-ups
+Uses Alpaca news API only. Finnhub/news/metrics/earnings external sources removed.
 
 Usage:
   python3 signal_enricher.py              # Full enrichment (batched)
@@ -19,15 +15,12 @@ Usage:
 import json
 import logging
 import os
-import re
 import sys
 import time
 import gc
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
-
-import requests
 
 from alpaca_data import get_data_hub
 
@@ -36,14 +29,7 @@ logger = logging.getLogger(__name__)
 BOT_DIR = Path("/opt/stonk-ai")
 ENRICHMENT_FILE = BOT_DIR / "signal_enrichment.json"
 ENRICHMENT_TMP = BOT_DIR / "signal_enrichment.tmp.json"
-FINNHUB_KEY_PATHS = [
-    Path(__file__).parent / ".secrets" / "finnhub.key",
-    Path("/opt/stonk-ai/.secrets/finnhub.key"),
-    Path("/root/.openclaw/workspace/.secrets/finnhub.key"),
-]
 
-# Finnhub free tier: 60 calls/min. We target ~50/min to be safe.
-API_CALL_INTERVAL = 1.3  # seconds between calls (~46/min)
 BATCH_SIZE = 10  # symbols per batch
 BATCH_SAVE_DELAY = 2  # seconds to pause between batches
 ENRICHMENT_TTL_HOURS = 12  # re-enrich if older than this (unless --force)
@@ -63,49 +49,13 @@ BEARISH_WORDS = {
 
 
 def load_finnhub_key() -> str:
-    for p in FINNHUB_KEY_PATHS:
-        if p.exists():
-            try:
-                return p.read_text().strip()
-            except Exception:
-                continue
-    return os.getenv("FINNHUB_API_KEY", "")
+    """Deprecated: external Finnhub dependency removed. Returns empty string."""
+    return ""
 
-
-_last_call_time = 0.0
 
 def finnhub_get(endpoint: str, params: Dict, api_key: str, retries: int = 2) -> Optional[Dict]:
-    global _last_call_time
-    # Rate limit: ensure minimum interval between calls
-    elapsed = time.time() - _last_call_time
-    if elapsed < API_CALL_INTERVAL:
-        time.sleep(API_CALL_INTERVAL - elapsed)
-    
-    url = f"https://finnhub.io/api/v1{endpoint}"
-    params["token"] = api_key
-    for attempt in range(retries + 1):
-        try:
-            resp = requests.get(url, params=params, timeout=15)
-            _last_call_time = time.time()
-            if resp.status_code == 429:
-                if attempt < retries:
-                    wait = 60 + attempt * 30  # longer waits: 60s, 90s
-                    logger.warning(f"Finnhub 429 on {endpoint}, waiting {wait}s (attempt {attempt+1}/{retries+1})")
-                    time.sleep(wait)
-                    continue
-                logger.warning(f"Finnhub {endpoint} rate limited after {retries+1} attempts, skipping")
-                return None
-            if resp.status_code != 200:
-                logger.warning(f"Finnhub {endpoint} error {resp.status_code}: {resp.text[:200]}")
-                return None
-            return resp.json()
-        except Exception as e:
-            _last_call_time = time.time()
-            logger.warning(f"Finnhub {endpoint} failed: {e}")
-            if attempt < retries:
-                time.sleep(5)
-                continue
-            return None
+    """Deprecated: external Finnhub dependency removed. Returns None."""
+    logger.warning(f"finnhub_get({endpoint}) called but Finnhub is disabled")
     return None
 
 
@@ -258,21 +208,8 @@ def _fetch_recommendation_DEPRECATED(symbol: str, api_key: str) -> Optional[Dict
 
 
 def fetch_metrics(symbol: str, api_key: str) -> Optional[Dict]:
-    data = finnhub_get("/stock/metric", {"symbol": symbol, "metric": "all"}, api_key)
-    if not data:
-        return None
-    m = data.get("metric", {})
-    return {
-        "week_52_high": m.get("52WeekHigh"),
-        "week_52_low": m.get("52WeekLow"),
-        "week_52_high_date": m.get("52WeekHighDate"),
-        "week_52_low_date": m.get("52WeekLowDate"),
-        "beta": m.get("beta"),
-        "pe_ttm": m.get("peTTM"),
-        "eps_ttm": m.get("epsTTM"),
-        "dividend_yield": m.get("dividendYieldIndicatedAnnual"),
-        "market_cap": m.get("marketCapitalization"),
-    }
+    """Deprecated: external fundamental metrics removed. Returns None."""
+    return None
 
 
 def enrich_symbol(symbol: str, api_key: str, news_only: bool = False) -> Dict:
@@ -354,7 +291,7 @@ def save_enrichment(enrichment: Dict, path: Path = ENRICHMENT_FILE) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "source": "finnhub",
+        "source": "alpaca",
         "count": len(enrichment),
         "data": enrichment,
     }
@@ -457,8 +394,7 @@ def main():
     
     api_key = load_finnhub_key()
     if not api_key:
-        logger.error("No Finnhub API key found")
-        return 1
+        logger.warning("No external enrichment API key; using Alpaca news only")
     
     universe = load_universe()
     if not universe:

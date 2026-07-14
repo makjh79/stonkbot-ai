@@ -307,45 +307,8 @@ def write_json(symbol: str, payload: dict):
 # ---------------------------------------------------------------------------
 
 def main():
-    finnhub_key = load_finnhub_key()
-    alpaca_config = load_alpaca_config()
-
-    to_date = datetime.now(timezone.utc).date()
-    from_date = to_date - timedelta(days=DAYS_BACK)
-
-    failed = []
-    for symbol in WATCHLIST_TICKERS:
-        try:
-            fh_articles = finnhub_news(symbol, finnhub_key, str(from_date), str(to_date))
-            alp_articles = alpaca_news(symbol, alpaca_config, str(from_date), str(to_date))
-            articles = merge_articles([fh_articles, alp_articles])
-            payload = build_sentiment(symbol, articles)
-            if payload:
-                write_json(symbol, payload)
-                print(f"  {symbol}: {len(articles)} articles ({len(fh_articles)} Finnhub + {len(alp_articles)} Alpaca)")
-            else:
-                fallback = {
-                    "symbol": symbol,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "tone": "neutral",
-                    "toneScore": 0.0,
-                    "mentionCount24h": 0,
-                    "sparkline": [0.0] * DAYS_BACK,
-                    "headlines": [],
-                    "dataSource": "Finnhub + Alpaca News — no recent coverage",
-                }
-                write_json(symbol, fallback)
-                failed.append(f"{symbol}: no articles (wrote fallback)")
-        except Exception as e:
-            failed.append(f"{symbol}: {e}")
-        time.sleep(SLEEP_SECONDS)
-
-    if failed:
-        print("\nNotices:")
-        for msg in failed:
-            print(f"  - {msg}")
-
-    print("\nAll sentiment files generated.")
+    """No-op: external Finnhub dependency removed 2026-07-14."""
+    print("generate_sentiment.py is deprecated; external Finnhub dependency removed.")
 
 
 if __name__ == "__main__":

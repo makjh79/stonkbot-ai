@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 STONK.AI Market Indices Fetcher
-Fetches S&P 500 (SPY), Dow Jones (DIA), and NASDAQ (QQQ) via Alpaca data hub
-No Yahoo Finance dependency. All indices use Alpaca-tradable ETF proxies.
+Fetches S&P 500 (SPY), Dow Jones (DIA), and NASDAQ (QQQ) via Alpaca data hub.
+Zero external data dependencies. All indices use Alpaca-tradable ETF proxies.
 """
 
 import json
@@ -10,12 +10,6 @@ import logging
 import time
 from datetime import datetime
 from pathlib import Path
-import requests
-
-try:
-        HAS_ALPACA = True
-except ImportError:
-    HAS_ALPACA = False
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,18 +29,15 @@ JUNE_4_PRICES = {
 
 EXPERIMENT_START_VALUE = 100000  # $100K starting value
 
-def load_alpaca_config():
-    """Load Alpaca API credentials"""
-    if ALPACA_CONFIG_FILE.exists():
-        with open(ALPACA_CONFIG_FILE, 'r') as f:
-            return json.load(f)
-    return {}
+def _get_hub():
+    """Return Alpaca data hub, importing lazily to avoid hard dependency at import time."""
+    from alpaca_data import get_data_hub
+    return get_data_hub()
 
 def fetch_spy_from_alpaca():
     """Fetch SPY price from Alpaca data hub"""
     try:
-        from alpaca_data import get_data_hub
-        hub = get_data_hub()
+        hub = _get_hub()
         price = hub.get_latest_price('SPY')
         return float(price) if price else None
     except Exception as e:
@@ -56,8 +47,7 @@ def fetch_spy_from_alpaca():
 def fetch_regime_data():
     """Fetch regime indicator data (VIXY, SHY/TLT, LQD/HYG) from Alpaca hub"""
     try:
-        from alpaca_data import get_data_hub
-        hub = get_data_hub()
+        hub = _get_hub()
         snaps = hub.get_snapshots(['VIXY', 'SHY', 'TLT', 'LQD', 'HYG'])
         regime = {}
         for sym, snap in snaps.items():
@@ -87,33 +77,6 @@ def fetch_regime_data():
         logger.warning(f"Regime data fetch failed: {e}")
         return {}
 
-def fetch_spy_from_yahoo():
-    """Fallback: Fetch SPY from Yahoo Finance"""
-    try:
-        url = "https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d"
-        resp = requests.get(url, timeout=10, headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        })
-        data = resp.json()
-        meta = data['chart']['result'][0]['meta']
-        return float(meta.get('regularMarketPrice', 0))
-    except Exception as e:
-        logger.error(f"Yahoo SPY fetch failed: {e}")
-        return None
-
-def fetch_index_from_yahoo(symbol):
-    """Fetch index data from Yahoo Finance"""
-    try:
-        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=1d"
-        resp = requests.get(url, timeout=10, headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        })
-        data = resp.json()
-        meta = data['chart']['result'][0]['meta']
-        return float(meta.get('regularMarketPrice', 0))
-    except Exception as e:
-        logger.error(f"Yahoo {symbol} fetch failed: {e}")
-        return None
 
 def fetch_market_data():
     """Fetch all market indices + regime data"""
@@ -123,10 +86,8 @@ def fetch_market_data():
         'regime': fetch_regime_data()
     }
     
-    # S&P 500 - Try Alpaca first, fall back to Yahoo
+    # S&P 500 - Alpaca SIP only
     spy_price = fetch_spy_from_alpaca()
-    if not spy_price:
-        spy_price = fetch_spy_from_yahoo()
     
     if spy_price:
         spy_start = JUNE_4_PRICES['SPY']
@@ -140,16 +101,14 @@ def fetch_market_data():
             'return_pct': round(spy_return, 2),
             'current_value': round(spy_value, 2),
             'last_updated': datetime.now().isoformat(),
-            'source': 'Alpaca' if HAS_ALPACA else 'Yahoo'
+            'source': 'Alpaca'
         }
         logger.info(f"S&P 500 (SPY): ${spy_price:.2f} ({spy_return:+.2f}%) → ${spy_value:,.2f}")
     
     # Dow Jones - DIA ETF via Alpaca
     dia_price = None
     try:
-        if 'hub' not in dir():
-            from alpaca_data import get_data_hub
-            hub = get_data_hub()
+        hub = _get_hub()
         dia_price = hub.get_latest_price('DIA')
     except Exception as e:
         logger.warning(f"Alpaca DIA fetch failed: {e}")
@@ -180,9 +139,7 @@ def fetch_market_data():
     # NASDAQ - QQQ ETF via Alpaca
     qqq_price = None
     try:
-        if 'hub' not in dir():
-            from alpaca_data import get_data_hub
-            hub = get_data_hub()
+        hub = _get_hub()
         qqq_price = hub.get_latest_price('QQQ')
     except Exception as e:
         logger.warning(f"Alpaca QQQ fetch failed: {e}")
@@ -241,7 +198,7 @@ def save_market_data(data):
 def main():
     """Main loop - fetch every 30 seconds"""
     logger.info("Market Indices Fetcher Starting")
-    logger.info(f"SPY source: {'Alpaca' if HAS_ALPACA else 'Yahoo Finance'}")
+    logger.info("SPY source: Alpaca")
     logger.info(f"June 4 baselines: SPY=${JUNE_4_PRICES['SPY']}, DIA=${JUNE_4_PRICES['DIA']}, QQQ=${JUNE_4_PRICES['QQQ']}")
     
     while True:
