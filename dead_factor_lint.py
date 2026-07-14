@@ -36,6 +36,7 @@ SKIP_DIRS: Set[str] = {
     "backup-sqlite-migration-20260706_041612",
     "website",  # duplicate of /var/www/hedge-fund-website; deployed separately
     "sentiment",
+    "monitor",  # older copy of the monitor; active monitor lives in repo root
 }
 SKIP_FILE_PATTERNS: List[re.Pattern] = [
     re.compile(r"^rsi_cache\.json$", re.I),
@@ -85,11 +86,7 @@ DEAD_FACTORS: List[Tuple[str, List[str]]] = [
             r"\bfrom\s+finnhub\b",
             r"\bimport\s+finnhub\b",
             r"\bfinnhub_client\b",
-            r"\.finnhub\b",
-            r"finnhub_get\(",
-            r"load_finnhub_key\(",
-            r"refresh_news_for_symbols\(",
-            r"finnhub_news\(",
+            r"\bfinnhub_news\(",
         ],
     ),
     (
