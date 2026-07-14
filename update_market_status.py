@@ -48,12 +48,17 @@ def safe_chown(path: Path) -> None:
             return
         os.chown(path, STONKAI_UID, STONKAI_GID)
     except PermissionError:
-        pass  # non-root users cannot chown; existing ownership is fine
+        import logging
+        logging.warning(f"Could not chown {path} to stonkai:stonkai; future updates may fail")
 
 for dest in [BASE / 'market_status.json', WEB / 'market_status.json']:
-    with open(dest, 'w') as f:
-        json.dump(out, f, indent=2)
-    os.chmod(dest, 0o644)
-    safe_chown(dest)
+    try:
+        with open(dest, 'w') as f:
+            json.dump(out, f, indent=2)
+        os.chmod(dest, 0o644)
+        safe_chown(dest)
+    except PermissionError as exc:
+        import logging
+        logging.error(f"Failed to write {dest}: {exc}")
 
 print(out['timestamp'], 'is_open=' + str(out['is_open']), 'mode=' + out['mode'])
