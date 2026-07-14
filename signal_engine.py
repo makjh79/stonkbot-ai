@@ -45,7 +45,7 @@ import options_iv_analytics
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from readiness_score import compute_readiness, ReadinessResult, compute_confirmation_count
+from readiness_score import compute_readiness, ReadinessResult, compute_confirmation_count, TIER_STRONG_NOW_MIN, TIER_NOW_MIN
 from stonk_utils import atomic_write_json
 from stonkbot_db import save_signals as db_save_signals, heartbeat, export_json_mirrors
 from mean_reversion_signal import compute_mean_reversion
@@ -955,10 +955,10 @@ class SignalEngine:
         TIER_HYSTERESIS = 1.0  # must drop 1 full readiness point below threshold to demote
         for s in signals:
             prev_tier = previous_tiers.get(s.symbol)
-            if prev_tier == "STRONG_NOW" and 77.0 - TIER_HYSTERESIS <= s.readiness_score < TIER_STRONG_NOW_MIN:
+            if prev_tier == "STRONG_NOW" and TIER_STRONG_NOW_MIN - TIER_HYSTERESIS <= s.readiness_score < TIER_STRONG_NOW_MIN:
                 s.tier = "STRONG_NOW"
                 s.tier_reason = s.tier_reason.replace("BUILDING:", "PRIME:")
-            elif prev_tier == "NOW" and 72.0 - TIER_HYSTERESIS <= s.readiness_score < TIER_NOW_MIN:
+            elif prev_tier == "NOW" and TIER_NOW_MIN - TIER_HYSTERESIS <= s.readiness_score < TIER_NOW_MIN:
                 s.tier = "NOW"
 
         logger.info(f"Generated {len(signals)} signals. Top: {signals[0].symbol if signals else 'none'} (readiness={signals[0].readiness_score if signals else 0:.1f})")
