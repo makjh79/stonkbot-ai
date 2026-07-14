@@ -12,6 +12,7 @@ import subprocess
 import sys
 import time
 import requests
+from signal_rules import expected_display_tier_for_signal
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -306,16 +307,8 @@ def check_alignment_signals_vs_watchlist() -> None:
         # backend tier vs display tier mapping must be consistent
         backend_tier = sig.get("tier")
         display_tier = item.get("display_tier") or t.get("display_tier") or item.get("signal_tier")
-        expected = None
-        if backend_tier == "STRONG_NOW":
-            expected = "PRIME"
-        elif backend_tier == "NOW":
-            expected = "BUILDING"
-        elif backend_tier == "WATCH":
-            expected = "WATCHING"
-        elif backend_tier == "MONITOR":
-            expected = "TRACKING"
-        if expected and display_tier != expected:
+        expected = expected_display_tier_for_signal(sig)
+        if display_tier != expected:
             _log_issue(f"ALIGNMENT {sym}: backend {backend_tier} should map to {expected}, got {display_tier}")
 
         # entry_eligible must agree
@@ -433,13 +426,10 @@ def check_popup_narrative_alignment() -> None:
                 _log_issue(f"Popup {sym}: confirmations missing or not a dict")
                 continue
             sig_conf = sig.get("confirmations", {})
-            # Quick key-set alignment (tolerate earnings_confirmed in popup/watchlist from _infer_pead)
-            popup_keys = set(popup_conf.keys()) - {"earnings_confirmed"}
-            signal_keys = set(sig_conf.keys()) - {"earnings_confirmed"}
-            if popup_keys != signal_keys:
+            if set(popup_conf.keys()) != set(sig_conf.keys()):
                 _log_warn(
                     f"Popup {sym}: confirmation keys differ from signals "
-                    f"(popup={sorted(popup_keys)} vs signal={sorted(signal_keys)})"
+                    f"(popup={sorted(popup_conf.keys())} vs signal={sorted(sig_conf.keys())})"
                 )
             # confirmation_count alignment
             if data.get("confirmation_count") != sig.get("confirmation_count"):
@@ -463,15 +453,15 @@ def check_popup_narrative_alignment() -> None:
                 continue
             if "confirmation_count" not in data:
                 _log_warn(f"Watchlist narrative {sym}: missing confirmation_count")
-            # Compare confirmations, ignoring earnings_confirmed (added by _infer_pead in generator)
-            narr_conf = {k: v for k, v in data.get("confirmations", {}).items() if k != "earnings_confirmed"}
-            sig_conf = {k: v for k, v in sig.get("confirmations", {}).items() if k != "earnings_confirmed"}
+            # Compare confirmations exactly; earnings_confirmed removed 2026-07-04.
+            narr_conf = data.get("confirmations", {})
+            sig_conf = sig.get("confirmations", {})
             if narr_conf != sig_conf:
                 _log_warn(
                     f"Watchlist narrative {sym}: confirmations differ from signals"
                 )
 def check_popup_integrity() -> None:
-    """popup_content.json must have expected shape (sources, PEAD, denominator)."""
+    """popup_content.json must have expected shape (sources, denominator)."""
     popup = _load_json(os.path.join(WEB_DIR, "popup_content.json"))
     if popup is None:
         _log_warn("Missing popup_content.json in WEB_DIR — skipping popup checks")
@@ -482,7 +472,7 @@ def check_popup_integrity() -> None:
     for sym, data in holdings.items():
         if not isinstance(data, dict):
             continue
-        # PEAD/earnings_confirmed removed from scoring and UI chips (2026-07-04)
+        # earnings_confirmed removed from scoring and UI chips (2026-07-04)
         # if "earnings_confirmed" not in data.get("confirmations", {}):
         #     _log_issue(f"Popup {sym}: missing earnings_confirmed factor")
 
@@ -496,7 +486,22 @@ def check_popup_integrity() -> None:
             if f"/{expected_denom}" not in str(narr.get("factors", "")):
                 _log_issue(f"Popup {sym}: factors denominator stale (expected /{expected_denom})")
 def check_dead_code() -> None:
-    """No active .py file should import from dead data sources."""
+    """No active .py file should import from dead data sources or retain dead factors."""
+    try:
+        import dead_factor_lint
+        survivors = dead_factor_lint.find_survivors()
+        if survivors:
+            # Cap detail length so a Telegram alert isn't flooded
+            lines = [f"{cat}: {path}:{line}" for cat, path, line, _ in survivors[:10]]
+            more = len(survivors) - 10 if len(survivors) > 10 else 0
+            msg = f"Dead-factor lint found {len(survivors)} active reference(s): " + "; ".join(lines)
+            if more:
+                msg += f" (and {more} more)"
+            _log_issue(msg)
+    except Exception as e:
+        _log_warn(f"Could not run dead_factor_lint: {e}")
+
+    # Legacy import check kept as a backstop.
     forbidden = ["yfinance", "finnhub", "polygon", "yahoo_finance"]
     py_files = [p for p in Path(BASE_DIR).glob("*.py")]
     for p in py_files:
@@ -526,7 +531,7 @@ def check_html_currency() -> None:
     except Exception:
         return
     if '/10' not in html:
-        _log_issue("Deployed index.html missing /9 denominator — may be stale pre-PEAD version")
+        _log_issue("Deployed index.html missing /9 denominator — may be stale pre-removal version")
 def check_portfolio_sanity() -> None:
     """Position limits from cached portfolio snapshot."""
     portfolio = _load_json(os.path.join(WEB_DIR, "portfolio_data.json"))
@@ -683,8 +688,6 @@ def check_llm_narrative_freshness_and_validity() -> None:
         ("sector", "sector_strong", lambda v: bool(v)),
         ("intraday", "intraday_confirmed", lambda v: bool(v)),
         ("options", "options_confirmed", lambda v: bool(v)),
-        ("PEAD", "earnings_confirmed", lambda v: bool(v)),
-        ("earnings", "earnings_confirmed", lambda v: bool(v)),
         ("RSI", "rsi_signal", lambda v: v in ("bullish", "overbought")),
     ]
 

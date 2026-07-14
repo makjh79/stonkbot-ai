@@ -20,6 +20,8 @@ critical file has exactly one writer. Readers are allowed from anywhere.
 | `/var/www/hedge-fund-website/portfolio_history.json` | History Reconstructor | `reconstruct_portfolio_history.py` | Mirrored copy |
 | `/var/www/hedge-fund-website/popup_content.json` | Popup Generator | `generate_popup_content_narrative_v6_server.py` | v6 narrative merge |
 | `/var/www/hedge-fund-website/watchlist_narratives.json` | LLM Narrative Generator | `generate_narratives_llm_batched.py` | Batched LLM narratives |
+| `/opt/stonk-ai/signal_rules.py` | Shared rules module | n/a (import-only) | Single source of truth for tiers/entry; edit intentionally |
+| `/opt/stonk-ai/dead_factor_lint.py` | Maintenance lint | cron or manual | Detects zombie PEAD/Finnhub/Yahoo/Polygon references |
 
 ## Shared Write Helper
 
@@ -30,6 +32,7 @@ All writers must use `stonk_utils.atomic_write_json()` which:
 - `chmod 0644`s the result
 - Enforces the single-writer registry above
 - Cleans up the temp file on failure
+- **Post-write assertions (new 2026-07-14):** checks size > 0, mtime within `max_age_seconds`, expected owner/mode, and immutable flag. Failing any assertion raises so stale data cannot silently propagate.
 
 ## Permission & Process Monitoring
 
@@ -38,12 +41,15 @@ All writers must use `stonk_utils.atomic_write_json()` which:
 1. Critical files are owned by `stonkai:stonkai` with mode `0644`
 2. No stonk-ai process is running as `root`
 3. No duplicate instances of the same stonk-ai script
+4. Tier/entry alignment between `signals.json` and `ai_watchlist_live.json` via `signal_rules.py` (single source of truth)
+5. Dead-factor lint is available via `dead_factor_lint.py` and should be wired into the deploy pipeline
 
 ## Do Not
 
 - Run stonk-ai scripts manually as `root`
 - Add a second writer for any file in the registry without updating this doc
 - Write to these files without using `stonk_utils.atomic_write_json()`
+- Set `+i` (immutable) on any file a non-root cron needs to update
 
 ## ⚠️ Known Architecture Debt
 

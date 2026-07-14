@@ -4,6 +4,7 @@ Goals:
 - Atomic JSON writes with correct permissions
 - Single-writer enforcement for critical files
 - Consistent logging/behaviour across scripts
+- Post-write assertions to catch stale mtime / immutable flag / permission drift
 """
 
 import json
@@ -11,8 +12,10 @@ import os
 import stat
 import tempfile
 import logging
+import shutil
+import time
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +59,64 @@ def _caller_script_name() -> str:
     return ""
 
 
+def _file_attrs(path: Union[str, Path]) -> Tuple[Optional[int], Optional[int], Optional[str]]:
+    """Return (file_mode, immutable_flag?, owner_name) for a path, or None on error."""
+    try:
+        st = os.lstat(path)
+        mode = stat.S_IMODE(st.st_mode)
+        owner = _uid_to_name(st.st_uid)
+        # Check immutable flag (requires reading ext attributes; non-root may fail)
+        immutable = None
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["lsattr", str(path)], capture_output=True, text=True, timeout=5
+            )
+            if result.returncode == 0:
+                # lsattr output: "---- filename"; 'i' in attrs means immutable
+                attrs = result.stdout.split()[0] if result.stdout.split() else ""
+                immutable = "i" in attrs
+        except Exception:
+            immutable = None
+        return mode, immutable, owner
+    except OSError:
+        return None, None, None
+
+
+def _uid_to_name(uid: int) -> str:
+    import pwd
+    try:
+        return pwd.getpwuid(uid).pw_name
+    except KeyError:
+        return str(uid)
+
+
+def _is_writable_now(path: Union[str, Path]) -> Tuple[bool, str]:
+    """Check whether the current non-root process can overwrite this path.
+
+    Returns (ok, reason). Does not attempt to fix anything.
+    """
+    path = Path(path)
+    if not path.exists():
+        # Writable if parent directory is writable
+        if not os.access(path.parent, os.W_OK):
+            return False, f"parent directory {path.parent} is not writable by current user"
+        return True, ""
+
+    if not os.access(path, os.W_OK):
+        mode, immutable, owner = _file_attrs(path)
+        hint = f"sudo chown stonkai:stonkai {path} && sudo chmod 0644 {path}"
+        if immutable:
+            hint += f" && sudo chattr -i {path}"
+        return False, f"not writable (owner={owner}, mode={oct(mode) if mode else '?'}, immutable={immutable}); run: {hint}"
+
+    mode, immutable, owner = _file_attrs(path)
+    if immutable:
+        return False, f"immutable flag (+i) is set on {path} (owner={owner}); run: sudo chattr -i {path}"
+
+    return True, ""
+
+
 def _is_allowed_writer(path: Union[str, Path], caller: str) -> bool:
     """Check if caller script is in the allowed-writer list for this path."""
     path_str = str(path)
@@ -65,6 +126,45 @@ def _is_allowed_writer(path: Union[str, Path], caller: str) -> bool:
     if "*" in config["allowed_writers"]:
         return True
     return caller in config["allowed_writers"]
+
+
+def _assert_write_ok(
+    path: Union[str, Path],
+    expected_owner: Optional[str] = None,
+    expected_mode: int = 0o644,
+    max_age_seconds: float = 120.0,
+) -> None:
+    """Assert that a file was just written and is in good shape.
+
+    Raises RuntimeError if any check fails so callers cannot silently emit stale data.
+    """
+    path = Path(path)
+    now = time.time()
+    st = path.stat()
+
+    if st.st_size == 0:
+        raise RuntimeError(f"{path} was written with zero bytes")
+
+    age = now - st.st_mtime
+    if age > max_age_seconds or age < -1:
+        raise RuntimeError(
+            f"{path} mtime is stale or clock-skewed (age={age:.1f}s, max={max_age_seconds:.0f}s); "
+            "atomic rename may have failed to update mtime"
+        )
+
+    actual_mode = stat.S_IMODE(st.st_mode)
+    if actual_mode != expected_mode:
+        raise RuntimeError(f"{path} mode is {oct(actual_mode)} (expected {oct(expected_mode)})")
+
+    if expected_owner:
+        actual_owner = _uid_to_name(st.st_uid)
+        if actual_owner != expected_owner:
+            raise RuntimeError(f"{path} owner is {actual_owner} (expected {expected_owner})")
+
+    # Immutable flag would block the *next* write; surface it now if we can detect it.
+    mode_bits, immutable, _ = _file_attrs(path)
+    if immutable:
+        raise RuntimeError(f"{path} has immutable flag (+i) set; run: sudo chattr -i {path}")
 
 
 def atomic_write_json(
@@ -105,8 +205,8 @@ def atomic_write_json(
         # Update mtime so freshness checks reflect the actual write, not the temp file's birth time
         os.utime(str(path), None)
         if owner:
-            import shutil
             shutil.chown(str(path), user=owner, group=owner)
+        _assert_write_ok(path, expected_owner=owner, expected_mode=mode)
     except Exception:
         # Clean up temp file on failure
         try:

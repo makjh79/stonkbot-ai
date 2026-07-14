@@ -24,18 +24,20 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from alpaca_data import get_data_hub
-from readiness_score import (
-    ENTRY_MIN_CONFIRMATIONS,
-    TIER_STRONG_NOW_MIN,
+from signal_rules import (
+    assign_tier,
     compute_confirmation_count,
+    expected_display_tier_for_signal,
+    is_entry_eligible,
+    TIER_BUILDING_MIN,
+    TIER_DISPLAY_MAP,
+    TIER_STRONG_NOW_MIN,
 )
 from stonk_utils import atomic_write_json
 import argparse
 import logging
 import subprocess
 logger = logging.getLogger(__name__)
-
-TIER_DISPLAY_MAP = {'STRONG_NOW': 'PRIME', 'NOW': 'BUILDING', 'WATCH': 'WATCHING', 'MONITOR': 'TRACKING'}
 
 # High-beta basket config (matches risk_engine.py / trading_bot.py)
 MAX_HIGH_BETA_DEPLOYED_PCT = 0.35
@@ -96,8 +98,7 @@ TIER_HISTORY_FILE = Path("/opt/stonk-ai/tier_history.json")
 
 # Config
 MAX_WATCHLIST_SIZE = 20
-TIER_BUILDING_MIN = 55.0  # floor for BUILDING tier
-
+# TIER_BUILDING_MIN imported from signal_rules.py
 
 
 
@@ -117,6 +118,17 @@ def _tier_position_cap(tier: str) -> float:
     if tier == "PRIME":
         return 0.12
     return 0.08
+
+
+def _entry_eligible_from_signal(s: dict) -> bool:
+    """Canonical entry gate using signal_rules.py (single source of truth)."""
+    conf = s.get("confirmations", {})
+    return is_entry_eligible(
+        readiness=s.get("readiness_score", 0),
+        confirmation_count=compute_confirmation_count(conf),
+        above_ema=conf.get("above_ema", False),
+        hard_confirmations=s.get("hard_confirmations", 0),
+    )
 
 
 def _compute_target_sizing(
@@ -195,19 +207,9 @@ def load_previous_tiers() -> Dict[str, str]:
 
 
 def assign_tier(backend_tier: str, entry_eligible: bool = False) -> str:
-    """Map backend signal tier to website display tier.
-
-    Deterministic mapping so the watchlist, monitor, and frontend all agree.
-    Decoupled from entry_eligible (2026-07-13): tier reflects model conviction
-    (readiness), while entry_eligible / buy_status drive actual trading intent.
-    """
-    mapping = {
-        "STRONG_NOW": "PRIME",
-        "NOW": "BUILDING",
-        "WATCH": "WATCHING",
-        "MONITOR": "TRACKING",
-    }
-    return mapping.get(backend_tier, "TRACKING")
+    """Re-export from signal_rules.py for local call sites."""
+    from signal_rules import assign_tier as _assign_tier
+    return _assign_tier(backend_tier, entry_eligible)
 
 
 def load_tier_history() -> List[Dict]:
@@ -485,19 +487,18 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         profit_25 = round(price * 1.25, 2) if price else 0
         profit_50 = round(price * 1.50, 2) if price else 0
 
-        # Compute action-based tier
-        entry_eligible = s.get("entry_eligible", False)
+        # Compute action-based tier using canonical rules from signal_rules.py.
+        entry_eligible = s.get("entry_eligible", _entry_eligible_from_signal(s))
         conf_count = compute_confirmation_count(s.get("confirmations", {}))
         raw_reason = s.get("tier_reason", f"Readiness {readiness:.1f}")
+        # Map backend prefix in tier_reason to frontend prefix in one pass.
+        backend_prefix = s.get("tier", "MONITOR")
+        frontend_prefix = TIER_DISPLAY_MAP.get(backend_prefix, "TRACKING")
+        for old_prefix in TIER_DISPLAY_MAP.keys():
+            if raw_reason.startswith(f"{old_prefix}:"):
+                raw_reason = f"{frontend_prefix}:" + raw_reason[len(old_prefix)+1:]
+                break
         tier_reason = raw_reason
-        if tier_reason.startswith("STRONG_NOW:"):
-            tier_reason = "PRIME:" + tier_reason[len("STRONG_NOW:"):]
-        elif tier_reason.startswith("NOW:"):
-            tier_reason = "BUILDING:" + tier_reason[len("NOW:"):]
-        elif tier_reason.startswith("WATCH:"):
-            tier_reason = "WATCHING:" + tier_reason[len("WATCH:"):]
-        elif tier_reason.startswith("MONITOR:"):
-            tier_reason = "TRACKING:" + tier_reason[len("MONITOR:"):]
         tier = assign_tier(s.get("tier", "MONITOR"), entry_eligible)
         # Build council note from action tier
         if not is_scored:
@@ -528,6 +529,7 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             "council_note": council_note,
             "symbol": symbol,
             "display_tier": tier,
+            "expected_display_tier": expected_display_tier_for_signal(s),
         }
 
         snap = snap_data.get(symbol, {})

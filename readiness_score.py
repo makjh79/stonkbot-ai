@@ -31,6 +31,17 @@ import math
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Union
 
+from signal_rules import (
+    compute_backend_tier,
+    compute_confirmation_count,
+    ENTRY_MIN_CONFIRMATIONS,
+    ENTRY_MIN_HARD_CONFIRMATIONS,
+    ENTRY_READINESS_MIN,
+    TIER_NOW_MIN,
+    TIER_STRONG_NOW_MIN,
+    TIER_WATCH_MIN,
+)
+
 # PEAD removed — Alpaca has no earnings API, factor dropped for zero external deps
 
 logger = logging.getLogger(__name__)
@@ -62,19 +73,8 @@ WEIGHT_SPREAD_OK = 0.005
 WEIGHT_NO_CORPORATE_ACTION = 0.005
 WEIGHT_BID_ASK_IMBALANCE = 0.005  # quote bid/ask size imbalance
 
-# Tier thresholds
-TIER_STRONG_NOW_MIN = 77.0   # lowered from 78.0 2026-07-13 after recalibration; keeps PRIME reachable
-TIER_NOW_MIN = 72.0   # raised from 70 for higher quality entries
-TIER_WATCH_MIN = 55.0   # raised from 50
-
-# Feature flag for entry gate (set False to restore previous loose gate)
-# To revert: change ENTRY_READINESS_MIN back to 75.0, ENTRY_MIN_CONFIRMATIONS to 4,
-# and reduce STRONG_NOW sizing multiplier.
-
-# Entry eligibility (tightened 2026-07-04; relaxed 2026-07-13 to restore tradeable range)
-ENTRY_READINESS_MIN = 75.0  # restored to 75 after score recalibration; gate stays high-quality
-ENTRY_MIN_CONFIRMATIONS = 5  # was 4; require more confirmations for entry
-ENTRY_MIN_HARD_CONFIRMATIONS = 1  # relaxed to 1 canonical hard confirm when total confirmations >= 7 (enforced below)
+# Tier and entry constants now live in signal_rules.py (single source of truth).
+# Any local overrides here are bugs; change them in signal_rules.py instead.
 
 
 
@@ -453,33 +453,7 @@ def _options_sentiment_score(
 
 
 
-def compute_confirmation_count(confirmations: dict) -> int:
-    """
-    Count active boolean confirmations from the canonical confirmations dict.
-
-    Notes:
-      - Excludes numeric *_score fields and momentum_score.
-      - rsi_signal is a string label; only neutral or oversold count as a confirmation.
-      - All other truthy values count as confirmations.
-
-    Single source of truth for backend, LLM, and frontend.
-    """
-    exclude = {"momentum_score", "intraday_score", "options_score", "relvol_score", "vwap_score"}
-    count = 0
-    for key, value in confirmations.items():
-        if key == "momentum_score":
-            if value is not None and value >= 50:
-                count += 1
-            continue
-        if key in exclude:
-            continue
-        if key == "rsi_signal":
-            if value in ("neutral", "oversold"):
-                count += 1
-            continue
-        if value:
-            count += 1
-    return count
+# compute_confirmation_count now imported from signal_rules.py.
 
 # Sector peer mapping for relative strength
 SECTOR_PEERS: Dict[str, List[str]] = {
@@ -712,7 +686,7 @@ def compute_readiness(
         "vwap_score": round(vwap_component, 1),
     }
 
-    # Confirmation count: canonical boolean count (single source of truth)
+    # Confirmation count: canonical boolean count (single source of truth via signal_rules)
     confirmation_count = compute_confirmation_count(confirmations)
 
     hard_confirmations = sum(
@@ -747,14 +721,7 @@ def compute_readiness(
 
     # Tier: decoupled from entry eligibility (2026-07-13).
     # STRONG_NOW is the top readiness tier; entry_eligible is a separate trading gate.
-    if readiness >= TIER_STRONG_NOW_MIN:
-        tier = "STRONG_NOW"
-    elif readiness >= TIER_NOW_MIN:
-        tier = "NOW"
-    elif readiness >= TIER_WATCH_MIN:
-        tier = "WATCH"
-    else:
-        tier = "MONITOR"
+    tier = compute_backend_tier(readiness)
 
     # Tier reason
     tier_reason = _build_tier_reason(
