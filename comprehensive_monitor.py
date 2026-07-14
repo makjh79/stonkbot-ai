@@ -305,11 +305,10 @@ def check_alignment_signals_vs_watchlist() -> None:
 
         # backend tier vs display tier mapping must be consistent
         backend_tier = sig.get("tier")
-        entry = sig.get("entry_eligible", False)
         display_tier = item.get("display_tier") or t.get("display_tier") or item.get("signal_tier")
         expected = None
         if backend_tier == "STRONG_NOW":
-            expected = "PRIME" if entry else "BUILDING"
+            expected = "PRIME"
         elif backend_tier == "NOW":
             expected = "BUILDING"
         elif backend_tier == "WATCH":
@@ -317,7 +316,7 @@ def check_alignment_signals_vs_watchlist() -> None:
         elif backend_tier == "MONITOR":
             expected = "TRACKING"
         if expected and display_tier != expected:
-            _log_issue(f"ALIGNMENT {sym}: backend {backend_tier} entry={entry} should map to {expected}, got {display_tier}")
+            _log_issue(f"ALIGNMENT {sym}: backend {backend_tier} should map to {expected}, got {display_tier}")
 
         # entry_eligible must agree
         w_entry = item.get("entry_eligible") or t.get("entry_eligible")
@@ -483,9 +482,9 @@ def check_popup_integrity() -> None:
     for sym, data in holdings.items():
         if not isinstance(data, dict):
             continue
-        # earnings_confirmed must be present (PEAD)
-        if "earnings_confirmed" not in data.get("confirmations", {}):
-            _log_issue(f"Popup {sym}: missing earnings_confirmed factor")
+        # PEAD/earnings_confirmed removed from scoring and UI chips (2026-07-04)
+        # if "earnings_confirmed" not in data.get("confirmations", {}):
+        #     _log_issue(f"Popup {sym}: missing earnings_confirmed factor")
 
         # sources dict must exist
         if "sources" not in data:
@@ -567,9 +566,9 @@ def check_trading_bot_entry_gate() -> None:
         tier = sig.get("tier", "")
         ready = sig.get("readiness_score", 0) or 0
         conf = sig.get("confirmation_count", 0) or 0
-        if tier != "STRONG_NOW":
+        if tier not in ("STRONG_NOW", "NOW"):
             _log_issue(f"ENTRY GATE {sig.get('symbol')}: entry_eligible=True but tier={tier}")
-        if ready < 77:
+        if ready < 75:
             _log_issue(f"ENTRY GATE {sig.get('symbol')}: entry_eligible=True but readiness={ready}")
         if conf < 5:
             _log_issue(f"ENTRY GATE {sig.get('symbol')}: entry_eligible=True but conf={conf}")

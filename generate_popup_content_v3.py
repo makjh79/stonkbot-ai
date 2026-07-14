@@ -380,19 +380,6 @@ _COMPANY_RISKS = {
 
 _EARNINGS_RE = re.compile(r'\b(earnings|EPS|beat estimates|missed estimates|guidance (upgrade|cut)|revenue surge|profit surge|sales beat)\b', re.IGNORECASE)
 
-def _infer_pead(signal_data):
-    """Infer post-earnings announcement drift from Alpaca news headlines."""
-    news = signal_data.get("news") or {}
-    headline = news.get("alpaca_headline", "") if isinstance(news, dict) else ""
-    has_earnings = bool(_EARNINGS_RE.search(headline))
-    confirmations = signal_data.setdefault("confirmations", {})
-    if "earnings_confirmed" not in confirmations:
-        confirmations["earnings_confirmed"] = has_earnings
-        if has_earnings:
-            signal_data["confirmation_count"] = signal_data.get("confirmation_count", 0) + 1
-    # Update denominator in tier_reason to reflect 10-factor pool (including PEAD + relvol + vwap)
-    if "tier_reason" in signal_data and ("/8" in str(signal_data.get("tier_reason", "")) or "/9" in str(signal_data.get("tier_reason", ""))):
-        signal_data["tier_reason"] = signal_data["tier_reason"].replace("/9", "/10")
 
 
 
@@ -428,8 +415,7 @@ def _visible_confirmation_count(signal_data):
         count += 1
     if conf.get("options_confirmed") is True:
         count += 1
-    if conf.get("earnings_confirmed") is True:
-        count += 1
+    # relvol_confirmed is kept only as a visible boolean chip, not weighted in readiness
     if conf.get("relvol_confirmed") is True:
         count += 1
     if conf.get("vwap_confirmed") is True:
@@ -477,7 +463,6 @@ def _why_bot_bought(signal_data, position, thesis_data=None):
     if confirmations.get("volume_confirmed"): sigs.append("volume confirming the move")
     if confirmations.get("macd_turning"):     sigs.append("MACD curling up")
     if confirmations.get("rsi_signal") == "oversold": sigs.append("RSI washed out")
-    if confirmations.get("earnings_confirmed"): sigs.append("post-earnings drift in play")
     if confirmations.get("intraday_confirmed"): sigs.append("intraday momentum")
     if confirmations.get("options_confirmed"): sigs.append("options skew bullish")
     if confirmations.get("relvol_confirmed"): sigs.append("volume surge confirming move")
@@ -647,7 +632,7 @@ def _confidence_level(position, signal_data, watchlist_data):
 # ─────────────────────────────────────────────────────────────────────
 
 def generate_dynamic_narrative(symbol, position, watchlist_data, signal_data, risk_config, risk_state):
-    _infer_pead(signal_data)
+
     pl_percent = position.get("unrealized_plpc", 0)
     price = position.get("current", 0)
     avg_entry = position.get("avg_entry", 0)
@@ -821,8 +806,6 @@ def _missing_factors(signal_data):
         missing.append("intraday")
     if not conf.get("options_confirmed"):
         missing.append("options")
-    if not conf.get("earnings_confirmed"):
-        missing.append("PEAD")
     return missing
 
 
@@ -932,7 +915,7 @@ def _watchlist_risk(signal_data, watchlist_data):
     return "The bear case: " + ", ".join(risks) + "."
 
 def generate_watchlist_narrative(symbol, signal_data, watchlist_data):
-    _infer_pead(signal_data)
+
     total_score = signal_data.get("total_score", 0)
     sector = signal_data.get("sector") or watchlist_data.get("sector", "Other")
     company = signal_data.get("company") or COMPANY_NAMES.get(symbol, symbol)
