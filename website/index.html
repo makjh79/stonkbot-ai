@@ -11273,10 +11273,6 @@ function updateDashboard(data, marketStatus) {
                 const effectiveTier = stock.tier || (isTracking ? 'TRACKING' : 'MONITOR');
                 const tierStyle = tierColors[effectiveTier] || tierColors['MONITOR'];
 
-                // Entry-gate chip: terse, surfaces tier vs. entry-eligibility split
-                const entryGate = getEntryGateChip(stock);
-                const entryGateHtml = entryGate.label ? `<span title="${entryGate.title}" style="display: inline-block; background: ${entryGate.bg}; color: ${entryGate.color}; font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 3px; border: 1px solid ${entryGate.border}; margin-left: 4px; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;">${entryGate.label}</span>` : '';
-
                 // Row styling - grey out tracking stocks
                 const primeNow = stock.tier === 'PRIME' || stock.tier === 'STRONG_NOW';
                 const buildingNow = stock.tier === 'BUILDING' || stock.tier === 'NOW';
@@ -11290,7 +11286,7 @@ function updateDashboard(data, marketStatus) {
 
                 const rsiDisplay = isNoPrice ? '<span style="color: var(--text-muted);">—</span>' : '<span class="wl-hide-mobile">' + stock.rsi.toFixed(0) + '</span>';
                 
-                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 8px 8px; vertical-align: middle;"><div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px;"><span style="background: transparent; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; padding: 2px 4px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.borderColor + '; text-transform: uppercase;">' + tierStyle.label + '</span>' + entryGateHtml + '</div></td><td style="padding: 8px 8px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px; font-size: 10px;">' + stock.company + '</div></td><td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + priceDisplay + '</td><td style="padding: 8px 8px; text-align: center;">' + changeDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">' + scoreDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 8px 8px; text-align: center;"></tr>';
+                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 8px 8px; vertical-align: middle;"><span style="background: transparent; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; padding: 2px 4px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.borderColor + '; text-transform: uppercase;">' + tierStyle.label + '</span></td><td style="padding: 8px 8px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px; font-size: 10px;">' + stock.company + '</div></td><td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + priceDisplay + '</td><td style="padding: 8px 8px; text-align: center;">' + changeDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">' + scoreDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td><td style="padding: 8px 8px; text-align: center;"></tr>';
             });
             
             html += '</tbody></table></div>';
@@ -11298,30 +11294,6 @@ function updateDashboard(data, marketStatus) {
             container.innerHTML = html;
         }
 
-        // Terse entry-gate chip for watchlist rows
-        function getEntryGateChip(stock) {
-            const tier = stock.tier || stock.signal_tier || 'MONITOR';
-            const eligible = stock.entry_eligible || false;
-            const hard = stock.hard_confirmation_count || 0;
-            const reason = stock.entry_gate_reason || '';
-            const conf = stock.confirmationCount || 0;
-
-            if (tier === 'STRONG_NOW' || tier === 'PRIME') {
-                return eligible
-                    ? { label: 'NEXT BUY', title: 'PRIME + entry gate passed', bg: 'rgba(6,182,212,0.15)', color: '#06b6d4', border: 'rgba(6,182,212,0.4)' }
-                    : { label: 'NEEDS CONFIRM', title: 'PRIME but needs a hard confirmation (volume/MACD/intraday/options/relative volume)', bg: 'rgba(251,191,36,0.12)', color: '#fbbf24', border: 'rgba(251,191,36,0.35)' };
-            }
-            if (tier === 'NOW' || tier === 'BUILDING') {
-                return eligible
-                    ? { label: 'TIER LOW', title: 'Entry gate passed, but bot only buys PRIME names', bg: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', border: 'rgba(255,255,255,0.12)' }
-                    : { label: '', title: '', bg: 'transparent', color: 'var(--text-muted)', border: 'transparent' };
-            }
-            if (tier === 'WATCH' || tier === 'WATCHING') {
-                return { label: 'WATCH', title: 'Approaching entry but below PRIME/BUILDING threshold', bg: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', border: 'rgba(255,255,255,0.12)' };
-            }
-            return { label: '', title: '', bg: 'transparent', color: 'var(--text-muted)', border: 'transparent' };
-        }
-        
         // Render dedicated Orders tab
         function renderNextBuysContent() {
             const container = document.getElementById('next-buys-tab-content');
@@ -11812,8 +11784,15 @@ function updateDashboard(data, marketStatus) {
             const readiness = stock.readinessScore || 50;
             const rsi = stock.rsi || 50;
             const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
-            const status = getWatchlistStatus(signal, readiness, rsi);
             const strategyShort = simplifyStrategy(stock.strategy, symbol);
+
+            // Status pill + entry gate note (popup only)
+            const statusColor = tier === 'PRIME' ? '#06b6d4' : tier === 'BUILDING' ? '#22c55e' : tier === 'WATCHING' ? '#fbbf24' : 'var(--text-muted)';
+            const statusText = tier === 'PRIME' ? 'Strong conviction — maximum entry' :
+                              tier === 'BUILDING' ? 'Building — not yet PRIME' :
+                              tier === 'WATCHING' ? 'Approaching entry — watch closely' : 'Waiting for setup';
+            const entryGateNote = (tier === 'PRIME' && !stock.entry_eligible) ? 'Needs a hard confirmation (volume / MACD / intraday / options / relative volume) to become entry-eligible.' :
+                                  (tier === 'BUILDING' && stock.entry_eligible) ? 'Entry gate passed, but bot only buys PRIME names.' : '';
 
             // Exit levels
             const stopPrice = stock.stopLoss || (stock.price * 0.85);
@@ -11871,6 +11850,15 @@ function updateDashboard(data, marketStatus) {
                             <button onclick="closeStockDetail()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                         </div>
 
+                        <!-- Status pill + entry gate note -->
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.9rem;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; flex-shrink: 0;"></span>
+                                <span style="font-size: 0.8rem; font-weight: 600; color: ${statusColor};">${statusText}</span>
+                            </div>
+                            ${entryGateNote ? `<div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; padding-left: 16px;">${entryGateNote}</div>` : ''}
+                        </div>
+
                         <!-- Price + change -->
                         <div style="display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 0.4rem;">
                             <div>
@@ -11883,15 +11871,6 @@ function updateDashboard(data, marketStatus) {
                                 </div>
                             </div>
                         </div>
-
-                        ${(tier === 'PRIME' && !stock.entry_eligible) ? `<!-- Buy gate explanation -->
-                        <div style="background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; padding: 10px 12px; margin: 0.6rem 0; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 0.9rem;">🚦</span>
-                            <div>
-                                <div style="font-size: 0.7rem; color: #fbbf24; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">Buy gate</div>
-                                <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">PRIME conviction, but not yet entry-eligible. Needs 2+ hard confirmations (momentum, volume, MACD).</div>
-                            </div>
-                        </div>` : ''}
 
                         <!-- Metrics grid: 3-up, consistent -->
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 0.9rem; align-items: stretch;">
