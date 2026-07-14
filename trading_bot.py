@@ -187,18 +187,18 @@ class AlpacaClient:
         return "paper-api" in self.base_url
 
     def get_account(self) -> Dict:
-        r = self.session.get(f"{self.base_url}/v2/account", timeout=15)
+        r = self.session.get(f"{self.base_url}/v2/account", timeout=45)
         r.raise_for_status()
         return r.json()
 
     def get_positions(self) -> List[Dict]:
-        r = self.session.get(f"{self.base_url}/v2/positions", timeout=15)
+        r = self.session.get(f"{self.base_url}/v2/positions", timeout=45)
         r.raise_for_status()
         return r.json()
 
     def is_market_open(self) -> bool:
         try:
-            r = self.session.get(f"{self.base_url}/v2/clock", timeout=10)
+            r = self.session.get(f"{self.base_url}/v2/clock", timeout=20)
             if r.status_code == 200:
                 return r.json().get("is_open", False)
         except Exception as e:
@@ -229,7 +229,7 @@ class AlpacaClient:
             r = self.session.get(
                 f"{self.data_url}/v2/stocks/quotes/latest",
                 params={"symbols": symbol, "feed": "sip"},
-                timeout=15,
+                timeout=30,
             )
             r.raise_for_status()
             quote = r.json().get("quotes", {}).get(symbol, {})
@@ -248,7 +248,7 @@ class AlpacaClient:
             r = self.session.get(
                 f"{self.data_url}/v2/stocks/quotes/latest",
                 params={"symbols": symbol, "feed": "sip"},
-                timeout=15,
+                timeout=30,
             )
             r.raise_for_status()
             quote = r.json().get("quotes", {}).get(symbol, {})
@@ -263,7 +263,7 @@ class AlpacaClient:
     def check_order_filled(self, order_id: str) -> bool:
         """Check if a limit order has been filled."""
         try:
-            r = self.session.get(f"{self.base_url}/v2/orders/{order_id}", timeout=10)
+            r = self.session.get(f"{self.base_url}/v2/orders/{order_id}", timeout=20)
             r.raise_for_status()
             return r.json().get("status") == "filled"
         except Exception as e:
@@ -276,7 +276,7 @@ class AlpacaClient:
             r = self.session.get(
                 f"{self.data_url}/v2/stocks/quotes/latest",
                 params={"symbols": symbol, "feed": "sip"},
-                timeout=15,
+                timeout=30,
             )
             r.raise_for_status()
             quote = r.json().get("quotes", {}).get(symbol, {})
@@ -292,7 +292,7 @@ class AlpacaClient:
     def cancel_order(self, order_id: str) -> bool:
         """Cancel an open order."""
         try:
-            r = self.session.delete(f"{self.base_url}/v2/orders/{order_id}", timeout=10)
+            r = self.session.delete(f"{self.base_url}/v2/orders/{order_id}", timeout=20)
             return r.status_code in (200, 204)
         except Exception as e:
             logger.warning(f"Could not cancel order {order_id}: {e}")
@@ -313,7 +313,7 @@ class AlpacaClient:
             "time_in_force": "day",
         }
         try:
-            r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+            r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=30)
             r.raise_for_status()
             return r.json().get("id", "unknown")
         except Exception as e:
@@ -323,7 +323,7 @@ class AlpacaClient:
     def get_asset(self, symbol: str) -> Optional[Dict]:
         """Get asset info from Alpaca. Returns None if not tradable."""
         try:
-            r = self.session.get(f"{self.base_url}/v2/assets/{symbol}", timeout=10)
+            r = self.session.get(f"{self.base_url}/v2/assets/{symbol}", timeout=20)
             if r.status_code == 404:
                 return None
             r.raise_for_status()
@@ -373,7 +373,7 @@ class AlpacaClient:
             if payload is None:
                 continue
             try:
-                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=30)
                 r.raise_for_status()
                 order_ids.append(r.json().get("id", "unknown"))
             except Exception as e:
@@ -492,7 +492,7 @@ class AlpacaClient:
             if extended_hours:
                 payload["extended_hours"] = True
             try:
-                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=30)
                 r.raise_for_status()
                 return r.json().get("id", "unknown")
             except Exception as e:
@@ -513,7 +513,7 @@ class AlpacaClient:
                     "limit_price": str(limit_price),
                 }
                 try:
-                    r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                    r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=30)
                     r.raise_for_status()
                     order_id = r.json().get("id", "unknown")
                     logger.info(f"Filled at ask (aggressive): {symbol} {side} {qty} @ ${limit_price:.2f}")
@@ -535,7 +535,7 @@ class AlpacaClient:
             if extended_hours:
                 payload["extended_hours"] = True
             try:
-                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=15)
+                r = self.session.post(f"{self.base_url}/v2/orders", json=payload, timeout=30)
                 r.raise_for_status()
                 order_id = r.json().get("id", "unknown")
             except Exception as e:
@@ -571,7 +571,7 @@ class AlpacaClient:
                         "limit_price": str(marketable_limit),
                     }
                     try:
-                        r = self.session.post(f"{self.base_url}/v2/orders", json=ml_payload, timeout=15)
+                        r = self.session.post(f"{self.base_url}/v2/orders", json=ml_payload, timeout=30)
                         r.raise_for_status()
                         ml_order_id = r.json().get("id", "unknown")
                         logger.info(f"Filled at marketable limit (escalated): {symbol} {side} {qty} @ ${marketable_limit:.2f}")
@@ -2086,7 +2086,7 @@ class STONKAIBot:
                 r = self.alpaca.session.get(
                     f"{self.alpaca.base_url}/v2/orders",
                     params={"status": "open", "symbols": symbol},
-                    timeout=10
+                    timeout=20
                 )
                 r.raise_for_status()
                 for o in r.json():
@@ -2328,7 +2328,7 @@ def _guarded_submit_order_v2(self, symbol, qty, side, dry_run=False, use_limit=T
             r = self.session.get(
                 f"{self.base_url}/v2/orders",
                 params={"status": "open", "symbols": symbol},
-                timeout=10
+                timeout=20
             )
             r.raise_for_status()
             open_orders = r.json()
