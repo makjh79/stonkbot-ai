@@ -44,6 +44,7 @@ SKIP_FILE_PATTERNS: List[re.Pattern] = [
     re.compile(r"\.v\d+\.html$", re.I),  # versioned old HTML
     re.compile(r"^index\.(v\d+|\d{6,})\.html$", re.I),
     re.compile(r"\.bak-.*$", re.I),
+    re.compile(r"\.disabled$", re.I),  # explicitly disabled scripts
 ]
 
 # Only these files in the web root are considered "active" enough to scan.
