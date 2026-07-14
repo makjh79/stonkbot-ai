@@ -1,16 +1,25 @@
+# Runtime data files (generated on VPS, not source of truth)
+*.json
+!package.json
+!package-lock.json
+heartbeats/*.json
+market_indices.json
+market_status.json
+market_status_api.json
+portfolio_data.json
+portfolio_history.json
+signals.json
+ai_watchlist_live.json
+trades_log.json
+watchlist_changes.json
+tier_history.json
+alert_log.json
+run/*.pid
+stonkbot.db*
+
 # Logs
 logs/*.log
 logs/
-
-# Generated data
-signals.json
-ai_watchlist_live.json
-portfolio_data.json
-portfolio_history.json
-trades_log.json
-watchlist_changes.json
-stonkbot.db*
-run/*.pid
 
 # Python cache
 __pycache__/
@@ -34,9 +43,4 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
-tier_history.json
 data_fetcher.log
-stonkbot.db-shm
-stonkbot.db-wal
-stonkbot.db
-alert_log.json
