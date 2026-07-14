@@ -11795,11 +11795,7 @@ function updateDashboard(data, marketStatus) {
             const tierColor = tier === 'PRIME' ? '#06b6d4' : tier === 'BUILDING' ? '#22c55e' : tier === 'WATCHING' ? '#fbbf24' : 'var(--text-muted)';
             const tierBg = tier === 'PRIME' ? 'rgba(6,182,212,0.15)' : tier === 'BUILDING' ? 'rgba(34,197,94,0.12)' : tier === 'WATCHING' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
 
-            // Status pill + entry gate note (popup only)
-            const statusColor = tier === 'PRIME' ? '#06b6d4' : tier === 'BUILDING' ? '#22c55e' : tier === 'WATCHING' ? '#fbbf24' : 'var(--text-muted)';
-            const statusText = tier === 'PRIME' ? 'Strong conviction — maximum entry' :
-                              tier === 'BUILDING' ? 'Building — not yet PRIME' :
-                              tier === 'WATCHING' ? 'Approaching entry — watch closely' : 'Waiting for setup';
+            // Entry gate note (popup only)
             const entryGateNote = (tier === 'PRIME' && !stock.entry_eligible) ? 'Needs a hard confirmation (volume / MACD / intraday / options / relative volume) to become entry-eligible.' :
                                   (tier === 'BUILDING' && stock.entry_eligible) ? 'Entry gate passed, but bot only buys PRIME names.' : '';
 
@@ -11849,14 +11845,8 @@ function updateDashboard(data, marketStatus) {
                             <button onclick="closeStockDetail()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                         </div>
 
-                        <!-- Status pill + entry gate note -->
-                        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.9rem;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; flex-shrink: 0;"></span>
-                                <span style="font-size: 0.8rem; font-weight: 600; color: ${statusColor};">${statusText}</span>
-                            </div>
-                            ${entryGateNote ? `<div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; padding-left: 16px;">${entryGateNote}</div>` : ''}
-                        </div>
+                        <!-- Entry gate note (popup only) -->
+                        ${entryGateNote ? `<div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.9rem;">${entryGateNote}</div>` : ''}
 
                         <!-- Price + change -->
                         <div style="display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 0.4rem;">
