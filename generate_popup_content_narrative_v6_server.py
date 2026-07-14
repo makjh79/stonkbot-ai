@@ -16,6 +16,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from signal_rules import compute_confirmation_count, active_confirmation_labels
+
 BOT_DIR = Path("/opt/stonk-ai")
 if str(BOT_DIR) not in sys.path:
     sys.path.insert(0, str(BOT_DIR))
@@ -94,24 +96,28 @@ def merge_watchlist_narratives(watchlist_content: dict, llm_narratives: dict, bu
         else:
             narratives[symbol]["display_tier"] = DISPLAY_TIER.get(narratives[symbol].get("tier"), "TRACKING")
 
-        # Incorporate bot intent into whatTriggersBuy narrative
-        base_trigger = narratives[symbol].get("whatTriggersBuy", "")
+        # Incorporate bot intent into whatTriggersBuy narrative using canonical chip count
+        conf = narratives[symbol].get("confirmations", {})
+        active_count = len(active_confirmation_labels(conf))
+        suffix_parts = []
         status = narratives[symbol].get("buy_status", "")
         reason = narratives[symbol].get("buy_reason", "")
         if status == "queued":
-            suffix = f" Bot status: queued for a new buy — {reason}."
+            suffix_parts.append(f"queued for a new buy — {reason}")
         elif status == "add":
-            suffix = f" Bot status: add to existing position — {reason}."
+            suffix_parts.append(f"add to existing position — {reason}")
         elif status == "hold":
-            suffix = f" Bot status: hold current position — {reason}."
+            suffix_parts.append(f"hold current position — {reason}")
         elif status == "not_ready":
-            suffix = f" Bot status: not yet ready to buy — {reason}."
+            suffix_parts.append(f"not yet ready to buy — {reason}")
         elif status == "tier_too_low":
-            suffix = f" Bot status: tier too low to trigger a buy — {reason}."
+            suffix_parts.append(f"tier too low to trigger a buy — {reason}")
         elif status == "no_price":
-            suffix = f" Bot status: cannot evaluate — {reason}."
-        else:
-            suffix = ""
+            suffix_parts.append(f"cannot evaluate — {reason}")
+        suffix = ""
+        if suffix_parts:
+            suffix = f" Bot status: {'; '.join(suffix_parts)}. ({active_count} active chips from the 15-factor model.)"
+        base_trigger = narratives[symbol].get("whatTriggersBuy", "")
         if suffix and not base_trigger.rstrip().endswith("."):
             suffix = " " + suffix.lstrip()
         if suffix:

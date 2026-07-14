@@ -372,6 +372,13 @@ def _build_watchlist_prompt(items: dict[str, dict]) -> str:
 For EACH watchlist symbol below, generate these fields. Output ONLY a single JSON object where each TOP-LEVEL KEY is the SYMBOL (e.g. "AAPL") and the value is an object with:
 {"whatItIs": "1 sentence", "whyOnWatchlist": "2-3 sentences", "whatTriggersBuy": "1-2 sentences", "catalyst": "1-2 sentences", "risk": "2-3 sentences"}
 
+Rules:
+- whyOnWatchlist MUST use the exact "Active Factors: X/15" count and the exact list of active labels provided.
+- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. missing hard confirmation from volume/MACD/intraday/options/relvol, or readiness below 75).
+- DO NOT mention inactive factors or claim more active factors than listed.
+- DO NOT say "entry eligible" if the prompt says "Entry eligible: no".
+- Keep numbers consistent with the prompt.
+
 Example for two symbols:
 {"AAPL": {"whatItIs": "Consumer electronics giant...", "whyOnWatchlist": "...", "whatTriggersBuy": "...", "catalyst": "...", "risk": "..."}, "TSLA": {"whatItIs": "EV maker...", ...}}
 
