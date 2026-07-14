@@ -29,8 +29,30 @@ ENTRY_READINESS_MIN = 75.0
 ENTRY_MIN_CONFIRMATIONS = 5
 ENTRY_MIN_HARD_CONFIRMATIONS = 1
 
-# Which confirmation keys count as "hard" for the entry gate.
-# These match the hard-confirmation set used by readiness_score.py.
+# -----------------------------------------------------------------------------
+# Confirmation chips
+# -----------------------------------------------------------------------------
+# Canonical set of 15 boolean/indicator chips shown in the UI and used by the
+# readiness engine.  The confirmation count should reflect *active chips* from
+# this set, not every truthy field in the confirmations dict.
+CONFIRMATION_CHIPS: Dict[str, Any] = {
+    "momentum_score": lambda v: v is not None and v >= 50,
+    "rsi_signal": lambda v: v in ("neutral", "oversold"),
+    "volume_confirmed": bool,
+    "macd_turning": bool,
+    "above_ema": bool,
+    "sector_strong": bool,
+    "intraday_confirmed": bool,
+    "options_confirmed": bool,
+    "relvol_confirmed": bool,
+    "vwap_confirmed": bool,
+    "momentum_5m_up": bool,
+    "near_term_bullish_flow": bool,
+    "spread_ok": bool,
+    "bid_ask_bullish": bool,
+    "no_corporate_action_risk": bool,
+}
+
 HARD_CONFIRMATION_KEYS = {
     "volume_confirmed",
     "macd_turning",
@@ -56,31 +78,46 @@ DISPLAY_TIER_MAP = {v: k for k, v in TIER_DISPLAY_MAP.items()}
 # Helpers
 # -----------------------------------------------------------------------------
 def compute_confirmation_count(confirmations: Optional[Dict[str, Any]]) -> int:
-    """Count active boolean confirmations from the canonical confirmations dict.
+    """Count active confirmation *chips* from the canonical 15-chip set.
 
-    Notes:
-      - Excludes numeric *_score fields and momentum_score.
-      - rsi_signal is a string label; only neutral or oversold count as a confirmation.
-      - All other truthy values count as confirmations.
+    This intentionally ignores numeric ratio fields like options_call_put_ratio
+    or bid_ask_spread_pct that live in the same dict but are not green chips.
     """
     if not confirmations:
         return 0
-    exclude = {"momentum_score", "intraday_score", "options_score", "relvol_score", "vwap_score"}
     count = 0
-    for key, value in confirmations.items():
-        if key == "momentum_score":
-            if value is not None and value >= 50:
+    for key, test in CONFIRMATION_CHIPS.items():
+        if key not in confirmations:
+            continue
+        value = confirmations[key]
+        try:
+            if test(value):
                 count += 1
-            continue
-        if key in exclude:
-            continue
-        if key == "rsi_signal":
-            if value in ("neutral", "oversold"):
-                count += 1
-            continue
-        if value:
-            count += 1
+        except Exception:
+            pass
     return count
+
+
+def active_confirmation_labels(confirmations: Optional[Dict[str, Any]]) -> list[str]:
+    """Return short labels of active chips, matching the UI factor chips."""
+    labels = {
+        "momentum_score": "MOM",
+        "rsi_signal": "RSI",
+        "volume_confirmed": "VOL",
+        "macd_turning": "MACD",
+        "above_ema": "EMA",
+        "sector_strong": "SEC",
+        "intraday_confirmed": "INT",
+        "options_confirmed": "OPT",
+        "relvol_confirmed": "RVOL",
+        "vwap_confirmed": "VWAP",
+        "momentum_5m_up": "5M",
+        "near_term_bullish_flow": "OF",
+        "spread_ok": "SPR",
+        "bid_ask_bullish": "QBI",
+        "no_corporate_action_risk": "CA",
+    }
+    return [labels[k] for k in CONFIRMATION_CHIPS if k in (confirmations or {}) and CONFIRMATION_CHIPS[k](confirmations[k])]
 
 
 def hard_confirmation_count(confirmations: Optional[Dict[str, Any]], hard_keys: Optional[Iterable[str]] = None) -> int:

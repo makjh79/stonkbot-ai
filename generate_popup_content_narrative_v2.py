@@ -6,6 +6,8 @@ No assembly-line fragments; each field picks from a large set of full sentences.
 import sys, os, json, random
 from pathlib import Path
 
+from signal_rules import compute_confirmation_count, active_confirmation_labels, hard_confirmation_count, is_entry_eligible
+
 BOT_DIR = Path("/opt/stonk-ai")
 if str(BOT_DIR) not in sys.path:
     sys.path.insert(0, str(BOT_DIR))
@@ -274,27 +276,28 @@ def new_what_kills_it(symbol, position, signal_data, watchlist_data, stops):
 def new_why_on_watchlist(symbol, signal_data, watchlist_data):
     readiness = signal_data.get("readiness_score", 0) or watchlist_data.get("readiness_score", 0)
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "MONITOR")
-    conf_count = signal_data.get("confirmation_count", 0)
-
+    conf = signal_data.get("confirmations", {}) or {}
+    active_labels = active_confirmation_labels(conf)
+    active_count = len(active_labels)
     if tier == "STRONG_NOW":
         return _hash_choice(symbol, [
-            f"Readiness {readiness:.0f}, {conf_count} factors green — highest-conviction tier. Bot buys the moment cash is free.",
-            f"Locked and loaded. Readiness {readiness:.0f} with {conf_count} confirmations firing.",
-            f"A-tier setup: {conf_count} confirmations, readiness {readiness:.0f}.",
-            f"Top of the buy list. Readiness {readiness:.0f}, {conf_count} factors aligned.",
+            f"Readiness {readiness:.0f}, {active_count} active factors ({', '.join(active_labels)}) — highest-conviction tier. Bot buys the moment cash is free.",
+            f"Locked and loaded. Readiness {readiness:.0f} with {active_count} active chips firing.",
+            f"A-tier setup: {active_count} active factors, readiness {readiness:.0f}.",
+            f"Top of the buy list. Readiness {readiness:.0f}, {active_count} factors aligned.",
         ])
     if tier == "NOW":
         return _hash_choice(symbol, [
-            f"Readiness {readiness:.0f} — an entry-ready setup waiting on portfolio cash.",
-            f"Clean setup, {conf_count} factors aligned. Just needs room in the portfolio.",
-            f"On deck: readiness {readiness:.0f}, {conf_count} confirmations.",
+            f"Readiness {readiness:.0f} — an entry-ready setup waiting on portfolio cash ({active_count} active chips: {', '.join(active_labels)}).",
+            f"Clean setup, {active_count} factors aligned. Just needs room in the portfolio.",
+            f"On deck: readiness {readiness:.0f}, {active_count} confirmations.",
             f"Ready to buy at readiness {readiness:.0f}. Cash is the only gate.",
         ])
     if tier == "WATCH":
         return _hash_choice(symbol, [
-            f"Readiness {readiness:.0f} — building a case, but missing a few confirmations.",
+            f"Readiness {readiness:.0f} — building a case, but only {active_count} active chips.",
             f"Interesting, but not urgent. Readiness {readiness:.0f} keeps it on the radar.",
-            f"WATCH tier: {conf_count} confirmations at readiness {readiness:.0f}. One more signal and it gets interesting.",
+            f"WATCH tier: {active_count} confirmations at readiness {readiness:.0f}. One more signal and it gets interesting.",
         ])
     return f"Readiness {readiness:.0f} — early watch, not close to an entry."
 
@@ -304,8 +307,12 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "MONITOR")
     readiness = signal_data.get("readiness_score", 0)
     conf = signal_data.get("confirmations", {}) or {}
+    active_count = len(active_confirmation_labels(conf))
+    hard = hard_confirmation_count(conf)
+    above_ema = bool(conf.get("above_ema"))
+    eligible = is_entry_eligible(readiness, active_count, above_ema, hard)
 
-    if tier == "STRONG_NOW":
+    if tier == "STRONG_NOW" and eligible:
         return _hash_choice(symbol, [
             "Gate is open. The only missing input is cash.",
             "Highest-conviction setup; the trigger is cash availability.",
@@ -313,7 +320,7 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
             "Ready to buy. Just needs an open cash slot.",
             "Top of the queue. Cash is the only gate.",
         ])
-    if tier == "NOW":
+    if tier in ("STRONG_NOW", "NOW") and eligible:
         return _hash_choice(symbol, [
             f"Readiness {readiness:.0f}. Bot buys when cash frees up and the next candle confirms.",
             f"Clean setup at readiness {readiness:.0f}. Entry on cash release.",
@@ -321,14 +328,18 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
         ])
 
     reasons = []
-    if not conf.get("above_ema"):
+    if not above_ema:
         reasons.append("reclaim the 20-day EMA")
-    if not conf.get("volume_confirmed"):
+    if active_count < 5:
+        reasons.append(f"get {5 - active_count} more active chips")
+    if hard < 1:
+        reasons.append("see a hard confirmation from volume, MACD, intraday, options, or relvol")
+    if readiness < 75:
+        reasons.append(f"push readiness above 75 (now {readiness:.0f})")
+    if not conf.get("volume_confirmed") and not reasons:
         reasons.append("see volume confirm")
-    if not conf.get("macd_turning"):
+    if not conf.get("macd_turning") and len(reasons) < 2:
         reasons.append("get MACD turning positive")
-    if not conf.get("options_confirmed"):
-        reasons.append("see options flow turn bullish")
 
     if reasons:
         return "Bot buys when " + " and ".join(reasons[:2]) + "."
