@@ -938,20 +938,13 @@ def check_cron_heartbeats() -> None:
     is_market_hours = _us_market_is_open(now)
     # job_name: max expected age in minutes
     expected = {
-        "stonk_health_check": 10,
-        "dynamic_watchlist_manager": 10,
-        "sync_alpaca_trades": None,  # market-hours-only; checked separately by schedule
-        "update_iv_summaries": 30 if is_market_hours else 2880,
-        # Signal enrichment now runs every 30 min via Alpaca news
-        "signal_enricher": 60,
-        "watchlist_feedback": 1440,
-        "daily_liquidity_report_am": 240 if is_market_hours else 1440,
-        "daily_liquidity_report_pm": 240 if is_market_hours else 1440,
+        # Only jobs that are currently scheduled AND record heartbeats
         "comprehensive_monitor": 20,
-        "fetch_price_history": 120 if is_market_hours else 1440,
-        "update_price_history": 2880,
-        "vps_memory_maintenance": 2880,
-        "analyze_options_skew_signal": 2880,
+        "dynamic_watchlist_manager": 10,
+        # Deprecated / no longer scheduled jobs removed to avoid false alerts:
+        # update_iv_summaries, signal_enricher, watchlist_feedback,
+        # daily_liquidity_report_am/pm, fetch_price_history, update_price_history,
+        # vps_memory_maintenance, analyze_options_skew_signal
     }
     for job, max_age_min in expected.items():
         if max_age_min is None:

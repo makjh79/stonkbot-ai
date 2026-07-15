@@ -1049,6 +1049,12 @@ class SignalEngine:
             atomic_write_json(path, payload)
             logger.info(f"Saved {len(all_signals)} signals to {path} (fallback)")
 
+        # Always write canonical local signals.json so downstream tools (watchlist, monitor) stay in sync
+        try:
+            atomic_write_json(path, payload)
+        except Exception as e:
+            logger.warning(f"Could not write canonical signals JSON to {path}: {e}")
+
         # Legacy mirror for safety (Phase 2: remove)
         web_signals_path = Path("/var/www/hedge-fund-website/signals.json")
         try:
