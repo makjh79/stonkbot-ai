@@ -73,7 +73,7 @@ from readiness_score import (
 import requests
 
 from signal_engine import SignalEngine, COMPANY_NAMES, DIP_MAX_DAILY_POSITIONS
-from risk_engine import RiskEngine, RiskConfig, load_high_beta_symbols
+from risk_engine import RiskEngine, RiskConfig, load_high_beta_symbols, is_stop_reason
 from alpaca_data import get_data_hub
 from stonk_utils import atomic_write_json
 import dynamic_watchlist_manager
@@ -938,6 +938,7 @@ class STONKAIBot:
         self._dry_run = TradingConfig.DRY_RUN or (not self.alpaca.is_paper() and not TradingConfig.LIVE_MODE)
         self._failed_buy_symbols: set = set()  # symbols that failed to buy (e.g. not tradable)
         self._positions: Dict = {}  # synced from portfolio_data each cycle for exit logic
+        self._short_alerts_sent: Dict[str, str] = {}  # symbol -> date alerted (1/day)
         self.circuit_breaker = CircuitBreaker()
         logger.info("Circuit breaker initialized")
 
@@ -990,6 +991,40 @@ class STONKAIBot:
                 and conf >= ENTRY_MIN_CONFIRMATIONS
                 and hard_conf >= ENTRY_MIN_HARD_CONFIRMATIONS
                 and above_ema)
+
+    def _entry_has_exit_conflict(self, sig: dict, price: float) -> Optional[str]:
+        """Pre-entry sanity: return a reason string if any EXIT condition is already
+        true for this symbol (buying it would whipsaw into an immediate sell).
+        Mirrors ThesisManager.check_thesis_exits + risk_engine VWAP stop.
+        Added 2026-07-18 after AAPL was bought then thesis-exited 3 minutes later.
+        """
+        # 1. Below 20d EMA → thesis exit "price falls below 20d EMA"
+        if sig.get("above_ema20", True) is False:
+            return "price below 20d EMA (thesis exit would fire)"
+        # 2. MACD histogram negative → counts toward momentum-loss thesis exit
+        if (sig.get("macd_hist") or 0) < 0:
+            return "MACD histogram negative (momentum-loss exit would fire)"
+        # 3. Sector reversal + RSI overbought → sector-reversal thesis exit
+        confirmations = sig.get("confirmations", {}) or {}
+        rsi_signal = confirmations.get("rsi_signal", "neutral")
+        if not sig.get("sector_strong", False) and rsi_signal == "overbought":
+            return "sector weak + RSI overbought (sector-reversal exit would fire)"
+        # 4. Already below VWAP → VWAP stop (-2% buffer) would fire immediately
+        vwap = sig.get("daily_vwap") or sig.get("vwap") or 0
+        if vwap and price and price < vwap * (1 + self.risk_engine.config.vwap_stop_buffer_pct):
+            return f"price ${price:.2f} below VWAP ${vwap:.2f} stop zone"
+        return None
+
+    def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False) -> Optional[str]:
+        """Anti-churn guardrails shared by all entry paths (2026-07-18).
+        Returns a block reason string, or None if entry is allowed."""
+        # Stop-out cooldown: no re-entry within stop_reentry_cooldown_hours of a stop-loss
+        if self.risk_engine.in_stop_cooldown(symbol):
+            return "stop-out cooldown active (no same-day re-entry after stop-loss)"
+        # Machine-gun guard: max N NEW entries per symbol per day (avg-in has its own cooldown)
+        if not is_avg_in and self.risk_engine.entries_today_count(symbol) >= self.risk_engine.config.max_entries_per_symbol_per_day:
+            return f"already entered today (max {self.risk_engine.config.max_entries_per_symbol_per_day} new entry/day)"
+        return None
 
 
     def _load_watchlist_symbols(self) -> set:
@@ -1376,7 +1411,37 @@ class STONKAIBot:
         pv = portfolio_data["account"]["portfolio_value"]
         cash = portfolio_data["account"]["cash"]
         logger.info(f"Portfolio: ${pv:,.2f} | Cash: ${cash:,.2f} | Positions: {len(portfolio_data['positions'])}")
-        # Sync _positions from portfolio data for exit logic
+
+        # Anomaly guard: detect short/negative positions (long-only strategy).
+        # These can only arise from external/manual account activity (e.g. the
+        # 2026-07-16 GTLB short). Alert once per day per symbol; never auto-trade.
+        try:
+            for bad in self.risk_engine.anomalous_positions(portfolio_data):
+                sym = bad.get("symbol", "?")
+                today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+                if self._short_alerts_sent.get(sym) != today:
+                    self._short_alerts_sent[sym] = today
+                    logger.critical(
+                        f"ANOMALY: short/negative position detected: {sym} qty={bad.get('qty')} "
+                        f"mv=${bad.get('market_value', 0):,.2f} — manual review required"
+                    )
+                    log_alert(
+                        subtype="risk",
+                        title=f"SHORT POSITION DETECTED: {sym}",
+                        description=(
+                            f"{sym} is short {bad.get('qty')} shares (${bad.get('market_value', 0):,.2f}). "
+                            "The bot is long-only and did not open this — likely external/manual account activity. "
+                            "The bot will not trade this position; cover it manually."
+                        ),
+                        symbol=sym,
+                        severity="critical",
+                        rationale="Long-only guardrail: negative position detected in account sync.",
+                        bot_response="Excluded from all exit/trim/entry logic. Awaiting manual cover.",
+                    )
+        except Exception as e:
+            logger.warning(f"Anomalous-position check failed: {e}")
+
+        # Sync _positions from portfolio data for exit logic (long positions only)
         self._positions = {
             p["symbol"]: {
                 "qty": p.get("qty", 0),
@@ -1387,7 +1452,7 @@ class STONKAIBot:
                 "entry_date": p.get("entry_date") or self.thesis_manager.theses.get(p["symbol"], {}).get("entry_date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
             }
             for p in portfolio_data.get("positions", [])
-            if p.get("symbol")
+            if p.get("symbol") and p.get("qty", 0) > 0
         }
 
         # Load macro-correlation high-beta basket for this cycle
@@ -1675,6 +1740,12 @@ class STONKAIBot:
                 if symbol in current_symbols:
                     continue
 
+                # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
+                _blocked = self._entry_blocked_by_guardrails(symbol)
+                if _blocked:
+                    logger.info(f"Skipping {symbol}: {_blocked}")
+                    continue
+
                 # In RISK_OFF, allow:
                 #   1. Mean reversion signals with entry_eligible (RSI < 35, volume capitulation)
                 #   2. STRONG_NOW momentum signals (high conviction even in defensive mode)
@@ -1703,6 +1774,12 @@ class STONKAIBot:
                         pass
                 if price is None or price <= 0:
                     logger.debug(f"No quote for {symbol}; skipping")
+                    continue
+
+                # Anti-churn: don't enter when an exit condition is already true
+                _conflict = self._entry_has_exit_conflict(sig, price)
+                if _conflict:
+                    logger.info(f"Skipping {symbol}: entry/exit conflict — {_conflict}")
                     continue
 
                 # Intraday pump check
@@ -1796,6 +1873,12 @@ class STONKAIBot:
                 if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
                     continue
 
+                # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
+                _blocked = self._entry_blocked_by_guardrails(symbol)
+                if _blocked:
+                    logger.info(f"Skipping {symbol}: {_blocked}")
+                    continue
+
                 # Regime-based entry gate
                 _min_tier = self._regime_params.get("min_tier_for_entry")
                 if _min_tier is None:
@@ -1818,6 +1901,12 @@ class STONKAIBot:
                         pass
                 if price is None or price <= 0:
                     logger.debug(f"No quote for {symbol}; skipping")
+                    continue
+
+                # Anti-churn: don't enter when an exit condition is already true
+                _conflict = self._entry_has_exit_conflict(sig, price)
+                if _conflict:
+                    logger.info(f"Skipping {symbol}: entry/exit conflict — {_conflict}")
                     continue
 
                 # Intraday entry timing
@@ -1923,8 +2012,17 @@ class STONKAIBot:
                     continue
                 if sig.get("tier") != "STRONG_NOW":
                     continue
+                # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
+                _blocked = self._entry_blocked_by_guardrails(symbol)
+                if _blocked:
+                    logger.info(f"Skipping dip buy {symbol}: {_blocked}")
+                    continue
                 price = self.alpaca.get_latest_quote(symbol)
                 if not price or price <= 0:
+                    continue
+                _conflict = self._entry_has_exit_conflict(sig, price)
+                if _conflict:
+                    logger.info(f"Skipping dip buy {symbol}: entry/exit conflict — {_conflict}")
                     continue
                 _tier_max_pct = self._tier_max_position_pct("STRONG_NOW", self.risk_engine.config.max_single_position_pct)
                 sizing = self.risk_engine.size_buy(
@@ -2006,6 +2104,11 @@ class STONKAIBot:
             if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
                 continue
 
+            # Anti-churn: avg-in also respects the stop-out cooldown
+            if self.risk_engine.in_stop_cooldown(symbol):
+                logger.info(f"Skipping avg-in {symbol}: stop-out cooldown active")
+                continue
+
             pl_pct = pos.get("unrealized_plpc", 0) or 0.0
             # Only average in if position is down or readiness has strengthened
             min_readiness_for_avg_in = 70.0 if self.alpaca.is_paper() else 75.0
@@ -2014,6 +2117,12 @@ class STONKAIBot:
 
             price = self.alpaca.get_latest_quote(symbol)
             if price is None or price <= 0:
+                continue
+
+            # Anti-churn: don't avg-in when an exit condition is already true
+            _conflict = self._entry_has_exit_conflict(sig, price)
+            if _conflict:
+                logger.info(f"Skipping avg-in {symbol}: entry/exit conflict — {_conflict}")
                 continue
 
             _tier = sig.get("tier", "NOW")
@@ -2108,6 +2217,12 @@ class STONKAIBot:
                 bot_response="Position closed as planned by risk rules."
             )
             logger.info(f"EXECUTED SELL: {qty} {symbol} ({trade['reason']})")
+            # Anti-churn bookkeeping (2026-07-18)
+            if qty >= long_qty:
+                # Full exit — clear stale peak/ATR so a future re-entry starts fresh
+                self.risk_engine.reset_position_tracking(symbol)
+            if is_stop_reason(trade.get("reason", "")):
+                self.risk_engine.record_stop_out(symbol, trade.get("reason", ""))
         except Exception as e:
             logger.error(f"Failed to sell {symbol}: {e}", exc_info=True)
 
@@ -2249,6 +2364,9 @@ class STONKAIBot:
             logger.info(f"EXECUTED BUY: {qty} {symbol} tier={tier} ({trade['reason']})")
             # Clear any previous failure flag for this symbol
             self._failed_buy_symbols.discard(symbol)
+            # Anti-churn bookkeeping: count NEW entries toward the 1/day cap
+            if not is_avg_in:
+                self.risk_engine.record_entry(symbol)
         except Exception as e:
             logger.error(f"Failed to buy {symbol}: {e}")
             self._failed_buy_symbols.add(symbol)
@@ -2301,6 +2419,10 @@ class STONKAIBot:
         logger.info(f"Entry gate: readiness >= 77 AND >= 5 confirmations AND above_ema")
         logger.info(f"Position caps: 12% STRONG_NOW / 8% other tiers; 25% sector cap")
         logger.info(f"Exits: -3% hard cut + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON)")
+        logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "
+                    f"peak reset on exit | {self.risk_engine.config.max_entries_per_symbol_per_day} entry/symbol/day | "
+                    f"trim band +{self.risk_engine.config.concentration_trim_band:.1%}, min trim ${self.risk_engine.config.min_trim_notional:.0f}, "
+                    f"{self.risk_engine.config.trim_cooldown_hours:.0f}h trim cooldown")
         logger.info(f"Drawdown halt: {self.risk_engine.config.new_entry_max_drawdown_pct:.0%}")
         logger.info("=" * 70)
 

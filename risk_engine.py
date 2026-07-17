@@ -47,6 +47,16 @@ def load_high_beta_symbols(
         return set()
 
 
+def is_stop_reason(reason: str) -> bool:
+    """True if a sell rationale is a stop-loss (vs profit take/trim/rotation).
+    Used to decide which sells trigger the re-entry cooldown."""
+    r = (reason or "").lower()
+    return any(k in r for k in (
+        "hard cut", "hard stop", "hard_stop", "trailing stop", "vwap stop",
+        "stop loss", "stop:",
+    ))
+
+
 @dataclass
 class RiskConfig:
     # --- Market hours / extended hours ---
@@ -110,6 +120,14 @@ class RiskConfig:
     max_sector_pct: float = 0.25                   # loosened from 20% to allow better deployment across clustered Fintech/Consumer signals
     concentration_trim_trigger: float = 1.00      # trim at cap, not 25% above (was 1.25)
 
+    # --- Anti-churn guardrails (2026-07-18) ---
+    concentration_trim_band: float = 0.005        # only trim when position exceeds cap by this much (0.5pp) — prevents 1-share dust trims
+    concentration_trim_target_buffer: float = 0.01  # trim down to 1pp BELOW cap so small price moves don't re-trigger
+    min_trim_notional: float = 250.0              # never place a trim smaller than $250
+    trim_cooldown_hours: float = 4.0              # per-symbol cooldown between concentration/sector trims
+    stop_reentry_cooldown_hours: float = 20.0     # after any stop-loss sell, block re-entry for ~1 trading day
+    max_entries_per_symbol_per_day: int = 1       # machine-gun guard: max 1 NEW entry per symbol per day
+
     # --- High-beta basket (macro correlation guard) ---
     high_beta_basket_cap_enabled: bool = True
     max_high_beta_deployed_pct: float = 0.35        # cap deployed capital in high-beta basket
@@ -168,6 +186,9 @@ class RiskEngine:
         self.position_high_water_marks: Dict[str, float] = {}
         self.position_atr_pct: Dict[str, float] = {}
         self.position_last_add_time: Dict[str, str] = {}
+        self.position_last_trim_time: Dict[str, str] = {}   # anti-churn: per-symbol trim cooldown
+        self.stopped_out: Dict[str, str] = {}               # symbol -> ISO timestamp of last stop-loss sell
+        self.entries_today: Dict[str, str] = {}             # symbol -> ISO date of last NEW entry (1/day cap)
         self.last_rotation_time: Optional[datetime] = None
         self._load_state()
 
@@ -188,6 +209,9 @@ class RiskEngine:
             self.position_high_water_marks = data.get("position_high_water_marks", {})
             self.position_atr_pct = data.get("position_atr_pct", {})
             self.position_last_add_time = data.get("position_last_add_time", {})
+            self.position_last_trim_time = data.get("position_last_trim_time", {})
+            self.stopped_out = data.get("stopped_out", {})
+            self.entries_today = data.get("entries_today", {})
         except Exception as e:
             logger.warning(f"Could not load risk state: {e}")
 
@@ -202,6 +226,9 @@ class RiskEngine:
                     "position_high_water_marks": self.position_high_water_marks,
                     "position_atr_pct": self.position_atr_pct,
                     "position_last_add_time": self.position_last_add_time,
+                    "position_last_trim_time": self.position_last_trim_time,
+                    "stopped_out": self.stopped_out,
+                    "entries_today": self.entries_today,
                     "updated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                 }, f, indent=2)
         except Exception as e:
@@ -222,6 +249,105 @@ class RiskEngine:
         today = self._today()
         self.daily_buys_deployed[today] = self.daily_buys_deployed.get(today, 0.0) + notional
         self._save_state()
+
+    # ------------------------------------------------------------------
+    # Anti-churn guardrails (2026-07-18)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _parse_ts(ts: str) -> Optional[datetime]:
+        try:
+            dt = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt
+        except Exception:
+            return None
+
+    def record_stop_out(self, symbol: str, reason: str = ""):
+        """Record a stop-loss sell; blocks re-entry for stop_reentry_cooldown_hours."""
+        self.stopped_out[symbol] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        logger.info(f"STOP-OUT recorded: {symbol} — re-entry blocked for {self.config.stop_reentry_cooldown_hours:.0f}h ({reason})")
+        self._save_state()
+
+    def in_stop_cooldown(self, symbol: str) -> bool:
+        """True if symbol was stopped out within the cooldown window."""
+        ts = self.stopped_out.get(symbol)
+        if not ts:
+            return False
+        dt = self._parse_ts(ts)
+        if dt is None:
+            self.stopped_out.pop(symbol, None)
+            return False
+        elapsed_h = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+        if elapsed_h >= self.config.stop_reentry_cooldown_hours:
+            # Cooldown expired — clean up lazily
+            self.stopped_out.pop(symbol, None)
+            return False
+        return True
+
+    def reset_position_tracking(self, symbol: str):
+        """Clear high-water mark and ATR tracking when a position is fully exited.
+
+        Prevents the whipsaw bug where a re-entered symbol inherits a stale peak
+        from a previous holding period and instantly triggers its trailing stop
+        (root cause of the 2026-07-16 LCID 30x stop/re-entry loop and the bogus
+        $775.98 CRWD peak).
+        """
+        removed = self.position_high_water_marks.pop(symbol, None)
+        self.position_atr_pct.pop(symbol, None)
+        if removed is not None:
+            logger.info(f"Peak reset: {symbol} high-water mark ${removed:.2f} cleared on full exit")
+            self._save_state()
+
+    def record_entry(self, symbol: str):
+        """Record a NEW position entry (not avg-in) for the 1-per-day entry cap."""
+        self.entries_today[symbol] = self._today()
+        self._save_state()
+
+    def entries_today_count(self, symbol: str) -> int:
+        """1 if a NEW entry already happened for this symbol today, else 0."""
+        d = self.entries_today.get(symbol)
+        if d is None:
+            return 0
+        if d != self._today():
+            self.entries_today.pop(symbol, None)
+            return 0
+        return 1
+
+    def _trim_on_cooldown(self, symbol: str) -> bool:
+        ts = self.position_last_trim_time.get(symbol)
+        if not ts:
+            return False
+        dt = self._parse_ts(ts)
+        if dt is None:
+            self.position_last_trim_time.pop(symbol, None)
+            return False
+        elapsed_h = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+        if elapsed_h >= self.config.trim_cooldown_hours:
+            self.position_last_trim_time.pop(symbol, None)
+            return False
+        return True
+
+    def _record_trim(self, symbol: str):
+        self.position_last_trim_time[symbol] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+    def anomalous_positions(self, portfolio_data: Dict) -> List[Dict]:
+        """Detect short/negative positions the long-only strategy cannot manage
+        (e.g. the 2026-07-16 accidental GTLB short from an external manual sell).
+        Returns list of offending positions; caller should alert, never auto-trade."""
+        bad = []
+        for pos in portfolio_data.get("positions", []):
+            qty = pos.get("qty", 0)
+            mv = pos.get("market_value", 0)
+            if qty < 0 or mv < 0:
+                bad.append({
+                    "symbol": pos.get("symbol"),
+                    "qty": qty,
+                    "market_value": mv,
+                    "unrealized_plpc": pos.get("unrealized_plpc", 0),
+                })
+        return bad
 
     def record_high_water(self, portfolio_value: float):
         if portfolio_value > self.high_water_mark:
@@ -480,9 +606,20 @@ class RiskEngine:
     def check_exits(self, portfolio_data: Dict) -> List[Dict]:
         trades = []
 
+        # Prune peak/ATR tracking for symbols no longer held (qty > 0 = held).
+        # Without this, a re-entered symbol inherits a stale peak from a previous
+        # holding period and its trailing stop fires instantly (LCID/CRWD whipsaw).
+        held = {p.get("symbol") for p in portfolio_data.get("positions", []) if p.get("qty", 0) > 0}
+        for sym in list(self.position_high_water_marks.keys()):
+            if sym not in held:
+                self.position_high_water_marks.pop(sym, None)
+                self.position_atr_pct.pop(sym, None)
+
         # Update per-position high water marks and ATR% from current prices
         for pos in portfolio_data.get("positions", []):
             symbol = pos.get("symbol")
+            if pos.get("qty", 0) <= 0:
+                continue  # short/anomalous — long-only logic does not apply
             current = pos.get("current", 0)
             if current > 0:
                 prev_peak = self.position_high_water_marks.get(symbol, current)
@@ -496,19 +633,32 @@ class RiskEngine:
         for pos in portfolio_data.get("positions", []):
             symbol = pos.get("symbol")
             qty = pos.get("qty", 0)
+            if qty <= 0:
+                continue  # short/anomalous position — alert handled in run_cycle, never trade it here
             current = pos.get("current", 0)
             plpc = pos.get("unrealized_plpc", 0) / 100  # stored as percent in portfolio_data
+            avg_entry = pos.get("avg_entry", 0) or 0
             peak = self.position_high_water_marks.get(symbol, current)
+            # Garbage-peak clamp: full profit exit fires at +50%, so a legit peak
+            # can never exceed ~1.5x the greater of entry/current. Anything beyond
+            # is corrupt data (e.g. CRWD peak $775.98 with price ~$205).
+            _peak_cap = max(avg_entry, current) * 1.5 if max(avg_entry, current) > 0 else peak
+            if peak > _peak_cap:
+                logger.warning(f"PEAK CLAMP: {symbol} peak ${peak:.2f} exceeds 1.5x entry/current — clamped to ${_peak_cap:.2f}")
+                peak = _peak_cap
+                self.position_high_water_marks[symbol] = peak
 
             # 0. Absolute hard cut: any position down -5% exits immediately
             if plpc <= -0.05:
+                reason = f"Hard cut: {plpc:.1%} (absolute -5% limit)"
                 trades.append({
                     "symbol": symbol,
                     "qty": qty,
                     "action": "SELL",
-                    "reason": f"Hard cut: {plpc:.1%} (absolute -5% limit)",
+                    "reason": reason,
                 })
                 logger.warning(f"HARD CUT: {symbol} at {plpc:.1%} — immediate exit due to >5% loss")
+                self.record_stop_out(symbol, reason)
                 continue
 
             # 1. Hard stop loss — ATR-based (1.5x ATR), clamped to [3%, 8%]
@@ -523,13 +673,15 @@ class RiskEngine:
                 effective_hard_stop = self.config.max_hard_stop_pct
 
             if plpc <= effective_hard_stop:
+                reason = f"Hard stop (ATR): {plpc:.1%} (limit {effective_hard_stop:.1%})"
                 trades.append({
                     "symbol": symbol,
                     "qty": qty,
                     "action": "SELL",
-                    "reason": f"Hard stop (ATR): {plpc:.1%} (limit {effective_hard_stop:.1%})",
+                    "reason": reason,
                 })
                 logger.warning(f"STOP LOSS: {symbol} at {plpc:.1%} (ATR stop {effective_hard_stop:.1%})")
+                self.record_stop_out(symbol, reason)
                 continue
 
             # 1b. VWAP-based stop (new with Alpaca paid data)
@@ -538,13 +690,15 @@ class RiskEngine:
                 if vwap and vwap > 0 and current > 0:
                     vwap_deviation = (current - vwap) / vwap
                     if vwap_deviation <= self.config.vwap_stop_buffer_pct:
+                        reason = f"VWAP stop: {vwap_deviation:.1%} below VWAP ${vwap:.2f}"
                         trades.append({
                             "symbol": symbol,
                             "qty": qty,
                             "action": "SELL",
-                            "reason": f"VWAP stop: {vwap_deviation:.1%} below VWAP ${vwap:.2f}",
+                            "reason": reason,
                         })
                         logger.warning(f"VWAP STOP: {symbol} at {vwap_deviation:.1%} below VWAP ${vwap:.2f}")
+                        self.record_stop_out(symbol, reason)
                         continue
 
             # 2. Trailing stop — pure ATR-based (2.0x ATR from peak)
@@ -568,13 +722,15 @@ class RiskEngine:
             if peak > 0 and current > 0:
                 drawdown_from_peak = (current - peak) / peak
                 if drawdown_from_peak <= effective_trailing:
+                    reason = f"Trailing stop: {drawdown_from_peak:.1%} from peak ${peak:.2f} (limit {effective_trailing:.1%})"
                     trades.append({
                         "symbol": symbol,
                         "qty": qty,
                         "action": "SELL",
-                        "reason": f"Trailing stop: {drawdown_from_peak:.1%} from peak ${peak:.2f} (limit {effective_trailing:.1%})",
+                        "reason": reason,
                     })
                     logger.warning(f"TRAILING STOP: {symbol} at {drawdown_from_peak:.1%} from peak ${peak:.2f} (limit {effective_trailing:.1%})")
+                    self.record_stop_out(symbol, reason)
                     continue
 
             # 3. Full profit exit
@@ -706,6 +862,10 @@ class RiskEngine:
             if trim_qty < 1:
                 continue
 
+            # Anti-churn: no dust trims — bump to min notional (capped at full position)
+            if trim_qty * price < self.config.min_trim_notional and trim_qty < qty:
+                trim_qty = min(qty, max(trim_qty, math.ceil(self.config.min_trim_notional / price)))
+
             trim_value = trim_qty * price
             trades.append({
                 "symbol": symbol,
@@ -774,13 +934,16 @@ class RiskEngine:
         for s in signals:
             readiness_map[s.get("symbol", "")] = s.get("readiness_score", 50.0)
 
-        # Find high-readiness buy candidates not currently held
+        # Find high-readiness buy candidates not currently held.
+        # Exclude symbols in stop-out cooldown (they can't be bought anyway) so
+        # rotation doesn't trim positions to fund a buy that will be blocked.
         held_symbols = {p.get("symbol") for p in portfolio_data.get("positions", [])}
         best_unheld = [
             (s.get("symbol"), s.get("readiness_score", 0))
             for s in signals
             if s.get("symbol") not in held_symbols
             and s.get("symbol") not in failed_buy_symbols
+            and not self.in_stop_cooldown(s.get("symbol", ""))
             and s.get("entry_eligible", False)
             and s.get("readiness_score", 0) >= 70
         ]
@@ -801,6 +964,8 @@ class RiskEngine:
             pos_pct = mv / pv
             readiness = readiness_map.get(symbol, 50.0)
 
+            if qty <= 0:
+                continue  # short/anomalous — not rotation material
             # Only trim overweight positions (> 5% of portfolio)
             if pos_pct < self.config.rotation_min_position_pct:
                 continue
@@ -842,6 +1007,9 @@ class RiskEngine:
 
             # Trim 20% of position (or at least rotation_min_trim_pct)
             trim_qty = max(1, int(qty * 0.20))
+            # Anti-churn: no dust trims
+            if trim_qty * price < self.config.min_trim_notional and trim_qty < qty:
+                trim_qty = min(qty, max(trim_qty, math.ceil(self.config.min_trim_notional / price)))
             trim_value = trim_qty * price
 
             trades.append({
@@ -881,7 +1049,13 @@ class RiskEngine:
             sector = pos.get("sector", "Other")
             sector_mv[sector] = sector_mv.get(sector, 0.0) + pos.get("market_value", 0)
 
-        # Single-stock concentration first
+        # Single-stock concentration first.
+        # Anti-churn: only trim when ABOVE cap + band, trim to BELOW cap,
+        # enforce min trim notional and a per-symbol cooldown. Prevents the
+        # 1-share "10.0% > 10.0%" dust-trim spam seen the week of 2026-07-13.
+        cap = self.config.max_single_position_pct
+        band = self.config.concentration_trim_band
+        target_pct = cap - self.config.concentration_trim_target_buffer
         for pos in positions:
             symbol = pos.get("symbol")
             qty = pos.get("qty", 0)
@@ -890,20 +1064,30 @@ class RiskEngine:
                 continue
 
             pos_pct = mv / pv
-            if pos_pct > self.config.max_single_position_pct * self.config.concentration_trim_trigger:
-                target_mv = pv * self.config.max_single_position_pct
+            trigger = cap * self.config.concentration_trim_trigger + band
+            if pos_pct > trigger:
+                if self._trim_on_cooldown(symbol):
+                    logger.debug(f"Trim cooldown active for {symbol}; skipping concentration trim")
+                    continue
+                target_mv = pv * target_pct
                 excess = mv - target_mv
-                trim_qty = max(1, int((excess / (mv / qty))))
+                price = mv / qty
+                trim_qty = max(1, int((excess / price)))
+                if trim_qty * price < self.config.min_trim_notional and trim_qty < qty:
+                    trim_qty = min(qty, math.ceil(self.config.min_trim_notional / price))
                 trades.append({
                     "symbol": symbol,
                     "qty": trim_qty,
                     "action": "SELL",
-                    "reason": f"Concentration trim: position {pos_pct:.1%} > trigger {self.config.max_single_position_pct * self.config.concentration_trim_trigger:.1%}",
+                    "reason": f"Concentration trim: position {pos_pct:.1%} > trigger {trigger:.1%}, target {target_pct:.1%}",
                 })
                 logger.info(f"CONCENTRATION TRIM: {symbol} {trim_qty} shares")
+                self._record_trim(symbol)
                 trimmed_symbols.add(symbol)
 
         # Sector concentration: only trim positions not already trimmed
+        sector_cap = self.config.max_sector_pct
+        sector_band = 0.01  # 1pp hysteresis on sector trims
         for pos in positions:
             symbol = pos.get("symbol")
             if symbol in trimmed_symbols:
@@ -915,15 +1099,23 @@ class RiskEngine:
                 continue
 
             sec_pct = sector_mv.get(sector, 0) / pv
-            if sec_pct > self.config.max_sector_pct * self.config.concentration_trim_trigger:
+            sector_trigger = sector_cap * self.config.concentration_trim_trigger + sector_band
+            if sec_pct > sector_trigger:
+                if self._trim_on_cooldown(symbol):
+                    logger.debug(f"Trim cooldown active for {symbol}; skipping sector trim")
+                    continue
                 trim_qty = max(1, qty // 4)
+                price = mv / qty
+                if trim_qty * price < self.config.min_trim_notional and trim_qty < qty:
+                    trim_qty = min(qty, math.ceil(self.config.min_trim_notional / price))
                 trades.append({
                     "symbol": symbol,
                     "qty": trim_qty,
                     "action": "SELL",
-                    "reason": f"Sector trim: {sector} {sec_pct:.1%} > trigger {self.config.max_sector_pct * self.config.concentration_trim_trigger:.1%}",
+                    "reason": f"Sector trim: {sector} {sec_pct:.1%} > trigger {sector_trigger:.1%}",
                 })
                 logger.info(f"SECTOR TRIM: {symbol} {trim_qty} shares ({sector})")
+                self._record_trim(symbol)
                 # reduce sector_mv so we don't over-trim
                 sector_mv[sector] -= mv * (trim_qty / qty)
 

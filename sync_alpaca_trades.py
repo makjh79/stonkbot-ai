@@ -143,7 +143,12 @@ def infer_rationale(trades):
                     t["rationale"] = f"Profit trim at {pnl_pct:+.1f}% (trimmed {sell_pct:.0%})"
                     t["strategy"] = "profit_trim"
                 elif same_day_buys:
-                    buy_syms = ", ".join([x["symbol"] for x in same_day_buys[:3]])
+                    # Dedupe preserving order (multiple buys of same symbol → "AAPL, AAPL" spam)
+                    seen = []
+                    for x in same_day_buys:
+                        if x["symbol"] not in seen:
+                            seen.append(x["symbol"])
+                    buy_syms = ", ".join(seen[:3])
                     t["rationale"] = f"Rotation: trim {sym} to fund {buy_syms}"
                     t["strategy"] = "rotation"
                 elif sell_pct <= 0.25:
