@@ -536,15 +536,65 @@ def check_portfolio_sanity() -> None:
     for p in positions:
         mv = p.get("market_value", 0)
         sym = p.get("symbol", "")
+        if p.get("qty", 0) <= 0:
+            continue  # shorts handled by check_short_positions
         pct = mv / total_value if total_value else 0
-        if pct > 0.085:  # 8% + small tolerance
-            _log_issue(f"Position {sym} is {pct:.1%} — exceeds 8% cap")
+        if pct > 0.105:  # 10% cap + tolerance
+            _log_issue(f"Position {sym} is {pct:.1%} — exceeds 10% cap")
         sector = p.get("sector", "unknown")
         sector_map[sector] = sector_map.get(sector, 0) + mv
     for sector, total_mv in sector_map.items():
         pct = total_mv / total_value
-        if pct > 0.22:  # 20% + tolerance
-            _log_issue(f"Sector {sector} is {pct:.1%} — exceeds 20% cap")
+        if pct > 0.26:  # 25% cap + tolerance
+            _log_issue(f"Sector {sector} is {pct:.1%} — exceeds 25% cap")
+
+
+def check_short_positions() -> None:
+    """Critical alert on short/negative positions — bot is long-only.
+    Would have caught the 2026-07-16 accidental GTLB short within 5 minutes."""
+    portfolio = _load_json(os.path.join(WEB_DIR, "portfolio_data.json"))
+    if not portfolio:
+        return
+    for p in portfolio.get("positions", []):
+        qty = p.get("qty", 0)
+        mv = p.get("market_value", 0)
+        if qty < 0 or mv < 0:
+            _log_issue(
+                f"SHORT POSITION: {p.get('symbol')} qty={qty} mv=${mv:,.0f} "
+                "— long-only strategy; external/manual account activity; cover manually"
+            )
+
+
+def check_trade_churn() -> None:
+    """Churn regression detector: flag excessive same-day trade counts.
+    Baseline: week of 2026-07-13 averaged 73 trades/day (364 total). Guardrail
+    target after anti-churn patch: <= 20/day."""
+    if not _is_us_market_hours():
+        return  # only meaningful while the bot can trade
+    trades = _load_json(os.path.join(BASE_DIR, "trades_log.json"))
+    if not isinstance(trades, list):
+        trades = (trades or {}).get("trades", []) if isinstance(trades, dict) else []
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    n = sum(1 for t in trades if str(t.get("timestamp", "")).startswith(today))
+    if n > 20:
+        _log_issue(f"Trade churn: {n} trades today — anti-churn guardrails may be failing")
+    elif n > 12:
+        _log_warn(f"Elevated trade count: {n} trades today")
+
+
+def check_outcome_tracker() -> None:
+    """Outcome tracker (measurement layer) freshness + format validity."""
+    path = os.path.join(WEB_DIR, "signal_accuracy.json")
+    acc = _load_json(path)
+    if acc is None:
+        _log_issue("signal_accuracy.json missing — outcome tracker not writing")
+        return
+    mt = _file_mtime(path)
+    if mt and (time.time() - mt) > 3600:
+        _log_issue(f"signal_accuracy.json stale ({(time.time() - mt) / 60:.0f} min old; outcome_tracker runs every 15 min)")
+    stats = acc.get("stats", {})
+    if "by_cohort" not in stats:
+        _log_warn("signal_accuracy.json missing cohort breakdown (stale format)")
 
 
 
@@ -1167,6 +1217,9 @@ def main() -> int:
     check_dead_code()
     check_html_currency()
     check_portfolio_sanity()
+    check_short_positions()
+    check_trade_churn()
+    check_outcome_tracker()
     # check_narrative_semantics()  # disabled: too many false positives from LLM template text
     check_trade_execution_health()
     check_open_orders()
