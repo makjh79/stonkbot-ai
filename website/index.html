@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20260718-v2">
-    <script>(function(){var v='20260718-v2';var k='stonkbot_v198';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20260718-v3">
+    <script>(function(){var v='20260718-v3';var k='stonkbot_v198';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3773,11 +3773,6 @@
                 <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
 
-            <!-- Guardrails status pill -->
-            <div id="guardrails-pill" style="display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.625rem; padding: 0.35rem 0.65rem; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.18); border-radius: 999px; font-size: 0.65rem; color: #22c55e; font-weight: 600; letter-spacing: 0.2px;">
-                <span style="font-size: 0.75rem;">🛡️</span>
-                <span id="guardrails-text">Guardrails active</span>
-            </div>
         </div>
 
         </div>
@@ -8103,7 +8098,7 @@ function updateDashboard(data, marketStatus) {
         window.addEventListener('DOMContentLoaded', function() {
             animateRace();
             updateRaceValues();
-            renderGuardrailsPill();
+
         });
 
         // ============================================
@@ -9257,26 +9252,10 @@ function updateDashboard(data, marketStatus) {
         // Track last data refresh time for freshness check
         window.lastHoldingsDataRefresh = Date.now();
 
-        // Guardrails config (stable, matches today's bot settings)
+        // Guardrails config (used for cooldown display in popups)
         const GUARDRAILS_CONFIG = {
-            stop_cooldown_hours: 20,
-            max_entries_per_day: 1,
-            trim_hysteresis: true,
-            short_quarantine: true
+            stop_cooldown_hours: 20
         };
-
-        function renderGuardrailsPill() {
-            const pill = document.getElementById('guardrails-pill');
-            const text = document.getElementById('guardrails-text');
-            if (!pill || !text) return;
-            const parts = [
-                `stop_cooldown=${GUARDRAILS_CONFIG.stop_cooldown_hours}h`,
-                `max_${GUARDRAILS_CONFIG.max_entries_per_day}_entry/day`,
-                GUARDRAILS_CONFIG.trim_hysteresis ? 'trim_hysteresis' : null,
-                GUARDRAILS_CONFIG.short_quarantine ? 'short_quarantine' : null
-            ].filter(Boolean);
-            text.textContent = parts.join(' · ');
-        }
 
         // Format relative time (e.g., "6h ago", "20m remaining")
         function formatDurationMs(ms) {
@@ -9323,7 +9302,13 @@ function updateDashboard(data, marketStatus) {
                 }
 
                 if (messages.length > 0) {
-                    banner.innerHTML = '<span style="font-size: 0.9rem;">⚠</span> ' + messages.join(' · ');
+                    const msgKey = messages.join('|');
+                    if (localStorage.getItem('anomaly-dismissed') === msgKey) {
+                        banner.className = 'anomaly-banner';
+                        return;
+                    }
+                    banner.innerHTML = '<span style="font-size: 0.9rem;">⚠</span> ' + messages.join(' · ') +
+                        ' <span onclick="dismissAnomalyBanner(\'' + encodeURIComponent(msgKey) + '\')" style="cursor:pointer; margin-left:0.5rem; opacity:0.6; font-size:0.8rem;" title="Dismiss">✕</span>';
                     banner.className = 'anomaly-banner show' + (degraded ? ' degraded' : '');
                 } else {
                     banner.innerHTML = '';
@@ -9332,6 +9317,11 @@ function updateDashboard(data, marketStatus) {
             } catch (e) {
                 console.error('Anomaly banner update failed:', e);
             }
+        }
+        function dismissAnomalyBanner(encodedKey) {
+            try { localStorage.setItem('anomaly-dismissed', decodeURIComponent(encodedKey)); } catch(e) {}
+            const banner = document.getElementById('anomaly-banner');
+            if (banner) { banner.className = 'anomaly-banner'; }
         }
         updateAnomalyBanner();
 
