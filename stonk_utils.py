@@ -35,6 +35,8 @@ CRITICAL_FILES = {
     "/var/www/hedge-fund-website/watchlist_narratives.json": {"owner": "stonkai", "allowed_writers": ["generate_narratives_llm_batched.py", "generate_popup_content_narrative_v6_server.py"], "mode": 0o644},
     "/opt/stonk-ai/signal_outcomes.json": {"owner": "stonkai", "allowed_writers": ["outcome_tracker.py"], "mode": 0o644},
     "/var/www/hedge-fund-website/signal_accuracy.json": {"owner": "stonkai", "allowed_writers": ["outcome_tracker.py"], "mode": 0o644},
+    "/opt/stonk-ai/pnl_attribution.json": {"owner": "stonkai", "allowed_writers": ["outcome_tracker.py", "pnl_attribution.py"], "mode": 0o644},
+    "/var/www/hedge-fund-website/pnl_attribution.json": {"owner": "stonkai", "allowed_writers": ["outcome_tracker.py", "pnl_attribution.py"], "mode": 0o644},
 }
 
 

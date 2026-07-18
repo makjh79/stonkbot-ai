@@ -36,6 +36,12 @@ try:
 except Exception:  # fallback for local testing outside the repo
     atomic_write_json = None
 
+try:
+    import pnl_attribution
+except Exception as e:
+    pnl_attribution = None
+    logging.warning(f"Could not import pnl_attribution: {e}")
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -369,10 +375,27 @@ def main() -> int:
     save_state(st)
     export_website(st, stats, prices)
 
+    # P&L attribution by decision type (pure reporting)
+    pnl_ok = False
+    if pnl_attribution is not None:
+        try:
+            pnl_payload = pnl_attribution.compute_attribution(
+                pnl_attribution.load_trades()
+            )
+            pnl_attribution.export(pnl_payload)
+            pnl_ok = True
+            logger.info(
+                f"P&L attribution: total=${pnl_payload['summary']['realized_pnl_total']:,.2f} "
+                f"sell_trades={pnl_payload['summary']['sell_trades']}"
+            )
+        except Exception as e:
+            logger.warning(f"P&L attribution failed: {e}")
+
     logger.info(
         f"Outcome tracker: +{n_sig} signal, +{n_trd} trade, {n_upd} updated | "
         f"total={stats['total_signals']} open={stats['pending_signals']} "
-        f"10d win_rate={stats['win_rate']}% avg={stats['avg_return']}%"
+        f"10d win_rate={stats['win_rate']}% avg={stats['avg_return']}% "
+        f"pnl_attr={'ok' if pnl_ok else 'skip'}"
     )
     return 0
 

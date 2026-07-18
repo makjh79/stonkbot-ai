@@ -25,6 +25,8 @@ critical file has exactly one writer. Readers are allowed from anywhere.
 
 | `/opt/stonk-ai/signal_outcomes.json` | Outcome Tracker | `outcome_tracker.py` | Model/trade outcome measurement state |
 | `/var/www/hedge-fund-website/signal_accuracy.json` | Outcome Tracker | `outcome_tracker.py` | Website export of outcome stats |
+| `/opt/stonk-ai/pnl_attribution.json` | Outcome Tracker | `outcome_tracker.py` | Realized P&L by decision type |
+| `/var/www/hedge-fund-website/pnl_attribution.json` | Outcome Tracker | `outcome_tracker.py` | Website mirror of P&L attribution |
 
 ## Shared Write Helper
 
