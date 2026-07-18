@@ -486,7 +486,9 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         total_score = s.get("total_score", 0)
         is_scored = total_score > 0 or readiness > 0
         tier = assign_tier(s.get("tier", "MONITOR"), s.get("entry_eligible", False)) if is_scored else "TRACKING"
-        price = s.get("price", 0)
+        # Use snapshot price (last trade, includes after-hours) over signal price (daily close)
+        _snap = snap_data.get(symbol, {})
+        price = _snap.get("price") or s.get("price", 0)
         # Fall back to prev_close when no live price (market closed)
         if not price or price == 0:
             price = s.get("prev_close", 0) or 0
