@@ -673,6 +673,18 @@ COMPANY_NAMES = {
     "PYPL": "PayPal Holdings", "FIS": "Fidelity National Info",
 }
 
+# Merge any on-disk company_names.json (built from Alpaca assets) so the
+# hardcoded dict above becomes a fallback for bootstrapped/empty systems.
+try:
+    _cn_path = Path("/opt/stonk-ai/company_names.json")
+    if _cn_path.exists():
+        with open(_cn_path) as _cn_f:
+            _cn_disk = json.load(_cn_f)
+        if isinstance(_cn_disk, dict):
+            COMPANY_NAMES = {**COMPANY_NAMES, **_cn_disk}
+except Exception:
+    pass
+
 # Minimum liquidity threshold: average daily volume > 50k shares on SIP consolidated feed.
 # Real volume will be much higher; this just filters out dead names on the free tier.
 MIN_AVG_VOLUME = 50_000
