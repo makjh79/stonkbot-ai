@@ -49,6 +49,9 @@ jobs:
           "cd /opt/stonk-ai && \
            git pull --autostash origin master && \
            \
+           echo '--- restore stonkai ownership after root git pull ---' && \
+           chown -R stonkai:stonkai /opt/stonk-ai && \
+           \
            echo '--- pre-deploy feature checks ---' && \
            grep -q 'TAB PANEL: Orders' website/index.html || { echo 'FAIL: Orders tab missing'; exit 1; } && \
            grep -q 'Watchlist Tiers' website/index.html || { echo 'FAIL: About tab Watchlist Tiers missing'; exit 1; } && \
