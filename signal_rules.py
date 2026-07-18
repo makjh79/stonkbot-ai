@@ -186,3 +186,38 @@ def expected_display_tier_for_signal(signal: Dict[str, Any]) -> str:
     """Given a signal dict, return the expected frontend display tier."""
     backend_tier = signal.get("tier") or compute_backend_tier(signal.get("readiness_score", 0))
     return assign_tier(backend_tier, signal.get("entry_eligible", False))
+
+
+# -----------------------------------------------------------------------------
+# Canonical sector taxonomy (2026-07-18)
+# -----------------------------------------------------------------------------
+# Split the overloaded "Consumer/Platform" bucket (was ~34% of the book, which
+# made sector trims fire constantly) into coherent groups. Also deduplicated:
+# every symbol appears in exactly one bucket (previously UBER/ABNB/EXPE/SPOT/
+# ROKU/PINS/SHOP were in both Technology and Consumer/Platform).
+_SECTOR_BUCKETS: Dict[str, Iterable[str]] = {
+    "Technology": ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "CRM", "ORCL", "ADBE", "INTU", "IBM", "INTC", "SNOW", "MDB", "GTLB", "CFLT", "ESTC", "PSTG", "DOCN", "VEEV", "TEAM", "NOW", "NET", "DDOG", "OKTA", "PATH", "PLTR"],
+    "Semiconductors": ["AMD", "MU", "LRCX", "AMAT", "KLAC", "SNPS", "CDNS", "MRVL", "NXPI", "QCOM", "SWKS", "TER", "ON", "AVGO", "TXN"],
+    "Cybersecurity": ["CRWD", "PANW", "ZS", "FTNT", "CYBR", "S"],
+    "Fintech": ["HOOD", "COIN", "SQ", "UPST", "AFRM", "SOFI", "PAYO", "LMND", "RELY", "PYPL", "FIS", "V", "GS", "MS", "BLK", "SCHW"],
+    "Travel/Mobility": ["UBER", "ABNB", "EXPE"],
+    "E-Commerce": ["SHOP", "ETSY", "CHWY"],
+    "Media/Entertainment": ["ROKU", "SPOT", "PINS", "SNAP", "TTD", "APP", "DKNG", "NFLX", "DUOL"],
+    "Consumer Brands": ["ELF", "LULU", "NKE", "COST", "WMT", "HD"],
+    "EV/Mobility": ["TSLA", "RIVN", "LCID", "NIO", "XPEV"],
+    "Healthcare": ["UNH", "LLY", "JNJ", "PFE", "ABBV", "MRK", "TMO", "VRTX", "BMY", "REGN", "GILD", "ISRG", "ZBH", "ILMN", "SGEN"],
+    "Energy": ["XOM", "CVX", "COP", "SLB", "EOG", "PSX", "MPC", "OXY"],
+    "Industrials": ["GE", "CAT", "UNP", "HON", "UPS", "RTX", "LMT", "DE"],
+    "Financials": ["JPM", "BAC", "WFC"],
+    "Communications/Media": ["DIS", "CMCSA", "TMUS", "CHTR", "WBD", "PARA"],
+}
+
+SECTOR_MAP: Dict[str, str] = {}
+for _sector_name, _symbols in _SECTOR_BUCKETS.items():
+    for _sym in _symbols:
+        SECTOR_MAP[_sym] = _sector_name
+
+
+def sector_for(symbol: str) -> str:
+    """Canonical sector lookup. All sector resolution must go through here."""
+    return SECTOR_MAP.get(symbol, "Other")

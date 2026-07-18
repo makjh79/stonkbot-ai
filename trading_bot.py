@@ -20,6 +20,7 @@ v2.5 changes:
 
 import json
 import logging
+import math
 import os
 import sys
 import time
@@ -939,6 +940,8 @@ class STONKAIBot:
         self._failed_buy_symbols: set = set()  # symbols that failed to buy (e.g. not tradable)
         self._positions: Dict = {}  # synced from portfolio_data each cycle for exit logic
         self._short_alerts_sent: Dict[str, str] = {}  # symbol -> date alerted (1/day)
+        self._persistent_eligible: set = set()  # symbols eligible on BOTH last and current scan
+        self._scan_state_file = Path(__file__).parent / "entry_scan_state.json"
         self.circuit_breaker = CircuitBreaker()
         logger.info("Circuit breaker initialized")
 
@@ -1024,7 +1027,28 @@ class STONKAIBot:
         # Machine-gun guard: max N NEW entries per symbol per day (avg-in has its own cooldown)
         if not is_avg_in and self.risk_engine.entries_today_count(symbol) >= self.risk_engine.config.max_entries_per_symbol_per_day:
             return f"already entered today (max {self.risk_engine.config.max_entries_per_symbol_per_day} new entry/day)"
+        # Persistence gate: must have been entry-eligible on the PREVIOUS scan too
+        if not is_avg_in and symbol not in self._persistent_eligible:
+            return "not entry-eligible on previous scan (persistence gate)"
         return None
+
+    def _load_scan_state(self) -> set:
+        """Symbols that were entry-eligible STRONG_NOW on the previous scan."""
+        try:
+            if self._scan_state_file.exists():
+                data = json.loads(self._scan_state_file.read_text())
+                ts = float(data.get("ts", 0))
+                if time.time() - ts <= 1800:  # must be a recent scan, not stale state
+                    return set(data.get("eligible", []))
+        except Exception as e:
+            logger.debug(f"scan state load failed: {e}")
+        return set()
+
+    def _save_scan_state(self, eligible: set):
+        try:
+            self._scan_state_file.write_text(json.dumps({"eligible": sorted(eligible), "ts": time.time()}, indent=2))
+        except Exception as e:
+            logger.debug(f"scan state save failed: {e}")
 
 
     def _load_watchlist_symbols(self) -> set:
@@ -1093,24 +1117,11 @@ class STONKAIBot:
     # ------------------------------------------------------------------
     @staticmethod
     def _symbol_sector(symbol: str) -> str:
-        """Return sector mapping (synced with signal_engine.py / paper_rebalancer.py)."""
-        sectors = {
-            "Technology": ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "NFLX", "CRM", "ORCL", "ADBE", "INTU", "IBM", "INTC", "SNOW", "MDB", "GTLB", "CFLT", "ESTC", "PSTG", "DOCN", "VEEV", "TEAM", "NOW", "NET", "DDOG", "OKTA", "PATH", "PLTR", "UBER", "ABNB", "EXPE", "SPOT", "ROKU", "PINS", "SNAP", "TTD", "SHOP"],
-            "Semiconductors": ["AMD", "MU", "LRCX", "AMAT", "KLAC", "SNPS", "CDNS", "MRVL", "NXPI", "QCOM", "SWKS", "TER", "ON", "AVGO", "TXN"],
-            "Cybersecurity": ["CRWD", "PANW", "ZS", "FTNT", "CYBR", "S"],
-            "Fintech": ["HOOD", "COIN", "SQ", "UPST", "AFRM", "SOFI", "PAYO", "LMND", "RELY", "PYPL", "FIS", "V", "GS", "MS", "BLK", "SCHW"],
-            "Consumer/Platform": ["UBER", "DKNG", "SHOP", "TTD", "ROKU", "PINS", "SNAP", "ABNB", "EXPE", "SPOT", "ELF", "APP", "DUOL", "CHWY", "ETSY", "LULU", "NKE", "COST", "WMT", "HD"],
-            "EV/Mobility": ["TSLA", "RIVN", "LCID", "NIO", "XPEV"],
-            "Healthcare": ["UNH", "LLY", "JNJ", "PFE", "ABBV", "MRK", "TMO", "VRTX", "BMY", "REGN", "GILD", "ISRG", "ZBH", "ILMN", "SGEN"],
-            "Energy": ["XOM", "CVX", "COP", "SLB", "EOG", "PSX", "MPC", "OXY"],
-            "Industrials": ["GE", "CAT", "UNP", "HON", "UPS", "RTX", "LMT", "DE"],
-            "Financials": ["JPM", "BAC", "WFC", "GS", "MS", "BLK", "SCHW", "V"],
-            "Communications/Media": ["DIS", "CMCSA", "TMUS", "CHTR", "WBD", "PARA"],
-        }
-        for sector, symbols in sectors.items():
-            if symbol in symbols:
-                return sector
-        return "Other"
+        """Sector lookup — delegates to the canonical taxonomy in signal_rules
+        (2026-07-18). Local map removed (duplicate of signal_engine's, with the
+        same two-bucket membership bugs)."""
+        from signal_rules import sector_for
+        return sector_for(symbol)
 
     def _sector_exposures(self, portfolio_data: dict) -> dict:
         exposures = {}
@@ -1313,11 +1324,71 @@ class STONKAIBot:
     def _tier_max_position_pct(tier: str, base_max_pct: float) -> float:
         """Return the max position % cap for a given signal tier.
 
-        STRONG_NOW: 12% — conviction gets room to run. NOW: 8% hard wall.
+        Tier-scaled caps (2026-07-18): conviction gets room, weak tiers don't
+        get to be the biggest position in the book (fixes PAYO at 10% while
+        tier WATCH and not entry-eligible).
+          STRONG_NOW: 12% | NOW: 8% | WATCH: 5% | MONITOR: 3%
         """
         if tier == "STRONG_NOW":
             return 0.12
-        return base_max_pct  # 8% for NOW, WATCH, MONITOR
+        if tier == "NOW":
+            return 0.08
+        if tier == "WATCH":
+            return 0.05
+        return 0.03  # MONITOR and anything unknown
+
+    def _check_tier_cap_trims(self, portfolio_data: Dict) -> List[Dict]:
+        """Trim positions that exceed their tier-scaled cap (2026-07-18).
+
+        Uses the same anti-churn machinery as concentration trims: 0.5pp band
+        above cap before triggering, trim to 1pp below cap, $250 min notional,
+        4h per-symbol cooldown, max 2 trims per cycle (no fire sales).
+        Positions with no fresh signal are left alone (never trim blind).
+        """
+        trades: List[Dict] = []
+        pv = portfolio_data.get("account", {}).get("portfolio_value", 0)
+        if pv <= 0:
+            return trades
+        signal_map = {s.get("symbol"): s for s in self._signals}
+        cfg = self.risk_engine.config
+        band = cfg.concentration_trim_band
+        target_buffer = cfg.concentration_trim_target_buffer
+        for pos in portfolio_data.get("positions", []):
+            if len(trades) >= 2:
+                break
+            sym = pos.get("symbol")
+            qty = pos.get("qty", 0)
+            mv = pos.get("market_value", 0)
+            if qty <= 0 or mv <= 0:
+                continue  # shorts excluded (quarantined)
+            sig = signal_map.get(sym)
+            if not sig:
+                continue  # no fresh signal — don't trim blind
+            tier = sig.get("tier", "MONITOR")
+            cap = self._tier_max_position_pct(tier, cfg.max_single_position_pct)
+            pos_pct = mv / pv
+            trigger = cap + band
+            if pos_pct <= trigger:
+                continue
+            if self.risk_engine._trim_on_cooldown(sym):
+                logger.debug(f"Trim cooldown active for {sym}; skipping tier-cap trim")
+                continue
+            price = mv / qty
+            if price <= 0:
+                continue
+            target_mv = pv * (cap - target_buffer)
+            trim_qty = max(1, int((mv - target_mv) / price))
+            if trim_qty * price < cfg.min_trim_notional and trim_qty < qty:
+                trim_qty = min(qty, math.ceil(cfg.min_trim_notional / price))
+            trades.append({
+                "symbol": sym,
+                "qty": trim_qty,
+                "action": "SELL",
+                "reason": f"Tier cap trim: {tier} position {pos_pct:.1%} > cap {cap:.1%}, target {cap - target_buffer:.1%}",
+            })
+            logger.info(f"TIER CAP TRIM: {sym} {trim_qty} shares ({tier} {pos_pct:.1%} > {cap:.1%})")
+            self.risk_engine._record_trim(sym)
+        return trades
 
     # ------------------------------------------------------------------
     # Main cycle
@@ -1477,6 +1548,16 @@ class STONKAIBot:
 
         # Re-fetch after sells
         if exit_trades:
+            portfolio_data = self.data_store.fetch()
+            if not portfolio_data:
+                return
+
+        # 1a-tier. Tier-scaled cap trims: WATCH 5% / NOW 8% / STRONG_NOW 12%.
+        # Weak tiers don't get to be the biggest position in the book.
+        tier_trades = self._check_tier_cap_trims(portfolio_data)
+        for trade in tier_trades:
+            self._execute_sell(trade, portfolio_data)
+        if tier_trades:
             portfolio_data = self.data_store.fetch()
             if not portfolio_data:
                 return
@@ -1724,6 +1805,32 @@ class STONKAIBot:
 
         current_positions = {p["symbol"]: p for p in portfolio_data.get("positions", [])}
         signal_map = {s["symbol"]: s for s in top_signals}
+
+        # Signal persistence gate (2026-07-18): NEW entries require the symbol to
+        # have been entry-eligible STRONG_NOW on TWO consecutive scans. Kills
+        # single-scan flukes; costs at most one 5-min scan of delay.
+        _currently_eligible = {
+            s["symbol"] for s in top_signals
+            if s.get("tier") == "STRONG_NOW" and self._is_entry_eligible_for_mode(s)
+        }
+        self._persistent_eligible = self._load_scan_state() & _currently_eligible
+        self._save_scan_state(_currently_eligible)
+        _held = _currently_eligible - self._persistent_eligible
+        if _held:
+            logger.info(f"Persistence gate: {sorted(_held)} newly eligible — entries held one scan")
+
+        # Signal persistence gate (2026-07-18): NEW entries require the symbol to
+        # have been entry-eligible STRONG_NOW on TWO consecutive scans. Kills
+        # single-scan flukes; costs at most one 5-min scan of delay.
+        _currently_eligible = {
+            s["symbol"] for s in top_signals
+            if s.get("tier") == "STRONG_NOW" and self._is_entry_eligible_for_mode(s)
+        }
+        self._persistent_eligible = self._load_scan_state() & _currently_eligible
+        self._save_scan_state(_currently_eligible)
+        _held = _currently_eligible - self._persistent_eligible
+        if _held:
+            logger.info(f"Persistence gate: {sorted(_held)} newly eligible — entries held one scan")
 
         # 3a. Build ranked entry queue by readiness_score (highest first)
         # Regime-adaptive strategy switching:
@@ -2417,10 +2524,11 @@ class STONKAIBot:
         logger.info(f"Dry run: {self._dry_run}")
         logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
         logger.info(f"Entry gate: readiness >= 77 AND >= 5 confirmations AND above_ema")
-        logger.info(f"Position caps: 12% STRONG_NOW / 8% other tiers; 25% sector cap")
+        logger.info(f"Position caps: 12% STRONG_NOW / 8% NOW / 5% WATCH / 3% MONITOR; 25% sector cap")
         logger.info(f"Exits: -3% hard cut + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON)")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "
                     f"peak reset on exit | {self.risk_engine.config.max_entries_per_symbol_per_day} entry/symbol/day | "
+                    f"2-scan persistence | "
                     f"trim band +{self.risk_engine.config.concentration_trim_band:.1%}, min trim ${self.risk_engine.config.min_trim_notional:.0f}, "
                     f"{self.risk_engine.config.trim_cooldown_hours:.0f}h trim cooldown")
         logger.info(f"Drawdown halt: {self.risk_engine.config.new_entry_max_drawdown_pct:.0%}")
