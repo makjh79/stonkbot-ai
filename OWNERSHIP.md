@@ -16,7 +16,7 @@ critical file has exactly one writer. Readers are allowed from anywhere.
 | `/var/www/hedge-fund-website/ai_watchlist_live.json` | Dynamic Watchlist Manager | `dynamic_watchlist_manager.py` | Sole writer; mirrored from opt |
 | `/opt/stonk-ai/portfolio_data.json` | Trading Bot | `trading_bot.py` | Canonical bot portfolio state |
 | `/var/www/hedge-fund-website/portfolio_data.json` | Trading Bot | `trading_bot.py` | Mirrored copy |
-| `/opt/stonk-ai/portfolio_history.json` | History Reconstructor | `reconstruct_portfolio_history.py` | Daily reconstruct |
+| `/opt/stonk-ai/portfolio_history.json` | History Reconstructor | `reconstruct_portfolio_history.py` (+ daily appends by `health_check.py`) | Daily reconstruct; health_check appends the 17:59 UTC snapshot |
 | `/var/www/hedge-fund-website/portfolio_history.json` | History Reconstructor | `reconstruct_portfolio_history.py` | Mirrored copy |
 | `/var/www/hedge-fund-website/popup_content.json` | Popup Generator | `generate_popup_content_narrative_v6_server.py` | v6 narrative merge |
 | `/var/www/hedge-fund-website/watchlist_narratives.json` | LLM Narrative Generator | `generate_narratives_llm_batched.py` | Batched LLM narratives |
