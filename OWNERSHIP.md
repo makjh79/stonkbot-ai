@@ -23,6 +23,9 @@ critical file has exactly one writer. Readers are allowed from anywhere.
 | `/opt/stonk-ai/signal_rules.py` | Shared rules module | n/a (import-only) | Single source of truth for tiers/entry; edit intentionally |
 | `/opt/stonk-ai/dead_factor_lint.py` | Maintenance lint | cron or manual | Detects zombie references to removed data sources (PEAD and the 3 deprecated external APIs) |
 
+| `/opt/stonk-ai/signal_outcomes.json` | Outcome Tracker | `outcome_tracker.py` | Model/trade outcome measurement state |
+| `/var/www/hedge-fund-website/signal_accuracy.json` | Outcome Tracker | `outcome_tracker.py` | Website export of outcome stats |
+
 ## Shared Write Helper
 
 All writers must use `stonk_utils.atomic_write_json()` which:
