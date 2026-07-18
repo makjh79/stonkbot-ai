@@ -125,6 +125,7 @@ def compute_attribution(trades: List[Dict]) -> Dict:
 
     positions: Dict[str, Dict] = {}  # sym -> {qty, avg_cost}
     daily: Dict[str, Dict[str, float]] = defaultdict(lambda: defaultdict(float))
+    daily_trades: Dict[str, int] = defaultdict(int)
     tag_totals: Dict[str, float] = defaultdict(float)
     tag_trades: Dict[str, int] = defaultdict(int)
     sell_count = 0
@@ -155,6 +156,7 @@ def compute_attribution(trades: List[Dict]) -> Dict:
             daily[day][tag] += pnl
             tag_totals[tag] += pnl
             tag_trades[tag] += 1
+            daily_trades[day] += 1
             sell_count += 1
             realized_total += pnl
 
@@ -166,7 +168,7 @@ def compute_attribution(trades: List[Dict]) -> Dict:
     # Build daily series sorted by date
     series = []
     for day in sorted(daily.keys()):
-        row = {"date": day, "total": round(sum(daily[day].values()), 2)}
+        row = {"date": day, "total": round(sum(daily[day].values()), 2), "trades": daily_trades.get(day, 0)}
         for tag in sorted(SELL_STRATEGIES):
             row[tag] = round(daily[day].get(tag, 0.0), 2)
         series.append(row)
