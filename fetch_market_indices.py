@@ -20,11 +20,11 @@ logger = logging.getLogger(__name__)
 # Alpaca config
 ALPACA_CONFIG_FILE = Path(__file__).parent / "alpaca_config.json"
 
-# June 4, 2026 baseline prices (experiment start date)
-JUNE_4_PRICES = {
-    'SPY': 757.09,       # S&P 500 ETF
-    'DIA': 515.29,       # SPDR Dow Jones ETF (Alpaca, June 4 close)
-    'QQQ': 739.8         # Invesco QQQ NASDAQ ETF (Alpaca, June 4 close)
+# July 7, 2026 baseline prices (bot reset date — race is measured from the reset)
+RESET_PRICES = {
+    'SPY': 747.71,       # S&P 500 ETF (Alpaca, Jul 7 close)
+    'DIA': 528.45,       # SPDR Dow Jones ETF (Alpaca, Jul 7 close)
+    'QQQ': 709.43        # Invesco QQQ NASDAQ ETF (Alpaca, Jul 7 close)
 }
 
 EXPERIMENT_START_VALUE = 100000  # $100K starting value
@@ -90,7 +90,7 @@ def fetch_market_data():
     spy_price = fetch_spy_from_alpaca()
     
     if spy_price:
-        spy_start = JUNE_4_PRICES['SPY']
+        spy_start = RESET_PRICES['SPY']
         spy_return = ((spy_price - spy_start) / spy_start) * 100
         spy_value = EXPERIMENT_START_VALUE * (1 + spy_return / 100)
         
@@ -121,7 +121,7 @@ def fetch_market_data():
         except Exception as e:
             logger.warning(f"DIA bars fallback failed: {e}")
     if dia_price:
-        dia_start = JUNE_4_PRICES['DIA']
+        dia_start = RESET_PRICES['DIA']
         dia_return = ((dia_price - dia_start) / dia_start) * 100
         dia_value = EXPERIMENT_START_VALUE * (1 + dia_return / 100)
         
@@ -152,7 +152,7 @@ def fetch_market_data():
         except Exception as e:
             logger.warning(f"QQQ bars fallback failed: {e}")
     if qqq_price:
-        qqq_start = JUNE_4_PRICES['QQQ']
+        qqq_start = RESET_PRICES['QQQ']
         qqq_return = ((qqq_price - qqq_start) / qqq_start) * 100
         qqq_value = EXPERIMENT_START_VALUE * (1 + qqq_return / 100)
         
