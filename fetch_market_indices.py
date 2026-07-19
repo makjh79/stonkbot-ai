@@ -199,7 +199,7 @@ def main():
     """Main loop - fetch every 30 seconds"""
     logger.info("Market Indices Fetcher Starting")
     logger.info("SPY source: Alpaca")
-    logger.info(f"June 4 baselines: SPY=${JUNE_4_PRICES['SPY']}, DIA=${JUNE_4_PRICES['DIA']}, QQQ=${JUNE_4_PRICES['QQQ']}")
+    logger.info(f"Jul 7 reset baselines: SPY=${RESET_PRICES['SPY']}, DIA=${RESET_PRICES['DIA']}, QQQ=${RESET_PRICES['QQQ']}")
     
     while True:
         data = fetch_market_data()
