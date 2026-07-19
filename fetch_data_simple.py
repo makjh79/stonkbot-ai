@@ -268,8 +268,8 @@ def fetch_spy_benchmark(api=None):
         logger.warning(f"Could not fetch SPY benchmark: {e}")
         return None
 
-# June 4, 2026 SPY baseline price (experiment start)
-SPY_JUNE_4_PRICE = 757.09
+# July 7, 2026 SPY baseline price (bot reset date — matches RESET_PRICES in fetch_market_indices.py)
+SPY_RESET_PRICE = 747.71
 
 def update_history(data, api=None):
     """Append current data to portfolio history."""
@@ -295,8 +295,8 @@ def update_history(data, api=None):
             if spy_price:
                 benchmark_symbol = "SPY"
                 # Calculate benchmark value normalized to $100K starting value
-                # Using June 4, 2026 SPY price as baseline
-                benchmark_value = round((spy_price / SPY_JUNE_4_PRICE) * 100000.0, 2)
+                # Using July 7, 2026 SPY price as baseline (post-reset)
+                benchmark_value = round((spy_price / SPY_RESET_PRICE) * 100000.0, 2)
 
         # Create check entry
         check = {
