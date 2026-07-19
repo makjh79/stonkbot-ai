@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster-20260718-v4">
-    <script>(function(){var v='20260719-v2';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260719-v3';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3772,15 +3772,6 @@
                 <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500: </span>
                 <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
-            <div id="risk-stats-strip" style="display:none; margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer;" onclick="showRiskStatsInfo(event)">
-                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.35rem;">
-                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Sharpe</div><div id="rs-sharpe" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div></div>
-                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Max DD</div><div id="rs-maxdd" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #ef4444;">--</div></div>
-                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Beta</div><div id="rs-beta" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div></div>
-                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Win Rate</div><div id="rs-winrate" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div></div>
-                </div>
-                <div id="rs-window" style="font-size: 0.58rem; color: var(--text-muted); text-align: center; margin-top: 0.3rem;"></div>
-            </div>
 
         </div>
 
@@ -4104,20 +4095,71 @@
           <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
-          <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.5rem;margin:1rem 0 0.75rem;">
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span style="text-transform:none;">· since the Jul 7 reset</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Realized P&L</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Bot</div>
+              <div id="perf-bot-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">S&P 500</div>
+              <div id="perf-bench-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+            </div>
+          </div>
+          <div id="perf-verdict" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.4rem;text-align:center;"></div>
+          <div id="perf-window" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.2rem;text-align:center;"></div>
+
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">By the Numbers</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Win Rate <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Win Rate:</strong> How often closed trades made money.<br><br>A low win rate is not automatically bad — what matters is whether winners are bigger than losers. That is what Profit Factor measures.')">i</span></div>
+              <div id="perf-winrate" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Profit Factor <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Profit Factor:</strong> Total winnings divided by total losses.<br><br>Above 1.0 = winners outweigh losers.<br>Below 1.0 = losing more than winning.')">i</span></div>
+              <div id="perf-pf" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Worst Drop <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Worst Drop:</strong> The largest peak-to-trough decline since the reset (technically: max drawdown).<br><br>The worst pain an investor would have felt holding this portfolio.')">i</span></div>
+              <div id="perf-maxdd" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#ff4757;">--</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Realized P&L <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Realized P&L:</strong> Actual dollars won or lost on closed trades. Open positions do not count until they are sold.')">i</span></div>
               <div id="attr-total-pnl" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
             </div>
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Sell Trades</div>
-              <div id="attr-sell-trades" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Avg Winner</div>
+              <div id="perf-avgw" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#00d084;">--</div>
             </div>
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Decision Quality</div>
-              <div id="attr-quality" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Avg Loser</div>
+              <div id="perf-avgl" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#ff4757;">--</div>
             </div>
           </div>
+          <div id="perf-trademeta" style="font-size:0.65rem;color:var(--text-muted);margin-top:0.4rem;text-align:center;"></div>
+
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Risk Report Card</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Sharpe <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Sharpe Ratio:</strong> Return earned per unit of risk taken.<br><br>Above 1.0 is decent, above 2.0 is strong.<br><br>Needs 20+ trading days to mean anything — before that it is noise.')">i</span></div>
+              <div id="perf-sharpe" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">—</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Beta <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Beta:</strong> How much the portfolio amplifies the market.<br><br>1.0 = moves with the S&P 500.<br>1.4 = 40% jumpier than the market.')">i</span></div>
+              <div id="perf-beta" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">—</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Volatility <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Volatility:</strong> How wildly the portfolio value swings, annualized.<br><br>Lower = smoother ride. Needs 20+ trading days to be meaningful.')">i</span></div>
+              <div id="perf-vol" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">—</div>
+            </div>
+          </div>
+          <div id="perf-risknote" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.35rem;text-align:center;">Unlocks after 20 trading days — before that, they would be noise dressed as precision.</div>
+
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Which Signals Actually Work</div>
+          <div style="font-size:0.7rem;color:var(--text-secondary);line-height:1.5;margin-bottom:0.4rem;">Every entry is scored on 15 signal checks (momentum, volume, VWAP…). As trades close, we measure which checks actually predicted winners — and which are just decoration.</div>
+          <div id="fa-scores" style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin-bottom:0.5rem;"></div>
+          <div id="fa-factors" style="display:flex;flex-direction:column;gap:0.3rem;"></div>
+          <div id="fa-takeaway" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
 
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">P&L by Decision Type</div>
           <div id="attr-tags" style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.75rem;">
@@ -4133,102 +4175,76 @@
         </div>
       </div>
 
-      <!-- ───────── Section 5: What the Data Says ───────── -->
-      <div id="data-says" class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
-        <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
-          <div style="display:flex;align-items:center;gap:0.5rem;">
-            <span style="font-size:1.1rem;">🧪</span>
-            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">What the Data Says</span>
-          </div>
-          <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
-        </div>
-        <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
-          <div id="fa-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin:0.75rem 0 0.5rem;">
-            <div style="font-size:0.75rem;color:var(--text-muted);grid-column:1/-1;">Loading...</div>
-          </div>
-          <div id="fa-meta" style="font-size:0.65rem;color:var(--text-muted);margin-bottom:0.5rem;"></div>
-          <div id="fa-scores" style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin-bottom:0.5rem;"></div>
-          <div id="fa-factors" style="display:flex;flex-direction:column;gap:0.3rem;"></div>
-          <div id="fa-takeaway" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
-          <div id="fa-footer" style="font-size:0.6rem;color:var(--text-muted);text-align:right;margin-top:0.5rem;"></div>
-        </div>
-      </div>
-
     </div>
 </div>
 
-<!-- Risk stats + factor attribution JS -->
+<!-- Bot Performance: risk stats + factor attribution JS -->
 <script>
-async function loadRiskStats() {
+let _perfLoaded = false;
+async function loadPerformanceStats() {
+    if (_perfLoaded) return;
+    _perfLoaded = true;
+    const setT = function(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; };
     try {
         const res = await fetch('risk_stats.json?v=' + Date.now());
-        if (!res.ok) return;
-        const d = await res.json();
-        const w = d.window || {}, p = d.portfolio || {}, t = d.trades || {};
-        if (!w.sufficient) return;
-        const strip = document.getElementById('risk-stats-strip');
-        if (!strip) return;
-        document.getElementById('rs-sharpe').textContent = (p.sharpe != null) ? p.sharpe : '—';
-        document.getElementById('rs-maxdd').textContent = (p.max_drawdown_pct != null) ? p.max_drawdown_pct + '%' : '—';
-        document.getElementById('rs-beta').textContent = (p.beta != null) ? p.beta : '—';
-        document.getElementById('rs-winrate').textContent = (t.win_rate_pct != null) ? t.win_rate_pct + '%' : '—';
-        document.getElementById('rs-window').textContent = (w.reset_date ? 'Since ' + w.reset_date + ' reset' : 'Since ' + (w.start || 'inception')) + ' · ' + (w.calendar_days || 0) + ' days · tap for definitions';
-        strip.style.display = 'block';
-    } catch (e) { /* keep hidden */ }
-}
-document.addEventListener('DOMContentLoaded', loadRiskStats);
-
-function showRiskStatsInfo(event) {
-    showInfoTooltip(event,
-        '<strong>Risk-adjusted stats</strong> — daily close-to-close, benchmark: S&P 500, post-reset window only (bot restarted Jul 7, 2026; earlier history excluded).<br><br>' +
-        '<strong>Sharpe:</strong> Return per unit of risk. Above 1.0 is decent, above 2.0 is strong. Negative means losing money for the risk taken.<br><br>' +
-        '<strong>Max Drawdown:</strong> Worst peak-to-trough drop from the portfolio high. Pain, measured.<br><br>' +
-        '<strong>Beta:</strong> Sensitivity to the S&P 500. 1.0 = moves with the market; above 1.0 = amplifies it.<br><br>' +
-        '<strong>Win Rate:</strong> Share of closed trades that made money. Says nothing about size — see Profit Factor in What the Data Says.<br><br>' +
-        'Computed nightly. Sharpe/Beta/Volatility appear once 20+ post-reset trading days accrue — before that they are noise.');
-}
-
-let _faLoaded = false;
-async function loadFactorAttribution() {
-    if (_faLoaded) return;
+        if (res.ok) {
+            const d = await res.json();
+            const w = d.window || {}, p = d.portfolio || {}, t = d.trades || {};
+            const ret = function(v) { return (v >= 0 ? '+' : '') + v + '%'; };
+            if (p.total_return_pct != null) {
+                setT('perf-bot-ret', ret(p.total_return_pct));
+                const el = document.getElementById('perf-bot-ret');
+                if (el) el.style.color = p.total_return_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            }
+            if (p.benchmark_return_pct != null) {
+                setT('perf-bench-ret', ret(p.benchmark_return_pct));
+                const el = document.getElementById('perf-bench-ret');
+                if (el) el.style.color = p.benchmark_return_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            }
+            if (p.total_return_pct != null && p.benchmark_return_pct != null) {
+                const spread = p.total_return_pct - p.benchmark_return_pct;
+                setT('perf-verdict', spread >= 0
+                    ? 'Ahead of the S&P 500 by ' + spread.toFixed(1) + ' pts'
+                    : 'Trailing the S&P 500 by ' + Math.abs(spread).toFixed(1) + ' pts');
+            }
+            const wparts = [];
+            if (w.reset_date) wparts.push('Post-reset window · ' + (w.calendar_days || 0) + ' days');
+            if (w.trading_days) wparts.push(w.trading_days + ' trading days');
+            wparts.push('updates nightly');
+            setT('perf-window', wparts.join(' · '));
+            setT('perf-maxdd', p.max_drawdown_pct != null ? p.max_drawdown_pct + '%' : '—');
+            setT('perf-sharpe', p.sharpe != null ? p.sharpe : '—');
+            setT('perf-beta', p.beta != null ? p.beta : '—');
+            setT('perf-vol', p.volatility_annual_pct != null ? p.volatility_annual_pct + '%' : '—');
+            if (p.sharpe != null) { const rn = document.getElementById('perf-risknote'); if (rn) rn.style.display = 'none'; }
+            if (t.win_rate_pct != null) setT('perf-winrate', t.win_rate_pct + '%');
+        }
+    } catch (e) { /* leave placeholders */ }
     try {
-        const res = await fetch('factor_attribution.json?v=' + Date.now());
-        if (!res.ok) return;
-        const d = await res.json();
-        _faLoaded = true;
-        renderFactorAttribution(d);
-    } catch (e) { /* leave placeholder */ }
+        const res2 = await fetch('factor_attribution.json?v=' + Date.now());
+        if (res2.ok) renderFactorAttribution(await res2.json());
+    } catch (e) { /* leave placeholders */ }
 }
 
 function renderFactorAttribution(d) {
     const o = d.overall || {}, s = d.sample || {}, f = d.factors || {};
-    const cell = function(label, id) {
-        return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem;text-align:center;"><div style="font-size:0.58rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:0.2rem;">' + label + '</div><div id="' + id + '" style="font-size:0.9rem;font-weight:700;font-family:\'JetBrains Mono\',monospace;color:var(--text-primary);">--</div></div>';
-    };
-    const sumEl = document.getElementById('fa-summary');
-    if (sumEl) sumEl.innerHTML = cell('Win Rate','fa-wr') + cell('Profit Factor','fa-pf') + cell('Avg Winner','fa-aw') + cell('Avg Loser','fa-al');
-    const set = function(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; };
-    set('fa-wr', o.win_rate_pct != null ? o.win_rate_pct + '%' : '—');
-    set('fa-pf', o.profit_factor != null ? o.profit_factor : '—');
-    const aw = document.getElementById('fa-aw');
-    if (aw && o.avg_winner_pct != null) { aw.textContent = '+' + o.avg_winner_pct + '%'; aw.style.color = '#22c55e'; }
-    const al = document.getElementById('fa-al');
-    if (al && o.avg_loser_pct != null) { al.textContent = o.avg_loser_pct + '%'; al.style.color = '#ef4444'; }
+    const setT = function(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; };
+    if (o.win_rate_pct != null) setT('perf-winrate', o.win_rate_pct + '%');
+    setT('perf-pf', o.profit_factor != null ? o.profit_factor : '—');
+    if (o.avg_winner_pct != null) setT('perf-avgw', '+' + o.avg_winner_pct + '%');
+    if (o.avg_loser_pct != null) setT('perf-avgl', o.avg_loser_pct + '%');
 
-    const metaEl = document.getElementById('fa-meta');
-    if (metaEl) {
-        const parts = [];
-        if (s.closed_trades != null) parts.push(s.closed_trades + ' closed round trips');
-        if (o.avg_holding_days != null) parts.push('avg hold ' + o.avg_holding_days + ' days');
-        const scored = (s.with_snapshots || 0) + (s.with_rationale_only || 0);
-        if (scored) parts.push(scored + ' with entry scores');
-        metaEl.textContent = parts.join(' · ');
-    }
+    const parts = [];
+    if (s.closed_trades != null) parts.push(s.closed_trades + ' closed round trips');
+    if (o.avg_holding_days != null) parts.push('avg hold ' + o.avg_holding_days + ' days');
+    const scored = (s.with_snapshots || 0) + (s.with_rationale_only || 0);
+    if (scored) parts.push(scored + ' with entry scores');
+    setT('perf-trademeta', parts.join(' · '));
 
     const r = f.readiness_score, c = f.confirmation_count;
     const sc = [];
     if (r && r.n) {
-        let line = 'Readiness at entry vs outcome: <strong>r = ' + (r.correlation != null ? r.correlation.toFixed(2) : '—') + '</strong> (n=' + r.n + ')';
+        let line = 'Readiness score vs outcome: <strong>r = ' + (r.correlation != null ? r.correlation.toFixed(2) : '—') + '</strong> (n=' + r.n + ')';
         if (r.avg_pnl_prime_pct != null && r.avg_pnl_subprime_pct != null) {
             line += '<br><span style="color:var(--text-muted);">PRIME (≥' + (r.prime_threshold || 76) + ') entries avg ' + r.avg_pnl_prime_pct + '% vs sub-PRIME ' + r.avg_pnl_subprime_pct + '%</span>';
         }
@@ -4266,11 +4282,7 @@ function renderFactorAttribution(d) {
     }
     const fEl = document.getElementById('fa-factors');
     if (fEl) fEl.innerHTML = html;
-
-    const tkEl = document.getElementById('fa-takeaway');
-    if (tkEl && d.takeaway) tkEl.textContent = d.takeaway;
-    const ftEl = document.getElementById('fa-footer');
-    if (ftEl) ftEl.textContent = 'FIFO round trips from the live trade log · entry-time factor snapshots · updated daily · small samples, weak conclusions';
+    if (d.takeaway) setT('fa-takeaway', d.takeaway);
 }
 </script>
 
@@ -4282,8 +4294,7 @@ function toggleAboutSection(header) {
     if (body.style.display === 'none') {
         body.style.display = 'block';
         chevron.style.transform = 'rotate(180deg)';
-        if (header.closest('#bot-performance')) loadPnlAttribution();
-        if (header.closest('#data-says')) loadFactorAttribution();
+        if (header.closest('#bot-performance')) { loadPnlAttribution(); loadPerformanceStats(); }
     } else {
         body.style.display = 'none';
         chevron.style.transform = 'rotate(0deg)';
