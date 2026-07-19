@@ -37,6 +37,11 @@ CRITICAL_FILES = {
     "/var/www/hedge-fund-website/signal_accuracy.json": {"owner": "stonkai", "allowed_writers": ["outcome_tracker.py"], "mode": 0o644},
     "/opt/stonk-ai/pnl_attribution.json": {"owner": "stonkai", "allowed_writers": ["outcome_tracker.py", "pnl_attribution.py"], "mode": 0o644},
     "/var/www/hedge-fund-website/pnl_attribution.json": {"owner": "stonkai", "allowed_writers": ["outcome_tracker.py", "pnl_attribution.py"], "mode": 0o644},
+    "/opt/stonk-ai/risk_stats.json": {"owner": "stonkai", "allowed_writers": ["risk_stats.py"], "mode": 0o644},
+    "/var/www/hedge-fund-website/risk_stats.json": {"owner": "stonkai", "allowed_writers": ["risk_stats.py"], "mode": 0o644},
+    "/opt/stonk-ai/factor_attribution.json": {"owner": "stonkai", "allowed_writers": ["factor_attribution.py"], "mode": 0o644},
+    "/var/www/hedge-fund-website/factor_attribution.json": {"owner": "stonkai", "allowed_writers": ["factor_attribution.py"], "mode": 0o644},
+    "/opt/stonk-ai/entry_factor_snapshots.json": {"owner": "stonkai", "allowed_writers": ["entry_factor_snapshots.py"], "mode": 0o644},
 }
 
 

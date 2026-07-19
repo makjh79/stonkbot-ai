@@ -25,6 +25,11 @@ critical file has exactly one writer. Readers are allowed from anywhere.
 
 | `/opt/stonk-ai/signal_outcomes.json` | Outcome Tracker | `outcome_tracker.py` | Model/trade outcome measurement state |
 | `/var/www/hedge-fund-website/signal_accuracy.json` | Outcome Tracker | `outcome_tracker.py` | Website export of outcome stats |
+| `/var/www/hedge-fund-website/risk_stats.json` | Risk Stats | `risk_stats.py` | Sharpe/beta/drawdown/win-rate for Bot vs Market strip |
+| `/opt/stonk-ai/risk_stats.json` | Risk Stats | `risk_stats.py` | Mirrored copy |
+| `/var/www/hedge-fund-website/factor_attribution.json` | Factor Attribution | `factor_attribution.py` | Per-chip win-rate attribution for What the data says |
+| `/opt/stonk-ai/factor_attribution.json` | Factor Attribution | `factor_attribution.py` | Mirrored copy |
+| `/opt/stonk-ai/entry_factor_snapshots.json` | Entry Snapshots | `entry_factor_snapshots.py` | Append-only entry-time factor capture; no historical backfill by design |
 | `/opt/stonk-ai/company_names.json` | Signal Engine data file | `signal_engine.py` (reads), `fetch_company_names.py` (rebuilds) | Generated from Alpaca assets; merged at import to expand `COMPANY_NAMES` |
 | `/opt/stonk-ai/pnl_attribution.json` | Outcome Tracker | `outcome_tracker.py` | Realized P&L by decision type |
 | `/var/www/hedge-fund-website/pnl_attribution.json` | Outcome Tracker | `outcome_tracker.py` | Website mirror of P&L attribution |

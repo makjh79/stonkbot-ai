@@ -4,6 +4,8 @@ import json, urllib.request, ssl
 from datetime import datetime, timedelta
 from collections import defaultdict
 
+from stonk_utils import atomic_write_json
+
 CFG = json.load(open("/opt/stonk-ai/alpaca_config.json"))
 KEY = CFG["api_key"]
 SECRET = CFG["api_secret"]
