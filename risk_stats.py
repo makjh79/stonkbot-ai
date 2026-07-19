@@ -26,7 +26,9 @@ HISTORY = BASE / "portfolio_history.json"
 TRADES = BASE / "trades_log.json"
 
 RF_ANNUAL = 0.04
-MIN_CALENDAR_DAYS = 30  # frontend also gates on this
+RESET_DATE = "2026-07-07"  # bot v2.5 reset; earlier history is a different strategy incarnation
+MIN_TRADING_DAYS = 5       # enough for non-annualized stats (MaxDD, win rate)
+MIN_TRADING_DAYS_RATIOS = 20  # Sharpe/beta/alpha are junk below this
 
 
 def load_json(path, default=None):
@@ -94,6 +96,8 @@ def stdev(xs):
 def main():
     hist = load_json(HISTORY, {})
     checks = hist.get("checks", []) if isinstance(hist, dict) else []
+    # Post-reset window only: pre-reset history belongs to the old bot.
+    checks = [c for c in checks if (c.get("timestamp") or "")[:10] >= RESET_DATE]
     series = daily_series(checks)
 
     trades = load_json(TRADES, {}).get("trades", [])
@@ -117,11 +121,12 @@ def main():
         sp, sb = stdev(rp), stdev(rb)
 
         rf_daily = RF_ANNUAL / 252.0
-        sharpe = ((mp - rf_daily) / sp * math.sqrt(252)) if sp > 0 else None
+        ratios_ok = n >= MIN_TRADING_DAYS_RATIOS
+        sharpe = ((mp - rf_daily) / sp * math.sqrt(252)) if (sp > 0 and ratios_ok) else None
 
-        # Beta / alpha vs benchmark
+        # Beta / alpha vs benchmark (junk below MIN_TRADING_DAYS_RATIOS)
         beta = alpha_ann = None
-        if sp > 0 and sb > 0:
+        if ratios_ok and sp > 0 and sb > 0:
             cov = mean([(rp[i] - mp) * (rb[i] - mb) for i in range(n)]) * n / (n - 1)
             var_b = sb ** 2
             beta = cov / var_b if var_b > 0 else None
@@ -153,12 +158,13 @@ def main():
                 "end": dates[-1],
                 "calendar_days": (d1 - d0).days,
                 "trading_days": n,
-                "sufficient": (d1 - d0).days >= MIN_CALENDAR_DAYS,
+                "sufficient": n >= MIN_TRADING_DAYS,
+                "reset_date": RESET_DATE,
             },
             "portfolio": {
                 "total_return_pct": round((pvals[-1] / pvals[0] - 1) * 100, 2),
                 "benchmark_return_pct": round((bvals[-1] / bvals[0] - 1) * 100, 2),
-                "volatility_annual_pct": round(sp * math.sqrt(252) * 100, 1) if sp else None,
+                "volatility_annual_pct": round(sp * math.sqrt(252) * 100, 1) if (sp and ratios_ok) else None,
                 "sharpe": round(sharpe, 2) if sharpe is not None else None,
                 "beta": round(beta, 2) if beta is not None else None,
                 "alpha_annual_pct": round(alpha_ann * 100, 1) if alpha_ann is not None else None,

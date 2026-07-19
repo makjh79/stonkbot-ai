@@ -87,9 +87,10 @@ while current_day <= end_dt:
                 positions[sym] -= qty
                 cash += value
     # Compute portfolio value (forward-fill last known price across non-trading days)
+    # Short positions (qty < 0) must be valued as liabilities, not skipped.
     value = cash
     for sym, qty in positions.items():
-        if qty > 0:
+        if abs(qty) > 1e-9:
             last_price = None
             for d in sorted(prices[sym].keys(), reverse=True):
                 if d <= day:

@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster-20260718-v4">
-    <script>(function(){var v='20260719-v1';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260719-v2';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -4172,7 +4172,7 @@ async function loadRiskStats() {
         document.getElementById('rs-maxdd').textContent = (p.max_drawdown_pct != null) ? p.max_drawdown_pct + '%' : '—';
         document.getElementById('rs-beta').textContent = (p.beta != null) ? p.beta : '—';
         document.getElementById('rs-winrate').textContent = (t.win_rate_pct != null) ? t.win_rate_pct + '%' : '—';
-        document.getElementById('rs-window').textContent = 'Since ' + (w.start || 'inception') + ' · ' + (w.calendar_days || 0) + ' days · tap for definitions';
+        document.getElementById('rs-window').textContent = (w.reset_date ? 'Since ' + w.reset_date + ' reset' : 'Since ' + (w.start || 'inception')) + ' · ' + (w.calendar_days || 0) + ' days · tap for definitions';
         strip.style.display = 'block';
     } catch (e) { /* keep hidden */ }
 }
@@ -4180,12 +4180,12 @@ document.addEventListener('DOMContentLoaded', loadRiskStats);
 
 function showRiskStatsInfo(event) {
     showInfoTooltip(event,
-        '<strong>Risk-adjusted stats</strong> — daily close-to-close, benchmark: S&P 500.<br><br>' +
+        '<strong>Risk-adjusted stats</strong> — daily close-to-close, benchmark: S&P 500, post-reset window only (bot restarted Jul 7, 2026; earlier history excluded).<br><br>' +
         '<strong>Sharpe:</strong> Return per unit of risk. Above 1.0 is decent, above 2.0 is strong. Negative means losing money for the risk taken.<br><br>' +
         '<strong>Max Drawdown:</strong> Worst peak-to-trough drop from the portfolio high. Pain, measured.<br><br>' +
         '<strong>Beta:</strong> Sensitivity to the S&P 500. 1.0 = moves with the market; above 1.0 = amplifies it.<br><br>' +
         '<strong>Win Rate:</strong> Share of closed trades that made money. Says nothing about size — see Profit Factor in What the Data Says.<br><br>' +
-        'Computed nightly from full history. Short track record — descriptive, not predictive.');
+        'Computed nightly. Sharpe/Beta/Volatility appear once 20+ post-reset trading days accrue — before that they are noise.');
 }
 
 let _faLoaded = false;
