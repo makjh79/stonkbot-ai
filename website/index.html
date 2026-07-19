@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster-20260718-v4">
-    <script>(function(){var v='20260719-v3';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260719-v4';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -8735,7 +8735,9 @@ function updateDashboard(data, marketStatus) {
 
                 const historyData = await historyRes.json();
                 const marketData = await marketRes.json();
-                const checks = historyData.checks || [];
+                // Window to post-reset history: bot restarted Jul 7, 2026; earlier data is the old strategy incarnation
+                const RESET_DATE = '2026-07-07';
+                const checks = (historyData.checks || []).filter(c => (c.timestamp || '') >= RESET_DATE);
 
                 // Get live market returns
                 const indices = marketData.indices || {};
