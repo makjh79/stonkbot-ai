@@ -26,7 +26,7 @@ HISTORY = BASE / "portfolio_history.json"
 TRADES = BASE / "trades_log.json"
 
 RF_ANNUAL = 0.04
-MIN_TRADING_DAYS = 30  # frontend also gates on this
+MIN_CALENDAR_DAYS = 30  # frontend also gates on this
 
 
 def load_json(path, default=None):
@@ -153,7 +153,7 @@ def main():
                 "end": dates[-1],
                 "calendar_days": (d1 - d0).days,
                 "trading_days": n,
-                "sufficient": n >= MIN_TRADING_DAYS,
+                "sufficient": (d1 - d0).days >= MIN_CALENDAR_DAYS,
             },
             "portfolio": {
                 "total_return_pct": round((pvals[-1] / pvals[0] - 1) * 100, 2),
