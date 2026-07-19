@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="cache-buster-20260718-v4">
-    <script>(function(){var v='20260718-v4';var k='stonkbot_v198';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <script>(function(){var v='20260719-v1';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3772,6 +3772,15 @@
                 <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500: </span>
                 <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
+            <div id="risk-stats-strip" style="display:none; margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; cursor: pointer;" onclick="showRiskStatsInfo(event)">
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.35rem;">
+                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Sharpe</div><div id="rs-sharpe" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div></div>
+                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Max DD</div><div id="rs-maxdd" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #ef4444;">--</div></div>
+                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Beta</div><div id="rs-beta" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div></div>
+                    <div style="text-align: center; min-width: 52px;"><div style="font-size: 0.58rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;">Win Rate</div><div id="rs-winrate" style="font-size: 0.85rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div></div>
+                </div>
+                <div id="rs-window" style="font-size: 0.58rem; color: var(--text-muted); text-align: center; margin-top: 0.3rem;"></div>
+            </div>
 
         </div>
 
@@ -4124,8 +4133,146 @@
         </div>
       </div>
 
+      <!-- ───────── Section 5: What the Data Says ───────── -->
+      <div id="data-says" class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
+        <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:1.1rem;">🧪</span>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">What the Data Says</span>
+          </div>
+          <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+        </div>
+        <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
+          <div id="fa-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin:0.75rem 0 0.5rem;">
+            <div style="font-size:0.75rem;color:var(--text-muted);grid-column:1/-1;">Loading...</div>
+          </div>
+          <div id="fa-meta" style="font-size:0.65rem;color:var(--text-muted);margin-bottom:0.5rem;"></div>
+          <div id="fa-scores" style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin-bottom:0.5rem;"></div>
+          <div id="fa-factors" style="display:flex;flex-direction:column;gap:0.3rem;"></div>
+          <div id="fa-takeaway" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
+          <div id="fa-footer" style="font-size:0.6rem;color:var(--text-muted);text-align:right;margin-top:0.5rem;"></div>
+        </div>
+      </div>
+
     </div>
 </div>
+
+<!-- Risk stats + factor attribution JS -->
+<script>
+async function loadRiskStats() {
+    try {
+        const res = await fetch('risk_stats.json?v=' + Date.now());
+        if (!res.ok) return;
+        const d = await res.json();
+        const w = d.window || {}, p = d.portfolio || {}, t = d.trades || {};
+        if (!w.sufficient) return;
+        const strip = document.getElementById('risk-stats-strip');
+        if (!strip) return;
+        document.getElementById('rs-sharpe').textContent = (p.sharpe != null) ? p.sharpe : '—';
+        document.getElementById('rs-maxdd').textContent = (p.max_drawdown_pct != null) ? p.max_drawdown_pct + '%' : '—';
+        document.getElementById('rs-beta').textContent = (p.beta != null) ? p.beta : '—';
+        document.getElementById('rs-winrate').textContent = (t.win_rate_pct != null) ? t.win_rate_pct + '%' : '—';
+        document.getElementById('rs-window').textContent = 'Since ' + (w.start || 'inception') + ' · ' + (w.calendar_days || 0) + ' days · tap for definitions';
+        strip.style.display = 'block';
+    } catch (e) { /* keep hidden */ }
+}
+document.addEventListener('DOMContentLoaded', loadRiskStats);
+
+function showRiskStatsInfo(event) {
+    showInfoTooltip(event,
+        '<strong>Risk-adjusted stats</strong> — daily close-to-close, benchmark: S&P 500.<br><br>' +
+        '<strong>Sharpe:</strong> Return per unit of risk. Above 1.0 is decent, above 2.0 is strong. Negative means losing money for the risk taken.<br><br>' +
+        '<strong>Max Drawdown:</strong> Worst peak-to-trough drop from the portfolio high. Pain, measured.<br><br>' +
+        '<strong>Beta:</strong> Sensitivity to the S&P 500. 1.0 = moves with the market; above 1.0 = amplifies it.<br><br>' +
+        '<strong>Win Rate:</strong> Share of closed trades that made money. Says nothing about size — see Profit Factor in What the Data Says.<br><br>' +
+        'Computed nightly from full history. Short track record — descriptive, not predictive.');
+}
+
+let _faLoaded = false;
+async function loadFactorAttribution() {
+    if (_faLoaded) return;
+    try {
+        const res = await fetch('factor_attribution.json?v=' + Date.now());
+        if (!res.ok) return;
+        const d = await res.json();
+        _faLoaded = true;
+        renderFactorAttribution(d);
+    } catch (e) { /* leave placeholder */ }
+}
+
+function renderFactorAttribution(d) {
+    const o = d.overall || {}, s = d.sample || {}, f = d.factors || {};
+    const cell = function(label, id) {
+        return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem;text-align:center;"><div style="font-size:0.58rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:0.2rem;">' + label + '</div><div id="' + id + '" style="font-size:0.9rem;font-weight:700;font-family:\'JetBrains Mono\',monospace;color:var(--text-primary);">--</div></div>';
+    };
+    const sumEl = document.getElementById('fa-summary');
+    if (sumEl) sumEl.innerHTML = cell('Win Rate','fa-wr') + cell('Profit Factor','fa-pf') + cell('Avg Winner','fa-aw') + cell('Avg Loser','fa-al');
+    const set = function(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; };
+    set('fa-wr', o.win_rate_pct != null ? o.win_rate_pct + '%' : '—');
+    set('fa-pf', o.profit_factor != null ? o.profit_factor : '—');
+    const aw = document.getElementById('fa-aw');
+    if (aw && o.avg_winner_pct != null) { aw.textContent = '+' + o.avg_winner_pct + '%'; aw.style.color = '#22c55e'; }
+    const al = document.getElementById('fa-al');
+    if (al && o.avg_loser_pct != null) { al.textContent = o.avg_loser_pct + '%'; al.style.color = '#ef4444'; }
+
+    const metaEl = document.getElementById('fa-meta');
+    if (metaEl) {
+        const parts = [];
+        if (s.closed_trades != null) parts.push(s.closed_trades + ' closed round trips');
+        if (o.avg_holding_days != null) parts.push('avg hold ' + o.avg_holding_days + ' days');
+        const scored = (s.with_snapshots || 0) + (s.with_rationale_only || 0);
+        if (scored) parts.push(scored + ' with entry scores');
+        metaEl.textContent = parts.join(' · ');
+    }
+
+    const r = f.readiness_score, c = f.confirmation_count;
+    const sc = [];
+    if (r && r.n) {
+        let line = 'Readiness at entry vs outcome: <strong>r = ' + (r.correlation != null ? r.correlation.toFixed(2) : '—') + '</strong> (n=' + r.n + ')';
+        if (r.avg_pnl_prime_pct != null && r.avg_pnl_subprime_pct != null) {
+            line += '<br><span style="color:var(--text-muted);">PRIME (≥' + (r.prime_threshold || 76) + ') entries avg ' + r.avg_pnl_prime_pct + '% vs sub-PRIME ' + r.avg_pnl_subprime_pct + '%</span>';
+        }
+        sc.push(line);
+    }
+    if (c && c.n) sc.push('Confirmation count vs outcome: <strong>r = ' + (c.correlation != null ? c.correlation.toFixed(2) : '—') + '</strong> (n=' + c.n + ')');
+    const scEl = document.getElementById('fa-scores');
+    if (scEl) scEl.innerHTML = sc.join('<br>');
+
+    const minN = s.min_factor_n || 20;
+    const chips = Object.keys(f).filter(function(k) { return f[k] && f[k].label && f[k].n_active !== undefined; });
+    const suff = chips.filter(function(k) { return (f[k].n_active + f[k].n_inactive) >= minN; });
+    suff.sort(function(a, b) { return (f[b].edge_pp || 0) - (f[a].edge_pp || 0); });
+    let html = '';
+    suff.forEach(function(k) {
+        const x = f[k];
+        const e = Math.max(-50, Math.min(50, x.edge_pp || 0));
+        const wPct = Math.abs(e);
+        const pos = e >= 0;
+        const barStyle = pos
+            ? 'left:50%;width:' + wPct + '%;background:rgba(34,197,94,0.45);'
+            : 'left:' + (50 - wPct) + '%;width:' + wPct + '%;background:rgba(239,68,68,0.45);';
+        html += '<div style="display:flex;align-items:center;gap:0.5rem;">'
+            + '<div style="width:42px;font-size:0.65rem;font-weight:700;color:var(--text-secondary);">' + x.label + '</div>'
+            + '<div style="flex:1;position:relative;height:14px;background:rgba(255,255,255,0.03);border-radius:4px;">'
+            + '<div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.15);"></div>'
+            + '<div style="position:absolute;top:2px;bottom:2px;border-radius:3px;' + barStyle + '"></div>'
+            + '</div>'
+            + '<div style="width:86px;text-align:right;font-size:0.62rem;color:var(--text-muted);">' + (e >= 0 ? '+' : '') + e + ' pp · n=' + (x.n_active + x.n_inactive) + '</div>'
+            + '</div>';
+    });
+    const collecting = chips.length - suff.length;
+    if (collecting > 0) {
+        html += '<div style="font-size:0.65rem;color:var(--text-muted);margin-top:0.3rem;">' + collecting + ' signal factors still collecting entry snapshots (need n≥' + minN + ' each) — bars light up as new trades close.</div>';
+    }
+    const fEl = document.getElementById('fa-factors');
+    if (fEl) fEl.innerHTML = html;
+
+    const tkEl = document.getElementById('fa-takeaway');
+    if (tkEl && d.takeaway) tkEl.textContent = d.takeaway;
+    const ftEl = document.getElementById('fa-footer');
+    if (ftEl) ftEl.textContent = 'FIFO round trips from the live trade log · entry-time factor snapshots · updated daily · small samples, weak conclusions';
+}
+</script>
 
 <!-- About section toggle JS -->
 <script>
@@ -4136,6 +4283,7 @@ function toggleAboutSection(header) {
         body.style.display = 'block';
         chevron.style.transform = 'rotate(180deg)';
         if (header.closest('#bot-performance')) loadPnlAttribution();
+        if (header.closest('#data-says')) loadFactorAttribution();
     } else {
         body.style.display = 'none';
         chevron.style.transform = 'rotate(0deg)';
