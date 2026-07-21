@@ -4210,7 +4210,6 @@ async function loadPerformanceStats() {
             const wparts = [];
             if (w.reset_date) wparts.push('Post-reset window · ' + (w.calendar_days || 0) + ' days');
             if (w.trading_days) wparts.push(w.trading_days + ' trading days');
-            wparts.push('updates nightly');
             setT('perf-window', wparts.join(' · '));
             setT('perf-maxdd', p.max_drawdown_pct != null ? p.max_drawdown_pct + '%' : '—');
             setT('perf-sharpe', p.sharpe != null ? p.sharpe : '—');
@@ -4220,6 +4219,40 @@ async function loadPerformanceStats() {
             if (t.win_rate_pct != null) setT('perf-winrate', t.win_rate_pct + '%');
         }
     } catch (e) { /* leave placeholders */ }
+    // Live-sync the scoreboard returns with the rest of the site (hero card,
+    // performance chart): risk_stats.json is only regenerated a few times a
+    // day, so its return figures drift intraday. Bot return = live portfolio
+    // value vs the $100K baseline; S&P return = live market indices feed.
+    // Window stats (drawdown, Sharpe, beta, vol, win rate) still come from
+    // risk_stats — those are meant to be computed over daily closes.
+    try {
+        const retLive = function(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; };
+        const [pdRes, miRes] = await Promise.all([
+            fetch('portfolio_data.json?v=' + Date.now()),
+            fetch('market_indices.json?v=' + Date.now())
+        ]);
+        if (pdRes.ok && miRes.ok) {
+            const pd = await pdRes.json();
+            const mi = await miRes.json();
+            const pv = pd.account && pd.account.portfolio_value;
+            const spRet = mi.indices && mi.indices['S&P 500'] && mi.indices['S&P 500'].return_pct;
+            if (pv) {
+                const botRet = ((pv - 100000) / 100000) * 100;
+                setT('perf-bot-ret', retLive(botRet));
+                const elB = document.getElementById('perf-bot-ret');
+                if (elB) elB.style.color = botRet >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                if (spRet != null) {
+                    setT('perf-bench-ret', retLive(spRet));
+                    const elS = document.getElementById('perf-bench-ret');
+                    if (elS) elS.style.color = spRet >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    const spread = botRet - spRet;
+                    setT('perf-verdict', spread >= 0
+                        ? 'Ahead of the S&P 500 by ' + spread.toFixed(1) + ' pts'
+                        : 'Trailing the S&P 500 by ' + Math.abs(spread).toFixed(1) + ' pts');
+                }
+            }
+        }
+    } catch (e) { /* keep risk_stats values */ }
     try {
         const res2 = await fetch('factor_attribution.json?v=' + Date.now());
         if (res2.ok) renderFactorAttribution(await res2.json());
