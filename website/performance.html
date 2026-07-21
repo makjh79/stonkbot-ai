@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StonkBOT.AI | Performance</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-elevated: #111111;
+            --bg-card: #151515;
+            --border: rgba(255,255,255,0.08);
+            --text-primary: #f5f5f5;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --accent-yellow: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+        .subtitle { color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.15rem; }
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.4rem 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .back-link:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.85rem;
+        }
+        .stat-card.vs-card {
+            border-color: rgba(6,182,212,0.25);
+            background: linear-gradient(135deg, rgba(6,182,212,0.08) 0%, var(--bg-card) 100%);
+        }
+        .stat-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 0.25rem; }
+        .stat-value { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+        .stat-value.pos { color: var(--accent-green); }
+        .stat-value.neg { color: var(--accent-red); }
+        .stat-value.winning { color: var(--accent-green); text-shadow: 0 0 20px rgba(16,185,129,0.2); }
+        .stat-value.losing { color: var(--accent-red); text-shadow: 0 0 20px rgba(239,68,68,0.2); }
+        .vs-detail { font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.35rem; }
+        .vs-detail span { display: block; margin-top: 0.15rem; }
+        .extreme-row { display: flex; justify-content: space-between; margin-top: 0.35rem; }
+        .extreme-item { text-align: left; }
+        .extreme-item:last-child { text-align: right; }
+        .extreme-label { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; }
+        .extreme-value { font-size: 0.8rem; font-weight: 600; }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        .btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.35rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+        .btn.active { background: rgba(6,182,212,0.12); color: var(--accent-cyan); border-color: rgba(6,182,212,0.3); }
+        .note {
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            margin-top: 0.75rem;
+            line-height: 1.5;
+        }
+        .legend { color: var(--text-secondary); font-size: 0.65rem; margin-top: 0.5rem; }
+        .legend span { display: inline-flex; align-items: center; margin-right: 1rem; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; margin-right: 0.3rem; }
+        .dot-buy { background: var(--accent-green); }
+        .dot-sell { background: var(--accent-red); }
+        .dot-swing { background: var(--accent-yellow); }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.1rem; }
+            .chart-card { padding: 0.75rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <div class="site-header-logo" style="font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; cursor: pointer;" onclick="window.location.href='index.html'"><span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span></div>
+                <div class="subtitle">Performance vs. S&P 500</div>
+            </div>
+            <a class="back-link" href="index.html">← Back to StonkBOT</a>
+        </header>
+
+        <div class="stats-grid">
+            <!-- Card 1: Portfolio Value -->
+            <div class="stat-card">
+                <div class="stat-label">💰 Portfolio Value</div>
+                <div class="stat-value" id="statValue" style="font-size: 1.5rem; margin: 0.5rem 0;">--</div>
+                <div class="vs-detail" id="statReturnDetail">--</div>
+                <div class="vs-detail" id="statDaysActive" style="margin-top: 0.5rem; font-size: 0.65rem;">--</div>
+            </div>
+            
+            <!-- Card 2: The Race (vs S&P 500) -->
+            <div class="stat-card vs-card">
+                <div class="stat-label">🏆 vs S&P 500</div>
+                <div class="stat-value" id="statVs" style="font-size: 1.5rem; margin: 0.5rem 0;">--</div>
+                <div class="vs-detail">
+                    <span id="statBotDetail">Bot: --</span>
+                    <span id="statMarketDetail">S&P 500: --</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="controls">
+                <button class="btn" data-range="7">7D</button>
+                <button class="btn" data-range="30">30D</button>
+                <button class="btn" data-range="90">90D</button>
+                <button class="btn active" data-range="all">All</button>
+                <span style="margin-left:auto; color:var(--text-muted); font-size:0.6rem;" id="lastUpdated">--</span>
+            </div>
+            <div style="position:relative; height:55vh; min-height:320px;">
+                <canvas id="historyChart"></canvas>
+            </div>
+            <div class="legend">
+                <span><span class="dot" style="background:#06b6d4;"></span>StonkBOT</span>
+                <span><span class="dot dot-swing"></span>SPY Benchmark</span>
+                <span><span class="dot dot-buy"></span>Buy trade ≥$5K</span>
+                <span><span class="dot dot-sell"></span>Sell trade ≥$5K</span>
+            </div>
+            <div class="note">
+                Chart uses the portfolio snapshot closest to noon UTC for each trading day. Trade markers show the portfolio value at market close on the day of the trade. Data auto-refreshes every 2 minutes.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chart = null;
+        let portfolioData = [];
+        let tradeData = [];
+
+        function fmtMoney(n) {
+            if (n === undefined || n === null) return '--';
+            const sign = n >= 0 ? '+' : '−';
+            return sign + '$' + Math.abs(n).toLocaleString('en-US', {maximumFractionDigits:0});
+        }
+
+        function getDailySnapshots(checks) {
+            const byDay = {};
+            checks.forEach(c => {
+                const day = c.timestamp.slice(0, 10);
+                if (!byDay[day]) byDay[day] = [];
+                byDay[day].push(c);
+            });
+            return Object.keys(byDay).sort().map(day => {
+                const entries = byDay[day];
+                const noon = new Date(day + 'T12:00:00Z').getTime();
+                const closest = entries.reduce((best, cur) => {
+                    const curDiff = Math.abs(new Date(cur.timestamp).getTime() - noon);
+                    const bestDiff = Math.abs(new Date(best.timestamp).getTime() - noon);
+                    return curDiff < bestDiff ? cur : best;
+                });
+                return {
+                    date: day,
+                    value: closest.portfolio_value,
+                    benchmark: closest.benchmark_value,
+                    benchmarkSymbol: closest.benchmark_symbol,
+                    timestamp: closest.timestamp
+                };
+            });
+        }
+
+        function computeDailyDeltas(snapshots) {
+            for (let i = 0; i < snapshots.length; i++) {
+                if (i === 0) snapshots[i].delta = 0;
+                else snapshots[i].delta = snapshots[i].value - snapshots[i-1].value;
+            }
+            return snapshots;
+        }
+
+        function filterRange(snapshots, rangeDays) {
+            if (rangeDays === 'all') return snapshots;
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - parseInt(rangeDays));
+            return snapshots.filter(s => new Date(s.date + 'T00:00:00Z') >= cutoff);
+        }
+
+        function buildSwingLabels(visible) {
+            // Return annotations as simple labels positioned near data points
+            return visible.map((s, i) => {
+                if (i === 0 || Math.abs(s.delta) < 500) return null;
+                return {
+                    type: 'label',
+                    xValue: s.date,
+                    yValue: s.value,
+                    content: fmtMoney(s.delta),
+                    color: s.delta >= 0 ? '#10b981' : '#ef4444',
+                    font: { size: 10, weight: '700' },
+                    position: 'end',
+                    yAdjust: s.delta >= 0 ? -14 : 14
+                };
+            }).filter(Boolean);
+        }
+
+        async function loadData() {
+            const [phRaw, tlRaw, pdRaw] = await Promise.all([
+                fetch('portfolio_history.json?t=' + Date.now()).then(r => r.json()).catch(() => ({checks:[]})),
+                fetch('trades_log.json?t=' + Date.now()).then(r => r.json()).catch(() => ({trades:[]})),
+                fetch('portfolio_data.json?t=' + Date.now()).then(r => r.json()).catch(() => ({}))
+            ]);
+            const checks = phRaw.checks || [];
+            const reconstructed = phRaw.reconstructed || false;
+            portfolioData = computeDailyDeltas(getDailySnapshots(checks));
+            tradeData = tlRaw.trades || [];
+            const liveValue = pdRaw.account?.portfolio_value || null;
+            const badge = reconstructed ? ' · reconstructed from Alpaca fills' : '';
+            document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) + badge;
+            updateStats(portfolioData, liveValue);
+            renderChart('all');
+        }
+
+        function updateStats(snapshots, liveValue) {
+            if (!snapshots.length) return;
+            const STARTING_VALUE = 100000;
+            const latest = liveValue !== null ? liveValue : snapshots[snapshots.length-1].value;
+            const ret = latest - STARTING_VALUE;
+            const pct = (ret / STARTING_VALUE) * 100;
+
+            // Calculate days active from first snapshot
+            const startDate = new Date(snapshots[0].date);
+            const latestDate = new Date(snapshots[snapshots.length - 1].date);
+            const daysActive = Math.max(1, Math.round((latestDate - startDate) / (1000 * 60 * 60 * 24)));
+
+            // Card 1: Portfolio Value
+            document.getElementById('statValue').textContent = '$' + latest.toLocaleString('en-US', {maximumFractionDigits:0});
+            const retDetail = document.getElementById('statReturnDetail');
+            retDetail.textContent = `${fmtMoney(ret)} • ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+            retDetail.style.color = ret >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            
+            const daysEl = document.getElementById('statDaysActive');
+            daysEl.textContent = `Since ${snapshots[0].date} • ${daysActive} days`;
+
+            // Card 2: The Race (vs S&P 500) - Use live market_indices.json for current SPY data
+            const vsEl = document.getElementById('statVs');
+            const botDetail = document.getElementById('statBotDetail');
+            const marketDetail = document.getElementById('statMarketDetail');
+            
+            // Fetch live SPY data from market_indices.json
+            fetch('./market_indices.json?t=' + Date.now())
+                .then(r => r.json())
+                .then(marketData => {
+                    const sp500 = marketData?.indices?.['S&P 500'];
+                    if (sp500 && sp500.current_value && sp500.start_price) {
+                        const benchLatest = sp500.current_value;
+                        const benchStart = (sp500.start_price / sp500.current_price) * sp500.current_value; // Normalize to $100K base
+                        const benchPct = sp500.return_pct;
+                        const diffPct = pct - benchPct;
+                        const isWinning = diffPct >= 0;
+                        
+                        vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
+                        vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
+                        
+                        botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                        botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                        marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}%`;
+                        marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    } else {
+                        throw new Error('No SPY data');
+                    }
+                })
+                .catch(err => {
+                    // Fallback to portfolio_history benchmark if market_indices fails
+                    const benchStart = snapshots[0].benchmark;
+                    const benchLatest = snapshots[snapshots.length - 1].benchmark;
+                    
+                    if (benchStart && benchLatest) {
+                        const benchRet = benchLatest - benchStart;
+                        const benchPct = (benchRet / benchStart) * 100;
+                        const diffPct = pct - benchPct;
+                        const isWinning = diffPct >= 0;
+                        
+                        vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
+                        vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
+                        
+                        botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                        botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                        marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}% (stale)`;
+                        marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    } else {
+                        vsEl.textContent = '--';
+                        botDetail.textContent = 'Bot: --';
+                        marketDetail.textContent = 'S&P 500: --';
+                    }
+                });
+        }
+
+        function buildTradePoints(visible, trades) {
+            const dayValue = {};
+            visible.forEach(s => dayValue[s.date] = s.value);
+            const bigTrades = trades.filter(t => t.total_value >= 5000).slice(0, 16);
+            const data = visible.map(s => null);
+            const points = bigTrades.map(t => {
+                const day = t.timestamp.slice(0, 10);
+                return {
+                    x: day,
+                    y: dayValue[day] !== undefined ? dayValue[day] : null,
+                    action: t.action,
+                    symbol: t.symbol,
+                    value: t.total_value
+                };
+            }).filter(p => p.y !== null);
+            return points;
+        }
+
+        function renderChart(rangeDays) {
+            const visible = filterRange(portfolioData, rangeDays);
+            const labels = visible.map(s => s.date);
+            const values = visible.map(s => s.value);
+            const benchmarks = visible.map(s => s.benchmark || null);
+            const tradePoints = buildTradePoints(visible, tradeData);
+
+            if (chart) chart.destroy();
+
+            const datasets = [
+                {
+                    label: 'StonkBOT',
+                    data: values,
+                    borderColor: '#06b6d4',
+                    backgroundColor: (ctx) => {
+                        const chart = ctx.chart;
+                        const {ctx: c, chartArea} = chart;
+                        if (!chartArea) return null;
+                        const grad = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                        grad.addColorStop(0, 'rgba(6,182,212,0.18)');
+                        grad.addColorStop(1, 'rgba(6,182,212,0.0)');
+                        return grad;
+                    },
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: '#06b6d4',
+                    pointBorderColor: 'rgba(255,255,255,0.2)',
+                    pointBorderWidth: 1,
+                    order: 2
+                }
+            ];
+
+            if (benchmarks.some(b => b !== null)) {
+                datasets.push({
+                    label: 'SPY Benchmark',
+                    data: benchmarks,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [6, 4],
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: '#f59e0b',
+                    pointBorderColor: 'rgba(255,255,255,0.2)',
+                    order: 3
+                });
+            }
+            datasets.push({
+                label: 'Trades ≥$5K',
+                data: labels.map(d => {
+                    const p = tradePoints.find(pt => pt.x === d);
+                    return p ? p.y : null;
+                }),
+                pointBackgroundColor: (ctx) => {
+                    const d = labels[ctx.dataIndex];
+                    const p = tradePoints.find(pt => pt.x === d);
+                    return p && p.action === 'BUY' ? '#10b981' : '#ef4444';
+                },
+                pointBorderColor: 'rgba(255,255,255,0.3)',
+                pointBorderWidth: 1,
+                pointRadius: 7,
+                pointHoverRadius: 9,
+                showLine: false,
+                order: 1
+            });
+
+            chart = new Chart(document.getElementById('historyChart'), {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,15,15,0.95)',
+                            titleColor: '#f5f5f5',
+                            bodyColor: '#9ca3af',
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: (ctx) => {
+                                    if (ctx.dataset.label === 'StonkBOT') {
+                                        return `StonkBOT: $${ctx.parsed.y.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+                                    }
+                                    if (ctx.dataset.label === 'SPY Benchmark') {
+                                        return `SPY: $${ctx.parsed.y.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+                                    }
+                                    const d = labels[ctx.dataIndex];
+                                    const p = tradePoints.find(pt => pt.x === d);
+                                    if (!p) return '';
+                                    return `${p.action} ${p.symbol}: $${p.value.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#6b7280', font: { size: 10 }, maxRotation: 0 }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: {
+                                color: '#6b7280',
+                                font: { size: 10 },
+                                callback: (v) => '$' + (v/1000).toFixed(1) + 'K'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.querySelectorAll('.controls .btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.controls .btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderChart(btn.dataset.range);
+            });
+        });
+
+        loadData();
+        setInterval(loadData, 120000);
+    </script>
+</body>
+</html>
