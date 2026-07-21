@@ -176,7 +176,7 @@
                 <span><span class="dot dot-sell"></span>Sell trade ≥$5K</span>
             </div>
             <div class="note">
-                Chart uses the portfolio snapshot closest to noon UTC for each trading day. Trade markers show the portfolio value at market close on the day of the trade. Data auto-refreshes every 2 minutes.
+                Older days show the portfolio snapshot closest to noon UTC; the last 1–2 sessions plot live intraday detail (ET). Trade markers show the portfolio value at market close on the day of the trade. Data auto-refreshes every 2 minutes.
             </div>
         </div>
     </div>
@@ -215,6 +215,62 @@
                     timestamp: closest.timestamp
                 };
             });
+        }
+
+        // Hybrid series (Jul 21): daily noon-UTC snapshots for older history,
+        // plus live intraday points for the most recent session(s). Previously
+        // the chart collapsed EVERY day to one snapshot, so the line never
+        // moved intraday even though the pipeline now records it.
+        function buildSeries(checks) {
+            if (!checks.length) return [];
+            const byDay = {};
+            checks.forEach(c => {
+                const day = c.timestamp.slice(0, 10);
+                (byDay[day] = byDay[day] || []).push(c);
+            });
+            const days = Object.keys(byDay).sort();
+
+            // Newest day always renders intraday; the previous day too when its
+            // micro-checks are still inside the backend's rolling 36h window.
+            const intradayDays = new Set();
+            intradayDays.add(days[days.length - 1]);
+            if (days.length > 1 && byDay[days[days.length - 2]].length > 3) {
+                intradayDays.add(days[days.length - 2]);
+            }
+
+            const etLabel = (ts) => new Date(ts).toLocaleString('en-US', {
+                timeZone: 'America/New_York', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: false
+            });
+
+            const series = [];
+            days.forEach(day => {
+                const entries = byDay[day].slice().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                if (intradayDays.has(day) && entries.length > 1) {
+                    entries.forEach(c => series.push({
+                        date: day,
+                        label: etLabel(c.timestamp),
+                        value: c.portfolio_value,
+                        benchmark: c.benchmark_value ?? null,
+                        timestamp: c.timestamp
+                    }));
+                } else {
+                    const noon = new Date(day + 'T12:00:00Z').getTime();
+                    const closest = entries.reduce((best, cur) => {
+                        const curDiff = Math.abs(new Date(cur.timestamp).getTime() - noon);
+                        const bestDiff = Math.abs(new Date(best.timestamp).getTime() - noon);
+                        return curDiff < bestDiff ? cur : best;
+                    });
+                    series.push({
+                        date: day,
+                        label: day,
+                        value: closest.portfolio_value,
+                        benchmark: closest.benchmark_value ?? null,
+                        timestamp: closest.timestamp
+                    });
+                }
+            });
+            return series;
         }
 
         function computeDailyDeltas(snapshots) {
@@ -257,7 +313,7 @@
             ]);
             const checks = phRaw.checks || [];
             const reconstructed = phRaw.reconstructed || false;
-            portfolioData = computeDailyDeltas(getDailySnapshots(checks));
+            portfolioData = computeDailyDeltas(buildSeries(checks));
             tradeData = tlRaw.trades || [];
             const liveValue = pdRaw.account?.portfolio_value || null;
             const badge = reconstructed ? ' · reconstructed from Alpaca fills' : '';
@@ -344,7 +400,7 @@
         function buildTradePoints(visible, trades) {
             const dayValue = {};
             visible.forEach(s => dayValue[s.date] = s.value);
-            const bigTrades = trades.filter(t => t.total_value >= 5000).slice(0, 16);
+            const bigTrades = trades.filter(t => t.total_value >= 5000).slice(-16);
             const data = visible.map(s => null);
             const points = bigTrades.map(t => {
                 const day = t.timestamp.slice(0, 10);
@@ -361,7 +417,7 @@
 
         function renderChart(rangeDays) {
             const visible = filterRange(portfolioData, rangeDays);
-            const labels = visible.map(s => s.date);
+            const labels = visible.map(s => s.label || s.date);
             const values = visible.map(s => s.value);
             const benchmarks = visible.map(s => s.benchmark || null);
             const tradePoints = buildTradePoints(visible, tradeData);
@@ -402,6 +458,7 @@
                     backgroundColor: 'transparent',
                     borderWidth: 2,
                     borderDash: [6, 4],
+                    spanGaps: true,
                     fill: false,
                     tension: 0.3,
                     pointRadius: 0,
@@ -413,12 +470,15 @@
             }
             datasets.push({
                 label: 'Trades ≥$5K',
-                data: labels.map(d => {
-                    const p = tradePoints.find(pt => pt.x === d);
-                    return p ? p.y : null;
+                data: visible.map((s, i) => {
+                    const p = tradePoints.find(pt => pt.x === s.date);
+                    if (!p) return null;
+                    // Attach the marker to the last plotted point of that day
+                    const isLastOfDay = (i === visible.length - 1) || visible[i + 1].date !== s.date;
+                    return isLastOfDay ? p.y : null;
                 }),
                 pointBackgroundColor: (ctx) => {
-                    const d = labels[ctx.dataIndex];
+                    const d = visible[ctx.dataIndex] ? visible[ctx.dataIndex].date : null;
                     const p = tradePoints.find(pt => pt.x === d);
                     return p && p.action === 'BUY' ? '#10b981' : '#ef4444';
                 },
@@ -453,7 +513,7 @@
                                     if (ctx.dataset.label === 'SPY Benchmark') {
                                         return `SPY: $${ctx.parsed.y.toLocaleString('en-US', {maximumFractionDigits:0})}`;
                                     }
-                                    const d = labels[ctx.dataIndex];
+                                    const d = visible[ctx.dataIndex] ? visible[ctx.dataIndex].date : null;
                                     const p = tradePoints.find(pt => pt.x === d);
                                     if (!p) return '';
                                     return `${p.action} ${p.symbol}: $${p.value.toLocaleString('en-US', {maximumFractionDigits:0})}`;
