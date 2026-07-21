@@ -5656,7 +5656,7 @@ function updateDashboard(data, marketStatus) {
             const pnlEl = document.getElementById('portfolio-pnl');
             if (data.account) {
                 const STARTING_VALUE = 100000;
-                const portfolioValue = data.account.portfolio_value || 0;
+                const portfolioValue = (liveQuotesFresh() ? _liveQuotes.portfolio_value : data.account.portfolio_value) || 0;
                 const totalPl = portfolioValue - STARTING_VALUE;
                 const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
                 const isPositive = totalReturn >= 0;

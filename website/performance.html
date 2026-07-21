@@ -547,8 +547,58 @@
             });
         });
 
+        // ---- Live quotes layer (Jul 22): 10s refresh of stat cards + chart tail ----
+        // Uses live_quotes.json from the VPS SIP poller only when <60s old;
+        // otherwise the page keeps its standard 2-minute cadence.
+        async function pollLiveQuotes() {
+            try {
+                const r = await fetch('live_quotes.json?t=' + Date.now());
+                if (!r.ok) return;
+                const d = await r.json();
+                if (!d.timestamp || (Date.now() - new Date(d.timestamp).getTime()) > 60000) return;
+
+                const pct = d.total_return_pct;
+                const ret = d.total_pl;
+                document.getElementById('statValue').textContent = '$' + Math.round(d.portfolio_value).toLocaleString('en-US');
+                const rd = document.getElementById('statReturnDetail');
+                rd.textContent = `${fmtMoney(ret)} • ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                rd.style.color = ret >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+
+                if (d.spy && d.spy.return_pct != null) {
+                    const benchPct = d.spy.return_pct;
+                    const diffPct = pct - benchPct;
+                    const isWinning = diffPct >= 0;
+                    const vsEl = document.getElementById('statVs');
+                    vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
+                    vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
+                    const botDetail = document.getElementById('statBotDetail');
+                    botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                    botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    const mkt = document.getElementById('statMarketDetail');
+                    mkt.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}%`;
+                    mkt.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
+
+                // Move the chart's tail point with the live value (today's
+                // intraday points carry the current UTC date).
+                if (chart && portfolioData.length) {
+                    const today = new Date().toISOString().slice(0, 10);
+                    const lastIdx = portfolioData.length - 1;
+                    if (portfolioData[lastIdx].date === today) {
+                        chart.data.datasets[0].data[lastIdx] = d.portfolio_value;
+                        if (chart.data.datasets[1] && d.spy && d.spy.value) {
+                            chart.data.datasets[1].data[lastIdx] = d.spy.value;
+                        }
+                        chart.update('none');
+                    }
+                }
+            } catch (e) { /* keep 2-min cadence */ }
+        }
+
         loadData();
         setInterval(loadData, 120000);
+        pollLiveQuotes();
+        setInterval(pollLiveQuotes, 10000);
     </script>
 </body>
 </html>
