@@ -5639,6 +5639,7 @@ function updateDashboard(data, marketStatus) {
             // Update portfolio value with animated count-up
             const portfolioValueEl = document.getElementById('portfolio-value');
             if (portfolioValueEl && data.account) {
+                portfolioValueEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
                 const newNum = liveQuotesFresh() ? _liveQuotes.portfolio_value : data.account.portfolio_value;
                 const currentNum = parseFloat(portfolioValueEl.dataset.value || '0');
                 if (Math.abs(newNum - currentNum) > 0.5) {
@@ -5665,12 +5666,14 @@ function updateDashboard(data, marketStatus) {
                     returnBadge.style.background = isPositive ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
                 }
                 if (returnEl) {
+                    returnEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
                     const newReturn = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
                     if (returnEl.textContent?.trim() !== newReturn) {
                         setValue('portfolio-return', newReturn);
                     }
                 }
                 if (pnlEl) {
+                    pnlEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
                     const newPnl = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
                     if (pnlEl.textContent?.trim() !== newPnl) {
                         setValue('portfolio-pnl', newPnl);
@@ -8107,6 +8110,7 @@ function updateDashboard(data, marketStatus) {
             if (pvEl && d.portfolio_value) {
                 pvEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
                 pvEl.dataset.value = d.portfolio_value;
+                pvEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
             }
             const totalReturn = d.total_return_pct;
             const totalPl = d.total_pl;
@@ -8117,28 +8121,40 @@ function updateDashboard(data, marketStatus) {
                 returnBadge.style.background = isPositive ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
             }
             const returnEl = document.getElementById('portfolio-return');
-            if (returnEl && totalReturn != null) returnEl.textContent = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+            if (returnEl && totalReturn != null) {
+                returnEl.textContent = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+                returnEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
+            }
             const pnlEl = document.getElementById('portfolio-pnl');
             if (pnlEl && totalPl != null) {
                 pnlEl.textContent = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
                 pnlEl.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
+                pnlEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
             }
 
             // Race card (S&P vs Bot) + spread — same ids as updateRaceValues
             if (d.spy && d.spy.return_pct != null) {
                 const spValueEl = document.getElementById('sp500Value');
-                if (spValueEl && d.spy.value) spValueEl.textContent = '$' + Math.round(d.spy.value).toLocaleString();
+                if (spValueEl && d.spy.value) {
+                    spValueEl.textContent = '$' + Math.round(d.spy.value).toLocaleString();
+                    spValueEl.classList.remove('skeleton', 'skeleton-value');
+                }
                 const spReturnEl = document.getElementById('sp500Return');
                 if (spReturnEl) {
                     spReturnEl.textContent = (d.spy.return_pct >= 0 ? '+' : '') + d.spy.return_pct.toFixed(2) + '%';
                     spReturnEl.style.color = d.spy.return_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    spReturnEl.classList.remove('skeleton', 'skeleton-text');
                 }
                 const stonkValueEl = document.getElementById('stonkAiValue');
-                if (stonkValueEl && d.portfolio_value) stonkValueEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
+                if (stonkValueEl && d.portfolio_value) {
+                    stonkValueEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
+                    stonkValueEl.classList.remove('skeleton', 'skeleton-value');
+                }
                 const stonkReturnEl = document.getElementById('stonkAiReturn');
                 if (stonkReturnEl && totalReturn != null) {
                     stonkReturnEl.textContent = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(2) + '%';
                     stonkReturnEl.style.color = totalReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    stonkReturnEl.classList.remove('skeleton', 'skeleton-text');
                 }
                 const spread = (totalReturn || 0) - d.spy.return_pct;
                 const raceSpread = document.getElementById('race-spread');
@@ -8363,8 +8379,8 @@ function updateDashboard(data, marketStatus) {
 
                 console.log('updateRaceValues: Updated display successfully');
 
-                // Update visible data freshness indicator
-                updateDataFreshness(portfolioData?.timestamp || new Date().toISOString());
+                // Update visible data freshness indicator (removed from UI; call is a legacy no-op)
+                if (typeof updateDataFreshness === 'function') updateDataFreshness(portfolioData?.timestamp || new Date().toISOString());
 
                 // Cache the values for next time to prevent flicker
                 setRaceCache({
