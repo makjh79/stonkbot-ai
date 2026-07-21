@@ -155,7 +155,7 @@ def _ntp_drift_seconds() -> Optional[float]:
     return None
 def check_services() -> None:
     """Ensure critical systemd services are active."""
-    services = ["stonk-ai.service"]  # watchlist service intentionally disabled; DWM cron owns watchlist updates
+    services = ["stonk-ai.service", "stonk-ai-live-quotes.service"]  # watchlist service intentionally disabled; DWM cron owns watchlist updates
     for svc in services:
         rc, stdout, stderr = _run_cmd(f"systemctl is-active {svc}")
         if rc != 0:
@@ -549,20 +549,88 @@ def check_portfolio_sanity() -> None:
             _log_issue(f"Sector {sector} is {pct:.1%} — exceeds 25% cap")
 
 
+def check_portfolio_history_freshness() -> None:
+    """Newest portfolio_history.json check must be <30 min old during US market
+    hours — stonk-ai-data appends a live micro-check every cycle (~2 min).
+    A stale newest check means the live writer silently stopped; this is how the
+    2026-07-20 chart freeze (collapsed to midnight snapshot) went unnoticed."""
+    hist = _load_json(os.path.join(WEB_DIR, "portfolio_history.json"))
+    if not hist:
+        return
+    checks = hist.get("checks", [])
+    if not checks:
+        _log_issue("portfolio_history.json has zero checks")
+        return
+    newest = None
+    for c in checks:
+        try:
+            dt = datetime.fromisoformat(c.get("timestamp", "").replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            if newest is None or dt > newest:
+                newest = dt
+        except Exception:
+            continue
+    if newest is None:
+        return
+    now = datetime.now(timezone.utc)
+    mins = now.hour * 60 + now.minute
+    market_window = now.weekday() < 5 and (13 * 60 + 30) <= mins <= (20 * 60 + 30)
+    age_min = (now - newest).total_seconds() / 60
+    if market_window and age_min > 30:
+        _log_issue(
+            f"portfolio_history.json newest check is {age_min:.0f} min old (max 30) "
+            "— performance chart not updating; check stonk-ai-data.service"
+        )
+
+
+def check_live_quotes_pipeline() -> None:
+    """live_quotes.json (tier-2 SIP poller) must be fresh during US market
+    hours — the poller writes every 15s. A stale/missing file means the live
+    layer silently died; the site falls back to the 5-min pipeline (degraded,
+    not broken), so alert before anyone notices the ticker stopped moving."""
+    path = os.path.join(WEB_DIR, "live_quotes.json")
+    now = datetime.now(timezone.utc)
+    mins = now.hour * 60 + now.minute
+    market_window = now.weekday() < 5 and (13 * 60 + 30) <= mins <= (20 * 60 + 30)
+    if not market_window:
+        return
+    mtime = _file_mtime(path)
+    if mtime is None:
+        _log_issue("live_quotes.json missing during market hours — check stonk-ai-live-quotes.service")
+        return
+    age = now.timestamp() - mtime
+    if age > 120:
+        _log_issue(
+            f"live_quotes.json is {age / 60:.1f} min old (max 2) "
+            "— live quotes layer degraded; check stonk-ai-live-quotes.service"
+        )
+
+
 def check_short_positions() -> None:
     """Critical alert on short/negative positions — bot is long-only.
-    Would have caught the 2026-07-16 accidental GTLB short within 5 minutes."""
-    portfolio = _load_json(os.path.join(WEB_DIR, "portfolio_data.json"))
-    if not portfolio:
+    Queries Alpaca /v2/positions directly: portfolio_data.json is bot-written
+    and long-only, which hid the 2026-07-16 manual GTLB short from this check.
+    Broker-level no_shorting=true (set 2026-07-20) is the primary guard."""
+    cfg_path = os.path.join(BASE_DIR, "alpaca_config.json")
+    try:
+        cfg = _load_json(cfg_path) or {}
+        headers = {"APCA-API-KEY-ID": cfg["api_key"],
+                   "APCA-API-SECRET-KEY": cfg["api_secret"]}
+        base = cfg.get("base_url", "https://paper-api.alpaca.markets")
+        r = requests.get(f"{base}/v2/positions", headers=headers, timeout=15)
+        if r.status_code != 200:
+            return
+        for p in r.json():
+            qty = float(p.get("qty", 0) or 0)
+            mv = float(p.get("market_value", 0) or 0)
+            if p.get("side") == "short" or qty < 0 or mv < 0:
+                _log_issue(
+                    f"SHORT POSITION: {p.get('symbol')} qty={p.get('qty')} mv=${mv:,.0f} "
+                    "— long-only strategy; external/manual account activity; cover manually"
+                )
+    except Exception:
         return
-    for p in portfolio.get("positions", []):
-        qty = p.get("qty", 0)
-        mv = p.get("market_value", 0)
-        if qty < 0 or mv < 0:
-            _log_issue(
-                f"SHORT POSITION: {p.get('symbol')} qty={qty} mv=${mv:,.0f} "
-                "— long-only strategy; external/manual account activity; cover manually"
-            )
 
 
 def check_trade_churn() -> None:
@@ -1217,6 +1285,8 @@ def main() -> int:
     check_dead_code()
     check_html_currency()
     check_portfolio_sanity()
+    check_portfolio_history_freshness()
+    check_live_quotes_pipeline()
     check_short_positions()
     check_trade_churn()
     check_outcome_tracker()
