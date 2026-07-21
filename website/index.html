@@ -5639,7 +5639,7 @@ function updateDashboard(data, marketStatus) {
             // Update portfolio value with animated count-up
             const portfolioValueEl = document.getElementById('portfolio-value');
             if (portfolioValueEl && data.account) {
-                const newNum = data.account.portfolio_value;
+                const newNum = liveQuotesFresh() ? _liveQuotes.portfolio_value : data.account.portfolio_value;
                 const currentNum = parseFloat(portfolioValueEl.dataset.value || '0');
                 if (Math.abs(newNum - currentNum) > 0.5) {
                     animateCountUp(portfolioValueEl, currentNum, newNum, 1200);
@@ -6352,7 +6352,7 @@ function updateDashboard(data, marketStatus) {
                 }
 
                 return `
-                <div onclick="showTradeDetails('${pos.symbol}')" data-positive="${isPositive}" class="holding-card" role="button" tabindex="0" aria-label="View details for ${pos.symbol}">
+                <div onclick="showTradeDetails('${pos.symbol}')" data-symbol="${pos.symbol}" data-positive="${isPositive}" class="holding-card" role="button" tabindex="0" aria-label="View details for ${pos.symbol}">
                     <div class="holding-main">
                         <div class="holding-symbol">${pos.symbol}</div>
                         <div class="holding-company">${companyName}</div>
@@ -6360,8 +6360,8 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div class="holding-sparkline" aria-hidden="true">${generateSparkline(pos)}</div>
                     <div class="holding-metrics">
-                        <div class="holding-price">$${pos.current.toFixed(2)}</div>
-                        <div class="holding-pl ${plClass}">${sign}${pos.unrealized_plpc.toFixed(2)}%</div>
+                        <div class="holding-price" data-live-price>$${pos.current.toFixed(2)}</div>
+                        <div class="holding-pl ${plClass}" data-live-pl>${sign}${pos.unrealized_plpc.toFixed(2)}%</div>
                     </div>
                 </div>
                 `;
@@ -8082,6 +8082,108 @@ function updateDashboard(data, marketStatus) {
             };
         }
 
+        // ---- Live quotes layer (tier-2, Jul 22) ----
+        // Polls live_quotes.json written by the VPS SIP poller every 15s.
+        // Used only when <60s old; otherwise everything silently falls back
+        // to the standard 5-minute pipeline.
+        let _liveQuotes = null;
+        function liveQuotesFresh() {
+            return _liveQuotes && (Date.now() - new Date(_liveQuotes.timestamp).getTime()) < 60000;
+        }
+        async function pollLiveQuotes() {
+            try {
+                const r = await fetch('live_quotes.json?t=' + Date.now());
+                if (!r.ok) return;
+                const d = await r.json();
+                if (!d.timestamp || (Date.now() - new Date(d.timestamp).getTime()) > 60000) return;
+                _liveQuotes = d;
+                applyLiveQuotes(d);
+            } catch (e) { /* fall back to 5-min pipeline */ }
+        }
+
+        function applyLiveQuotes(d) {
+            // Hero value + return badge (mirrors the standard formatters)
+            const pvEl = document.getElementById('portfolio-value');
+            if (pvEl && d.portfolio_value) {
+                pvEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
+                pvEl.dataset.value = d.portfolio_value;
+            }
+            const totalReturn = d.total_return_pct;
+            const totalPl = d.total_pl;
+            const isPositive = (totalReturn || 0) >= 0;
+            const returnBadge = document.getElementById('portfolio-return-badge');
+            if (returnBadge) {
+                returnBadge.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
+                returnBadge.style.background = isPositive ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
+            }
+            const returnEl = document.getElementById('portfolio-return');
+            if (returnEl && totalReturn != null) returnEl.textContent = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+            const pnlEl = document.getElementById('portfolio-pnl');
+            if (pnlEl && totalPl != null) {
+                pnlEl.textContent = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
+                pnlEl.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
+            }
+
+            // Race card (S&P vs Bot) + spread — same ids as updateRaceValues
+            if (d.spy && d.spy.return_pct != null) {
+                const spValueEl = document.getElementById('sp500Value');
+                if (spValueEl && d.spy.value) spValueEl.textContent = '$' + Math.round(d.spy.value).toLocaleString();
+                const spReturnEl = document.getElementById('sp500Return');
+                if (spReturnEl) {
+                    spReturnEl.textContent = (d.spy.return_pct >= 0 ? '+' : '') + d.spy.return_pct.toFixed(2) + '%';
+                    spReturnEl.style.color = d.spy.return_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
+                const stonkValueEl = document.getElementById('stonkAiValue');
+                if (stonkValueEl && d.portfolio_value) stonkValueEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
+                const stonkReturnEl = document.getElementById('stonkAiReturn');
+                if (stonkReturnEl && totalReturn != null) {
+                    stonkReturnEl.textContent = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(2) + '%';
+                    stonkReturnEl.style.color = totalReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
+                const spread = (totalReturn || 0) - d.spy.return_pct;
+                const raceSpread = document.getElementById('race-spread');
+                if (raceSpread) {
+                    raceSpread.textContent = spread >= 0 ? `▲ +${spread.toFixed(2)}% ahead` : `▼ ${spread.toFixed(2)}% behind`;
+                    raceSpread.style.color = spread >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
+                const spStatus = document.getElementById('sp500Status');
+                if (spStatus && totalReturn != null) {
+                    const spLeading = d.spy.return_pct >= totalReturn;
+                    spStatus.textContent = spLeading ? 'LEADING' : 'BEHIND';
+                    spStatus.style.background = spLeading ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)';
+                    spStatus.style.color = spLeading ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
+                const stonkStatus = document.getElementById('stonkAiStatus');
+                if (stonkStatus && totalReturn != null) {
+                    const botLeading = totalReturn >= d.spy.return_pct;
+                    stonkStatus.textContent = botLeading ? 'LEADING' : 'BEHIND';
+                    stonkStatus.style.background = botLeading ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)';
+                    stonkStatus.style.color = botLeading ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
+            }
+
+            // Holdings cards — live price + P&L per row
+            if (d.positions) {
+                document.querySelectorAll('.holding-card[data-symbol]').forEach(card => {
+                    const q = d.positions[card.dataset.symbol];
+                    if (!q) return;
+                    const pe = card.querySelector('[data-live-price]');
+                    if (pe && q.price) pe.textContent = '$' + q.price.toFixed(2);
+                    const le = card.querySelector('[data-live-pl]');
+                    if (le && q.unrealized_plpc != null) {
+                        const pos = q.unrealized_plpc >= 0;
+                        le.textContent = (pos ? '+' : '') + q.unrealized_plpc.toFixed(2) + '%';
+                        le.classList.remove('positive', 'negative');
+                        le.classList.add(pos ? 'positive' : 'negative');
+                        card.dataset.positive = pos ? 'true' : 'false';
+                    }
+                });
+            }
+        }
+
+        setInterval(pollLiveQuotes, 10000);
+        pollLiveQuotes();
+
         // Cache for race values to prevent flicker - uses localStorage to persist across reloads
         // Only uses cache if less than 5 minutes old to avoid stale data flipping
         const RACE_CACHE_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
@@ -8169,9 +8271,12 @@ function updateDashboard(data, marketStatus) {
                 ]);
 
                 const portfolioData = await portfolioRes.json();
-                const currentValue = portfolioData.account?.portfolio_value || FALLBACK_DATA.account.portfolio_value;
-                const spReturn = spData.return;
-                const spValue = spData.currentValue;
+                // Prefer the live-quotes layer when fresh (Jul 22) so the 120s
+                // refresh doesn't flash 5-min-old values between live ticks.
+                const live = liveQuotesFresh() ? _liveQuotes : null;
+                const currentValue = live ? live.portfolio_value : (portfolioData.account?.portfolio_value || FALLBACK_DATA.account.portfolio_value);
+                const spReturn = (live && live.spy) ? live.spy.return_pct : spData.return;
+                const spValue = (live && live.spy) ? live.spy.value : spData.currentValue;
 
                 console.log('updateRaceValues: Got data', { currentValue, spReturn, spValue });
 
