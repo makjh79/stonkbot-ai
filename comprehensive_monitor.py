@@ -1318,6 +1318,19 @@ def main() -> int:
         "warnings": WARNINGS,
     }
 
+    # Publish status for the website anomaly banner (it fetches
+    # comprehensive_monitor.json every 2 min). Best-effort: alerting via
+    # Telegram remains the primary channel.
+    report["healthy"] = status == "HEALTHY"
+    try:
+        out = os.path.join(WEB_DIR, "comprehensive_monitor.json")
+        tmp = out + ".tmp"
+        with open(tmp, "w") as fh:
+            json.dump(report, fh)
+        os.replace(tmp, out)
+    except Exception:
+        pass
+
     if status != "HEALTHY":
         # Only print JSON report when there is something to say
         print(json.dumps(report, indent=2))
