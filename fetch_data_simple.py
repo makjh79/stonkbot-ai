@@ -235,10 +235,10 @@ def fetch_and_save():
         except:
             data["day_change"] = 0
         
-        data["total_pl"] = total_pl
-        # Calculate total_pl_pct based on actual cost basis, not fixed 100000
-        total_cost = sum(p["cost_basis"] for p in data["positions"])
-        data["total_pl_pct"] = (total_pl / total_cost * 100) if total_cost > 0 else 0
+        # P&L vs the $100K experiment baseline (site narrative). Cost-basis
+        # semantics (Jul 19) made a -5% experiment read as +0.9% — reverted Jul 21.
+        data["total_pl"] = round(data["account"]["portfolio_value"] - 100000.0, 2)
+        data["total_pl_pct"] = round((data["account"]["portfolio_value"] - 100000.0) / 1000.0, 4)
         
         # fetch_data_simple.py no longer writes portfolio_data.json;
         # trading_bot.py is the single writer of canonical portfolio state.
@@ -286,17 +286,16 @@ def update_history(data, api=None):
             with open(HISTORY_FILE, 'r') as f:
                 history = json.load(f)
 
-        # Fetch SPY benchmark if API available
+        # Fetch SPY benchmark via hub. `if api:` guard removed Jul 21 — callers
+        # pass api=None, which silently skipped benchmark appends since Jul 19.
         benchmark_value = None
         benchmark_symbol = None
-        spy_price = None
-        if api:
-            spy_price = fetch_spy_benchmark(api)
-            if spy_price:
-                benchmark_symbol = "SPY"
-                # Calculate benchmark value normalized to $100K starting value
-                # Using July 7, 2026 SPY price as baseline (post-reset)
-                benchmark_value = round((spy_price / SPY_RESET_PRICE) * 100000.0, 2)
+        spy_price = fetch_spy_benchmark()
+        if spy_price:
+            benchmark_symbol = "SPY"
+            # Calculate benchmark value normalized to $100K starting value
+            # Using July 7, 2026 SPY price as baseline (post-reset)
+            benchmark_value = round((spy_price / SPY_RESET_PRICE) * 100000.0, 2)
 
         # Create check entry
         check = {
@@ -313,9 +312,18 @@ def update_history(data, api=None):
             check["benchmark_value"] = benchmark_value
             check["benchmark_symbol"] = benchmark_symbol
 
-        # Merge into daily snapshots: keep the check closest to noon UTC for each day.
-        # All live micro-checks are retained for the current day only.
+        # Retention policy (reworked Jul 21):
+        #  - Rolling 36h of micro-checks, thinned to one per 120s bucket.
+        #  - Older history collapses to one snapshot per UTC day (closest to
+        #    noon UTC), capped at 180 days.
+        # Rationale: the old "keep today, collapse at UTC midnight" design wiped
+        # the latest US session's intraday detail at 08:00 HKT — exactly when
+        # the HK-based owner opens the chart. A rolling window preserves the
+        # most recent session regardless of day boundaries.
         from collections import defaultdict
+
+        ROLLING_WINDOW_SEC = 36 * 3600
+        MICRO_BUCKET_SEC = 120
 
         def parse_ts(ts):
             if ts.endswith("Z"):
@@ -326,29 +334,38 @@ def update_history(data, api=None):
             noon = datetime.fromisoformat(day + "T12:00:00+00:00")
             return abs((parse_ts(ts) - noon).total_seconds())
 
-        # Group all checks (existing + new) by day and keep the best daily snapshot
-        by_day = defaultdict(list)
-        for c in history.get("checks", []):
-            by_day[c["timestamp"][:10]].append(c)
-        by_day[check["timestamp"][:10]].append(check)
+        all_checks = history.get("checks", [])
+
+        # Throttle appends: the writer calls every ~5s during market hours, so
+        # overwrite the newest check in place when it is <120s old.
+        if all_checks and (parse_ts(check["timestamp"]) - parse_ts(all_checks[-1]["timestamp"])).total_seconds() < MICRO_BUCKET_SEC:
+            all_checks[-1] = check
+        else:
+            all_checks.append(check)
+
+        cutoff = datetime.now(timezone.utc).timestamp() - ROLLING_WINDOW_SEC
+        recent = []
+        old_by_day = defaultdict(list)
+        for c in all_checks:
+            if parse_ts(c["timestamp"]).timestamp() >= cutoff:
+                recent.append(c)
+            else:
+                old_by_day[c["timestamp"][:10]].append(c)
+
+        # Thin the rolling window: keep the latest check per 120s bucket.
+        buckets = {}
+        for c in recent:
+            b = int(parse_ts(c["timestamp"]).timestamp() // MICRO_BUCKET_SEC)
+            buckets[b] = c
+        recent = [buckets[b] for b in sorted(buckets)]
 
         daily_checks = []
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        for day, entries in sorted(by_day.items()):
-            if day == today:
-                # For the current trading day, keep the latest live check so the chart
-                # and stats reflect real-time values, but still use the one nearest noon
-                # if the latest is far from market close.
-                best = min(entries, key=lambda c: seconds_from_noon(c["timestamp"], day))
-                latest = max(entries, key=lambda c: parse_ts(c["timestamp"]))
-                chosen = latest if latest != best and seconds_from_noon(latest["timestamp"], day) <= 6 * 3600 else best
-                daily_checks.append(chosen)
-            else:
-                best = min(entries, key=lambda c: seconds_from_noon(c["timestamp"], day))
-                daily_checks.append(best)
+        for day, entries in sorted(old_by_day.items()):
+            best = min(entries, key=lambda c: seconds_from_noon(c["timestamp"], day))
+            daily_checks.append(best)
 
-        # Keep a rolling window of the most recent 180 daily snapshots (~6 months)
-        daily_checks = daily_checks[-180:]
+        # Rolling 180 historical daily snapshots + live micro-checks
+        daily_checks = daily_checks[-180:] + recent
 
         history["checks"] = daily_checks
         history["last_check"] = check["timestamp"]
@@ -382,14 +399,26 @@ def sync_trades_log():
         logger.error(f"Trades log sync error: {e}")
 
 def is_market_open():
-    """Check if US stock market is currently open (NYSE/NASDAQ schedule)"""
-    now = datetime.now()
-    
-    # Check if weekend
+    """Check if US stock market is currently open (NYSE/NASDAQ regular session).
+
+    Jul 21 fix: previously checked weekday + holiday only — no time-of-day —
+    so on weekdays it returned True around the clock and the main loop spun at
+    5-second cadence 24h/day, hammering the Alpaca API and ballooning
+    portfolio_history.json. Now also requires 09:30-16:00 ET.
+    """
+    try:
+        from zoneinfo import ZoneInfo
+        now = datetime.now(ZoneInfo("America/New_York"))
+    except Exception:
+        # Fallback if tzdata is missing: EDT approximation (UTC-4).
+        from datetime import timedelta as _td
+        now = datetime.now(timezone.utc) - _td(hours=4)
+
+    # Weekend
     if now.weekday() >= 5:  # Saturday=5, Sunday=6
         return False
-    
-    # Check US market holidays for 2026
+
+    # US market holidays for 2026
     market_holidays_2026 = [
         (1, 1),   # New Year's Day
         (1, 19),  # Martin Luther King Jr. Day
@@ -404,12 +433,13 @@ def is_market_open():
         (11, 26), # Thanksgiving
         (12, 25), # Christmas
     ]
-    
-    today = (now.month, now.day)
-    if today in market_holidays_2026:
+    if (now.month, now.day) in market_holidays_2026:
         return False
-    
-    return True
+
+    # Regular session: 09:30-16:00 ET
+    mins = now.hour * 60 + now.minute
+    return 570 <= mins < 960
+
 
 if __name__ == "__main__":
     logger.info("STONK.AI Data Fetcher Starting")
