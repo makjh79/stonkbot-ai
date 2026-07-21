@@ -1,0 +1,17 @@
+[Unit]
+Description=STONK.AI Live Quotes Poller (tier-2 real-time layer)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=stonkai
+Group=stonkai
+WorkingDirectory=/opt/stonk-ai
+ExecStart=/usr/bin/python3 /opt/stonk-ai/live_quotes_poller.py
+Environment=PYTHONDONTWRITEBYTECODE=1
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
