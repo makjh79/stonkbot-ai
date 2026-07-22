@@ -21,6 +21,26 @@ BASE_DIR = "/opt/stonk-ai"
 WEB_DIR = "/var/www/hedge-fund-website"
 ISSUES: List[str] = []
 WARNINGS: List[str] = []
+PUBLIC_ISSUES: List[str] = []
+_CURRENT_CHECK: str = ""
+
+# Checks whose issues are VISITOR-VISIBLE breakage and may light the public
+# website anomaly banner. Everything else is ops-only (log/Telegram): internal
+# guardrail metrics (e.g. trade churn), LLM narrative drift, cron audits, etc.
+# must not scare site visitors. Banner reads report["public_status"] (falls
+# back to overall status when the field is absent, e.g. older monitor).
+PUBLIC_CHECKS = frozenset({
+    "check_bot_crash",
+    "check_services",
+    "check_file_freshness",
+    "check_signals_write_health",
+    "check_portfolio_sanity",
+    "check_portfolio_history_freshness",
+    "check_short_positions",
+    "check_trade_execution_health",
+    "check_open_orders",
+    "check_alpaca_portfolio_sync",
+})
 
 # ─── Telegram Alerter (import from sibling monitor.py, fallback inline) ────
 
@@ -77,7 +97,19 @@ def _send_alert(summary: str, details: List[str]) -> None:
 # ─── Helpers ──────────────────────────────────────────────────────────────
 def _log_issue(msg: str) -> None:
     ISSUES.append(msg)
+    if _CURRENT_CHECK in PUBLIC_CHECKS:
+        PUBLIC_ISSUES.append(msg)
     print(f"[ISSUE] {msg}", file=sys.stderr)
+
+
+def _run(fn) -> None:
+    """Run one check, tagging any issues it logs with its function name."""
+    global _CURRENT_CHECK
+    _CURRENT_CHECK = getattr(fn, "__name__", "")
+    try:
+        fn()
+    finally:
+        _CURRENT_CHECK = ""
 def _log_warn(msg: str) -> None:
     WARNINGS.append(msg)
     print(f"[WARN]  {msg}", file=sys.stderr)
@@ -1267,38 +1299,38 @@ def _check_process_health():
 
 def main() -> int:
     print("StonkBOT Integrity Monitor running ...")
-    _check_file_permissions()
-    _check_process_health()
-    check_system_time()
-    check_market_hours_sanity()
-    check_bot_crash()
-    check_services()
-    check_file_freshness()
-    check_signals_write_health()
-    check_extended_hours_prices()
-    check_universe_names()
-    check_shadow_company_names()
-    check_alignment_signals_vs_watchlist()
-    check_factor_confirmation_integrity()
-    check_popup_narrative_alignment()
-    check_popup_integrity()
-    check_dead_code()
-    check_html_currency()
-    check_portfolio_sanity()
-    check_portfolio_history_freshness()
-    check_live_quotes_pipeline()
-    check_short_positions()
-    check_trade_churn()
-    check_outcome_tracker()
+    _run(_check_file_permissions)
+    _run(_check_process_health)
+    _run(check_system_time)
+    _run(check_market_hours_sanity)
+    _run(check_bot_crash)
+    _run(check_services)
+    _run(check_file_freshness)
+    _run(check_signals_write_health)
+    _run(check_extended_hours_prices)
+    _run(check_universe_names)
+    _run(check_shadow_company_names)
+    _run(check_alignment_signals_vs_watchlist)
+    _run(check_factor_confirmation_integrity)
+    _run(check_popup_narrative_alignment)
+    _run(check_popup_integrity)
+    _run(check_dead_code)
+    _run(check_html_currency)
+    _run(check_portfolio_sanity)
+    _run(check_portfolio_history_freshness)
+    _run(check_live_quotes_pipeline)
+    _run(check_short_positions)
+    _run(check_trade_churn)
+    _run(check_outcome_tracker)
     # check_narrative_semantics()  # disabled: too many false positives from LLM template text
-    check_trade_execution_health()
-    check_open_orders()
-    check_llm_narrative_pipeline()
-    check_llm_narrative_freshness_and_validity()
-    check_trading_bot_entry_gate()
-    check_alpaca_portfolio_sync()
-    check_cron_heartbeats()
-    check_cron_entries()
+    _run(check_trade_execution_health)
+    _run(check_open_orders)
+    _run(check_llm_narrative_pipeline)
+    _run(check_llm_narrative_freshness_and_validity)
+    _run(check_trading_bot_entry_gate)
+    _run(check_alpaca_portfolio_sync)
+    _run(check_cron_heartbeats)
+    _run(check_cron_entries)
 
     status = "HEALTHY"
     exit_code = 0
@@ -1316,6 +1348,11 @@ def main() -> int:
         "warning_count": len(WARNINGS),
         "issues": ISSUES,
         "warnings": WARNINGS,
+        # Public banner view: only visitor-visible breakage lights the site
+        # anomaly banner. Ops-only issues (churn, narrative drift, cron audits)
+        # still set overall status / Telegram, but not the banner.
+        "public_status": "DEGRADED" if PUBLIC_ISSUES else "HEALTHY",
+        "public_issues": PUBLIC_ISSUES,
     }
 
     # Publish status for the website anomaly banner (it fetches
