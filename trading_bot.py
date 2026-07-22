@@ -74,7 +74,7 @@ from readiness_score import (
 import requests
 
 from signal_engine import SignalEngine, COMPANY_NAMES, DIP_MAX_DAILY_POSITIONS
-from risk_engine import RiskEngine, RiskConfig, load_high_beta_symbols, is_stop_reason
+from risk_engine import RiskEngine, RiskConfig, load_high_beta_symbols, is_stop_reason, tier_max_position_pct
 from alpaca_data import get_data_hub
 from stonk_utils import atomic_write_json
 import dynamic_watchlist_manager
@@ -1024,6 +1024,9 @@ class STONKAIBot:
         # Stop-out cooldown: no re-entry within stop_reentry_cooldown_hours of a stop-loss
         if self.risk_engine.in_stop_cooldown(symbol):
             return "stop-out cooldown active (no same-day re-entry after stop-loss)"
+        # Sell re-entry cooldown: no buy within 4h of ANY non-stop sell (trim/rotation/exit)
+        if self.risk_engine.in_sell_reentry_cooldown(symbol):
+            return "sell re-entry cooldown active (no buy within 4h of a non-stop sell)"
         # Machine-gun guard: max N NEW entries per symbol per day (avg-in has its own cooldown)
         if not is_avg_in and self.risk_engine.entries_today_count(symbol) >= self.risk_engine.config.max_entries_per_symbol_per_day:
             return f"already entered today (max {self.risk_engine.config.max_entries_per_symbol_per_day} new entry/day)"
@@ -1328,14 +1331,11 @@ class STONKAIBot:
         get to be the biggest position in the book (fixes PAYO at 10% while
         tier WATCH and not entry-eligible).
           STRONG_NOW: 12% | NOW: 8% | WATCH: 5% | MONITOR: 3%
+
+        Delegates to risk_engine.tier_max_position_pct (single source of
+        truth, shared with the concentration trimmer since 2026-07-22).
         """
-        if tier == "STRONG_NOW":
-            return 0.12
-        if tier == "NOW":
-            return 0.08
-        if tier == "WATCH":
-            return 0.05
-        return 0.03  # MONITOR and anything unknown
+        return tier_max_position_pct(tier, base_max_pct)
 
     def _check_tier_cap_trims(self, portfolio_data: Dict) -> List[Dict]:
         """Trim positions that exceed their tier-scaled cap (2026-07-18).
@@ -1534,7 +1534,10 @@ class STONKAIBot:
         # 1. Handle exits: risk engine + thesis exits
         exit_trades = []
         exit_trades.extend(self.risk_engine.check_exits(portfolio_data))
-        exit_trades.extend(self.risk_engine.check_concentration(portfolio_data))
+        exit_trades.extend(self.risk_engine.check_concentration(
+            portfolio_data,
+            tier_map={s.get("symbol"): s.get("tier", "") for s in self._signals},
+        ))
         # Symmetric high-beta cap enforcement: trim existing high-beta positions
         # when the basket exceeds its cap, then block new buys until compliant.
         exit_trades.extend(self.risk_engine.check_high_beta_basket(portfolio_data, high_beta_symbols))
@@ -2215,6 +2218,10 @@ class STONKAIBot:
             if self.risk_engine.in_stop_cooldown(symbol):
                 logger.info(f"Skipping avg-in {symbol}: stop-out cooldown active")
                 continue
+            # Anti-churn: avg-in also respects the non-stop sell re-entry cooldown
+            if self.risk_engine.in_sell_reentry_cooldown(symbol):
+                logger.info(f"Skipping avg-in {symbol}: sell re-entry cooldown active")
+                continue
 
             pl_pct = pos.get("unrealized_plpc", 0) or 0.0
             # Only average in if position is down or readiness has strengthened
@@ -2330,6 +2337,9 @@ class STONKAIBot:
                 self.risk_engine.reset_position_tracking(symbol)
             if is_stop_reason(trade.get("reason", "")):
                 self.risk_engine.record_stop_out(symbol, trade.get("reason", ""))
+            else:
+                # Non-stop sell (trim/rotation/thesis/profit) — block re-entry for 4h
+                self.risk_engine.record_nonstop_sell(symbol, trade.get("reason", ""))
         except Exception as e:
             logger.error(f"Failed to sell {symbol}: {e}", exc_info=True)
 

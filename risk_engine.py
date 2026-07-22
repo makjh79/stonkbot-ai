@@ -57,6 +57,23 @@ def is_stop_reason(reason: str) -> bool:
     ))
 
 
+def tier_max_position_pct(tier: str, base_max_pct: float) -> float:
+    """Single source of truth for tier-scaled per-position caps.
+
+      STRONG_NOW: 12% | NOW: 8% | WATCH: 5% | MONITOR/unknown: 3%
+
+    `base_max_pct` is accepted for API compatibility with the historical
+    trading_bot helper but the tier values are absolute by design.
+    """
+    if tier == "STRONG_NOW":
+        return 0.12
+    if tier == "NOW":
+        return 0.08
+    if tier == "WATCH":
+        return 0.05
+    return 0.03  # MONITOR and anything unknown
+
+
 @dataclass
 class RiskConfig:
     # --- Market hours / extended hours ---
@@ -126,6 +143,7 @@ class RiskConfig:
     min_trim_notional: float = 250.0              # never place a trim smaller than $250
     trim_cooldown_hours: float = 4.0              # per-symbol cooldown between concentration/sector trims
     stop_reentry_cooldown_hours: float = 20.0     # after any stop-loss sell, block re-entry for ~1 trading day
+    sell_reentry_cooldown_hours: float = 4.0      # after any NON-stop sell (trim/rotation/exit), block re-entry (2026-07-22)
     max_entries_per_symbol_per_day: int = 1       # machine-gun guard: max 1 NEW entry per symbol per day
 
     # --- High-beta basket (macro correlation guard) ---
@@ -188,6 +206,7 @@ class RiskEngine:
         self.position_last_add_time: Dict[str, str] = {}
         self.position_last_trim_time: Dict[str, str] = {}   # anti-churn: per-symbol trim cooldown
         self.stopped_out: Dict[str, str] = {}               # symbol -> ISO timestamp of last stop-loss sell
+        self.sell_cooldowns: Dict[str, str] = {}            # symbol -> ISO timestamp of last NON-stop sell (anti ping-pong)
         self.entries_today: Dict[str, str] = {}             # symbol -> ISO date of last NEW entry (1/day cap)
         self.last_rotation_time: Optional[datetime] = None
         self._load_state()
@@ -211,6 +230,7 @@ class RiskEngine:
             self.position_last_add_time = data.get("position_last_add_time", {})
             self.position_last_trim_time = data.get("position_last_trim_time", {})
             self.stopped_out = data.get("stopped_out", {})
+            self.sell_cooldowns = data.get("sell_cooldowns", {})
             self.entries_today = data.get("entries_today", {})
         except Exception as e:
             logger.warning(f"Could not load risk state: {e}")
@@ -228,6 +248,7 @@ class RiskEngine:
                     "position_last_add_time": self.position_last_add_time,
                     "position_last_trim_time": self.position_last_trim_time,
                     "stopped_out": self.stopped_out,
+                    "sell_cooldowns": self.sell_cooldowns,
                     "entries_today": self.entries_today,
                     "updated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                 }, f, indent=2)
@@ -283,6 +304,30 @@ class RiskEngine:
         if elapsed_h >= self.config.stop_reentry_cooldown_hours:
             # Cooldown expired — clean up lazily
             self.stopped_out.pop(symbol, None)
+            return False
+        return True
+
+    def record_nonstop_sell(self, symbol: str, reason: str = ""):
+        """Record a non-stop sell (trim/rotation/thesis/profit exit); blocks
+        re-entry for sell_reentry_cooldown_hours. Kills the trim<->avg-in
+        ping-pong seen 2026-07-21 (AAPL re-bought 2 min after a concentration
+        trim; LCID avg-in 2 min after a trim)."""
+        self.sell_cooldowns[symbol] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        logger.info(f"SELL COOLDOWN recorded: {symbol} — re-entry blocked for {self.config.sell_reentry_cooldown_hours:.0f}h ({reason[:60]})")
+        self._save_state()
+
+    def in_sell_reentry_cooldown(self, symbol: str) -> bool:
+        """True if symbol had a non-stop sell within the re-entry window."""
+        ts = self.sell_cooldowns.get(symbol)
+        if not ts:
+            return False
+        dt = self._parse_ts(ts)
+        if dt is None:
+            self.sell_cooldowns.pop(symbol, None)
+            return False
+        elapsed_h = (datetime.now(timezone.utc) - dt).total_seconds() / 3600
+        if elapsed_h >= self.config.sell_reentry_cooldown_hours:
+            self.sell_cooldowns.pop(symbol, None)
             return False
         return True
 
@@ -1033,8 +1078,17 @@ class RiskEngine:
     # Rebalancing / trimming oversized positions
     # ------------------------------------------------------------------
 
-    def check_concentration(self, portfolio_data: Dict, force: bool = False) -> List[Dict]:
-        """Trim oversized positions and sectors anytime a trigger is hit."""
+    def check_concentration(self, portfolio_data: Dict, force: bool = False,
+                            tier_map: Optional[Dict[str, str]] = None) -> List[Dict]:
+        """Trim oversized positions and sectors anytime a trigger is hit.
+
+        tier_map (symbol -> signal tier) lets the single-stock branch respect
+        tier-scaled caps: without it a STRONG_NOW position sized to its 12%
+        tier cap would trip the flat 10% backstop and ping-pong with the
+        avg-in engine (root cause of the 2026-07-21 LCID trim/re-buy loop).
+        The effective cap is max(flat backstop, tier cap) — the backstop stays
+        authoritative for unknown tiers and never tightens tier rules.
+        """
         trades = []
         pv = portfolio_data.get("account", {}).get("portfolio_value", 0)
         if pv <= 0:
@@ -1064,12 +1118,20 @@ class RiskEngine:
                 continue
 
             pos_pct = mv / pv
-            trigger = cap * self.config.concentration_trim_trigger + band
+            eff_cap = cap
+            tier = (tier_map or {}).get(symbol, "")
+            if tier:
+                # Never let the flat backstop contradict tier-scaled caps.
+                eff_cap = max(cap, tier_max_position_pct(tier, cap))
+                target_pct_sym = eff_cap - self.config.concentration_trim_target_buffer
+            else:
+                target_pct_sym = target_pct
+            trigger = eff_cap * self.config.concentration_trim_trigger + band
             if pos_pct > trigger:
                 if self._trim_on_cooldown(symbol):
                     logger.debug(f"Trim cooldown active for {symbol}; skipping concentration trim")
                     continue
-                target_mv = pv * target_pct
+                target_mv = pv * target_pct_sym
                 excess = mv - target_mv
                 price = mv / qty
                 trim_qty = max(1, int((excess / price)))
@@ -1079,7 +1141,7 @@ class RiskEngine:
                     "symbol": symbol,
                     "qty": trim_qty,
                     "action": "SELL",
-                    "reason": f"Concentration trim: position {pos_pct:.1%} > trigger {trigger:.1%}, target {target_pct:.1%}",
+                    "reason": f"Concentration trim: position {pos_pct:.1%} > trigger {trigger:.1%}, target {target_pct_sym:.1%}",
                 })
                 logger.info(f"CONCENTRATION TRIM: {symbol} {trim_qty} shares")
                 self._record_trim(symbol)

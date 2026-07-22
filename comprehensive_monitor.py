@@ -670,20 +670,55 @@ def check_short_positions() -> None:
 
 
 def check_trade_churn() -> None:
-    """Churn regression detector: flag excessive same-day trade counts.
-    Baseline: week of 2026-07-13 averaged 73 trades/day (364 total). Guardrail
-    target after anti-churn patch: <= 20/day."""
+    """Oscillation detector: same-symbol BUY<->SELL direction flips per day.
+
+    Replaced the raw trade-count check (2026-07-22): partial trims make the
+    raw number meaningless as a churn signal (a 30-trade day of rotation +
+    stops is healthy; a 10-trade day can still be churn). The real 2026-07-21
+    churn was trim<->avg-in ping-pong (LCID, AAPL). Raw count is kept only as
+    a runaway order-spam backstop.
+
+    trades_log rationale strings are unreliable (sync infers/mis-tags them),
+    so flips are counted from action sequences only: an entry followed by a
+    stop-loss is 1 flip (normal); a ping-pong cycle is 2+ flips per symbol.
+    """
     if not _is_us_market_hours():
         return  # only meaningful while the bot can trade
     trades = _load_json(os.path.join(BASE_DIR, "trades_log.json"))
     if not isinstance(trades, list):
         trades = (trades or {}).get("trades", []) if isinstance(trades, dict) else []
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    n = sum(1 for t in trades if str(t.get("timestamp", "")).startswith(today))
-    if n > 20:
-        _log_issue(f"Trade churn: {n} trades today — anti-churn guardrails may be failing")
-    elif n > 12:
-        _log_warn(f"Elevated trade count: {n} trades today")
+    todays = [t for t in trades if str(t.get("timestamp", "")).startswith(today)]
+    n = len(todays)
+    if n > 50:
+        _log_issue(f"Runaway trade count: {n} trades today — possible order-spam bug")
+
+    by_symbol: Dict[str, List[str]] = {}
+    for t in sorted(todays, key=lambda x: str(x.get("timestamp", ""))):
+        sym = t.get("symbol")
+        act = str(t.get("action", "")).upper()
+        if sym and act in ("BUY", "SELL"):
+            by_symbol.setdefault(sym, []).append(act)
+
+    flips = 0
+    ping_pong: List[str] = []
+    for sym, acts in by_symbol.items():
+        f = sum(1 for a, b in zip(acts, acts[1:]) if a != b)
+        flips += f
+        if f >= 2:
+            ping_pong.append(f"{sym}({f})")
+
+    if flips >= 5:
+        _log_issue(
+            f"Trade oscillation: {flips} same-symbol direction flips today"
+            + (f" ({', '.join(ping_pong)})" if ping_pong else "")
+            + " — entry/trim guardrails may be fighting"
+        )
+    elif flips >= 3:
+        _log_warn(
+            f"Elevated same-symbol flips: {flips} today"
+            + (f" ({', '.join(ping_pong)})" if ping_pong else "")
+        )
 
 
 def check_outcome_tracker() -> None:
