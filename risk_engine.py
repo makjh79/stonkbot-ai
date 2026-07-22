@@ -158,8 +158,10 @@ class RiskConfig:
     trailing_stop_pct: float = -0.10               # base: sell if position falls 10% from its peak
     trailing_stop_atr_multiplier: float = 2.0       # ATR multiple for trailing stop
     hard_stop_atr_multiplier: float = 1.5           # ATR multiple for hard stop (replaces fixed 10%)
-    max_hard_stop_pct: float = -0.08                # never wider than 8% even for low-vol stocks
+    max_hard_stop_pct: float = -0.11                # never wider than 11% — covers 1.5x ATR up to the 7% ATR entry limit (was -8%, which sat inside the noise band of 5-7% ATR names)
     min_hard_stop_pct: float = -0.03                # never tighter than 3% (avoid noise kills)
+    abs_hard_cut_pct: float = -0.05                 # absolute last-resort cut; ATR-widened up to 1x ATR when ATR is known (2026-07-22)
+    max_entry_atr_pct: float = 0.07                 # no new entries/avg-ins on names with daily ATR > 7% — untradeable with stop-based exits (LCID lesson)
     trim_profit_pct: float = 0.25                  # trim 1/3 at +25%
     full_exit_profit_pct: float = 0.50             # full exit at +50%
 
@@ -306,6 +308,17 @@ class RiskEngine:
             self.stopped_out.pop(symbol, None)
             return False
         return True
+
+    def bought_today(self, symbol: str) -> bool:
+        """True if the symbol had ANY buy today (new entry or avg-in).
+        The bot only trades US market hours (13:30-20:00 UTC), so the UTC date
+        always equals the ET trading date — plain date compare is correct."""
+        today = self._today()
+        if self.entries_today.get(symbol) == today:
+            return True
+        ts = self.position_last_add_time.get(symbol)
+        dt = self._parse_ts(ts) if ts else None
+        return bool(dt and dt.strftime("%Y-%m-%d") == today)
 
     def record_nonstop_sell(self, symbol: str, reason: str = ""):
         """Record a non-stop sell (trim/rotation/thesis/profit exit); blocks
@@ -506,6 +519,9 @@ class RiskEngine:
             return SizingResult(symbol, 0, 0.0, "", blocked=True, block_reason="position at cap")
 
         atr_pct = atr / price if atr > 0 and price > 0 else 0.02
+        if atr_pct > self.config.max_entry_atr_pct:
+            return SizingResult(symbol, 0, 0.0, "", blocked=True,
+                                block_reason=f"volatility filter: ATR {atr_pct:.1%} > {self.config.max_entry_atr_pct:.0%} limit — untradeable with stop-based exits")
         if atr_pct > 0:
             risk_target = pv * self.config.target_position_risk * self.config.avg_in_risk_multiplier
             risk_based_notional = risk_target / atr_pct
@@ -600,6 +616,10 @@ class RiskEngine:
         else:
             risk_based_notional = pv * (self.config.max_single_position_pct / 2)
 
+        if atr_pct > self.config.max_entry_atr_pct:
+            return SizingResult(symbol, 0, 0.0, "", blocked=True,
+                                block_reason=f"volatility filter: ATR {atr_pct:.1%} > {self.config.max_entry_atr_pct:.0%} limit — untradeable with stop-based exits")
+
         # Record ATR% for this symbol so trailing stop can be volatility-aware
         if atr_pct > 0:
             self.position_atr_pct[symbol] = atr_pct
@@ -693,28 +713,34 @@ class RiskEngine:
                 peak = _peak_cap
                 self.position_high_water_marks[symbol] = peak
 
-            # 0. Absolute hard cut: any position down -5% exits immediately
-            if plpc <= -0.05:
-                reason = f"Hard cut: {plpc:.1%} (absolute -5% limit)"
+            # ATR% fetched once up front — every stop below is ATR-aware (2026-07-22)
+            atr_pct = self.position_atr_pct.get(symbol, 0)
+
+            # 0. Absolute hard cut: down -5% exits immediately — widened to 1x ATR
+            # when ATR is known, so 5-7% ATR names aren't noise-killed by a flat cut
+            abs_cut = self.config.abs_hard_cut_pct
+            if atr_pct > 0:
+                abs_cut = min(abs_cut, -atr_pct)
+            if plpc <= abs_cut:
+                reason = f"Hard cut: {plpc:.1%} (limit {abs_cut:.1%})"
                 trades.append({
                     "symbol": symbol,
                     "qty": qty,
                     "action": "SELL",
                     "reason": reason,
                 })
-                logger.warning(f"HARD CUT: {symbol} at {plpc:.1%} — immediate exit due to >5% loss")
+                logger.warning(f"HARD CUT: {symbol} at {plpc:.1%} — immediate exit due to >{abs_cut:.1%} loss")
                 self.record_stop_out(symbol, reason)
                 continue
 
-            # 1. Hard stop loss — ATR-based (1.5x ATR), clamped to [3%, 8%]
-            atr_pct = self.position_atr_pct.get(symbol, 0)
+            # 1. Hard stop loss — ATR-based (1.5x ATR), clamped to [3%, 11%]
             if atr_pct > 0:
                 atr_hard_stop = -(atr_pct * self.config.hard_stop_atr_multiplier)
-                # Clamp: never wider than 8%, never tighter than 3%
+                # Clamp: never wider than 11%, never tighter than 3%
                 effective_hard_stop = max(self.config.max_hard_stop_pct, atr_hard_stop)
                 effective_hard_stop = min(self.config.min_hard_stop_pct, effective_hard_stop)
             else:
-                # Fallback: use fixed 8% if no ATR data yet
+                # Fallback: use fixed 11% if no ATR data yet
                 effective_hard_stop = self.config.max_hard_stop_pct
 
             if plpc <= effective_hard_stop:
@@ -730,12 +756,15 @@ class RiskEngine:
                 continue
 
             # 1b. VWAP-based stop (new with Alpaca paid data)
+            # Buffer scales with ATR (0.5x ATR, floored at 2%) so a flat -2%
+            # doesn't noise-stop 4-7% ATR names on an ordinary dip (2026-07-22)
             if self.config.vwap_stop_enabled:
                 vwap = pos.get("daily_vwap") or pos.get("intraday_vwap")
                 if vwap and vwap > 0 and current > 0:
                     vwap_deviation = (current - vwap) / vwap
-                    if vwap_deviation <= self.config.vwap_stop_buffer_pct:
-                        reason = f"VWAP stop: {vwap_deviation:.1%} below VWAP ${vwap:.2f}"
+                    vwap_buffer = -max(abs(self.config.vwap_stop_buffer_pct), 0.5 * atr_pct)
+                    if vwap_deviation <= vwap_buffer:
+                        reason = f"VWAP stop: {vwap_deviation:.1%} below VWAP ${vwap:.2f} (limit {vwap_buffer:.1%})"
                         trades.append({
                             "symbol": symbol,
                             "qty": qty,
@@ -748,11 +777,10 @@ class RiskEngine:
 
             # 2. Trailing stop — pure ATR-based (2.0x ATR from peak)
             # No longer capped by fixed 10% — let ATR fully drive it
-            atr_pct = self.position_atr_pct.get(symbol)
             if atr_pct and atr_pct > 0:
                 atr_trailing = -(atr_pct * self.config.trailing_stop_atr_multiplier)
-                # Clamp: never wider than 10%, never tighter than 3%
-                effective_trailing = max(-0.10, atr_trailing)
+                # Clamp: never wider than 14% (covers 2x ATR to the 7% entry limit), never tighter than 3%
+                effective_trailing = max(-0.14, atr_trailing)
                 effective_trailing = min(-0.03, effective_trailing)
             else:
                 effective_trailing = self.config.trailing_stop_pct  # fallback -10%
@@ -761,8 +789,10 @@ class RiskEngine:
             if self.config.vwap_trailing_enabled and self.config.vwap_stop_enabled:
                 vwap = pos.get("daily_vwap")
                 if vwap and vwap > 0 and current < vwap:
-                    # Below VWAP — tighten the trailing stop by 1%
-                    effective_trailing = max(effective_trailing - 0.01, -0.05)
+                    # Below VWAP — tighten by 1pp, but never tighter than 1x ATR
+                    # (a flat -5% floor noise-stops high-ATR names)
+                    trail_floor = max(-0.05, -atr_pct) if atr_pct and atr_pct > 0 else -0.05
+                    effective_trailing = max(effective_trailing - 0.01, trail_floor)
 
             if peak > 0 and current > 0:
                 drawdown_from_peak = (current - peak) / peak

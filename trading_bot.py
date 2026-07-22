@@ -1666,6 +1666,8 @@ class STONKAIBot:
                                 _exited_today.add(sym)
 
         # Hard cut: anything down -3% gets exited regardless of holding period or flatness
+        # Threshold widens to 1x ATR for high-ATR names so the cut sits OUTSIDE the
+        # normal daily noise band (2026-07-22; flat -3% noise-killed 4-7% ATR names)
         for sym in list(self._positions.keys()):
             if sym in _exited_today:
                 continue
@@ -1674,8 +1676,10 @@ class STONKAIBot:
             _current = pos.get("current_price", 0) or (pos.get("market_value", 0) / pos.get("qty", 1))
             if _entry > 0 and _current > 0:
                 _loss_pct = (_current - _entry) / _entry * 100
-                if _loss_pct <= -3.0:
-                    logger.info(f"🛑 Hard cut: {sym} down {_loss_pct:.1f}% — hitting -3% limit")
+                _atr_pct = self.risk_engine.position_atr_pct.get(sym, 0) * 100
+                _cut = max(3.0, _atr_pct) if _atr_pct > 0 else 3.0
+                if _loss_pct <= -_cut:
+                    logger.info(f"🛑 Hard cut: {sym} down {_loss_pct:.1f}% — hitting -{_cut:.0f}% limit")
                     self._exit_position(sym, reason="hard_stop_3pct")
                     _exited_today.add(sym)
 
@@ -2273,6 +2277,14 @@ class STONKAIBot:
         symbol = trade["symbol"]
         requested_qty = trade["qty"]
 
+        # Min-hold rule (2026-07-22): defer non-stop sells on positions bought
+        # today. Same-day round-trips were 60% of trades and net -$4.9K; only
+        # genuine stop-losses may exit same-day (cost of being immediately wrong).
+        reason_str = trade.get("reason", "")
+        if not is_stop_reason(reason_str) and self.risk_engine.bought_today(symbol):
+            logger.info(f"MIN-HOLD: deferring non-stop sell of {symbol} (bought today; {reason_str[:60]})")
+            return
+
         # Hard guard: never short-sell. Only sell what we actually own long.
         long_qty = 0
         positions = portfolio_data.get("positions", []) if portfolio_data else []
@@ -2535,7 +2547,7 @@ class STONKAIBot:
         logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
         logger.info(f"Entry gate: readiness >= 77 AND >= 5 confirmations AND above_ema")
         logger.info(f"Position caps: 12% STRONG_NOW / 8% NOW / 5% WATCH / 3% MONITOR; 25% sector cap")
-        logger.info(f"Exits: -3% hard cut + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON)")
+        logger.info(f"Exits: -3% hard cut (widens to 1x ATR) + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON) | min-hold: no same-day non-stop sells")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "
                     f"{self.risk_engine.config.sell_reentry_cooldown_hours:.0f}h sell re-entry cooldown | "
                     f"peak reset on exit | {self.risk_engine.config.max_entries_per_symbol_per_day} entry/symbol/day | "
