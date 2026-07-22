@@ -268,7 +268,10 @@ def fetch_spy_benchmark(api=None):
         logger.warning(f"Could not fetch SPY benchmark: {e}")
         return None
 
-# July 7, 2026 SPY baseline price (bot reset date — matches RESET_PRICES in fetch_market_indices.py)
+# Deprecated (2026-07-22): hardcoded Jul 7 reset baseline rebased the benchmark
+# series mid-window. update_history now uses history['benchmark_base'] instead.
+# Kept for reference; fetch_market_indices.py has its own RESET_PRICES for the
+# site's since-reset index widgets (separate, intentional convention).
 SPY_RESET_PRICE = 747.71
 
 def update_history(data, api=None):
@@ -288,14 +291,34 @@ def update_history(data, api=None):
 
         # Fetch SPY benchmark via hub. `if api:` guard removed Jul 21 — callers
         # pass api=None, which silently skipped benchmark appends since Jul 19.
+        # Normalization (2026-07-22): base stored in history['benchmark_base']
+        # ({date, spy_close}) so the series stays continuous. The previous
+        # SPY_RESET_PRICE (Jul 7) hardcode rebased the series mid-window and
+        # broke full-window comparison; self-heals from the first retained
+        # check's date when the stamp is missing.
         benchmark_value = None
         benchmark_symbol = None
         spy_price = fetch_spy_benchmark()
         if spy_price:
             benchmark_symbol = "SPY"
-            # Calculate benchmark value normalized to $100K starting value
-            # Using July 7, 2026 SPY price as baseline (post-reset)
-            benchmark_value = round((spy_price / SPY_RESET_PRICE) * 100000.0, 2)
+            base_close = (history.get("benchmark_base") or {}).get("spy_close")
+            if not base_close:
+                checks_existing = history.get("checks", [])
+                first_date = str(checks_existing[0].get("timestamp", ""))[:10] if checks_existing else ""
+                if first_date:
+                    try:
+                        hub = get_data_hub()
+                        _res = hub.get_daily_bars(["SPY"], days=200)
+                        _bars = _res.get("SPY", {})
+                        _closes = {str(t)[:10]: float(c) for t, c in zip(_bars.get("timestamps", []), _bars.get("closes", []))}
+                        base_close = _closes.get(first_date)
+                    except Exception as e:
+                        logger.warning(f"benchmark base lookup failed: {e}")
+                if not base_close:
+                    first_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+                    base_close = spy_price
+                history["benchmark_base"] = {"date": first_date, "spy_close": base_close}
+            benchmark_value = round((spy_price / base_close) * 100000.0, 2)
 
         # Create check entry
         check = {
