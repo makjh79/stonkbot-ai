@@ -236,8 +236,12 @@ def check_signals_write_health():
         _log_issue(f"signals.json not written by signal_engine for {(now - opt_mtime)/60:.0f} min — write may be failing")
 
     if opt_mtime and web_mtime:
-        if abs(opt_mtime - web_mtime) > 60:
-            _log_issue(f"signals.json opt/web copy mismatch: opt_age={now - opt_mtime:.0f}s web_age={now - web_mtime:.0f}s")
+        # Tolerate normal lag from non-mirroring writers (e.g. signal_tracker
+        # refreshes the opt copy only; the next mirroring write closes the gap).
+        # Only flag when the web copy lags by more than a full refresh cycle —
+        # i.e. the mirror is genuinely failing, not just mid-cycle.
+        if opt_mtime - web_mtime > 20 * 60:
+            _log_issue(f"signals.json web mirror stale: opt_age={now - opt_mtime:.0f}s web_age={now - web_mtime:.0f}s")
 
 def check_extended_hours_prices() -> None:
     """All universe symbols (and watchlist) must carry live / extended-hours price data."""
