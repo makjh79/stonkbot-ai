@@ -2537,10 +2537,11 @@ class STONKAIBot:
         logger.info(f"Position caps: 12% STRONG_NOW / 8% NOW / 5% WATCH / 3% MONITOR; 25% sector cap")
         logger.info(f"Exits: -3% hard cut + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON)")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "
+                    f"{self.risk_engine.config.sell_reentry_cooldown_hours:.0f}h sell re-entry cooldown | "
                     f"peak reset on exit | {self.risk_engine.config.max_entries_per_symbol_per_day} entry/symbol/day | "
                     f"2-scan persistence | "
                     f"trim band +{self.risk_engine.config.concentration_trim_band:.1%}, min trim ${self.risk_engine.config.min_trim_notional:.0f}, "
-                    f"{self.risk_engine.config.trim_cooldown_hours:.0f}h trim cooldown")
+                    f"{self.risk_engine.config.trim_cooldown_hours:.0f}h trim cooldown | tier-aware concentration caps")
         logger.info(f"Drawdown halt: {self.risk_engine.config.new_entry_max_drawdown_pct:.0%}")
         logger.info("=" * 70)
 
