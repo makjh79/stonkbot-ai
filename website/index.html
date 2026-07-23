@@ -4237,7 +4237,9 @@ async function loadPerformanceStats() {
             const pv = pd.account && pd.account.portfolio_value;
             const spRet = mi.indices && mi.indices['S&P 500'] && mi.indices['S&P 500'].return_pct;
             if (pv) {
-                const botRet = ((pv - 100000) / 100000) * 100;
+                // Rebase Jul 23: compare to post-reset pv (Jul 7 16:00 UTC snapshot)
+                const BOT_RESET_PV = 99866.86;
+                const botRet = ((pv - BOT_RESET_PV) / BOT_RESET_PV) * 100;
                 setT('perf-bot-ret', retLive(botRet));
                 const elB = document.getElementById('perf-bot-ret');
                 if (elB) elB.style.color = botRet >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
@@ -8150,28 +8152,30 @@ function updateDashboard(data, marketStatus) {
                     stonkValueEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
                     stonkValueEl.classList.remove('skeleton', 'skeleton-value');
                 }
+                // Rebase Jul 23: compare bot to post-reset pv (Jul 7 16:00 UTC snapshot)
+                const raceBotReturn = d.portfolio_value != null ? ((d.portfolio_value - 99866.86) / 99866.86 * 100) : null;
                 const stonkReturnEl = document.getElementById('stonkAiReturn');
-                if (stonkReturnEl && totalReturn != null) {
-                    stonkReturnEl.textContent = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(2) + '%';
-                    stonkReturnEl.style.color = totalReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                if (stonkReturnEl && raceBotReturn != null) {
+                    stonkReturnEl.textContent = (raceBotReturn >= 0 ? '+' : '') + raceBotReturn.toFixed(2) + '%';
+                    stonkReturnEl.style.color = raceBotReturn >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
                     stonkReturnEl.classList.remove('skeleton', 'skeleton-text');
                 }
-                const spread = (totalReturn || 0) - d.spy.return_pct;
+                const spread = (raceBotReturn || 0) - d.spy.return_pct;
                 const raceSpread = document.getElementById('race-spread');
                 if (raceSpread) {
                     raceSpread.textContent = spread >= 0 ? `▲ +${spread.toFixed(2)}% ahead` : `▼ ${spread.toFixed(2)}% behind`;
                     raceSpread.style.color = spread >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
                 }
                 const spStatus = document.getElementById('sp500Status');
-                if (spStatus && totalReturn != null) {
-                    const spLeading = d.spy.return_pct >= totalReturn;
+                if (spStatus && raceBotReturn != null) {
+                    const spLeading = d.spy.return_pct >= raceBotReturn;
                     spStatus.textContent = spLeading ? 'LEADING' : 'BEHIND';
                     spStatus.style.background = spLeading ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)';
                     spStatus.style.color = spLeading ? 'var(--accent-green)' : 'var(--accent-red)';
                 }
                 const stonkStatus = document.getElementById('stonkAiStatus');
-                if (stonkStatus && totalReturn != null) {
-                    const botLeading = totalReturn >= d.spy.return_pct;
+                if (stonkStatus && raceBotReturn != null) {
+                    const botLeading = raceBotReturn >= d.spy.return_pct;
                     stonkStatus.textContent = botLeading ? 'LEADING' : 'BEHIND';
                     stonkStatus.style.background = botLeading ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)';
                     stonkStatus.style.color = botLeading ? 'var(--accent-green)' : 'var(--accent-red)';
@@ -8297,7 +8301,9 @@ function updateDashboard(data, marketStatus) {
                 console.log('updateRaceValues: Got data', { currentValue, spReturn, spValue });
 
                 // Calculate StonkBOT.AI return
-                const stonkReturn = ((currentValue - 100000) / 100000 * 100);
+                // Rebase Jul 23: compare bot to post-reset pv (Jul 7 16:00 UTC snapshot)
+                const BOT_RESET_PV = 99866.86;
+                const stonkReturn = ((currentValue - BOT_RESET_PV) / BOT_RESET_PV * 100);
 
                 // Update S&P 500 display
                 const spReturnEl = document.getElementById('sp500Return');
