@@ -196,11 +196,16 @@ def check_file_freshness() -> None:
     """Key pipeline outputs must not be stale."""
     files = {
         "signals.json": 1200,           # 20 min slack (signal engine refreshes ~every 15 min)
-        "ai_watchlist_live.json": 120,  # 2 min
+        "ai_watchlist_live.json": 700,  # DWM cron writes every 5 min; 120s guaranteed flapping
         "popup_content.json": 300,      # 5 min
         "watchlist_narratives.json": 300,
         "trades_log.json": 600,         # 10 min (syncs every 5 min)
-        "portfolio_history.json": 900,  # 15 min
+        # portfolio_history.json deliberately NOT listed here: since 2026-07-21
+        # its writer (fetch_data_simple) only writes during US market hours
+        # (09:30-16:00 ET), so this check's rough 13:00-21:00 UTC window
+        # false-fired DEGRADED every weekday 09:00-09:30 ET and spammed WARNs
+        # overnight. check_portfolio_history_freshness() covers it with the
+        # correct market-hours window and a 30-min threshold.
     }
     now = time.time()
     is_market = _is_us_market_hours()
