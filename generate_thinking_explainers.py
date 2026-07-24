@@ -35,6 +35,21 @@ LLM_TIMEOUT = int(os.environ.get("STONKBOT_THINKING_TIMEOUT", "180"))
 MAX_PER_BATCH = 12
 EXPLAIN_TYPES = ("trade", "digest", "skip")
 
+# Backend tier -> public site label (matches index.html mapping at line ~9995).
+# Voice layer always speaks in public names; raw bot quotes stay raw.
+PUBLIC_TIER = {
+    "STRONG_NOW": "PRIME",
+    "NOW": "BUILDING",
+    "WATCH": "WATCHING",
+    "MONITOR": "TRACKING",
+}
+
+
+def public_tier(t):
+    if not t:
+        return t
+    return PUBLIC_TIER.get(str(t).upper(), str(t))
+
 sys.path.insert(0, BASE)
 from stonk_utils import atomic_write_json
 
@@ -158,7 +173,7 @@ def signal_snapshot(signals_doc, symbol):
             return {
                 "company": s.get("company"),
                 "readiness": s.get("readiness_score"),
-                "tier": s.get("tier"),
+                "tier": public_tier(s.get("tier")),
                 "confirmations": s.get("confirmation_count"),
             }
     return {}
