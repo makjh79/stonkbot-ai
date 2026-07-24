@@ -648,6 +648,29 @@ def check_live_quotes_pipeline() -> None:
         )
 
 
+def check_thinking_pipeline() -> None:
+    """thinking_stream.json (Bot Thinking sidecar) is written every 5 min by
+    cron 24/7. A stale/missing file during market hours means the decision
+    journal silently died — the Holdings teaser hides itself on staleness, so
+    nobody would notice without this check."""
+    path = os.path.join(WEB_DIR, "thinking_stream.json")
+    now = datetime.now(timezone.utc)
+    mins = now.hour * 60 + now.minute
+    market_window = now.weekday() < 5 and (13 * 60 + 30) <= mins <= (20 * 60 + 30)
+    if not market_window:
+        return
+    mtime = _file_mtime(path)
+    if mtime is None:
+        _log_issue("thinking_stream.json missing during market hours — check thinking_journal.py cron")
+        return
+    age = now.timestamp() - mtime
+    if age > 20 * 60:
+        _log_issue(
+            f"thinking_stream.json is {age / 60:.1f} min old (max 20) "
+            "— Bot Thinking sidecar degraded; check thinking_journal.py cron"
+        )
+
+
 def check_short_positions() -> None:
     """Critical alert on short/negative positions — bot is long-only.
     Queries Alpaca /v2/positions directly: portfolio_data.json is bot-written
@@ -1118,6 +1141,7 @@ def check_cron_entries() -> None:
         "sync_alpaca_trades.py": "sync Alpaca trades",
         "dynamic_watchlist_manager.py": "watchlist rotation",
         "snapshot_portfolio.py": "portfolio snapshot",
+        "thinking_journal.py": "Bot Thinking journal",
     }
     for script, label in required.items():
         if script not in out:
@@ -1363,6 +1387,7 @@ def main() -> int:
     _run(check_portfolio_sanity)
     _run(check_portfolio_history_freshness)
     _run(check_live_quotes_pipeline)
+    _run(check_thinking_pipeline)
     _run(check_short_positions)
     _run(check_trade_churn)
     _run(check_outcome_tracker)
