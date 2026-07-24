@@ -69,6 +69,10 @@ jobs:
            chown stonkai:stonkai /var/www/hedge-fund-website/performance.html && \
            chmod 0644 /var/www/hedge-fund-website/performance.html && \
            \
+           cp /opt/stonk-ai/website/thinking.html /var/www/hedge-fund-website/thinking.html && \
+           chown stonkai:stonkai /var/www/hedge-fund-website/thinking.html && \
+           chmod 0644 /var/www/hedge-fund-website/thinking.html && \
+           \
            mkdir -p /var/www/hedge-fund-website/sentiment /var/www/hedge-fund-website/history && \
            rm -f /etc/nginx/sites-enabled/*.bak.* && \
            \
