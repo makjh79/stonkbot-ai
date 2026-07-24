@@ -33,7 +33,7 @@ OUT_PATH = os.path.join(BASE, "thinking_llm.json")
 MODEL = os.environ.get("STONKBOT_THINKING_MODEL", "ollama/kimi-k2.7-code:cloud")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_THINKING_TIMEOUT", "180"))
 MAX_PER_BATCH = 12
-EXPLAIN_TYPES = ("trade", "digest")
+EXPLAIN_TYPES = ("trade", "digest", "skip")
 
 sys.path.insert(0, BASE)
 from stonk_utils import atomic_write_json
@@ -234,7 +234,6 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
             continue
         sym = e.get("symbol")
         sig = signal_snapshot(signals_doc, sym)
-        pos = position_snapshot(portfolio_doc, sym)
         radar = "off the radar (not in current scan universe)"
         if sig:
             r = sig.get("readiness")
@@ -242,6 +241,15 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
                      else "still on the radar")
             if sig.get("tier"):
                 radar += f", tier {sig['tier']}"
+        if e["type"] == "skip":
+            blocks.append(
+                f"id={eid}\n"
+                f"  kind: skip (I considered this name but a rule held me back)\n"
+                f"  line: \"{e['text']}\"\n"
+                f"  radar: {radar}"
+            )
+            continue
+        pos = position_snapshot(portfolio_doc, sym)
         pos_txt = ("remainder still held"
                    + (f" at {pos['plpc']:+.1f}% unrealized" if isinstance(pos.get("plpc"), (int, float)) else "")
                    if pos.get("held") else "position fully closed")
@@ -284,6 +292,7 @@ Voice rules (strict):
 - CRITICAL: the reader already sees the raw line with its trigger numbers. Do NOT restate them. Add what the numbers don't say: holding period, round-trip outcome, what the exit frees up, whether the symbol stays on the radar
 - Vary your sentence shapes. If four stops fire in one day, do not explain them the same way four times — for a routine trailing stop a single short shrug of a sentence is better than a template
 - For stops/hard cuts: matter-of-fact, no excuses, no self-pity. For quiet days: cash as a deliberate position, said plainly, at most once
+- For skips: a rule held me back from a name I was considering — explain the tension plainly (what I wanted vs what the rule says). One sentence is usually enough. Do not sound frustrated; the leash is mine and it is there on purpose
 - Use only the facts below — never invent numbers or reasons
 
 Tape context: {tape}

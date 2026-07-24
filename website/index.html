@@ -3841,6 +3841,7 @@
                             var color = '#6b7280';
                             if (e.type === 'trade') color = (e.action === 'BUY') ? '#10b981' : '#ef4444';
                             else if (e.type === 'digest') color = '#06b6d4';
+                            else if (e.type === 'skip') color = '#f59e0b';
                             document.getElementById('thinkingTeaserText').textContent = txt;
                             document.getElementById('thinkingTeaserDot').style.background = color;
                             document.getElementById('thinkingTeaser').style.display = 'flex';

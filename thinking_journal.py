@@ -26,6 +26,7 @@ No LLM. Decision logic untouched — this observes, it does not act.
 
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
@@ -44,6 +45,13 @@ STATE_PATH = os.path.join(BASE, "thinking_state.json")
 OUT_PATH = os.path.join(WEB_DIR, "thinking_stream.json")
 LIVE_QUOTES = os.path.join(WEB_DIR, "live_quotes.json")
 LLM_EXPLAINERS = os.path.join(BASE, "thinking_llm.json")
+BOT_LOG = os.path.join(BASE, "logs", "trading_bot.log")
+HKT = ZoneInfo("Asia/Hong_Kong")  # bot log timestamps are server-local
+
+SKIP_RE = re.compile(
+    r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d+ - \S+ - \w+ - Skipping ([A-Z0-9.]+): (.+)$"
+)
+SEED_LOG_BYTES = 3 * 1024 * 1024  # first run reads at most this much backlog
 
 MAX_ENTRIES = 400
 MAX_TRADE_IDS = 800
@@ -154,6 +162,58 @@ def trade_text(t):
 
 # ---------------------------------------------------------------- signals
 
+def canonical_reason(raw):
+    """Collapse dynamic skip reasons into stable, displayable buckets."""
+    r = (raw or "").lower()
+    if "persistence gate" in r:
+        return "persistence gate — needs consecutive eligible scans"
+    if "stop-out cooldown" in r:
+        return "stop-out cooldown — no same-day re-entry after stop-loss"
+    if "too hot" in r:
+        return "intraday pump — entry too hot"
+    if "entry/exit conflict" in r:
+        return "entry/exit conflict — price inside VWAP stop zone"
+    return (raw or "unknown").strip()[:60]
+
+
+def read_new_log_lines(offset):
+    """Tail BOT_LOG from byte offset; rotation-safe. Returns (lines, new_offset)."""
+    try:
+        size = os.path.getsize(BOT_LOG)
+    except OSError:
+        return [], offset
+    if offset is None:
+        offset = max(0, size - SEED_LOG_BYTES)
+    if size < offset:  # rotated/truncated
+        offset = 0
+    try:
+        with open(BOT_LOG, "r", errors="replace") as f:
+            f.seek(offset)
+            data = f.read()
+            return data.splitlines(), f.tell()
+    except OSError:
+        return [], offset
+
+
+def qualify_note(sig):
+    """'would otherwise qualify' annotation for skip entries."""
+    if not sig:
+        return ""
+    r = sig.get("readiness_score")
+    base = f"readiness {r:.0f}" if isinstance(r, (int, float)) else "readiness n/a"
+    fails = gate_failures(sig)
+    if not fails:
+        return base + " — would otherwise qualify"
+    return base + f" — gate also blocks ({', '.join(fails)})"
+
+
+def find_signal(signals_doc, symbol):
+    for s in (signals_doc or {}).get("signals") or []:
+        if s.get("symbol") == symbol:
+            return s
+    return None
+
+
 def gate_failures(sig):
     """Return list of plain-English gate failures for a signal dict."""
     fails = []
@@ -233,6 +293,9 @@ def default_state():
         "digest_date": None,
         "quiet_streak": 0,
         "bootstrapped": False,
+        "log_offset": None,
+        "open_skips": {},
+        "skips_bootstrapped": False,
     }
 
 
@@ -301,9 +364,65 @@ def main():
     state["emitted_trade_ids"] = list(emitted)[-MAX_TRADE_IDS:]
     state["bootstrapped"] = True
 
-    # ---- 2. scan windows (market hours only) ---------------------------
+    # ---- 2. skip decisions (bot log tail) ------------------------------
+    # The bot logs "Skipping SYM: reason" every cycle it declines to act on
+    # an otherwise-actionable name. Collapse by (day, symbol, reason) into a
+    # single living entry — the stream shows the decision, not the spam.
+    sig_doc = load_json(SIGNALS)
+    lines, new_offset = read_new_log_lines(state.get("log_offset"))
+    state["log_offset"] = new_offset
+    first_skip_run = not state["skips_bootstrapped"]
+
+    # day rollover: freeze yesterday's skip windows
+    for k in [k for k in state["open_skips"] if not k.startswith(today_et)]:
+        del state["open_skips"][k]
+
+    skips_changed = False
+    for line in lines:
+        m = SKIP_RE.match(line)
+        if not m:
+            continue
+        ts_hkt = datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S").replace(tzinfo=HKT)
+        ts_utc = ts_hkt.astimezone(timezone.utc)
+        et_d = ts_utc.astimezone(ET).date().isoformat()
+        if first_skip_run and et_d != today_et:
+            continue  # seed: only today's skips on first pass
+        sym, canon = m.group(2), canonical_reason(m.group(3))
+        key = f"{et_d}|{sym}|{canon}"
+        entry_id = f"skip-{et_d}-{sym}-{re.sub(r'[^a-z0-9]+', '-', canon.lower())[:30]}"
+        win = next((e for e in entries if e.get("id") == entry_id), None)
+        if win is None:
+            # Only surface skips with real tension: the entry gate passes and
+            # another rule is the sole blocker. When the gate also blocks, the
+            # skip is noise — scan windows already tell that story.
+            sig = find_signal(sig_doc, sym)
+            if not sig or gate_failures(sig):
+                continue
+            win = {
+                "id": entry_id,
+                "ts": ts_utc.isoformat().replace("+00:00", "Z"),
+                "et_date": et_d,
+                "type": "skip",
+                "symbol": sym,
+                "reason": canon,
+                "n": 0,
+            }
+            entries.insert(0, win)
+        win["n"] = int(win.get("n") or 0) + 1
+        win["ts"] = ts_utc.isoformat().replace("+00:00", "Z")
+        n = win["n"]
+        note = qualify_note(find_signal(sig_doc, sym))
+        win["text"] = (f"Skipped {sym}{f' ×{n}' if n > 1 else ''} — {canon}"
+                       + (f" · {note}" if note else ""))
+        state["open_skips"][key] = entry_id
+        skips_changed = True
+
+    state["skips_bootstrapped"] = True
+    if skips_changed:
+        entries.sort(key=lambda e: e.get("ts", ""), reverse=True)
+
+    # ---- 3. scan windows (market hours only) ---------------------------
     if in_market_hours(now_et):
-        sig_doc = load_json(SIGNALS)
         sig_ts_raw = (sig_doc or {}).get("generated_at")
         sig_ts = parse_ts(sig_ts_raw)
         if sig_ts and sig_ts_raw != state["last_signals_ts"]:
@@ -338,7 +457,7 @@ def main():
         if not is_market_day(now_et) or now_et.hour >= 16:
             state["open_scan_id"] = None
 
-    # ---- 3. day digest (after close, once per market day) --------------
+    # ---- 4. day digest (after close, once per market day) --------------
     scans_today = 0
     for e in entries:
         if e.get("type") == "scan" and e.get("et_date") == today_et:
@@ -386,7 +505,7 @@ def main():
         state["digest_date"] = today_et
         state["open_scan_id"] = None
 
-    # ---- 4. merge LLM explainers (written async by
+    # ---- 5. merge LLM explainers (written async by
     # generate_thinking_explainers.py; sidecar stays sole stream writer) ----
     llm_doc = load_json(LLM_EXPLAINERS) or {}
     explainers = llm_doc.get("explainers") or {}
@@ -395,7 +514,7 @@ def main():
             if "explainer" not in e and e.get("id") in explainers:
                 e["explainer"] = explainers[e["id"]]
 
-    # ---- 5. write ------------------------------------------------------
+    # ---- 6. write ------------------------------------------------------
     entries = entries[:MAX_ENTRIES]
     out = {
         "generated_at": now.isoformat().replace("+00:00", "Z"),
