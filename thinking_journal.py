@@ -42,6 +42,8 @@ SIGNALS = os.path.join(BASE, "signals.json")
 PORTFOLIO = os.path.join(BASE, "portfolio_data.json")
 STATE_PATH = os.path.join(BASE, "thinking_state.json")
 OUT_PATH = os.path.join(WEB_DIR, "thinking_stream.json")
+LIVE_QUOTES = os.path.join(WEB_DIR, "live_quotes.json")
+LLM_EXPLAINERS = os.path.join(BASE, "thinking_llm.json")
 
 MAX_ENTRIES = 400
 MAX_TRADE_IDS = 800
@@ -204,6 +206,25 @@ def scan_stats(signals_doc):
 
 # ---------------------------------------------------------------- state
 
+def market_ctx():
+    """Point-in-time tape snapshot stamped onto entries. SPY return is since
+    the Jul 7 reset — the same baseline the site's race card uses."""
+    ctx = {}
+    lq = load_json(LIVE_QUOTES) or {}
+    spy = lq.get("spy") or {}
+    if isinstance(spy.get("return_pct"), (int, float)):
+        ctx["spy_pct"] = round(spy["return_pct"], 2)
+    if isinstance(lq.get("day_change_pct"), (int, float)):
+        ctx["day_chg_pct"] = round(lq["day_change_pct"], 2)
+    pv, cash = lq.get("portfolio_value"), lq.get("cash")
+    if not (pv and cash):
+        acct = (load_json(PORTFOLIO) or {}).get("account") or {}
+        pv, cash = acct.get("portfolio_value"), acct.get("cash")
+    if pv and cash:
+        ctx["cash_pct"] = round(cash / pv * 100, 1)
+    return ctx
+
+
 def default_state():
     return {
         "emitted_trade_ids": [],
@@ -256,9 +277,10 @@ def main():
         if e.get("type") == "trade" and e.get("et_date") == today_et:
             trades_today += 1
 
+    ctx = market_ctx()
     for ts, tid, t in new_trades:
         et_d = ts.astimezone(ET).date().isoformat()
-        entries.insert(0, {
+        entry = {
             "id": f"trade-{tid}",
             "ts": ts.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
             "et_date": et_d,
@@ -266,7 +288,10 @@ def main():
             "action": (t.get("action") or "").upper(),
             "symbol": t.get("symbol"),
             "text": trade_text(t),
-        })
+        }
+        if ctx:
+            entry["ctx"] = ctx
+        entries.insert(0, entry)
         emitted.add(tid)
         if et_d == today_et:
             trades_today += 1
@@ -347,17 +372,30 @@ def main():
             body = f"{scans_today} scans" if scans_today else ""
         tail = f"cash {cash_pct:.0f}%"
         mid = f" — {body}" if body else ""
-        entries.insert(0, {
+        d_entry = {
             "id": f"digest-{today_et}",
             "ts": now.isoformat().replace("+00:00", "Z"),
             "et_date": today_et,
             "type": "digest",
             "text": f"{head}{mid} · {tail}",
-        })
+        }
+        d_ctx = market_ctx()
+        if d_ctx:
+            d_entry["ctx"] = d_ctx
+        entries.insert(0, d_entry)
         state["digest_date"] = today_et
         state["open_scan_id"] = None
 
-    # ---- 4. write ------------------------------------------------------
+    # ---- 4. merge LLM explainers (written async by
+    # generate_thinking_explainers.py; sidecar stays sole stream writer) ----
+    llm_doc = load_json(LLM_EXPLAINERS) or {}
+    explainers = llm_doc.get("explainers") or {}
+    if explainers:
+        for e in entries:
+            if "explainer" not in e and e.get("id") in explainers:
+                e["explainer"] = explainers[e["id"]]
+
+    # ---- 5. write ------------------------------------------------------
     entries = entries[:MAX_ENTRIES]
     out = {
         "generated_at": now.isoformat().replace("+00:00", "Z"),

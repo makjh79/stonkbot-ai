@@ -669,6 +669,27 @@ def check_thinking_pipeline() -> None:
             f"thinking_stream.json is {age / 60:.1f} min old (max 20) "
             "— Bot Thinking sidecar degraded; check thinking_journal.py cron"
         )
+        return
+    # LLM voice layer: trade entries should pick up an explainer within ~30 min
+    # (explainer cron writes thinking_llm.json, sidecar merges). Warn-only:
+    # the stream still works without it, just quieter than intended.
+    try:
+        import json as _json
+        with open(path) as f:
+            stream = _json.load(f)
+        for e in (stream.get("entries") or [])[:50]:
+            if e.get("type") != "trade" or e.get("explainer"):
+                continue
+            ets = datetime.fromisoformat(str(e.get("ts", "")).replace("Z", "+00:00"))
+            e_age = now.timestamp() - ets.timestamp()
+            if e_age > 30 * 60:
+                _log_warn(
+                    f"thinking stream: trade {e.get('symbol', '?')} unexplained "
+                    f"{e_age / 60:.0f} min after entry — check generate_thinking_explainers.py"
+                )
+                break
+    except Exception:
+        pass
 
 
 def check_short_positions() -> None:
@@ -1142,6 +1163,7 @@ def check_cron_entries() -> None:
         "dynamic_watchlist_manager.py": "watchlist rotation",
         "snapshot_portfolio.py": "portfolio snapshot",
         "thinking_journal.py": "Bot Thinking journal",
+        "generate_thinking_explainers.py": "Bot Thinking LLM explainers",
     }
     for script, label in required.items():
         if script not in out:

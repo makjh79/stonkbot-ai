@@ -112,6 +112,15 @@
         .entry-text { font-size: 0.8rem; line-height: 1.45; color: var(--text-primary); }
         .entry.scan .entry-text { color: var(--text-muted); font-size: 0.74rem; }
         .entry.digest .entry-text { font-weight: 600; }
+        .entry-why {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            line-height: 1.4;
+        }
 
         .empty, .offline {
             text-align: center;
@@ -185,6 +194,12 @@
             return ET_FMT_DAY.format(new Date(isoDay + 'T12:00:00Z'));
         }
 
+        function esc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
         function entryClass(e) {
             if (e.type === 'trade') return e.action === 'BUY' ? 'trade-buy' : 'trade-sell';
             return e.type;
@@ -211,9 +226,10 @@
                     lastDay = d;
                 }
                 const time = ET_FMT_TIME.format(new Date(e.ts));
+                const why = e.explainer ? `<span class="entry-why">${esc(e.explainer)}</span>` : '';
                 html += `<div class="entry ${entryClass(e)}">` +
                         `<span class="entry-time">${time}</span>` +
-                        `<span class="entry-text">${e.text}</span></div>`;
+                        `<span class="entry-text">${esc(e.text)}${why}</span></div>`;
             }
             el.innerHTML = html;
         }
