@@ -122,13 +122,40 @@ def _collect_facts(session):
 
     def tline(t):
         why = t.get("rationale") or t.get("strategy") or ""
-        return f"{t['action']} {t['symbol']} {t['qty']} @ ${t['price']:.2f}" + (f" — {why}" if why else "")
+        return t["action"], t["symbol"], t["qty"], t["price"], why
+
+    # group identical trades (action+symbol+reason) into "SELL ROKU ×4 @ $142.28-142.38 — why"
+    groups = {}
+    order = []
+    for t in day_trades:
+        a, s, q, px, why = tline(t)
+        key = (a, s, why[:40])
+        if key not in groups:
+            groups[key] = {"a": a, "s": s, "qty": 0, "pxs": [], "why": why}
+            order.append(key)
+        groups[key]["qty"] += q
+        groups[key]["pxs"].append(px)
+    clauses = []
+    for key in order[:4]:
+        g = groups[key]
+        lo, hi = min(g["pxs"]), max(g["pxs"])
+        px_txt = f"${lo:.2f}" if lo == hi else f"${lo:.2f}-{hi:.2f}"
+        c = f"{g['a']} {g['s']}"
+        if len(g["pxs"]) > 1:
+            c += f" x{len(g['pxs'])}"
+        c += f" ({g['qty']} sh) @ {px_txt}"
+        if g["why"]:
+            c += f" — {g['why'].split('(')[0].strip()}"
+        clauses.append(c)
+    if len(order) > 4:
+        clauses.append(f"+{len(order) - 4} more")
+    trades_txt = "; ".join(clauses)
 
     block_lines = [f"{b.get('symbol')} blocked by {b.get('gate', 'gate')} ({b.get('reason', '')})" for b in blocks]
 
     weekday = session.strftime("%A")
     lines = [f"SESSION: {weekday} {session.isoformat()} (US ET)"]
-    lines.append(f"TRADES ({len(day_trades)}): " + ("; ".join(tline(t) for t in day_trades) if day_trades else "none"))
+    lines.append(f"TRADES ({len(day_trades)}): " + (trades_txt if day_trades else "none"))
     lines.append(f"GATE BLOCKS ({len(blocks)}): " + ("; ".join(block_lines) if block_lines else "none"))
     pl = f"PORTFOLIO: value ${pv:,.0f}"
     if day_pp is not None:
@@ -184,13 +211,15 @@ def _llm_entry(facts_text):
             data=json.dumps({
                 "model": MODEL,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 220,
+                "max_tokens": 2048,
                 "temperature": 0.4,
             }).encode(),
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
         )
-        with urllib.request.urlopen(req, timeout=60) as r:
-            text = json.loads(r.read())["choices"][0]["message"]["content"].strip()
+        with urllib.request.urlopen(req, timeout=90) as r:
+            data = json.loads(r.read())
+            choices = data.get("choices") or []
+            text = ((choices[0].get("message") or {}).get("content") or "").strip() if choices else ""
     except Exception:
         return None
     if not text or len(text) < 40:
@@ -217,7 +246,7 @@ def _template_entry(facts_text, stats, weekday, session):
     if stats["blocks"]:
         p1 += f" Entry gates blocked {stats['blocks']}: {blocks_line}."
     p2 = f"Portfolio {pf_line.lower()}. Holdings: {pos_line}. "
-    p2 += f"On the experiment window, {win_line}."
+    p2 += win_line[0].upper() + win_line[1:] + "."
     return p1 + " " + p2
 
 
