@@ -457,13 +457,15 @@ def main():
         if not is_market_day(now_et) or now_et.hour >= 16:
             state["open_scan_id"] = None
 
+    # Digests retired 2026-07-25: Bot's Diary (diary.json) owns session summaries.
+    DIGESTS_ENABLED = False
     # ---- 4. day digest (after close, once per market day) --------------
     scans_today = 0
     for e in entries:
         if e.get("type") == "scan" and e.get("et_date") == today_et:
             scans_today += int(e.get("n") or 0)
 
-    if (is_market_day(now_et) and (now_et.hour, now_et.minute) >= (16, 5)
+    if (DIGESTS_ENABLED and is_market_day(now_et) and (now_et.hour, now_et.minute) >= (16, 5)
             and state["digest_date"] != today_et):
         port = load_json(PORTFOLIO) or {}
         acct = port.get("account") or {}
