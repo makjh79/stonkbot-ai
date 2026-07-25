@@ -308,6 +308,8 @@ def main():
 
     stream = load_json(OUT_PATH) or {}
     entries = stream.get("entries") or []
+    # Digests retired 2026-07-25: strip any remaining digest entries (Bot's Diary owns session summaries)
+    entries = [e for e in entries if e.get("type") != "digest"]
 
     now = now_utc()
     now_et = now.astimezone(ET)
