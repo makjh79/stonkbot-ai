@@ -186,14 +186,18 @@ def _llm_entry(facts_text):
         return None
 
     prompt = (
-        "You write the daily diary of a public $100K autonomous stock-trading experiment. "
-        "The project's only asset is credibility.\n"
-        "Rules:\n"
-        "- Use ONLY the facts below. Every number you write must appear in the facts, copied exactly.\n"
-        "- Max 110 words, plain prose, 1-2 short paragraphs. No emojis, no headers, no bullet lists.\n"
-        "- Be flatly honest about losses and mistakes; no excuses, no hype, no war metaphors.\n"
-        "- No advice, no predictions. If nothing happened, say so plainly.\n"
-        "- Refer to the bot in third person (\"the bot\").\n\n"
+        "You are the diarist for a public $100K autonomous stock-trading experiment. "
+        "The project's only asset is credibility, and this diary is its daily record.\n\n"
+        "Voice: a sharp, slightly dry markets diarist — a desk-journal close-of-day note, not a report. "
+        "Personality lives in word choice and rhythm, never in jokes at the expense of the facts. "
+        "Understated wit is welcome; hype, cheerleading, and self-congratulation are not. "
+        "Plain text, 1-2 short paragraphs, max 130 words. Spell out counts under ten (\"nine trades\", not \"9 trades\"). "
+        "Vary your openings — lead with whatever was actually interesting about the day; a quiet day can be a fine entry.\n\n"
+        "Hard rules (credibility):\n"
+        "- Use ONLY the facts below. Every number you write as a digit must appear in the facts, copied exactly.\n"
+        "- Be flatly honest about losses and mistakes: deadpan, never excusing. No advice, no predictions.\n"
+        "- No emojis, no headers, no bullet lists, no war or sports metaphors.\n"
+        "- Refer to the bot in third person (\"the bot\"). Never open with an ISO date; \"Friday\" or \"Friday, Jul 24\" at most.\n\n"
         "FACTS:\n" + facts_text
     )
 
