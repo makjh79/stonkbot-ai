@@ -1018,12 +1018,15 @@ class STONKAIBot:
             return f"price ${price:.2f} below VWAP ${vwap:.2f} stop zone"
         return None
 
-    def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False) -> Optional[str]:
+    def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False, price: float = 0.0) -> Optional[str]:
         """Anti-churn guardrails shared by all entry paths (2026-07-18).
         Returns a block reason string, or None if entry is allowed."""
         # Stop-out cooldown: no re-entry within stop_reentry_cooldown_hours of a stop-loss
         if self.risk_engine.in_stop_cooldown(symbol):
             return "stop-out cooldown active (no same-day re-entry after stop-loss)"
+        # Amendment 1D: re-entry price discipline — post-stop re-entry only at/below stop price
+        if price and self.risk_engine.reentry_price_blocked(symbol, price):
+            return f"re-entry price discipline: ${price:.2f} above stop-out price (EXPERIMENT.md Amendment 1)"
         # Sell re-entry cooldown: no buy within 4h of ANY non-stop sell (trim/rotation/exit)
         if self.risk_engine.in_sell_reentry_cooldown(symbol):
             return "sell re-entry cooldown active (no buy within 4h of a non-stop sell)"
@@ -1794,7 +1797,7 @@ class STONKAIBot:
         current_symbols = {p["symbol"] for p in portfolio_data.get("positions", [])}
 
 # ALPHA: Hard portfolio position ceiling -- trim weakest when over limit, block new entries at limit
-        MAX_POSITIONS = 12
+        MAX_POSITIONS = 15
         if len(current_symbols) >= MAX_POSITIONS:
             if len(current_symbols) > MAX_POSITIONS:
                 self._trim_weakest_positions(portfolio_data, target=MAX_POSITIONS)
@@ -1855,7 +1858,7 @@ class STONKAIBot:
                     continue
 
                 # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
-                _blocked = self._entry_blocked_by_guardrails(symbol)
+                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0))
                 if _blocked:
                     logger.info(f"Skipping {symbol}: {_blocked}")
                     continue
@@ -1988,7 +1991,7 @@ class STONKAIBot:
                     continue
 
                 # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
-                _blocked = self._entry_blocked_by_guardrails(symbol)
+                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0))
                 if _blocked:
                     logger.info(f"Skipping {symbol}: {_blocked}")
                     continue
@@ -2127,7 +2130,7 @@ class STONKAIBot:
                 if sig.get("tier") != "STRONG_NOW":
                     continue
                 # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
-                _blocked = self._entry_blocked_by_guardrails(symbol)
+                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0))
                 if _blocked:
                     logger.info(f"Skipping dip buy {symbol}: {_blocked}")
                     continue
@@ -2348,7 +2351,9 @@ class STONKAIBot:
                 # Full exit — clear stale peak/ATR so a future re-entry starts fresh
                 self.risk_engine.reset_position_tracking(symbol)
             if is_stop_reason(trade.get("reason", "")):
-                self.risk_engine.record_stop_out(symbol, trade.get("reason", ""))
+                _pos = self._positions.get(symbol) or {}
+                _stop_px = _pos.get("current", 0) or _pos.get("current_price", 0) or 0
+                self.risk_engine.record_stop_out(symbol, trade.get("reason", ""), price=_stop_px)
             else:
                 # Non-stop sell (trim/rotation/thesis/profit) — block re-entry for 4h
                 self.risk_engine.record_nonstop_sell(symbol, trade.get("reason", ""))

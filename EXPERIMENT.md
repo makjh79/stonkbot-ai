@@ -79,4 +79,8 @@ QQQ-below-50DMA gate: weekend backtest vs Jul 7–24 decides; if added, ships as
 This amendment was written and committed BEFORE any code change. Analysis reports (whipsaw tax, QQQ-gate backtest) land in /opt/stonk-ai/analysis/ as supporting evidence; each code patch is logged below.
 
 ### Amendment 1 change log
-- (pending — code patches land 2026-07-25/26)
+- 2026-07-25 10:20 HKT — risk_engine.py: retired below-VWAP trailing tightening (`vwap_trailing_tighten_enabled=False`, item 5 "retire" executed); VWAP stop buffer 0.5x→1.0x ATR; tier caps halved (12/8/5/3% → 6/4/2.5/1.5%); target_position_risk 0.015→0.0075; re-entry price discipline (7 calendar days, stop-out price stored, blocked attempts logged); legacy-cap grandfathering for pre-amendment holdings (seeded AAPL 12%, ELF 12%, ROKU 5%, PAYO 3%); high-beta basket trim hysteresis (+0.5pp band, trim-to-1pp-below, $250 min notional, 4h per-symbol cooldown).
+- 2026-07-25 10:20 HKT — trading_bot.py: entry guardrails accept price and call `reentry_price_blocked`; `record_stop_out` now passes fill price.
+- 2026-07-25 10:25 HKT — trade_quality_report.py deployed (cron `20 7,13,21 * * *` HKT) → trade_quality.json with PF, median hold, whipsaw tax, re-entry opp-cost, post-amendment scoreboard; comprehensive_monitor.py freshness check (26h).
+- 2026-07-25 — Evidence: analysis/amendment1-evidence.md — 447 FIFO round trips Jul 7–24: PF 0.323, median hold 3.6h, same-day PF 0.178, whipsaw tax $7,872 ≈ entire window realized loss; 3 sub−3% trailing stops (item 5). **QQQ-below-50DMA gate REJECTED by backtest**: would have blocked the better half of entries (gated PF 0.459 vs allowed 0.218) — regime detection stays position-level per original design.
+- Smoke test 29/29 passed (/tmp/amendment1_smoke.py): tier caps, retired tighten (noise dip survives / real break stops), 1.0x ATR VWAP gate, re-entry block/allow/expiry/persistence, legacy seed/prune/override, basket hysteresis.

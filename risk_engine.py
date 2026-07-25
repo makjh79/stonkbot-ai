@@ -60,18 +60,18 @@ def is_stop_reason(reason: str) -> bool:
 def tier_max_position_pct(tier: str, base_max_pct: float) -> float:
     """Single source of truth for tier-scaled per-position caps.
 
-      STRONG_NOW: 12% | NOW: 8% | WATCH: 5% | MONITOR/unknown: 3%
+      STRONG_NOW: 6% | NOW: 4% | WATCH: 2.5% | MONITOR/unknown: 1.5%  (halved 2026-07-25, EXPERIMENT.md Amendment 1C)
 
     `base_max_pct` is accepted for API compatibility with the historical
     trading_bot helper but the tier values are absolute by design.
     """
     if tier == "STRONG_NOW":
-        return 0.12
+        return 0.06
     if tier == "NOW":
-        return 0.08
+        return 0.04
     if tier == "WATCH":
-        return 0.05
-    return 0.03  # MONITOR and anything unknown
+        return 0.025
+    return 0.015  # MONITOR and anything unknown
 
 
 @dataclass
@@ -166,7 +166,7 @@ class RiskConfig:
     full_exit_profit_pct: float = 0.50             # full exit at +50%
 
     # --- Sizing ---
-    target_position_risk: float = 0.015             # each new position targets 1.5% portfolio vol risk
+    target_position_risk: float = 0.0075            # halved 2026-07-25 (Amendment 1C): matches ~2x wider effective stops, same dollar risk
     min_trade_notional: float = 500.0               # skip trades below $500
 
     # --- Universe / gate ---
@@ -177,6 +177,8 @@ class RiskConfig:
     vwap_stop_buffer_pct: float = -0.02            # sell if 2% below VWAP
     vwap_trailing_enabled: bool = True              # use VWAP as dynamic trailing stop
     vwap_trailing_atr_multiplier: float = 2.0      # ATR multiple below VWAP for trailing
+    vwap_trailing_tighten_enabled: bool = False    # RETIRED 2026-07-25 (Amendment 1A): below-VWAP tighten floored at 1x ATR — noise-stopped entries inside ordinary daily range
+    reentry_price_discipline_days: float = 7.0     # Amendment 1D: post-stop re-entry requires price <= stop-out price for this many calendar days
 
 
 @dataclass
@@ -211,6 +213,10 @@ class RiskEngine:
         self.sell_cooldowns: Dict[str, str] = {}            # symbol -> ISO timestamp of last NON-stop sell (anti ping-pong)
         self.entries_today: Dict[str, str] = {}             # symbol -> ISO date of last NEW entry (1/day cap)
         self.last_rotation_time: Optional[datetime] = None
+        self.stop_out_prices: Dict[str, Dict] = {}          # Amendment 1D: symbol -> {"ts", "price"} of last stop-out
+        self.blocked_reentries: list = []                   # Amendment 1F: blocked re-entries logged for opportunity-cost accounting
+        self.legacy_position_caps: Dict[str, float] = {}    # Amendment 1C: grandfathered caps for pre-amendment holdings
+        self.amendment1_seeded: bool = False
         self._load_state()
 
     # ------------------------------------------------------------------
@@ -234,6 +240,10 @@ class RiskEngine:
             self.stopped_out = data.get("stopped_out", {})
             self.sell_cooldowns = data.get("sell_cooldowns", {})
             self.entries_today = data.get("entries_today", {})
+            self.stop_out_prices = data.get("stop_out_prices", {})
+            self.blocked_reentries = data.get("blocked_reentries", [])
+            self.legacy_position_caps = data.get("legacy_position_caps", {})
+            self.amendment1_seeded = data.get("amendment1_seeded", False)
         except Exception as e:
             logger.warning(f"Could not load risk state: {e}")
 
@@ -252,6 +262,10 @@ class RiskEngine:
                     "stopped_out": self.stopped_out,
                     "sell_cooldowns": self.sell_cooldowns,
                     "entries_today": self.entries_today,
+                    "stop_out_prices": self.stop_out_prices,
+                    "blocked_reentries": self.blocked_reentries[-500:],
+                    "legacy_position_caps": self.legacy_position_caps,
+                    "amendment1_seeded": self.amendment1_seeded,
                     "updated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                 }, f, indent=2)
         except Exception as e:
@@ -287,10 +301,13 @@ class RiskEngine:
         except Exception:
             return None
 
-    def record_stop_out(self, symbol: str, reason: str = ""):
-        """Record a stop-loss sell; blocks re-entry for stop_reentry_cooldown_hours."""
+    def record_stop_out(self, symbol: str, reason: str = "", price: float = 0.0):
+        """Record a stop-loss sell; blocks re-entry for stop_reentry_cooldown_hours.
+        Amendment 1D: also stores the stop-out price for re-entry price discipline."""
         self.stopped_out[symbol] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-        logger.info(f"STOP-OUT recorded: {symbol} — re-entry blocked for {self.config.stop_reentry_cooldown_hours:.0f}h ({reason})")
+        if price and price > 0:
+            self.stop_out_prices[symbol] = {"ts": self.stopped_out[symbol], "price": float(price)}
+        logger.info(f"STOP-OUT recorded: {symbol} @ ${price:.2f} — re-entry blocked for {self.config.stop_reentry_cooldown_hours:.0f}h ({reason})")
         self._save_state()
 
     def in_stop_cooldown(self, symbol: str) -> bool:
@@ -308,6 +325,35 @@ class RiskEngine:
             self.stopped_out.pop(symbol, None)
             return False
         return True
+
+    def reentry_price_blocked(self, symbol: str, current_price: float) -> bool:
+        """Amendment 1D: for reentry_price_discipline_days after a stop-out, re-entry
+        requires price <= stop-out price. Kills the stop-low / re-buy-high whipsaw loop
+        (AAPL stopped $321.19 Jul 23, re-bought $332.64 Jul 24). Blocked attempts are
+        logged with prices so the rule's opportunity cost is measurable."""
+        rec = self.stop_out_prices.get(symbol)
+        if not rec or not rec.get("price") or not current_price or current_price <= 0:
+            return False
+        dt = self._parse_ts(rec.get("ts"))
+        if dt is None:
+            self.stop_out_prices.pop(symbol, None)
+            return False
+        age_days = (datetime.now(timezone.utc) - dt).total_seconds() / 86400
+        if age_days >= self.config.reentry_price_discipline_days:
+            self.stop_out_prices.pop(symbol, None)
+            return False
+        if current_price > rec["price"]:
+            self.blocked_reentries.append({
+                "symbol": symbol,
+                "ts": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "stop_px": rec["price"],
+                "attempt_px": float(current_price),
+            })
+            self.blocked_reentries = self.blocked_reentries[-500:]
+            self._save_state()
+            logger.info(f"RE-ENTRY PRICE BLOCK: {symbol} ${current_price:.2f} > stop-out ${rec['price']:.2f} (Amendment 1D)")
+            return True
+        return False
 
     def bought_today(self, symbol: str) -> bool:
         """True if the symbol had ANY buy today (new entry or avg-in).
@@ -762,7 +808,7 @@ class RiskEngine:
                 vwap = pos.get("daily_vwap") or pos.get("intraday_vwap")
                 if vwap and vwap > 0 and current > 0:
                     vwap_deviation = (current - vwap) / vwap
-                    vwap_buffer = -max(abs(self.config.vwap_stop_buffer_pct), 0.5 * atr_pct)
+                    vwap_buffer = -max(abs(self.config.vwap_stop_buffer_pct), 1.0 * atr_pct)  # 1.0x ATR from 2026-07-25 (Amendment 1B)
                     if vwap_deviation <= vwap_buffer:
                         reason = f"VWAP stop: {vwap_deviation:.1%} below VWAP ${vwap:.2f} (limit {vwap_buffer:.1%})"
                         trades.append({
@@ -786,7 +832,7 @@ class RiskEngine:
                 effective_trailing = self.config.trailing_stop_pct  # fallback -10%
 
             # VWAP-enhanced trailing: tighten stop if below VWAP
-            if self.config.vwap_trailing_enabled and self.config.vwap_stop_enabled:
+            if self.config.vwap_trailing_enabled and self.config.vwap_stop_enabled and self.config.vwap_trailing_tighten_enabled:  # Amendment 1A: tightening retired 2026-07-25
                 vwap = pos.get("daily_vwap")
                 if vwap and vwap > 0 and current < vwap:
                     # Below VWAP — tighten by 1pp, but never tighter than 1x ATR
@@ -1127,6 +1173,23 @@ class RiskEngine:
         positions = portfolio_data.get("positions", [])
         trimmed_symbols = set()
 
+        # Amendment 1C: grandfather pre-amendment holdings — they keep legacy caps
+        # until fully exited; halved caps apply to entries from 2026-07-27 onward.
+        held_syms = {p.get("symbol") for p in positions if p.get("qty", 0) > 0}
+        for _s in list(self.legacy_position_caps):
+            if _s not in held_syms:
+                self.legacy_position_caps.pop(_s, None)
+        if not self.amendment1_seeded:
+            _legacy = {"STRONG_NOW": 0.12, "NOW": 0.08, "WATCH": 0.05}
+            for p in positions:
+                s = p.get("symbol")
+                if p.get("qty", 0) > 0 and s:
+                    t = (tier_map or {}).get(s, "")
+                    self.legacy_position_caps[s] = _legacy.get(t, 0.03) if t else self.config.max_single_position_pct
+            self.amendment1_seeded = True
+            self._save_state()
+            logger.info(f"AMENDMENT1: legacy caps seeded for held positions: {self.legacy_position_caps}")
+
         # Sector aggregates
         sector_mv: Dict[str, float] = {}
         for pos in positions:
@@ -1153,6 +1216,9 @@ class RiskEngine:
             if tier:
                 # Never let the flat backstop contradict tier-scaled caps.
                 eff_cap = max(cap, tier_max_position_pct(tier, cap))
+                legacy = self.legacy_position_caps.get(symbol)
+                if legacy:
+                    eff_cap = max(eff_cap, legacy)
                 target_pct_sym = eff_cap - self.config.concentration_trim_target_buffer
             else:
                 target_pct_sym = target_pct
@@ -1230,10 +1296,14 @@ class RiskEngine:
         high_beta_mv = sum(p.get("market_value", 0) for p in positions if p.get("symbol") in high_beta_symbols)
         high_beta_pct = high_beta_mv / deployed if deployed > 0 else 0.0
         cap = self.config.max_high_beta_deployed_pct
-        if high_beta_pct <= cap:
+        # Amendment 1E: hysteresis — ignore sub-band breaches, trim to BELOW cap,
+        # enforce min notional + per-symbol cooldown (ROKU: six ~$142 trims in
+        # 2 days on a 35.0% -> 35.1% oscillation, Jul 23-24).
+        band = self.config.concentration_trim_band
+        if high_beta_pct <= cap + band:
             return trades
 
-        excess_mv = high_beta_mv - deployed * cap
+        excess_mv = high_beta_mv - deployed * (cap - self.config.concentration_trim_target_buffer)
         hb_positions = [p for p in positions if p.get("symbol") in high_beta_symbols and p.get("market_value", 0) > 0 and p.get("qty", 0) > 0]
         hb_positions.sort(key=lambda p: p.get("market_value", 0), reverse=True)
 
@@ -1241,10 +1311,16 @@ class RiskEngine:
             if excess_mv <= 0:
                 break
             symbol = pos.get("symbol")
+            if self._trim_on_cooldown(symbol):
+                logger.debug(f"Basket trim cooldown active for {symbol}; skipping")
+                continue
             qty = pos.get("qty", 0)
             mv = pos.get("market_value", 0)
             price = mv / qty if qty > 0 else 0
             trim_qty = max(1, int(min(qty, excess_mv / price)) if price > 0 else 1)
+            if trim_qty * price < self.config.min_trim_notional and trim_qty < qty:
+                logger.info(f"BASKET TRIM skipped: {symbol} ~${trim_qty * price:.0f} < ${self.config.min_trim_notional:.0f} min notional")
+                continue
             trades.append({
                 "symbol": symbol,
                 "qty": trim_qty,
@@ -1252,6 +1328,7 @@ class RiskEngine:
                 "reason": f"High-beta basket trim: {high_beta_pct:.1%} deployed vs {cap:.1%} cap",
             })
             logger.info(f"HIGH-BETA TRIM: {symbol} {trim_qty} shares ({high_beta_pct:.1%} > {cap:.1%})")
+            self._record_trim(symbol)
             excess_mv -= trim_qty * price
 
         return trades

@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+"""trade_quality.json generator (EXPERIMENT.md Amendment 1F).
+Rolling diagnostics: PF (all/same-day/multi-day), median hold, whipsaw tax,
+re-entry-rule opportunity cost, sub-3% stops, exit-reason attribution,
+and post-Amendment-1 scoreboard (PF + QQQ comparison from 2026-07-27).
+Cron: 3x/day. Output: /var/www/hedge-fund-website/trade_quality.json
+"""
+import json, os, re, sys
+from datetime import datetime, timedelta, timezone
+from collections import defaultdict
+
+sys.path.insert(0, "/opt/stonk-ai")
+
+TRADES = "/var/www/hedge-fund-website/trades_log.json"
+RISK_STATE = "/opt/stonk-ai/risk_state.json"
+OUT = "/var/www/hedge-fund-website/trade_quality.json"
+ET = timedelta(hours=-4)
+AMENDMENT_LIVE = "2026-07-27"  # first session under amended rules
+
+def parse_ts(s):
+    return datetime.fromisoformat(str(s).replace("Z", "+00:00")).replace(tzinfo=None)
+
+def classify(r):
+    r = (r or "").lower()
+    if "trailing stop" in r: return "trailing_stop"
+    if "hard stop" in r or "hard cut" in r or "hard_stop" in r: return "hard_stop"
+    if "vwap stop" in r: return "vwap_stop"
+    if "high-beta basket" in r: return "basket_trim"
+    if "tier cap" in r: return "tier_cap_trim"
+    if "max_positions" in r: return "maxpos_trim"
+    if "concentration" in r: return "conc_trim"
+    if "sector trim" in r: return "sector_trim"
+    if "rotation" in r: return "rotation"
+    if "thesis exit" in r: return "thesis_exit"
+    if "profit" in r: return "profit"
+    if "cash" in r: return "cash_raise"
+    if "full sell" in r: return "full_sell_unattributed"
+    return "other"
+
+STOP_KINDS = {"trailing_stop", "hard_stop", "vwap_stop"}
+
+def fifo_trips(trades):
+    open_lots, trips = defaultdict(list), []
+    for x in trades:
+        sym, act = x["symbol"], x["action"].upper()
+        qty, px, ts = x["qty"], x["price"], parse_ts(x["timestamp"])
+        if act == "BUY":
+            open_lots[sym].append([qty, px, ts])
+        elif act == "SELL":
+            reason = classify(x.get("rationale"))
+            rem = qty
+            while rem > 1e-9 and open_lots[sym]:
+                lot = open_lots[sym][0]
+                take = min(rem, lot[0])
+                trips.append({"symbol": sym, "qty": take, "entry_ts": lot[2], "exit_ts": ts,
+                              "entry_px": lot[1], "exit_px": px, "pnl": take * (px - lot[1]),
+                              "hold_hours": (ts - lot[2]).total_seconds() / 3600,
+                              "same_day_et": (lot[2] + ET).date() == (ts + ET).date(),
+                              "exit_reason": reason})
+                lot[0] -= take; rem -= take
+                if lot[0] <= 1e-9: open_lots[sym].pop(0)
+    return trips
+
+def pf(rs):
+    gp = sum(t["pnl"] for t in rs if t["pnl"] > 0)
+    gl = sum(t["pnl"] for t in rs if t["pnl"] < 0)
+    return (round(gp / abs(gl), 3) if gl else (None if gp == 0 else 999.0)), round(gp + gl, 2)
+
+def block_stats(trips):
+    if not trips:
+        return {"n": 0}
+    wins = [t for t in trips if t["pnl"] > 0]
+    p, net = pf(trips)
+    holds = sorted(t["hold_hours"] for t in trips)
+    return {"n": len(trips), "win_rate_pct": round(100 * len(wins) / len(trips), 1),
+            "profit_factor": p, "net_pnl": net,
+            "median_hold_hours": round(holds[len(holds) // 2], 1)}
+
+def main():
+    now = datetime.now(timezone.utc)
+    items = json.load(open(TRADES))
+    items = items if isinstance(items, list) else items.get("trades", [])
+    cutoff = (now - timedelta(days=30)).strftime("%Y-%m-%d")
+    w = sorted([x for x in items if x.get("timestamp", "") >= cutoff], key=lambda x: x["timestamp"])
+    trips = fifo_trips(w)
+
+    same = [t for t in trips if t["same_day_et"]]
+    multi = [t for t in trips if not t["same_day_et"]]
+
+    # rolling 20-trade expectancy by exit time
+    last20 = sorted(trips, key=lambda t: t["exit_ts"])[-20:]
+    exp20 = round(sum(t["pnl"] for t in last20), 2)
+
+    # whipsaw pairs (stop-out -> re-entry <=5d)
+    sells = [x for x in w if x["action"].upper() == "SELL"]
+    buys = [x for x in w if x["action"].upper() == "BUY"]
+    pairs, used = [], set()
+    for s in sells:
+        if classify(s.get("rationale")) not in STOP_KINDS: continue
+        sts = parse_ts(s["timestamp"])
+        for i, b in enumerate(buys):
+            if i in used or b["symbol"] != s["symbol"]: continue
+            dt = (parse_ts(b["timestamp"]) - sts).total_seconds()
+            if 0 < dt <= 5 * 86400:
+                pairs.append({"symbol": s["symbol"], "stop_ts": s["timestamp"][:16], "stop_px": s["price"],
+                              "reentry_ts": b["timestamp"][:16], "reentry_px": b["price"],
+                              "tax_usd": round(max(0.0, (b["price"] - s["price"]) * b["qty"]), 2)})
+                used.add(i); break
+    sub3 = sum(1 for x in sells
+               if (m := re.search(r"Trailing stop: (-?\d+\.?\d*)% from peak", x.get("rationale", "")))
+               and abs(float(m.group(1))) < 3.0)
+
+    reasons = {}
+    for t in trips:
+        r = reasons.setdefault(t["exit_reason"], {"n": 0, "pnl": 0.0})
+        r["n"] += 1; r["pnl"] += t["pnl"]
+
+    # re-entry rule opportunity cost (Amendment 1D), priced now
+    blocked, opp = [], 0.0
+    try:
+        state = json.load(open(RISK_STATE))
+        blocked = state.get("blocked_reentries", [])[-50:]
+        if blocked:
+            from alpaca_data import AlpacaDataHub
+            hub = AlpacaDataHub()
+            px_now = hub.get_latest_prices(list({b["symbol"] for b in blocked}))
+            for b in blocked:
+                cur = px_now.get(b["symbol"])
+                if cur:
+                    opp += (cur - b["attempt_px"]) * 1  # per-share; qty unknown at block time
+                    b["current_px"] = round(cur, 2)
+                    b["drift_pct"] = round((cur / b["attempt_px"] - 1) * 100, 2)
+    except Exception as e:
+        blocked.append({"error": f"{type(e).__name__}: {e}"})
+
+    # post-amendment scoreboard (live from Jul 27)
+    post = [t for t in trips if t["exit_ts"].strftime("%Y-%m-%d") >= AMENDMENT_LIVE]
+    qqq_since = None
+    try:
+        from alpaca_data import AlpacaDataHub
+        raw = AlpacaDataHub().get_daily_bars(["QQQ"], days=20)
+        q = raw.get("QQQ", {})
+        ts, cl = q.get("timestamps", []), q.get("closes", [])
+        series = [(str(t)[:10], c) for t, c in zip(ts, cl) if str(t)[:10] >= AMENDMENT_LIVE]
+        if len(series) >= 2:
+            qqq_since = round((series[-1][1] / series[0][1] - 1) * 100, 2)
+    except Exception:
+        pass
+
+    out = {
+        "generated_at": now.isoformat().replace("+00:00", "Z"),
+        "window_days": 30,
+        "all": block_stats(trips),
+        "same_day": block_stats(same),
+        "multi_day": block_stats(multi),
+        "rolling_20_trade_net_pnl": exp20,
+        "whipsaw": {"pairs": len(pairs), "tax_usd": round(sum(p["tax_usd"] for p in pairs), 2), "detail": pairs[-15:]},
+        "sub3pct_trailing_stops_30d": sub3,
+        "exit_reasons": {k: {"n": v["n"], "pnl": round(v["pnl"], 2)} for k, v in sorted(reasons.items(), key=lambda kv: kv[1]["pnl"])},
+        "reentry_rule": {"blocked_count": len([b for b in blocked if "error" not in b]),
+                         "opp_cost_per_share_sum": round(opp, 2), "recent": blocked[-10:]},
+        "amendment1": {"live_from": AMENDMENT_LIVE, "closed_trips": block_stats(post),
+                       "qqq_return_pct_since_live": qqq_since},
+    }
+    with open(OUT, "w") as f:
+        json.dump(out, f, indent=1)
+    try:
+        os.chown(OUT, 1000, 1000)  # stonkai
+    except Exception:
+        pass
+    print(f"trade_quality.json written: trips={len(trips)} pf={out['all'].get('profit_factor')} "
+          f"whipsaw=${out['whipsaw']['tax_usd']} blocked={out['reentry_rule']['blocked_count']}")
+
+if __name__ == "__main__":
+    main()

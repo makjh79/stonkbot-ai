@@ -977,6 +977,17 @@ def check_llm_narrative_freshness_and_validity() -> None:
 # ─── Main ───────────────────────────────────────────────────────────────────
 
 # ─── Execution Health Checks ────────────────────────────────────────────────
+def check_trade_quality_freshness() -> None:
+    """Amendment 1F: trade_quality.json diagnostics present and fresh (3x/day cron)."""
+    path = os.path.join(WEB_DIR, "trade_quality.json")
+    if not os.path.exists(path):
+        _log_issue("trade_quality.json missing (trade_quality_report.py cron not running)")
+        return
+    age_h = (time.time() - os.path.getmtime(path)) / 3600
+    if age_h > 26:
+        _log_issue(f"Stale file: trade_quality.json is {age_h:.1f}h old (max 26h)")
+
+
 def check_llm_narrative_pipeline() -> None:
     """Verify the LLM narrative generator is healthy and output is fresh."""
     timer = "stonk-ai-llm-narrative.timer"
@@ -1417,6 +1428,7 @@ def main() -> int:
     _run(check_trade_execution_health)
     _run(check_open_orders)
     _run(check_llm_narrative_pipeline)
+    _run(check_trade_quality_freshness)
     _run(check_llm_narrative_freshness_and_validity)
     _run(check_trading_bot_entry_gate)
     _run(check_alpaca_portfolio_sync)
