@@ -191,9 +191,16 @@ def _nums(text):
 
 
 def _llm_entry(facts_text):
+    def _fail(msg):
+        try:
+            with open("/opt/stonk-ai/logs/diary.log", "a") as f:
+                f.write(f"{datetime.now(timezone.utc).isoformat()} {msg}\n")
+        except Exception:
+            pass
+        return None
     key = _openrouter_key()
     if not key:
-        return None
+        return _fail("no-key")
     prompt = (
         "You write the daily diary of a public $100K autonomous stock-trading experiment. "
         "The project's only asset is credibility.\n"
@@ -217,18 +224,19 @@ def _llm_entry(facts_text):
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
                      "HTTP-Referer": "https://stonkbot.ai", "X-Title": "StonkBOT.AI"},
         )
-        with urllib.request.urlopen(req, timeout=90) as r:
+        with urllib.request.urlopen(req, timeout=240) as r:
             data = json.loads(r.read())
             choices = data.get("choices") or []
             text = ((choices[0].get("message") or {}).get("content") or "").strip() if choices else ""
-    except Exception:
-        return None
+    except Exception as e:
+        return _fail(f"call: {type(e).__name__} {str(e)[:160]}")
     if not text or len(text) < 40:
-        return None
+        return _fail(f"empty (finish={choices[0].get('finish_reason') if choices else 'none'})")
     allowed = _nums(facts_text)
-    for n in _nums(text):
-        if not any(abs(n - a) < 1e-6 or (a != 0 and abs(n - a) / abs(a) < 1e-4) for a in allowed):
-            return None  # invented number -> reject
+    bad = [n for n in _nums(text)
+           if not any(abs(n - a) < 1e-6 or (a != 0 and abs(n - a) / abs(a) < 1e-4) for a in allowed)]
+    if bad:
+        return _fail(f"invented numbers: {bad[:6]}")
     return text
 
 
