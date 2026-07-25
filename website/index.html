@@ -4052,6 +4052,62 @@
         </div>
       </div>
 
+      <!-- ───────── Section 2: The Experiment (live) ───────── -->
+      <div class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
+        <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:1.1rem;">🧪</span>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">The Experiment — Live Rules</span>
+          </div>
+          <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
+        </div>
+        <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
+          <div id="experiment-live-panel" style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
+            <p style="margin:0 0 0.75rem 0;">Pre-registered rules, judged in public. Window <strong style="color:var(--text-primary);">Jul 27 → Aug 29</strong>: if all-trades profit factor &lt; 1.0 <em>and</em> trailing QQQ, momentum entries get shelved and capital moves to index.</p>
+            <div id="experiment-metrics" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.4rem;margin-bottom:0.75rem;">
+              <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:0.5rem;text-align:center;"><div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Profit factor</div><div id="exp-pf" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:800;color:var(--text-primary);">—</div><div style="font-size:0.58rem;color:var(--text-muted);">need ≥ 1.0</div></div>
+              <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:0.5rem;text-align:center;"><div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Median hold</div><div id="exp-hold" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:800;color:var(--text-primary);">—</div><div style="font-size:0.58rem;color:var(--text-muted);">tripwire ≥ 2d by Aug 8</div></div>
+              <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:0.5rem;text-align:center;"><div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">vs QQQ</div><div id="exp-qqq" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:800;color:var(--text-primary);">—</div><div style="font-size:0.58rem;color:var(--text-muted);">must not trail</div></div>
+            </div>
+            <div style="font-size:0.68rem;color:var(--text-muted);margin-bottom:0.5rem;">Rules in force (Amendments 1–2): <span id="exp-rules">6/4/2.5/1.5% position caps · 2× ATR trailing stops · re-entry price discipline · earnings + implied-move entry gates</span></div>
+            <div id="exp-status" style="font-size:0.68rem;color:#fbbf24;">● ARMED — amended rules live from Jul 27 open</div>
+          </div>
+        </div>
+      </div>
+      <script>
+      (async function(){
+        try {
+          const ct = await fetch('config_truth.json').then(r=>r.ok?r.json():null).catch(()=>null);
+          const [tq, rs] = await Promise.all([
+            fetch('trade_quality.json').then(r=>r.ok?r.json():null).catch(()=>null),
+            fetch('risk_stats.json').then(r=>r.ok?r.json():null).catch(()=>null),
+          ]);
+          const a1 = tq?.amendment1 || {};
+          const trips = a1.closed_trips || {};
+          const statusEl = document.getElementById('exp-status');
+          const liveFrom = new Date('2026-07-27T13:30:00Z');
+          if (Date.now() < liveFrom.getTime() || !trips.n) {
+            if (Date.now() >= liveFrom.getTime() && statusEl) { statusEl.textContent = '● MEASURING — awaiting first closed trades'; statusEl.style.color = '#06b6d4'; }
+          } else {
+            document.getElementById('exp-pf').textContent = (trips.profit_factor ?? '—').toFixed(2);
+            document.getElementById('exp-pf').style.color = (trips.profit_factor ?? 0) >= 1.0 ? '#22c55e' : '#ef4444';
+            const holdH = trips.median_hold_hours ?? 0;
+            document.getElementById('exp-hold').textContent = holdH >= 48 ? (holdH/24).toFixed(1)+'d' : holdH.toFixed(1)+'h';
+            document.getElementById('exp-hold').style.color = holdH >= 32 ? '#22c55e' : '#fbbf24';
+            const q = a1.qqq_return_pct_since_live;
+            document.getElementById('exp-qqq').textContent = q != null ? (q>=0?'+':'')+q.toFixed(1)+'%' : '—';
+            if (statusEl) { statusEl.textContent = '● MEASURING — verdict Aug 29'; statusEl.style.color = '#06b6d4'; }
+          }
+          if (ct?.caps) {
+            const capText = `${(ct.caps.STRONG_NOW*100).toFixed(0)}/${(ct.caps.NOW*100).toFixed(0)}/${(ct.caps.WATCH*100).toFixed(1)}/${(ct.caps.MONITOR*100).toFixed(1)}% position caps · 2× ATR trailing stops · re-entry price discipline · earnings + implied-move entry gates`;
+            document.getElementById('exp-rules').textContent = capText;
+            const rc = document.getElementById('risk-cell-poscap');
+            if (rc) rc.textContent = `${(ct.caps.STRONG_NOW*100).toFixed(0)}% max per new position`;
+          }
+        } catch(e) {}
+      })();
+      </script>
+
       <!-- ───────── Section 2: How It Works ───────── -->
       <div class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
         <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
@@ -4080,7 +4136,7 @@
             <div class="risk-items" style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.68rem;color:var(--text-secondary);">
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops on every trade</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops (ATR-based)</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">12% max per position</div>
+              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">6% max per new position</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
             </div>
           </div>
@@ -9970,6 +10026,26 @@ function updateDashboard(data, marketStatus) {
             `;
         }
 
+        // Earnings chip data
+        let earningsMapCache = null, earningsMapLastFetch = 0;
+        async function fetchEarningsMap() {
+          if (earningsMapCache && Date.now() - earningsMapLastFetch < 300000) return earningsMapCache;
+          try { const r = await fetch('earnings.json'); if (r.ok) { earningsMapCache = (await r.json()).earnings || {}; earningsMapLastFetch = Date.now(); } } catch(e) {}
+          return earningsMapCache || {};
+        }
+        function earningsChipHtml(symbol) {
+          const rec = (earningsMapCache || {})[symbol];
+          if (!rec || !rec.date) return '';
+          const days = Math.floor((new Date(rec.date + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000);
+          if (days < 0 || days > 14) return '';
+          const near = days <= 7;
+          const color = near ? '#fbbf24' : 'var(--text-muted)';
+          const bg = near ? 'rgba(251,191,36,0.10)' : 'rgba(255,255,255,0.04)';
+          const border = near ? 'rgba(251,191,36,0.25)' : 'rgba(255,255,255,0.08)';
+          const label = days === 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days}d`;
+          return `<div style="display:inline-flex;align-items:center;gap:5px;background:${bg};border:1px solid ${border};border-radius:6px;padding:3px 8px;font-size:0.62rem;font-weight:600;color:${color};margin-top:6px;">📅 Earnings ${rec.date.slice(5).replace('-','/')} · ${label}${rec.hour ? ' · ' + rec.hour.toUpperCase() : ''}</div>`;
+        }
+
         async function showTradeDetails(symbol, isRefresh = false) {
             activePopupSymbol = symbol;
             if (activePopupRefreshInterval) clearInterval(activePopupRefreshInterval);
@@ -9978,6 +10054,7 @@ function updateDashboard(data, marketStatus) {
                 await fetchPopupContent();
             }
             await fetchTradesLog();
+            await fetchEarningsMap();
 
             const liveData = (typeof aiWatchlistPrices !== 'undefined' ? aiWatchlistPrices[symbol] : {}) || {};
             const staticData = tradeRationale[symbol];
@@ -10004,7 +10081,7 @@ function updateDashboard(data, marketStatus) {
             const thesisShort = simplifyThesis(preGenerated.thesis || (staticData ? staticData.thesis : ''), symbol);
 
             // Exit levels - only show the relevant one
-            const hardStop = preGenerated.hardStop || (position ? position.avg_entry * 0.90 : 0);
+            const hardStop = preGenerated.hardStop || (position ? position.avg_entry * 0.95 : 0);
             const trailingStop = preGenerated.trailingStop || 0;
             const currentStop = trailingStop > hardStop ? trailingStop : hardStop;
             const stopDist = livePrice > 0 ? ((currentStop - livePrice) / livePrice * 100).toFixed(1) : 0;
@@ -10049,6 +10126,7 @@ function updateDashboard(data, marketStatus) {
                         <div>
                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">${symbol}</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${companyName}</div>
+                            ${earningsChipHtml(symbol)}
                         </div>
                         <button onclick="closeTradeDetails()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                     </div>

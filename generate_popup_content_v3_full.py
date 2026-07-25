@@ -110,11 +110,13 @@ def load_risk_state() -> dict:
 def load_risk_config() -> dict:
     if RISK_CONFIG_FILE.exists():
         return load_json(RISK_CONFIG_FILE)
-    # Defaults matching risk_engine.py
+    # Defaults matching risk_engine.py (Amendment 1, 2026-07-25)
     return {
-        "hard_stop_loss_pct": -0.10,
+        "hard_stop_atr_multiplier": 1.5,
+        "hard_stop_min_pct": 0.03,
+        "hard_stop_max_pct": 0.11,
         "trailing_stop_pct": -0.10,
-        "trailing_stop_atr_multiplier": 2.5,
+        "trailing_stop_atr_multiplier": 2.0,
         "trim_profit_pct": 0.25,
         "full_exit_profit_pct": 0.50,
     }
@@ -126,25 +128,33 @@ def get_stop_levels(symbol: str, position: dict, risk_config: dict, risk_state: 
     peak = risk_state.get("position_high_water_marks", {}).get(symbol, avg_entry)
     atr_pct = risk_state.get("position_atr_pct", {}).get(symbol)
 
-    # Hard stop from cost basis
-    hard_stop = avg_entry * (1 + risk_config.get("hard_stop_loss_pct", -0.10))
+    # Hard stop from cost basis — 1.5× ATR clamped [3%, 11%] (Amendment 1); fallback 11%
+    if atr_pct and atr_pct > 0:
+        hard_pct = min(risk_config.get("hard_stop_max_pct", 0.11),
+                       max(risk_config.get("hard_stop_min_pct", 0.03),
+                           atr_pct * risk_config.get("hard_stop_atr_multiplier", 1.5)))
+    else:
+        hard_pct = risk_config.get("hard_stop_max_pct", 0.11)
+    hard_stop = avg_entry * (1 - hard_pct)
 
-    # Trailing stop from peak, volatility-aware only if ATR% was recorded
+    # Trailing stop from peak — 2.0× ATR clamped [3%, 14%] (Amendment 1); fallback 10%
     base_trailing_pct = abs(risk_config.get("trailing_stop_pct", -0.10))
     if atr_pct and atr_pct > 0:
-        atr_mult = risk_config.get("trailing_stop_atr_multiplier", 2.5)
-        trailing_pct = max(base_trailing_pct, atr_pct * atr_mult)
+        atr_mult = risk_config.get("trailing_stop_atr_multiplier", 2.0)
+        trailing_pct = min(0.14, max(0.03, atr_pct * atr_mult))
     else:
         trailing_pct = base_trailing_pct
 
     trailing_stop = peak * (1 - trailing_pct)
 
-    # VWAP stop (from Alpaca paid data)
+    # VWAP stop — max(2%, 1.0× ATR) below VWAP (Amendment 1B)
     vwap = signal_data.get("daily_vwap")
-    vwap_stop = round(vwap * 0.98, 2) if vwap and vwap > 0 else None  # 2% below VWAP
+    vwap_buffer = max(0.02, atr_pct) if atr_pct and atr_pct > 0 else 0.02
+    vwap_stop = round(vwap * (1 - vwap_buffer), 2) if vwap and vwap > 0 else None
 
     return {
         "hard_stop": round(hard_stop, 2),
+        "hard_pct": round(hard_pct, 4),
         "trailing_stop": round(trailing_stop, 2),
         "vwap_stop": vwap_stop,
         "vwap": round(vwap, 2) if vwap else None,
@@ -362,7 +372,8 @@ def _what_kills_it(symbol, position, signal_data, watchlist_data, stops):
     trailing = stops.get("trailing_stop", 0)
     vwap_stop = stops.get("vwap_stop")
 
-    stop_parts = [f"Hard stop at ${hard_stop:.2f} (-10% from entry)"]
+    hard_label = f"Hard stop at ${hard_stop:.2f} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5× ATR from entry)"
+    stop_parts = [hard_label]
     if trailing and trailing > 0:
         stop_parts.append(f"trailing stop at ${trailing:.2f}")
     if vwap_stop and vwap_stop > 0:
@@ -466,7 +477,7 @@ def generate_dynamic_narrative(symbol, position, watchlist_data, signal_data, ri
         "confirmations": confirmations,
         "company": company,
         "entryReason": why_owned,
-        "stopReason": f"Hard stop ${stops['hard_stop']:.2f} (-10%); trailing ${stops['trailing_stop']:.2f}",
+        "stopReason": f"Hard stop ${stops['hard_stop']:.2f} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5× ATR); trailing ${stops['trailing_stop']:.2f} (2× ATR)",
         "totalScore": round(total_score, 1) if total_score > 0 else None,
         "momentumScore": round(momentum_score, 1) if momentum_score > 0 else None,
         "qualityScore": round(quality_score, 1) if quality_score > 0 else None,

@@ -214,6 +214,49 @@ def main():
     except Exception:
         pass
 
+    # Website config-of-truth + earnings chip map (site copy must never drift from code)
+    try:
+        from risk_engine import RiskConfig as _RC, tier_max_position_pct as _tmpp
+        _cfg = _RC()
+        ct = {
+            "generated_at": now.isoformat().replace("+00:00", "Z"),
+            "caps": {t: _tmpp(t, _cfg.max_single_position_pct) for t in ("STRONG_NOW", "NOW", "WATCH", "MONITOR")},
+            "caps_note": "entries from 2026-07-27; pre-amendment holdings grandfathered at legacy caps",
+            "stops": {"trailing": "2x ATR from peak", "hard": "1.5x ATR", "abs_cut": "max(5%, 1x ATR)", "vwap": "max(2%, 1x ATR) below VWAP"},
+            "gates": {"earnings": "no entries within 2 days of confirmed earnings",
+                      "implied_move": "3-7d pre-earnings: no entries when IV daily move > 1.5x ATR",
+                      "reentry": "post-stop re-entry only at/below stop price (7d)"},
+            "experiment": {"window": "2026-07-27..2026-08-29", "tripwire": "median hold >= 2 days by Aug 8",
+                           "kill": "all-trades PF < 1.0 AND trailing QQQ -> entries shelved, capital to index"},
+        }
+        with open("/var/www/hedge-fund-website/config_truth.json", "w") as f:
+            json.dump(ct, f, indent=1)
+        try: os.chown("/var/www/hedge-fund-website/config_truth.json", 1000, 1000)
+        except Exception: pass
+
+        syms = set()
+        try:
+            pdp = json.load(open("/var/www/hedge-fund-website/portfolio_data.json"))
+            syms |= {p.get("symbol") for p in pdp.get("positions", []) if p.get("symbol")}
+        except Exception: pass
+        for wf in ("ai_watchlist_live.json", "ai_watchlist.json"):
+            try:
+                wl = json.load(open(f"/var/www/hedge-fund-website/{wf}"))
+                wl = wl if isinstance(wl, list) else wl.get("watchlist", wl.get("symbols", []))
+                for x in wl:
+                    s = x.get("symbol") if isinstance(x, dict) else x
+                    if s: syms.add(s)
+                break
+            except Exception: continue
+        ec = json.load(open("/opt/stonk-ai/earnings_cache.json")).get("earnings", {})
+        emap = {s: {"date": ec[s]["date"], "hour": ec[s].get("hour", "")} for s in sorted(syms) if s in ec}
+        with open("/var/www/hedge-fund-website/earnings.json", "w") as f:
+            json.dump({"generated_at": ct["generated_at"], "earnings": emap}, f)
+        try: os.chown("/var/www/hedge-fund-website/earnings.json", 1000, 1000)
+        except Exception: pass
+    except Exception as e:
+        print(f"config_truth/earnings export skipped: {e}")
+
     out = {
         "generated_at": now.isoformat().replace("+00:00", "Z"),
         "window_days": 30,

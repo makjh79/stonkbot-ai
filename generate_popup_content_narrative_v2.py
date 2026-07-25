@@ -399,7 +399,7 @@ def new_generate_dynamic_narrative(symbol, position, watchlist_data, signal_data
         "risk": new_what_kills_it(symbol, position, signal_data, watchlist_data, stops),
         "confidence": "Solid." if pl_percent >= -3 else "Shaky." if pl_percent >= -8 else "Thin.",
         "entryReason": new_bot_thinking(symbol, position, signal_data, watchlist_data, stops),
-        "stopReason": f"Hard stop {_price_fmt(stops['hard_stop'])}; trailing {_price_fmt(stops['trailing_stop'])}",
+        "stopReason": f"Hard stop {_price_fmt(stops['hard_stop'])} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5x ATR); trailing {_price_fmt(stops['trailing_stop'])} (2x ATR)",
         "entry_eligible": tier in ("STRONG_NOW", "NOW"),
     })
     return result
