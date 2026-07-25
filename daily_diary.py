@@ -19,6 +19,7 @@ DIARY_PATH = os.path.join(WEB, "diary.json")
 ET = timezone(timedelta(hours=-4))  # EDT; only used for date bucketing
 MAX_ENTRIES = 60
 MODEL = "moonshotai/kimi-k2.6"
+OLLAMA_MODEL = "kimi-k2.7-code:cloud"
 
 
 def _load(path, default=None):
@@ -198,9 +199,7 @@ def _llm_entry(facts_text):
         except Exception:
             pass
         return None
-    key = _openrouter_key()
-    if not key:
-        return _fail("no-key")
+
     prompt = (
         "You write the daily diary of a public $100K autonomous stock-trading experiment. "
         "The project's only asset is credibility.\n"
@@ -212,26 +211,55 @@ def _llm_entry(facts_text):
         "- Refer to the bot in third person (\"the bot\").\n\n"
         "FACTS:\n" + facts_text
     )
-    try:
-        req = urllib.request.Request(
-            "https://openrouter.ai/api/v1/chat/completions",
-            data=json.dumps({
-                "model": MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 4096,  # K2.6 spends most of budget on reasoning; content needs the headroom (same as narratives module)
-                "temperature": 0.4,
-            }).encode(),
-            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
-                     "HTTP-Referer": "https://stonkbot.ai", "X-Title": "StonkBOT.AI"},
-        )
-        with urllib.request.urlopen(req, timeout=240) as r:
-            data = json.loads(r.read())
-            choices = data.get("choices") or []
-            text = ((choices[0].get("message") or {}).get("content") or "").strip() if choices else ""
-    except Exception as e:
-        return _fail(f"call: {type(e).__name__} {str(e)[:160]}")
+
+    # Primary: local Ollama (free, no billing dependency). Fallback: OpenRouter.
+    text = None
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(
+                "http://localhost:11434/api/chat",
+                data=json.dumps({
+                    "model": OLLAMA_MODEL,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "stream": False,
+                    "options": {"temperature": 0.4},
+                }).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=240) as r:
+                text = (json.loads(r.read()).get("message") or {}).get("content") or ""
+            if text.strip():
+                break
+        except Exception as e:
+            if attempt == 2:
+                _fail(f"ollama: {type(e).__name__} {str(e)[:140]}")
+            text = None
+    if not text or not text.strip():
+        key = _openrouter_key()
+        if not key:
+            return _fail("ollama-empty + no-openrouter-key")
+        try:
+            req = urllib.request.Request(
+                "https://openrouter.ai/api/v1/chat/completions",
+                data=json.dumps({
+                    "model": MODEL,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 4096,  # K2.6 spends most of budget on reasoning (narratives-module config)
+                    "temperature": 0.4,
+                }).encode(),
+                headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
+                         "HTTP-Referer": "https://stonkbot.ai", "X-Title": "StonkBOT.AI"},
+            )
+            with urllib.request.urlopen(req, timeout=240) as r:
+                data = json.loads(r.read())
+                choices = data.get("choices") or []
+                text = ((choices[0].get("message") or {}).get("content") or "").strip() if choices else ""
+        except Exception as e:
+            return _fail(f"openrouter: {type(e).__name__} {str(e)[:140]}")
+    # strip any reasoning traces before validation
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
     if not text or len(text) < 40:
-        return _fail(f"empty (finish={choices[0].get('finish_reason') if choices else 'none'})")
+        return _fail("empty-content")
     allowed = _nums(facts_text)
     bad = [n for n in _nums(text)
            if not any(abs(n - a) < 1e-6 or (a != 0 and abs(n - a) / abs(a) < 1e-4) for a in allowed)]
