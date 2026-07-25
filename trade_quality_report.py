@@ -280,6 +280,12 @@ def main():
         os.chown(OUT, 1000, 1000)  # stonkai
     except Exception:
         pass
+    # Daily diary — idempotent, one entry per completed US session
+    try:
+        import daily_diary
+        print("diary:", daily_diary.maybe_generate())
+    except Exception as e:
+        print(f"diary skipped: {e}")
     print(f"trade_quality.json written: trips={len(trips)} pf={out['all'].get('profit_factor')} "
           f"whipsaw=${out['whipsaw']['tax_usd']} blocked={out['reentry_rule']['blocked_count']} "
           f"breadth={breadth and breadth.get('pct_above_50dma') if isinstance(breadth, dict) else breadth}")
