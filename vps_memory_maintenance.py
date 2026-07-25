@@ -31,7 +31,7 @@ DAILY_DIR = MEMORY_DIR / "memory"
 DREAMS_FILE = MEMORY_DIR / "DREAMS.md"
 
 
-def run_llm(prompt: str, model: str = "openrouter/moonshotai/kimi-k2.6", timeout: int = 180) -> str:
+def run_llm(prompt: str, model: str = "ollama/kimi-k2.7-code:cloud", timeout: int = 180) -> str:
     """Call openclaw infer model run and return the model text content."""
     cmd = [
         "timeout", "-s", "KILL", str(timeout),

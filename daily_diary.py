@@ -18,7 +18,6 @@ WEB = "/var/www/hedge-fund-website"
 DIARY_PATH = os.path.join(WEB, "diary.json")
 ET = timezone(timedelta(hours=-4))  # EDT; only used for date bucketing
 MAX_ENTRIES = 60
-MODEL = "moonshotai/kimi-k2.6"
 OLLAMA_MODEL = "kimi-k2.7-code:cloud"
 
 
@@ -42,20 +41,6 @@ def _latest_session(now_utc):
     while d.weekday() >= 5:
         d -= timedelta(days=1)
     return d
-
-
-def _openrouter_key():
-    for home in ("/home/stonkai", "/root", os.environ.get("HOME", "")):
-        if not home:
-            continue
-        p = Path(home) / ".openclaw" / "agents" / "main" / "agent" / "auth-profiles.json"
-        try:
-            key = json.loads(p.read_text()).get("profiles", {}).get("openrouter:default", {}).get("key")
-            if key:
-                return key
-        except Exception:
-            continue
-    return None
 
 
 def _collect_facts(session):
@@ -235,27 +220,7 @@ def _llm_entry(facts_text):
                 _fail(f"ollama: {type(e).__name__} {str(e)[:140]}")
             text = None
     if not text or not text.strip():
-        key = _openrouter_key()
-        if not key:
-            return _fail("ollama-empty + no-openrouter-key")
-        try:
-            req = urllib.request.Request(
-                "https://openrouter.ai/api/v1/chat/completions",
-                data=json.dumps({
-                    "model": MODEL,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": 4096,  # K2.6 spends most of budget on reasoning (narratives-module config)
-                    "temperature": 0.4,
-                }).encode(),
-                headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
-                         "HTTP-Referer": "https://stonkbot.ai", "X-Title": "StonkBOT.AI"},
-            )
-            with urllib.request.urlopen(req, timeout=240) as r:
-                data = json.loads(r.read())
-                choices = data.get("choices") or []
-                text = ((choices[0].get("message") or {}).get("content") or "").strip() if choices else ""
-        except Exception as e:
-            return _fail(f"openrouter: {type(e).__name__} {str(e)[:140]}")
+        return _fail("ollama-empty")
     # strip any reasoning traces before validation
     text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
     if not text or len(text) < 40:
