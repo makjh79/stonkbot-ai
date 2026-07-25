@@ -12525,6 +12525,7 @@ function updateDashboard(data, marketStatus) {
             if (Object.keys(watchlistNarrativesCache).length === 0) {
                 await fetchWatchlistNarratives().catch(() => {});
             }
+            await fetchEarningsMap();
             watchlistPopupSymbol = symbol;
             if (watchlistPopupRefreshInterval) {
                 clearInterval(watchlistPopupRefreshInterval);
@@ -12608,6 +12609,7 @@ function updateDashboard(data, marketStatus) {
                             <div>
                                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px;">${stock.symbol}</div>
                                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${stock.company}</div>
+                                ${earningsChipHtml(symbol)}
                             </div>
                             <button onclick="closeStockDetail()" style="background: rgba(255,255,255,0.05); border: none; color: var(--text-secondary); width: 32px; height: 32px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                         </div>
