@@ -160,9 +160,14 @@ def _collect_facts(session):
 
 
 _NUM_RE = re.compile(r"[+\-]?\$?\d[\d,]*\.?\d*\s*(?:%|pp)?")
+_MONTH_RE = re.compile(r"(?i)\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:st|nd|rd|th)?\b")
 
 
 def _nums(text):
+    # normalize away constructs that poison extraction: ISO dates, month-name dates, numeric ranges
+    text = re.sub(r"\d{4}-\d{2}-\d{2}", " ", text)
+    text = _MONTH_RE.sub(" ", text)
+    text = re.sub(r"(?<=\d)-(?=\d)", " to ", text)
     out = []
     for m in _NUM_RE.finditer(text):
         tok = m.group(0).strip().rstrip("%").rstrip("pp").strip()
