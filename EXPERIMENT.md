@@ -114,4 +114,6 @@ Config flags (`earnings_gate_enabled`, `implied_move_gate_enabled`) → False. N
 Gates evaluated at Aug 29 with Amendment 1 criteria. A gate showing zero measured avoidance value AND material blocked-winner cost gets retired, openly, in the change log.
 
 ### Amendment 2 change log
-- (pending — code lands 2026-07-25)
+- 2026-07-25 11:15 HKT — earnings_calendar.py: Finnhub daily cache (cron 30 6,13 HKT) -> earnings_cache.json (1,498 symbols); trading_bot.py: earnings proximity gate (<=2d block) + implied-move event gate (3-7d, IV daily move > 1.5x ATR, uses signals' options_implied_vol.iv_30d), both veto-only, fail-open, logged to logs/gate_blocks.jsonl; risk_engine.py: gate config flags (rollback path).
+- 2026-07-25 11:20 HKT — trade_quality_report.py: + gate-block accounting, market breadth (% universe above own 50DMA from existing SIP bars — first reading 64.6%), macro-calendar trade flagging (CPI/FOMC, measure-only), holdings earnings radar (<=7d).
+- Gate smoke test 8/8 passed (run as stonkai): <=2d block, 3-7d high-IV block, low-IV allow, >7d allow, fail-open x2, config-flag rollback, jsonl logging.

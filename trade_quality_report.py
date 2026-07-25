@@ -133,6 +133,73 @@ def main():
     except Exception as e:
         blocked.append({"error": f"{type(e).__name__}: {e}"})
 
+    # Amendment 2: gate blocks from logs/gate_blocks.jsonl
+    gate_blocks = {"24h": 0, "7d": 0, "by_gate": {}, "recent": []}
+    try:
+        gpath = "/opt/stonk-ai/logs/gate_blocks.jsonl"
+        if os.path.exists(gpath):
+            for line in open(gpath):
+                try:
+                    b = json.loads(line)
+                except Exception:
+                    continue
+                ts = parse_ts(b.get("ts", "1970"))
+                age_h = (now.replace(tzinfo=None) - ts).total_seconds() / 3600
+                if age_h <= 24: gate_blocks["24h"] += 1
+                if age_h <= 7 * 24: gate_blocks["7d"] += 1
+                g = b.get("gate", "?")
+                gate_blocks["by_gate"][g] = gate_blocks["by_gate"].get(g, 0) + 1
+                gate_blocks["recent"].append(b)
+            gate_blocks["recent"] = gate_blocks["recent"][-10:]
+    except Exception as e:
+        gate_blocks["error"] = str(e)
+
+    # Amendment 2C: breadth — % of signal universe above own 50DMA (existing Alpaca bars)
+    breadth = None
+    try:
+        from alpaca_data import AlpacaDataHub
+        sraw = json.load(open("/var/www/hedge-fund-website/signals.json"))
+        symbols = [x.get("symbol") for x in (sraw if isinstance(sraw, list) else sraw.get("signals", sraw.get("data", []))) if x.get("symbol")]
+        bars = AlpacaDataHub().get_daily_bars(symbols, days=120)
+        above = n_ok = 0
+        for sym, q in bars.items():
+            closes = (q or {}).get("closes", []) if isinstance(q, dict) else []
+            if len(closes) >= 50:
+                n_ok += 1
+                if closes[-1] > sum(closes[-50:]) / 50:
+                    above += 1
+        if n_ok:
+            breadth = {"pct_above_50dma": round(100 * above / n_ok, 1), "n": n_ok, "universe": len(symbols)}
+    except Exception as e:
+        breadth = {"error": f"{type(e).__name__}: {e}"}
+
+    # Amendment 2D: macro calendar (approx 2026 schedule — measurement only, NOT blocking)
+    MACRO_DATES = {
+        "2026-01-13", "2026-02-11", "2026-03-11", "2026-04-14", "2026-05-12", "2026-06-10",
+        "2026-07-14", "2026-08-12", "2026-09-11", "2026-10-13", "2026-11-10", "2026-12-10",  # CPI
+        "2026-01-28", "2026-03-18", "2026-04-29", "2026-06-17", "2026-07-29", "2026-09-16",
+        "2026-10-28", "2026-12-09",  # FOMC (day 2)
+    }
+    macro_trips = [t for t in trips if (t["entry_ts"] + ET).date().isoformat() in MACRO_DATES]
+    macro = {"entries_on_macro_days": len(macro_trips), "net_pnl": round(sum(t["pnl"] for t in macro_trips), 2)}
+
+    # Amendment 2A radar: current holdings with earnings <= 7d out
+    earnings_radar = []
+    try:
+        ec = json.load(open("/opt/stonk-ai/earnings_cache.json")).get("earnings", {})
+        pd_pos = json.load(open("/var/www/hedge-fund-website/portfolio_data.json")).get("positions", [])
+        et_today = (now - ET).date()
+        for p in pd_pos:
+            rec = ec.get(p.get("symbol"))
+            if rec and rec.get("date"):
+                from datetime import date as _d
+                y, m, dd = map(int, rec["date"].split("-"))
+                delta = (_d(y, m, dd) - et_today).days
+                if 0 <= delta <= 7:
+                    earnings_radar.append({"symbol": p.get("symbol"), "date": rec["date"], "days": delta, "hour": rec.get("hour")})
+    except Exception:
+        pass
+
     # post-amendment scoreboard (live from Jul 27)
     post = [t for t in trips if t["exit_ts"].strftime("%Y-%m-%d") >= AMENDMENT_LIVE]
     qqq_since = None
@@ -161,6 +228,8 @@ def main():
                          "opp_cost_per_share_sum": round(opp, 2), "recent": blocked[-10:]},
         "amendment1": {"live_from": AMENDMENT_LIVE, "closed_trips": block_stats(post),
                        "qqq_return_pct_since_live": qqq_since},
+        "amendment2": {"gate_blocks": gate_blocks, "breadth": breadth, "macro": macro,
+                       "earnings_radar": earnings_radar},
     }
     with open(OUT, "w") as f:
         json.dump(out, f, indent=1)
@@ -169,7 +238,8 @@ def main():
     except Exception:
         pass
     print(f"trade_quality.json written: trips={len(trips)} pf={out['all'].get('profit_factor')} "
-          f"whipsaw=${out['whipsaw']['tax_usd']} blocked={out['reentry_rule']['blocked_count']}")
+          f"whipsaw=${out['whipsaw']['tax_usd']} blocked={out['reentry_rule']['blocked_count']} "
+          f"breadth={breadth and breadth.get('pct_above_50dma') if isinstance(breadth, dict) else breadth}")
 
 if __name__ == "__main__":
     main()

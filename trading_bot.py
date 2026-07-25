@@ -24,7 +24,7 @@ import math
 import os
 import sys
 import time
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -1018,7 +1018,42 @@ class STONKAIBot:
             return f"price ${price:.2f} below VWAP ${vwap:.2f} stop zone"
         return None
 
-    def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False, price: float = 0.0) -> Optional[str]:
+    def _days_to_earnings(self, symbol: str):
+        """Amendment 2A: calendar days from ET today to next confirmed earnings.
+        None if unknown, stale (>48h cache), or already reported (negative)."""
+        try:
+            path = "/opt/stonk-ai/earnings_cache.json"
+            if not os.path.exists(path):
+                return None
+            mtime = os.path.getmtime(path)
+            if time.time() - mtime > 48 * 3600:
+                logger.warning("earnings_cache.json stale (>48h) — earnings gate fail-open")
+                return None
+            if getattr(self, "_earnings_cache_data", None) is None or getattr(self, "_earnings_cache_mtime", 0) != mtime:
+                self._earnings_cache_data = json.loads(Path(path).read_text()).get("earnings", {})
+                self._earnings_cache_mtime = mtime
+            rec = self._earnings_cache_data.get(symbol)
+            if not rec or not rec.get("date"):
+                return None
+            et_today = (datetime.now(timezone.utc) - timedelta(hours=4)).date()
+            ed = datetime.strptime(rec["date"], "%Y-%m-%d").date()
+            days = (ed - et_today).days
+            return days if days >= 0 else None
+        except Exception as e:
+            logger.debug(f"earnings gate lookup failed for {symbol}: {e}")
+            return None
+
+    def _log_gate_block(self, symbol: str, gate: str, detail: str, price: float = 0.0):
+        """Amendment 2: veto-only gates log every block to jsonl for measured-avoidance accounting."""
+        try:
+            rec = {"ts": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                   "symbol": symbol, "gate": gate, "detail": detail, "price": price}
+            with open("/opt/stonk-ai/logs/gate_blocks.jsonl", "a") as f:
+                f.write(json.dumps(rec) + "\n")
+        except Exception as e:
+            logger.debug(f"gate block log failed: {e}")
+
+    def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False, price: float = 0.0, iv_30d: float = 0.0, atr_pct: float = 0.0) -> Optional[str]:
         """Anti-churn guardrails shared by all entry paths (2026-07-18).
         Returns a block reason string, or None if entry is allowed."""
         # Stop-out cooldown: no re-entry within stop_reentry_cooldown_hours of a stop-loss
@@ -1027,6 +1062,19 @@ class STONKAIBot:
         # Amendment 1D: re-entry price discipline — post-stop re-entry only at/below stop price
         if price and self.risk_engine.reentry_price_blocked(symbol, price):
             return f"re-entry price discipline: ${price:.2f} above stop-out price (EXPERIMENT.md Amendment 1)"
+        # Amendment 2A: earnings proximity gate — no entries/avg-ins within N days of confirmed earnings
+        _ed = self._days_to_earnings(symbol)
+        if self.risk_engine.config.earnings_gate_enabled and _ed is not None and _ed <= self.risk_engine.config.earnings_gate_days:
+            self._log_gate_block(symbol, "earnings", f"reports in {_ed}d", price)
+            return f"earnings gate: reports in {_ed}d (EXPERIMENT.md Amendment 2A)"
+        # Amendment 2B: implied-move event gate — 3-7d pre-earnings, IV daily move must not dominate ATR
+        if (self.risk_engine.config.implied_move_gate_enabled and _ed is not None
+                and self.risk_engine.config.earnings_gate_days < _ed <= self.risk_engine.config.implied_move_window_days
+                and iv_30d and atr_pct and atr_pct > 0):
+            _iv_daily = iv_30d / (252 ** 0.5)
+            if _iv_daily > self.risk_engine.config.implied_move_atr_ratio * atr_pct:
+                self._log_gate_block(symbol, "implied_move", f"iv_daily {_iv_daily:.2%} vs atr {atr_pct:.2%}, earnings in {_ed}d", price)
+                return f"implied-move gate: IV daily {_iv_daily:.1%} > {self.risk_engine.config.implied_move_atr_ratio}x ATR {atr_pct:.1%} (EXPERIMENT.md Amendment 2B)"
         # Sell re-entry cooldown: no buy within 4h of ANY non-stop sell (trim/rotation/exit)
         if self.risk_engine.in_sell_reentry_cooldown(symbol):
             return "sell re-entry cooldown active (no buy within 4h of a non-stop sell)"
@@ -1858,7 +1906,7 @@ class STONKAIBot:
                     continue
 
                 # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
-                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0))
+                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0), iv_30d=((sig.get("options_implied_vol") or {}).get("iv_30d") or 0), atr_pct=((sig.get("atr14") or 0) / sig.get("price") if sig.get("price") else 0))
                 if _blocked:
                     logger.info(f"Skipping {symbol}: {_blocked}")
                     continue
@@ -1991,7 +2039,7 @@ class STONKAIBot:
                     continue
 
                 # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
-                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0))
+                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0), iv_30d=((sig.get("options_implied_vol") or {}).get("iv_30d") or 0), atr_pct=((sig.get("atr14") or 0) / sig.get("price") if sig.get("price") else 0))
                 if _blocked:
                     logger.info(f"Skipping {symbol}: {_blocked}")
                     continue
@@ -2130,7 +2178,7 @@ class STONKAIBot:
                 if sig.get("tier") != "STRONG_NOW":
                     continue
                 # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
-                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0))
+                _blocked = self._entry_blocked_by_guardrails(symbol, price=(sig.get("price") or sig.get("current_price") or 0), iv_30d=((sig.get("options_implied_vol") or {}).get("iv_30d") or 0), atr_pct=((sig.get("atr14") or 0) / sig.get("price") if sig.get("price") else 0))
                 if _blocked:
                     logger.info(f"Skipping dip buy {symbol}: {_blocked}")
                     continue

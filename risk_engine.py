@@ -179,6 +179,12 @@ class RiskConfig:
     vwap_trailing_atr_multiplier: float = 2.0      # ATR multiple below VWAP for trailing
     vwap_trailing_tighten_enabled: bool = False    # RETIRED 2026-07-25 (Amendment 1A): below-VWAP tighten floored at 1x ATR — noise-stopped entries inside ordinary daily range
     reentry_price_discipline_days: float = 7.0     # Amendment 1D: post-stop re-entry requires price <= stop-out price for this many calendar days
+    # --- Event-risk gates (Amendment 2, 2026-07-25) ---
+    earnings_gate_enabled: bool = True             # Amendment 2A: block entries <= earnings_gate_days before confirmed earnings
+    earnings_gate_days: float = 2.0
+    implied_move_gate_enabled: bool = True         # Amendment 2B: block entries in the 3-7d pre-earnings window when IV daily move dominates ATR
+    implied_move_window_days: float = 7.0
+    implied_move_atr_ratio: float = 1.5
 
 
 @dataclass
