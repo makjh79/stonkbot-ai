@@ -211,10 +211,11 @@ def _llm_entry(facts_text):
             data=json.dumps({
                 "model": MODEL,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 2048,
+                "max_tokens": 4096,  # K2.6 spends most of budget on reasoning; content needs the headroom (same as narratives module)
                 "temperature": 0.4,
             }).encode(),
-            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
+                     "HTTP-Referer": "https://stonkbot.ai", "X-Title": "StonkBOT.AI"},
         )
         with urllib.request.urlopen(req, timeout=90) as r:
             data = json.loads(r.read())
