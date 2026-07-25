@@ -84,3 +84,34 @@ This amendment was written and committed BEFORE any code change. Analysis report
 - 2026-07-25 10:25 HKT — trade_quality_report.py deployed (cron `20 7,13,21 * * *` HKT) → trade_quality.json with PF, median hold, whipsaw tax, re-entry opp-cost, post-amendment scoreboard; comprehensive_monitor.py freshness check (26h).
 - 2026-07-25 — Evidence: analysis/amendment1-evidence.md — 447 FIFO round trips Jul 7–24: PF 0.323, median hold 3.6h, same-day PF 0.178, whipsaw tax $7,872 ≈ entire window realized loss; 3 sub−3% trailing stops (item 5). **QQQ-below-50DMA gate REJECTED by backtest**: would have blocked the better half of entries (gated PF 0.459 vs allowed 0.218) — regime detection stays position-level per original design.
 - Smoke test 29/29 passed (/tmp/amendment1_smoke.py): tier caps, retired tighten (noise dip survives / real break stops), 1.0x ATR VWAP gate, re-entry block/allow/expiry/persistence, legacy seed/prune/override, basket hysteresis.
+
+---
+
+# Amendment 2 — Event-risk data gates (veto-only; freeze override)
+
+Registered: 2026-07-25 10:50 HKT (Saturday, market closed) · Owner directive: Howie, Telegram 10:42 HKT ("Let's override the freeze")
+Operator: Einstein
+
+## Scope decision
+Earnings + implied-move gates go LIVE (both are veto-only: they prevent trades, never create them). Breadth + macro calendar ship as MEASUREMENT-ONLY — neither has supporting evidence in this book yet, and promotion must clear the same evidentiary bar that rejected the QQQ-50DMA gate.
+
+## Attribution safeguard
+Veto-only design + separate block logging (logs/gate_blocks.jsonl → trade_quality.json). Kill-criteria PF is computed on trades that occur; each gate's value is assessed from its block log + measured avoidance, not folded silently into PF.
+
+## Changes (effective Monday Jul 27 2026 open)
+A. **Earnings proximity gate (live):** block NEW entries and avg-ins when a confirmed earnings report is ≤2 calendar days away. Source: Finnhub /calendar/earnings, daily cache (earnings_cache.json), fail-open on missing/stale data (logged).
+B. **Implied-move event gate (live):** when earnings is 3–7 days away, block entry if the ATM straddle implied move > 1.5× daily ATR% (Alpaca options snapshot, per-symbol daily cache, fail-open). Rationale: Amendment 1's wider stops do not control gap risk; event vol dominates the historical-vol sizing model.
+C. **Market breadth (measure-only):** % of signal universe above own 50DMA, computed from existing Alpaca SIP bars (zero new deps), into trade_quality.json. NOT gating — the QQQ-gate backtest showed price-based gates can select against the better trades in this book.
+D. **Macro calendar (measure-only):** CPI/FOMC dates; trades opened on those mornings flagged in trade_quality.json. NOT blocking — zero supporting evidence; cheapest to measure.
+
+## NOT changed
+Everything frozen under Amendment 1 (entry logic, stops, caps, tiers, regime approach).
+
+## Rollback
+Config flags (`earnings_gate_enabled`, `implied_move_gate_enabled`) → False. No code revert needed.
+
+## Keep/kill
+Gates evaluated at Aug 29 with Amendment 1 criteria. A gate showing zero measured avoidance value AND material blocked-winner cost gets retired, openly, in the change log.
+
+### Amendment 2 change log
+- (pending — code lands 2026-07-25)
