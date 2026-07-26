@@ -54,6 +54,7 @@ SKIP_RE = re.compile(
 SEED_LOG_BYTES = 3 * 1024 * 1024  # first run reads at most this much backlog
 
 MAX_ENTRIES = 400
+NON_TRADE_RESERVE = 40  # slots protected from trade floods (skips/scans/digests)
 MAX_TRADE_IDS = 2000
 SIGNAL_STALE_MIN = 40  # don't count a scan if signals.json itself is lagging
 
@@ -554,7 +555,12 @@ def main():
             _seen.add(eid)
         _deduped.append(e)
     _deduped.sort(key=lambda e: e.get("ts", ""), reverse=True)
-    entries = _deduped[:MAX_ENTRIES]
+    # Reserve slots for non-trade entries so trade floods can't crowd out
+    # skips/scans/digests — the "thinking" is the differentiating content.
+    _non_trade = [e for e in _deduped if e.get("type") != "trade"][:NON_TRADE_RESERVE]
+    _trades = [e for e in _deduped if e.get("type") == "trade"]
+    entries = sorted(_non_trade + _trades[:MAX_ENTRIES - len(_non_trade)],
+                     key=lambda e: e.get("ts", ""), reverse=True)
     out = {
         "generated_at": now.isoformat().replace("+00:00", "Z"),
         "entries": entries,

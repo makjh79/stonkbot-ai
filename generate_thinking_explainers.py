@@ -33,6 +33,7 @@ OUT_PATH = os.path.join(BASE, "thinking_llm.json")
 MODEL = os.environ.get("STONKBOT_THINKING_MODEL", "ollama/kimi-k2.7-code:cloud")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_THINKING_TIMEOUT", "180"))
 MAX_PER_BATCH = 12
+EXPLAIN_SCOPE = 150  # only voice the newest entries; older ones keep raw text
 EXPLAIN_TYPES = ("trade", "digest", "skip")
 
 # Backend tier -> public site label (matches index.html mapping at line ~9995).
@@ -334,7 +335,7 @@ def main():
     stream_ids = {e.get("id") for e in entries if e.get("id")}
 
     pending = [
-        e for e in entries
+        e for e in entries[:EXPLAIN_SCOPE]
         if e.get("type") in EXPLAIN_TYPES
         and e.get("id")
         and "explainer" not in e
