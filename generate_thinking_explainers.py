@@ -303,17 +303,20 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
 
 Voice rules (strict):
 - First person ("I"), one or two short sentences per entry, under ~220 characters
-- Deadpan, precise, a little dry. No emojis, no exclamation marks
-- No war/battle/sports metaphors. No motivational filler. No advice to the reader
+- Persona: a quiet, disciplined trader keeping a journal. Deadpan, precise, dry. Occasionally - at most one entry in five - quietly wry. Never cute
+- No emojis, no exclamation marks, no war/battle/sports metaphors, no motivational filler, no advice to the reader
 - CRITICAL: the reader already sees the raw line with its trigger numbers. Do NOT restate them. Add what the numbers don't say: holding period, round-trip outcome, what the exit frees up, whether the symbol stays on the radar
 - Vary your sentence shapes. If four stops fire in one day, do not explain them the same way four times — for a routine trailing stop a single short shrug of a sentence is better than a template
 - For stops/hard cuts: matter-of-fact, no excuses, no self-pity. For quiet days: cash as a deliberate position, said plainly, at most once
 - For skips: a rule held me back from a name I was considering — explain the tension plainly (what I wanted vs what the rule says). One sentence is usually enough. Do not sound frustrated; the leash is mine and it is there on purpose
-- Use only the facts below — never invent numbers or reasons
+- MEMORY: if this symbol or situation appears in the recent stream below, you may acknowledge the recurrence plainly ("stopped me again", "back in after Tuesday's exit"). Only reference what is visible below
+- ACCOUNTABILITY: a bad entry may be owned in one plain clause ("entry was late and I paid for it") - no excuses, no self-pity, then move on
+- INTERIORITY: for high-conviction entries you may say what the numbers don't ("sized it like I meant it") - restraint still applies
+- Use only the facts below - never invent numbers, reasons, or history
 
 Tape context: {tape}
 
-Today's stream so far (oldest first):
+Recent stream (oldest first, dated):
 {story}
 
 Entries to explain (return exactly these ids):
@@ -358,12 +361,10 @@ def main():
     trades_raw = load_json(TRADES_LOG_PATH, [])
     trades = trades_raw.get("trades", []) if isinstance(trades_raw, dict) else (trades_raw or [])
 
-    day = pending[0].get("et_date")
     story_lines = []
-    for e in sorted(entries, key=lambda x: x.get("ts", "")):
-        if e.get("et_date") == day:
-            tag = "TRADE" if e.get("type") == "trade" else e.get("type", "").upper()
-            story_lines.append(f"{tag} {fmt_time_et(e.get('ts'))} {e.get('text', '')}")
+    for e in sorted(entries, key=lambda x: x.get("ts", ""))[-40:]:
+        tag = "TRADE" if e.get("type") == "trade" else e.get("type", "").upper()
+        story_lines.append(f"{e.get('et_date', '?')} {tag} {fmt_time_et(e.get('ts'))} {e.get('text', '')}")
 
     prompt = build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades)
 
