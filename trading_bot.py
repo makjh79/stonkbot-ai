@@ -138,6 +138,8 @@ class TradingConfig:
     # RISK_ON:  8% max / 5% cash  / NOW entries
     # RISK_OFF: 4% max / 15% cash / STRONG_NOW entries only
     # CRISIS:   4% max / 30% cash / no new entries
+_RISK_OFF_MIN_READINESS = 78.0  # higher readiness bar for STRONG_NOW entries in defensive regime
+
 
 
 def load_alpaca_config() -> Dict:
@@ -1918,7 +1920,7 @@ class STONKAIBot:
                 if sig.get("tier") != "STRONG_NOW":
                     continue
                 readiness = sig.get("readiness_score", 0)
-                if readiness < _risk_off_min_readiness:
+                if readiness < _RISK_OFF_MIN_READINESS:
                     continue
                 if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
                     continue
@@ -2598,8 +2600,8 @@ class STONKAIBot:
         logger.info(f"Mode: {'PAPER (fake money)' if self.alpaca.is_paper() else 'LIVE (real money)'}")
         logger.info(f"Dry run: {self._dry_run}")
         logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
-        logger.info(f"Entry gate: readiness >= 77 AND >= 5 confirmations AND above_ema")
-        logger.info(f"Position caps: 12% STRONG_NOW / 8% NOW / 5% WATCH / 3% MONITOR; 25% sector cap")
+        logger.info(f"Entry gate: readiness >= 75 AND >= 5 confirmations AND above_ema (above_ema + hard confirm)")
+        logger.info(f"Position caps: 6% STRONG_NOW / 4% NOW / 2.5% WATCH / 1.5% MONITOR; 25% sector cap")
         logger.info(f"Exits: -3% hard cut (widens to 1x ATR) + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON) | min-hold: no same-day non-stop sells")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "
                     f"{self.risk_engine.config.sell_reentry_cooldown_hours:.0f}h sell re-entry cooldown | "
