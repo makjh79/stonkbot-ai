@@ -54,7 +54,7 @@ SKIP_RE = re.compile(
 SEED_LOG_BYTES = 3 * 1024 * 1024  # first run reads at most this much backlog
 
 MAX_ENTRIES = 400
-MAX_TRADE_IDS = 800
+MAX_TRADE_IDS = 2000
 SIGNAL_STALE_MIN = 40  # don't count a scan if signals.json itself is lagging
 
 # Live entry gate (trading_bot.py startup banner) — used only to explain
@@ -113,7 +113,17 @@ def extract_trades(raw):
 
 
 def trade_id(t):
-    return "|".join(str(t.get(k, "")) for k in ("timestamp", "action", "symbol", "qty", "price"))
+    qty = t.get("qty", "")
+    price = t.get("price", "")
+    try:
+        qty = f"{float(qty):g}"
+    except (TypeError, ValueError):
+        qty = str(qty)
+    try:
+        price = f"{float(price):.2f}"
+    except (TypeError, ValueError):
+        price = str(price)
+    return "|".join(str(x) for x in (t.get("timestamp", ""), t.get("action", ""), t.get("symbol", ""), qty, price))
 
 
 def clean_reason(r):
@@ -363,7 +373,20 @@ def main():
         # A trade closes any open scan window — the trade is the story.
         state["open_scan_id"] = None
 
-    state["emitted_trade_ids"] = list(emitted)[-MAX_TRADE_IDS:]
+    # FIFO order: keep ids in append order so trimming forgets the OLDEST,
+    # not a random hash-ordered subset (set->list order is process-random).
+    prev_order = state.get("emitted_trade_ids") or []
+    prev_set = set(prev_order)
+    ordered = [x for x in prev_order if x in emitted]
+    for _ts, _tid, _t in new_trades:
+        if _tid not in prev_set:
+            ordered.append(_tid)
+            prev_set.add(_tid)
+    for _tid in emitted:  # bootstrap-added ids (first_run path)
+        if _tid not in prev_set:
+            ordered.append(_tid)
+            prev_set.add(_tid)
+    state["emitted_trade_ids"] = ordered[-MAX_TRADE_IDS:]
     state["bootstrapped"] = True
 
     # ---- 2. skip decisions (bot log tail) ------------------------------
@@ -519,7 +542,19 @@ def main():
                 e["explainer"] = explainers[e["id"]]
 
     # ---- 6. write ------------------------------------------------------
-    entries = entries[:MAX_ENTRIES]
+    # Dedupe by entry id (keep first copy) and order strictly newest-first,
+    # so re-emitted trades land in chronological place instead of pile-ups.
+    _seen = set()
+    _deduped = []
+    for e in entries:
+        eid = e.get("id")
+        if eid:
+            if eid in _seen:
+                continue
+            _seen.add(eid)
+        _deduped.append(e)
+    _deduped.sort(key=lambda e: e.get("ts", ""), reverse=True)
+    entries = _deduped[:MAX_ENTRIES]
     out = {
         "generated_at": now.isoformat().replace("+00:00", "Z"),
         "entries": entries,
