@@ -547,8 +547,8 @@ def main():
             if risk_entries:
                 entries.extend(risk_entries)
                 # merge into state ids so duplicates are caught
-                for re in risk_entries:
-                    state.setdefault("seen_ids", {})[re["id"]] = re["ts"]
+                for rentry in risk_entries:
+                    state.setdefault("seen_ids", {})[rentry["id"]] = rentry["ts"]
     except Exception as exc:
         print(f"[WARN] risk watch failed: {exc}", file=sys.stderr)
 
