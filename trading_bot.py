@@ -5,7 +5,7 @@ Systematic quality-momentum strategy with readiness-driven entry and thesis-base
 
 Design principles:
 - Signal-driven: `signals.json` is the single source of truth for what to buy.
-- Readiness-driven: entry_eligible (STRONG_NOW tier, readiness >= 77, >= 5 confirmations, above_ema) replaces hard score threshold.
+- Readiness-driven: entry_eligible (STRONG_NOW tier, readiness >= 75, >= 5 confirmations, above_ema) replaces hard score threshold.
 - Thesis-based: each position has an entry thesis with defined exit triggers.
 - Risk-first: position sizing, concentration limits, and drawdown brakes.
 - Anti-fragile: cash buffers, daily budgets, hard stops, profit trims.
@@ -1377,7 +1377,7 @@ class STONKAIBot:
         """Scale position size by readiness conviction.
         Reduced from 3.0×/1.5×/0.5× to 2.0×/1.0×/0.5× while live expectancy is negative.
         """
-        if readiness >= 77:
+        if readiness >= 75:
             return 2.0   # STRONG_NOW high conviction
         if readiness >= 75:
             return 1.0   # upper NOW
@@ -2620,7 +2620,7 @@ class STONKAIBot:
         now = tier_max_position_pct("NOW", 0.08) * 100
         watch = tier_max_position_pct("WATCH", 0.08) * 100
         mon = tier_max_position_pct("MONITOR", 0.08) * 100
-        logger.info(f"Entry gate: readiness >= 77 AND >= 6 confirmations AND above_ema (above_ema + hard confirm)")
+        logger.info(f"Entry gate: readiness >= 75 AND >= 5 confirmations AND above_ema (above_ema + hard confirm)")
         logger.info(f"Position caps: {sn:.0f}% STRONG_NOW / {now:.0f}% NOW / {watch:.0f}% WATCH / {mon:.0f}% MONITOR; 25% sector cap")
         logger.info(f"Exits: -3% hard cut (widens to 1x ATR) + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON) | min-hold: no same-day non-stop sells")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "
