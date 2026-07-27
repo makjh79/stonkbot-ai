@@ -8259,7 +8259,7 @@ function updateDashboard(data, marketStatus) {
                     stonkValueEl.classList.remove('skeleton', 'skeleton-value');
                 }
                 // Rebase Jul 23: compare bot to post-reset pv (Jul 7 16:00 UTC snapshot)
-                const raceBotReturn = d.portfolio_value != null ? ((d.portfolio_value - 99866.86) / 99866.86 * 100) : null;
+                const raceBotReturn = d.portfolio_value != null ? ((d.portfolio_value - 100000.00) / 100000.00 * 100) : null;
                 const stonkReturnEl = document.getElementById('stonkAiReturn');
                 if (stonkReturnEl && raceBotReturn != null) {
                     stonkReturnEl.textContent = (raceBotReturn >= 0 ? '+' : '') + raceBotReturn.toFixed(2) + '%';
