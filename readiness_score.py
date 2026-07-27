@@ -48,17 +48,17 @@ logger = logging.getLogger(__name__)
 
 # Weights (sum to 1.0)
 # Rebalanced to reduce momentum collinearity (70%→55%) and add non-price factors
-WEIGHT_SIGNAL = 0.20  # reduced to make room for rel_volume + vwap_dev   # momentum cluster reduced from 30%
-WEIGHT_RSI = 0.10      # kept — weakly correlated, not pure trend
-WEIGHT_VOLUME = 0.05   # kept — negatively correlated, small weight
-WEIGHT_MACD = 0.08     # reduced from 10% — collinear with EMA
+WEIGHT_SIGNAL = 0.25  # raised 2026-07-27 to compensate dropped RSI/MACD
+WEIGHT_RSI = 0.00      # dropped 2026-07-27: attribution shows -13pp edge
+WEIGHT_VOLUME = 0.10   # raised 2026-07-27: volume/relvol had +31pp edge
+WEIGHT_MACD = 0.00     # dropped 2026-07-27: attribution shows -19pp edge
 WEIGHT_EMA = 0.10      # restored toward 12% — strongest live predictor (+0.572 corr); keep RS too
-WEIGHT_SECTOR = 0.30   # raised from 25% — best non-price predictor (+0.459 corr), PEAD dropped
-WEIGHT_INTRADAY = 0.10 # NEW — intraday flow/VWAP (not price-derivative)
-WEIGHT_OPTIONS = 0.05  # NEW — options IV sentiment (not price-derivative)
+WEIGHT_SECTOR = 0.25   # held 2026-07-27 as stabilizer after dropping RSI/MACD
+WEIGHT_INTRADAY = 0.05 # reduced 2026-07-27: intraday had -2.2pp edge
+WEIGHT_OPTIONS = 0.10  # raised 2026-07-27: options flow had +9.8pp edge
 WEIGHT_REL_VOLUME = 0.00  # kept as boolean confirmation chip only; volume score already captures same ratio
 
-WEIGHT_VWAP_DEV = 0.05   # NEW — VWAP deviation momentum signal
+WEIGHT_VWAP_DEV = 0.10   # raised 2026-07-27: VWAP had +3.1pp edge
 
 WEIGHT_RELATIVE_STRENGTH = 0.04  # NEW — stock vs SPY 20-day alpha; complements EMA, not replaces
 

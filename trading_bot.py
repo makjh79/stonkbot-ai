@@ -1062,7 +1062,7 @@ class STONKAIBot:
         # Sentinel halts ALL new entries and avg-ins. Exits/stops/trims unaffected.
         # Resume only by owner decision: sudo -u stonkai rm /opt/stonk-ai/ENTRIES_HALTED
         if os.path.exists("/opt/stonk-ai/ENTRIES_HALTED"):
-            return "entries halted: experiment ended early 2026-07-27 (sentinel /opt/stonk-ai/ENTRIES_HALTED)"
+            return "entries halted: signal redesign in progress (sentinel /opt/stonk-ai/ENTRIES_HALTED)"
         # Stop-out cooldown: no re-entry within stop_reentry_cooldown_hours of a stop-loss
         if self.risk_engine.in_stop_cooldown(symbol):
             return "stop-out cooldown active (no same-day re-entry after stop-loss)"
@@ -2605,7 +2605,7 @@ class STONKAIBot:
         logger.info(f"Mode: {'PAPER (fake money)' if self.alpaca.is_paper() else 'LIVE (real money)'}")
         logger.info(f"Dry run: {self._dry_run}")
         logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
-        logger.info(f"Entry gate: readiness >= 75 AND >= 5 confirmations AND above_ema (above_ema + hard confirm)")
+        logger.info(f"Entry gate: readiness >= 80 AND >= 6 confirmations AND above_ema (above_ema + hard confirm)")
         logger.info(f"Position caps: 6% STRONG_NOW / 4% NOW / 2.5% WATCH / 1.5% MONITOR; 25% sector cap")
         logger.info(f"Exits: -3% hard cut (widens to 1x ATR) + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON) | min-hold: no same-day non-stop sells")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "

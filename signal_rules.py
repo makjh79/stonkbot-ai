@@ -25,9 +25,9 @@ TIER_BUILDING_MIN = TIER_WATCH_MIN
 # -----------------------------------------------------------------------------
 # Entry gate
 # -----------------------------------------------------------------------------
-ENTRY_READINESS_MIN = 75.0
-ENTRY_MIN_CONFIRMATIONS = 5
-ENTRY_MIN_HARD_CONFIRMATIONS = 1
+ENTRY_READINESS_MIN = 80.0
+ENTRY_MIN_CONFIRMATIONS = 6
+ENTRY_MIN_HARD_CONFIRMATIONS = 2
 
 # -----------------------------------------------------------------------------
 # Confirmation chips
@@ -55,9 +55,9 @@ CONFIRMATION_CHIPS: Dict[str, Any] = {
 
 HARD_CONFIRMATION_KEYS = {
     "volume_confirmed",
-    "macd_turning",
     "intraday_confirmed",
     "options_confirmed",
+    "vwap_confirmed",
     "relvol_confirmed",
 }
 
