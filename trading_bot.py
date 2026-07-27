@@ -1058,6 +1058,11 @@ class STONKAIBot:
     def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False, price: float = 0.0, iv_30d: float = 0.0, atr_pct: float = 0.0) -> Optional[str]:
         """Anti-churn guardrails shared by all entry paths (2026-07-18).
         Returns a block reason string, or None if entry is allowed."""
+        # EXPERIMENT ENDED EARLY 2026-07-27 (owner decision - see EXPERIMENT.md termination note).
+        # Sentinel halts ALL new entries and avg-ins. Exits/stops/trims unaffected.
+        # Resume only by owner decision: sudo -u stonkai rm /opt/stonk-ai/ENTRIES_HALTED
+        if os.path.exists("/opt/stonk-ai/ENTRIES_HALTED"):
+            return "entries halted: experiment ended early 2026-07-27 (sentinel /opt/stonk-ai/ENTRIES_HALTED)"
         # Stop-out cooldown: no re-entry within stop_reentry_cooldown_hours of a stop-loss
         if self.risk_engine.in_stop_cooldown(symbol):
             return "stop-out cooldown active (no same-day re-entry after stop-loss)"

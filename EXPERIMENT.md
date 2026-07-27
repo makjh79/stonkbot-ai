@@ -121,3 +121,38 @@ Gates evaluated at Aug 29 with Amendment 1 criteria. A gate showing zero measure
 - 2026-07-25 14:55 HKT — daily_diary.py: one diary entry per completed US session (facts-sheet + number-validated LLM prose, template fallback; idempotent; called from trade_quality_report cron). Trade Log modal: diary card (display-only, reads diary.json). No trading-logic change.
 - 2026-07-25 15:50 HKT — all LLM queries moved to Ollama kimi-k2.7-code:cloud: daily_diary.py OpenRouter leg removed (Ollama -> template), vps_memory_maintenance.py default model swapped (was dead-key openrouter/k2.6, would 402 at 3AM). Narratives + thinking_explainers already ollama-default. No trading-logic change.
 - 2026-07-25 16:10 HKT — narrative layer consolidation: diary card moved Trade Log modal -> top of thinking.html (one page for the bot's account of itself); thinking_journal.py day-digest generation retired (DIGESTS_ENABLED=False, existing entries age out). Trade Log back to raw tape. No trading-logic change.
+
+## Terminated early - 2026-07-27 (owner decision)
+
+Ended by owner decision before the Aug 29 verdict date. This is an early
+termination with the record preserved, not an abandonment.
+
+**Reasons:**
+- 447-trade evidence (Jul 7-24): PF 0.323; whipsaw tax $7,872 ~= entire
+  window loss. Jul 22 audit: same-day round trips net -$4,887 vs multi-day
+  holds +$785.
+- The amended window (~40 round trips to Aug 29) was statistically
+  incapable of overturning the 447-trade base rate; its remaining value
+  was anti-fiddling, which the owner exercised directly by ending it.
+- Entry engine (15 scored factors) never validated; plumbing amendments
+  were treating symptoms.
+
+**What changed:**
+- ALL new entries and avg-ins halted via sentinel
+  `/opt/stonk-ai/ENTRIES_HALTED`, checked at the top of
+  `_entry_blocked_by_guardrails` (covers all 3 buy paths).
+- Exits, stops, trailing stops, tier-cap trims, crisis exits continue
+  unchanged. Open positions close out under amended (Amendment 1) rules.
+- A1 + A2 remain in force for exit-side behavior and gate measurement.
+
+**Not a pause:** resumption requires an explicit owner decision AND a v3
+pre-registration. Removing the sentinel without both is out of bounds.
+
+**Data preserved (do not delete):**
+- `trades_log.json`, `entry_factor_snapshots.json`,
+  `analysis/amendment1-evidence.*`, `logs/gate_blocks.jsonl`,
+  `trade_rationale.json`, portfolio history.
+- `factor_attribution.py` cron continues (3x daily) for the post-mortem.
+
+**Next:** factor-attribution deep-dive on the evidence window (Einstein).
+Owner decides index-vs-v3 with the study as input, not as gatekeeper.
