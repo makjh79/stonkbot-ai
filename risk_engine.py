@@ -60,18 +60,18 @@ def is_stop_reason(reason: str) -> bool:
 def tier_max_position_pct(tier: str, base_max_pct: float) -> float:
     """Single source of truth for tier-scaled per-position caps.
 
-      STRONG_NOW: 6% | NOW: 4% | WATCH: 2.5% | MONITOR/unknown: 1.5%  (halved 2026-07-25, EXPERIMENT.md Amendment 1C)
+      STRONG_NOW: 12% | NOW/WATCH/MONITOR: 8%  (restored 2026-07-27 post-redesign)
 
     `base_max_pct` is accepted for API compatibility with the historical
-    trading_bot helper but the tier values are absolute by design.
+    trading_bot helper; the tier values are absolute by design.
     """
     if tier == "STRONG_NOW":
-        return 0.06
+        return 0.12
     if tier == "NOW":
-        return 0.04
+        return 0.08
     if tier == "WATCH":
-        return 0.025
-    return 0.015  # MONITOR and anything unknown
+        return 0.08
+    return 0.08  # MONITOR and anything unknown
 
 
 @dataclass
@@ -133,7 +133,7 @@ class RiskConfig:
             }
 
     # --- Concentration ---
-    max_single_position_pct: float = 0.10          # loosened from 8% to improve capital deployment while maintaining concentration guard
+    max_single_position_pct: float = 0.08          # legacy helper cap; effective caps come from tier_max_position_pct()
     max_sector_pct: float = 0.25                   # loosened from 20% to allow better deployment across clustered Fintech/Consumer signals
     concentration_trim_trigger: float = 1.00      # trim at cap, not 25% above (was 1.25)
 
@@ -1338,3 +1338,35 @@ class RiskEngine:
             excess_mv -= trim_qty * price
 
         return trades
+
+# ── Config export helper (prevents config_truth.json drift) ──
+
+def export_config_truth(path=None) -> dict:
+    """Export current caps, stops, gates and experiment meta to config_truth.json."""
+    cfg = RiskConfig()
+    data = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "caps": {
+            "STRONG_NOW": round(tier_max_position_pct("STRONG_NOW", cfg.max_single_position_pct), 3),
+            "NOW": round(tier_max_position_pct("NOW", cfg.max_single_position_pct), 3),
+            "WATCH": round(tier_max_position_pct("WATCH", cfg.max_single_position_pct), 3),
+            "MONITOR": round(tier_max_position_pct("MONITOR", cfg.max_single_position_pct), 3),
+        },
+        "caps_note": "single source of truth: generated from risk_engine.py tier_max_position_pct",
+        "stops": {
+            "trailing": "2x ATR from peak",
+            "hard": "1.5x ATR",
+            "abs_cut": "max(5%, 1x ATR)",
+            "vwap": "max(2%, 1x ATR) below VWAP",
+        },
+        "gates": {
+            "earnings": "no entries within 2 days of confirmed earnings",
+            "implied_move": "3-7d pre-earnings: no entries when IV daily move > 1.5x ATR",
+            "reentry": "post-stop re-entry only at/below stop price (7d)",
+        },
+    }
+    if path:
+        with open(path, "w") as f:
+            json.dump(data, f, indent=1)
+    return data
+
