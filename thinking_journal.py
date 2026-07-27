@@ -623,6 +623,7 @@ def main():
                      key=lambda e: e.get("ts", ""), reverse=True)
     out = {
         "generated_at": now.isoformat().replace("+00:00", "Z"),
+        "generated_at_ts": now.timestamp(),
         "entries": entries,
     }
     atomic_write_json(OUT_PATH, out)
