@@ -3841,7 +3841,9 @@
                         .then(function (d) {
                             var ageMs = Date.now() - new Date(d.generated_at).getTime();
                             if (ageMs > 30 * 60 * 1000) return; // pipeline stale — stay hidden
-                            var entries = d.entries || []; var e = entries.find(function(x){ return x.type !== 'digest'; }) || entries[0];
+                            var entries = d.entries || [];
+                            var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
+                            var e = candidates[0] || entries[entries.length - 1];
                             if (!e) return;
                             var txt = (e.type === 'digest') ? e.text
                                 : TIME_FMT.format(new Date(e.ts)) + ' \u00b7 ' + e.text;
@@ -3849,6 +3851,7 @@
                             if (e.type === 'trade') color = (e.action === 'BUY') ? '#10b981' : '#ef4444';
                             else if (e.type === 'digest') color = '#06b6d4';
                             else if (e.type === 'skip') color = '#f59e0b';
+                            else if (e.type === 'watch') color = '#f97316';
                             document.getElementById('thinkingTeaserText').textContent = txt;
                             document.getElementById('thinkingTeaserDot').style.background = color;
                             document.getElementById('thinkingTeaser').style.display = 'flex';
