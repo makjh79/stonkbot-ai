@@ -9,8 +9,7 @@
     <meta name="cache-buster-20260718-v4">
     <script>(function(){var v='20260719-v4';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
-    window.__CACHE_BUST = '20260727-2225';
-// Nuclear cache bust - unregister service workers and clear caches
+    // Nuclear cache bust - unregister service workers and clear caches
     (function() {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -3550,7 +3549,7 @@
     <script>
         (function() {
             try {
-                const cached = localStorage.getItem('raceValuesCache');
+                const cached = localStorage.getItem('raceValuesCache_v20260727');
                 if (cached) {
                     window.__RACE_CACHE__ = JSON.parse(cached);
                     console.log('[CACHE] Restored from localStorage:', window.__RACE_CACHE__);
@@ -5514,7 +5513,7 @@ async function loadPnlAttribution() {
         // Simple data loading with XMLHttpRequest fallback
         function loadPortfolioData() {
             console.log('Loading data...');
-            const url = './portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST;
+            const url = './portfolio_data.json?t=' + Date.now();
 
             // Try fetch first
             if (window.fetch) {
@@ -6075,7 +6074,7 @@ function updateDashboard(data, marketStatus) {
         // Full async version (used by other components)
         async function loadPortfolioDataAsync() {
             try {
-                const response = await fetch('./portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST);
+                const response = await fetch('./portfolio_data.json?t=' + Date.now());
                 const data = await response.json();
                 window.lastPortfolioData = data;
 
@@ -6231,7 +6230,7 @@ function updateDashboard(data, marketStatus) {
                 // Try alternative fetch
                 try {
                     console.log('Trying alternative fetch...');
-                    const altResponse = await fetch('/portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST + '_cb=' + window.__CACHE_BUST);
+                    const altResponse = await fetch('/portfolio_data.json?t=' + Date.now());
                     if (altResponse.ok) {
                         const data = await altResponse.json();
                         updateHoldingsCards(data.positions);
@@ -6819,7 +6818,7 @@ function updateDashboard(data, marketStatus) {
             try {
                 const [tradeRes, portRes] = await Promise.all([
                     fetch('trades_log.json?t=' + Date.now()),
-                    fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST)
+                    fetch('portfolio_data.json?t=' + Date.now())
                 ]);
                 const tradeData = await tradeRes.json();
                 const portData = await portRes.json();
@@ -6948,7 +6947,7 @@ function updateDashboard(data, marketStatus) {
             if (latestPortfolioData) return latestPortfolioData;
 
             try {
-                const response = await fetch('./portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST);
+                const response = await fetch('./portfolio_data.json?t=' + Date.now());
                 if (response.ok) {
                     latestPortfolioData = await response.json();
                     return latestPortfolioData;
@@ -7597,7 +7596,7 @@ function updateDashboard(data, marketStatus) {
                 content.innerHTML = '<div style="display: flex; justify-content: center; padding: 2rem;"><div class="loading-spinner"></div></div>';
             }
 
-            fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST)
+            fetch('portfolio_data.json?t=' + Date.now())
                 .then(r => {
                     if (!r.ok) throw new Error('HTTP ' + r.status);
                     return r.json();
@@ -7961,7 +7960,7 @@ function updateDashboard(data, marketStatus) {
             try {
                 const [historyRes, currentRes] = await Promise.all([
                     fetch('portfolio_history.json?t=' + Date.now()),
-                    fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST)
+                    fetch('portfolio_data.json?t=' + Date.now())
                 ]);
 
                 const historyData = await historyRes.json();
@@ -8073,7 +8072,7 @@ function updateDashboard(data, marketStatus) {
             if (!autoEntryConfig.enabled) return;
 
             try {
-                const response = await fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST);
+                const response = await fetch('portfolio_data.json?t=' + Date.now());
                 const data = await response.json();
                 const cash = data.account?.cash || 0;
                 const portfolioValue = data.account?.portfolio_value || 0;
@@ -8317,7 +8316,7 @@ function updateDashboard(data, marketStatus) {
 
         function getRaceCache() {
             try {
-                const cached = localStorage.getItem('raceValuesCache');
+                const cached = localStorage.getItem('raceValuesCache_v20260727');
                 if (!cached) return null;
                 const parsed = JSON.parse(cached);
                 // Reject stale cache to prevent value flipping on refresh
@@ -8334,7 +8333,7 @@ function updateDashboard(data, marketStatus) {
         function setRaceCache(cache) {
             try {
                 cache.timestamp = Date.now();
-                localStorage.setItem('raceValuesCache', JSON.stringify(cache));
+                localStorage.setItem('raceValuesCache_v20260727', JSON.stringify(cache));
             } catch (e) {
                 console.log('Could not cache race values');
             }
@@ -8393,7 +8392,7 @@ function updateDashboard(data, marketStatus) {
                 console.log('updateRaceValues: Starting fetch...');
                 // Fetch both data sources
                 const [portfolioRes, spData] = await Promise.all([
-                    fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST),
+                    fetch('portfolio_data.json?t=' + Date.now()),
                     fetchSP500Data()
                 ]);
 
@@ -8671,7 +8670,7 @@ function updateDashboard(data, marketStatus) {
             // Fetch live data
             let portfolioData;
             try {
-                const response = await fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST);
+                const response = await fetch('portfolio_data.json?t=' + Date.now());
                 portfolioData = await response.json();
             } catch (e) {
                 console.error('Failed to fetch live data:', e);
@@ -9014,7 +9013,7 @@ function updateDashboard(data, marketStatus) {
 
                 if (checks.length === 0) {
                     // Fallback to current data if no history
-                    const currentRes = await fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST);
+                    const currentRes = await fetch('portfolio_data.json?t=' + Date.now());
                     const currentData = await currentRes.json();
                     const STARTING_VALUE = 100000;
                     const portfolioValue = currentData.account?.portfolio_value || STARTING_VALUE;
@@ -9701,7 +9700,7 @@ function updateDashboard(data, marketStatus) {
             if (!banner) return;
             try {
                 const [portfolioRes, monitorRes] = await Promise.allSettled([
-                    fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST),
+                    fetch('portfolio_data.json?t=' + Date.now()),
                     fetch('comprehensive_monitor.json?t=' + Date.now())
                 ]);
 
@@ -10314,7 +10313,7 @@ function updateDashboard(data, marketStatus) {
                 // Fetch both history and current data
                 const [historyRes, currentRes] = await Promise.all([
                     fetch('portfolio_history.json?t=' + Date.now()),
-                    fetch('portfolio_data.json?t=' + Date.now() + '_cb=' + window.__CACHE_BUST)
+                    fetch('portfolio_data.json?t=' + Date.now())
                 ]);
 
                 const historyData = await historyRes.json();
