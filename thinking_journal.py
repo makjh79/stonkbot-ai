@@ -26,7 +26,7 @@ No LLM. Decision logic untouched — this observes, it does not act.
 
 import json
 import os
-import re
+import re as _re
 import sys
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
@@ -48,7 +48,7 @@ LLM_EXPLAINERS = os.path.join(BASE, "thinking_llm.json")
 BOT_LOG = os.path.join(BASE, "logs", "trading_bot.log")
 HKT = ZoneInfo("Asia/Hong_Kong")  # bot log timestamps are server-local
 
-SKIP_RE = re.compile(
+SKIP_RE = _re.compile(
     r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d+ - \S+ - \w+ - Skipping ([A-Z0-9.]+): (.+)$"
 )
 SEED_LOG_BYTES = 3 * 1024 * 1024  # first run reads at most this much backlog
@@ -451,7 +451,7 @@ def main():
             continue  # seed: only today's skips on first pass
         sym, canon = m.group(2), canonical_reason(m.group(3))
         key = f"{et_d}|{sym}|{canon}"
-        entry_id = f"skip-{et_d}-{sym}-{re.sub(r'[^a-z0-9]+', '-', canon.lower())[:30]}"
+        entry_id = f"skip-{et_d}-{sym}-{_re.sub(r'[^a-z0-9]+', '-', canon.lower())[:30]}"
         sig = find_signal(sig_doc, sym)
         # Don't give thinking-stream airtime to low-priority names. Held
         # positions, top-10 watchlist, and near-entry readiness (>=75) matter;
