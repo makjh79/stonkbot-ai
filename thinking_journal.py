@@ -533,6 +533,23 @@ def main():
         state["digest_date"] = today_et
         state["open_scan_id"] = None
 
+    # ---- 4.5 pre-action risk watch ----------------------------------
+    try:
+        port = load_json(PORTFOLIO) or {}
+        sigs_doc = load_json(SIGNALS) or {}
+        risk_cfg = {"max_single_position_pct": 0.08}
+        portfolio_value = (port.get("account") or {}).get("portfolio_value") or port.get("portfolio_value") or 0
+        risk_entries = _build_risk_watch_entries(
+            entries, port.get("positions", []), risk_cfg, sigs_doc, portfolio_value
+        )
+        if risk_entries:
+            entries.extend(risk_entries)
+            # merge into state ids so duplicates are caught
+            for re in risk_entries:
+                state.setdefault("seen_ids", {})[re["id"]] = re["ts"]
+    except Exception as exc:
+        print(f"[WARN] risk watch failed: {exc}", file=sys.stderr)
+
     # ---- 5. merge LLM explainers (written async by
     # generate_thinking_explainers.py; sidecar stays sole stream writer) ----
     llm_doc = load_json(LLM_EXPLAINERS) or {}
@@ -567,6 +584,87 @@ def main():
     }
     atomic_write_json(OUT_PATH, out)
     atomic_write_json(STATE_PATH, state)
+
+
+
+# ── Pre-action risk watch (added 2026-07-27) ────────────────────────
+
+def _build_risk_watch_entries(entries, positions, risk_config, signals_doc=None, portfolio_value=0):
+    """Return new 'watch' entries for positions nearing trim/stop triggers.
+
+    These are informational only; the bot still makes decisions in trading_bot.py.
+    They give the public thinking stream advance notice of likely actions.
+    """
+    from risk_engine import tier_max_position_pct
+    new_entries = []
+    now = datetime.now(timezone.utc)
+    today_et = now.astimezone(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
+    existing_ids = {e.get("id") for e in entries if e.get("id")}
+
+    # map symbol -> current tier from signals.json
+    sigs = {s.get("symbol"): s for s in (signals_doc or {}).get("signals", []) if s.get("symbol")}
+
+    total_value = portfolio_value or 0
+    if total_value <= 0:
+        return []  # need a real portfolio value to compute concentration %
+    for p in positions:
+        sym = p.get("symbol")
+        mv = p.get("market_value", 0)
+        tier = (sigs.get(sym, {}).get("tier")
+                or sigs.get(sym, {}).get("signal_tier")
+                or p.get("tier", "MONITOR"))
+        cap = tier_max_position_pct(tier, risk_config.get("max_single_position_pct", 0.08))
+        pct = mv / total_value
+        over = pct - cap
+        # trim risk if already over cap or within 0.5pp of cap
+        if over >= -0.005:
+            eid = f"watch-cap-{today_et}-{sym}"
+            if eid not in existing_ids:
+                if over > 0:
+                    text = (
+                        f"{sym} is {pct*100:.1f}% of book, {over*100:.1f}pp over the {cap*100:.0f}% "
+                        f"{tier} cap. A tier-cap trim is likely on the next cycle."
+                    )
+                else:
+                    text = (
+                        f"{sym} is {pct*100:.1f}% of book, within {(over)*-100:.1f}pp of the {cap*100:.0f}% "
+                        f"{tier} cap. Watch for a concentration trim soon."
+                    )
+                new_entries.append({
+                    "id": eid,
+                    "ts": now.isoformat().replace("+00:00", "Z"),
+                    "et_date": today_et,
+                    "type": "watch",
+                    "symbol": sym,
+                    "text": text,
+                })
+
+        # stop risk: hard or trailing stop within 1.5% of current price
+        current = p.get("current") or p.get("current_price")
+        hard = p.get("hard_stop")
+        trailing = p.get("trailing_stop")
+        if current:
+            nearest = None
+            ndist = 1.0
+            if hard:
+                ndist = (current - hard) / current
+                nearest = f"hard stop ${hard:.2f}"
+            if trailing and (current - trailing) / current < ndist:
+                ndist = (current - trailing) / current
+                nearest = f"trailing stop ${trailing:.2f}"
+            if ndist <= 0.015:
+                eid = f"watch-stop-{today_et}-{sym}"
+                if eid not in existing_ids:
+                    new_entries.append({
+                        "id": eid,
+                        "ts": now.isoformat().replace("+00:00", "Z"),
+                        "et_date": today_et,
+                        "type": "watch",
+                        "symbol": sym,
+                        "text": f"{sym} is within {ndist*100:.1f}% of its {nearest}. "
+                                  "A stop exit is close if the tape weakens.",
+                    })
+    return new_entries
 
 
 if __name__ == "__main__":

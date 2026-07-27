@@ -34,7 +34,7 @@ MODEL = os.environ.get("STONKBOT_THINKING_MODEL", "ollama/kimi-k2.7-code:cloud")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_THINKING_TIMEOUT", "180"))
 MAX_PER_BATCH = 12
 EXPLAIN_SCOPE = 150  # only voice the newest entries; older ones keep raw text
-EXPLAIN_TYPES = ("trade", "digest", "skip")
+EXPLAIN_TYPES = ("trade", "digest", "skip", "watch")
 
 # Backend tier -> public site label (matches index.html mapping at line ~9995).
 # Voice layer always speaks in public names; raw bot quotes stay raw.
