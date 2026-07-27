@@ -156,3 +156,22 @@ pre-registration. Removing the sentinel without both is out of bounds.
 
 **Next:** factor-attribution deep-dive on the evidence window (Einstein).
 Owner decides index-vs-v3 with the study as input, not as gatekeeper.
+
+## Addendum - protocol ended, trading resumed (2026-07-27 10:12 HKT)
+
+Owner decision: trading RESUMED per strategy at 10:12 HKT the same day.
+Sentinel `/opt/stonk-ai/ENTRIES_HALTED` removed, service restarted 10:13 HKT,
+entry gate banner verified live.
+
+- The pre-registered experiment protocol (freeze, kill criteria, amendment
+  process) is **formally ended and no longer in force**. The "Terminated
+  early" section above stands as the record of the 09:54-10:12 halt.
+- The bot now trades the A1+A2 strategy **unconstrained**: future changes
+  require no pre-registration. Owner directive: "continue trading per the
+  strategy but there should be no more freeze."
+- The halt machinery (sentinel check in `_entry_blocked_by_guardrails`)
+  remains in the code, dormant, available for future owner use.
+- Measurement continues as the standing record: factor_attribution (3x
+  daily), entry_factor_snapshots (15-min), gate_blocks.jsonl, risk_stats.
+- No kill criteria are active. Any future halt/resume is an owner decision,
+  executed via the sentinel mechanism.
