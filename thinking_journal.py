@@ -539,14 +539,16 @@ def main():
         sigs_doc = load_json(SIGNALS) or {}
         risk_cfg = {"max_single_position_pct": 0.08}
         portfolio_value = (port.get("account") or {}).get("portfolio_value") or port.get("portfolio_value") or 0
-        risk_entries = _build_risk_watch_entries(
-            entries, port.get("positions", []), risk_cfg, sigs_doc, portfolio_value
-        )
-        if risk_entries:
-            entries.extend(risk_entries)
-            # merge into state ids so duplicates are caught
-            for re in risk_entries:
-                state.setdefault("seen_ids", {})[re["id"]] = re["ts"]
+        cash = (port.get("account") or {}).get("cash") or port.get("cash") or 0
+        if portfolio_value > 0:
+            risk_entries = _build_risk_watch_entries(
+                entries, port.get("positions", []), risk_cfg, sigs_doc, portfolio_value
+            )
+            if risk_entries:
+                entries.extend(risk_entries)
+                # merge into state ids so duplicates are caught
+                for re in risk_entries:
+                    state.setdefault("seen_ids", {})[re["id"]] = re["ts"]
     except Exception as exc:
         print(f"[WARN] risk watch failed: {exc}", file=sys.stderr)
 

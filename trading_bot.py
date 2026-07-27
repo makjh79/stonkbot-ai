@@ -751,6 +751,8 @@ class PortfolioDataStore:
             portfolio_data = {
                 "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                 "status": "live",
+                "portfolio_value": pv,          # top-level alias for backward compatibility
+                "cash": cash,                  # top-level alias for backward compatibility
                 "account": {
                     "portfolio_value": pv,
                     "cash": cash,
@@ -2605,8 +2607,12 @@ class STONKAIBot:
         logger.info(f"Mode: {'PAPER (fake money)' if self.alpaca.is_paper() else 'LIVE (real money)'}")
         logger.info(f"Dry run: {self._dry_run}")
         logger.info("Strategy: readiness-driven quality-momentum with thesis exits")
+        sn = tier_max_position_pct("STRONG_NOW", 0.08) * 100
+        now = tier_max_position_pct("NOW", 0.08) * 100
+        watch = tier_max_position_pct("WATCH", 0.08) * 100
+        mon = tier_max_position_pct("MONITOR", 0.08) * 100
         logger.info(f"Entry gate: readiness >= 80 AND >= 6 confirmations AND above_ema (above_ema + hard confirm)")
-        logger.info(f"Position caps: 6% STRONG_NOW / 4% NOW / 2.5% WATCH / 1.5% MONITOR; 25% sector cap")
+        logger.info(f"Position caps: {sn:.0f}% STRONG_NOW / {now:.0f}% NOW / {watch:.0f}% WATCH / {mon:.0f}% MONITOR; 25% sector cap")
         logger.info(f"Exits: -3% hard cut (widens to 1x ATR) + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON) | min-hold: no same-day non-stop sells")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "
                     f"{self.risk_engine.config.sell_reentry_cooldown_hours:.0f}h sell re-entry cooldown | "
