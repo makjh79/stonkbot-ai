@@ -3549,7 +3549,7 @@
     <script>
         (function() {
             try {
-                const cached = localStorage.getItem('raceValuesCache_v20260727');
+                const cached = localStorage.getItem('raceValuesCache_v20260727b');
                 if (cached) {
                     window.__RACE_CACHE__ = JSON.parse(cached);
                     console.log('[CACHE] Restored from localStorage:', window.__RACE_CACHE__);
@@ -8312,11 +8312,11 @@ function updateDashboard(data, marketStatus) {
 
         // Cache for race values to prevent flicker - uses localStorage to persist across reloads
         // Only uses cache if less than 5 minutes old to avoid stale data flipping
-        const RACE_CACHE_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
+        const RACE_CACHE_MAX_AGE_MS = 30 * 1000; // 30s // 5 minutes
 
         function getRaceCache() {
             try {
-                const cached = localStorage.getItem('raceValuesCache_v20260727');
+                const cached = localStorage.getItem('raceValuesCache_v20260727b');
                 if (!cached) return null;
                 const parsed = JSON.parse(cached);
                 // Reject stale cache to prevent value flipping on refresh
@@ -8333,7 +8333,7 @@ function updateDashboard(data, marketStatus) {
         function setRaceCache(cache) {
             try {
                 cache.timestamp = Date.now();
-                localStorage.setItem('raceValuesCache_v20260727', JSON.stringify(cache));
+                localStorage.setItem('raceValuesCache_v20260727b', JSON.stringify(cache));
             } catch (e) {
                 console.log('Could not cache race values');
             }
