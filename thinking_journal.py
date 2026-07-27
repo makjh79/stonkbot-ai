@@ -60,8 +60,8 @@ SIGNAL_STALE_MIN = 40  # don't count a scan if signals.json itself is lagging
 
 # Live entry gate (trading_bot.py startup banner) — used only to explain
 # near-misses in plain language. Keep in sync with the bot if the gate moves.
-GATE_READINESS = 77
-GATE_CONFIRMATIONS = 5
+GATE_READINESS = 80
+GATE_CONFIRMATIONS = 6
 
 
 # ---------------------------------------------------------------- helpers
@@ -72,6 +72,38 @@ def load_json(path, default=None):
             return json.load(f)
     except Exception:
         return default
+
+
+def load_watchlist_ranks(path="/var/www/hedge-fund-website/ai_watchlist_live.json"):
+    """Return ({symbol: 1-based rank}, watchlist_set) from live watchlist."""
+    try:
+        doc = load_json(path) or {}
+        wl = doc.get("watchlist") or []
+        return {sym: i + 1 for i, sym in enumerate(wl)}, set(wl)
+    except Exception:
+        return {}, set()
+
+
+def held_symbols_from_portfolio(port_path="/var/www/hedge-fund-website/portfolio_data.json"):
+    try:
+        port = load_json(port_path) or {}
+        positions = port.get("positions") or port.get("account", {}).get("positions") or []
+        return {p.get("symbol") for p in positions if p.get("symbol")}
+    except Exception:
+        return set()
+
+
+def symbol_relevant_for_thinking(sym, sig, held, watchlist_ranks, min_readiness=75.0, max_rank=10):
+    """Held positions and top-of-list or near-entry names are worth thinking about."""
+    if sym in held:
+        return True
+    rank = watchlist_ranks.get(sym)
+    if rank is not None and rank <= max_rank:
+        return True
+    r = sig.get("readiness_score") if sig else None
+    if isinstance(r, (int, float)) and r >= min_readiness:
+        return True
+    return False
 
 
 def parse_ts(s):
@@ -319,6 +351,10 @@ def main():
 
     stream = load_json(OUT_PATH) or {}
     entries = stream.get("entries") or []
+
+    # Live context for deciding which symbols deserve thinking-stream airtime.
+    watchlist_ranks, _watchlist_set = load_watchlist_ranks()
+    held = held_symbols_from_portfolio(PORTFOLIO)
     # Digests retired 2026-07-25: strip any remaining digest entries (Bot's Diary owns session summaries)
     entries = [e for e in entries if e.get("type") != "digest"]
 
@@ -416,12 +452,17 @@ def main():
         sym, canon = m.group(2), canonical_reason(m.group(3))
         key = f"{et_d}|{sym}|{canon}"
         entry_id = f"skip-{et_d}-{sym}-{re.sub(r'[^a-z0-9]+', '-', canon.lower())[:30]}"
+        sig = find_signal(sig_doc, sym)
+        # Don't give thinking-stream airtime to low-priority names. Held
+        # positions, top-10 watchlist, and near-entry readiness (>=75) matter;
+        # rank-8 rebuild chatter for a 72-readiness name is noise.
+        if not symbol_relevant_for_thinking(sym, sig, held, watchlist_ranks):
+            continue
         win = next((e for e in entries if e.get("id") == entry_id), None)
         if win is None:
             # Only surface skips with real tension: the entry gate passes and
             # another rule is the sole blocker. When the gate also blocks, the
             # skip is noise — scan windows already tell that story.
-            sig = find_signal(sig_doc, sym)
             if not sig or gate_failures(sig):
                 continue
             win = {
