@@ -471,8 +471,6 @@ def _why_bot_bought(signal_data, position, thesis_data=None):
     if confirmations.get("above_ema"):      sigs.append("price above 20-day EMA")
     if confirmations.get("sector_strong"):  sigs.append("hot sector")
     if confirmations.get("volume_confirmed"): sigs.append("volume confirming the move")
-    if confirmations.get("macd_turning"):     sigs.append("MACD curling up")
-    if confirmations.get("rsi_signal") == "oversold": sigs.append("RSI washed out")
     if confirmations.get("intraday_confirmed"): sigs.append("intraday momentum")
     if confirmations.get("options_confirmed"): sigs.append("options skew bullish")
     if confirmations.get("relvol_confirmed"): sigs.append("volume surge confirming move")
@@ -801,13 +799,8 @@ def _missing_factors(signal_data):
     missing = []
     if mom_score < 50:
         missing.append("momentum")
-    rsi = conf.get("rsi_signal", "")
-    if rsi not in ("bullish", "overbought"):
-        missing.append("RSI")
     if not conf.get("volume_confirmed"):
         missing.append("volume")
-    if not conf.get("macd_turning"):
-        missing.append("MACD")
     if not conf.get("above_ema"):
         missing.append("EMA")
     if not conf.get("sector_strong"):
@@ -831,21 +824,21 @@ def _why_on_watchlist(signal_data, watchlist_data):
     elif tier == "NOW" and entry:
         return f"Entry-ready. Readiness at {r:.0f}, {c} confirmations in the green. Bot will buy as soon as portfolio cash frees up."
     elif tier == "WATCH" and entry:
-        return f"Mean reversion play. Readiness at {r:.0f}, {c} lights green. Momentum is below the 72 gate but the setup is mathematically valid."
+        return f"Mean reversion play. Readiness at {r:.0f}, {c} lights green. Readiness is below the 80 gate but the setup is mathematically valid."
     elif tier == "WATCH":
-        gap = max(0, 72 - r)
+        gap = max(0, 80 - r)
         missing = _missing_factors(signal_data)
         missing_text = ", ".join(missing[:3]) + (" and others" if len(missing) > 3 else "") if missing else "supporting factors"
         if gap > 5 and c < 2:
-            return f"Watching from the sidelines. Readiness at {r:.0f} — {gap:.0f} points short of the 72 gate. Only {c} confirmation(s). Needs both momentum and confirmations."
+            return f"Watching from the sidelines. Readiness at {r:.0f} — {gap:.0f} points short of the 80 gate. Only {c} confirmation(s). Needs both momentum and confirmations."
         elif gap > 5:
-            return f"Watching from the sidelines. Readiness at {r:.0f} — {gap:.0f} points short of the 72 gate. Already has {c} confirmations green but needs more {missing_text}."
+            return f"Watching from the sidelines. Readiness at {r:.0f} — {gap:.0f} points short of the 80 gate. Already has {c} confirmations green but needs more {missing_text}."
         elif gap > 0 and c < 2:
-            return f"Close. Readiness at {r:.0f} — only {gap:.0f} shy of the gate. Only {c} confirmation(s). Needs 2+ green lights to fire."
+            return f"Close. Readiness at {r:.0f} — only {gap:.0f} shy of the gate. Only {c} confirmation(s). Needs 6+ green lights to fire."
         elif gap > 0:
-            return f"Close. Readiness at {r:.0f} — just {gap:.0f} shy of the 72 entry gate. Already has {c} confirmations green. Missing: {missing_text}."
+            return f"Close. Readiness at {r:.0f} — just {gap:.0f} shy of the 80 entry gate. Already has {c} confirmations green. Missing: {missing_text}."
         elif c < 2:
-            return f"At the gate. Readiness at {r:.0f} clears the 72 gate but only {c} confirmation firing. Needs 2+ green lights to pull the trigger."
+            return f"At the gate. Readiness at {r:.0f} clears the 80 gate but only {c} confirmation firing. Needs 6+ green lights to pull the trigger."
         else:
             return f"Close. Readiness at {r:.0f} clears the gate with {c} confirmations but tracking as WATCH."
     elif tier == "MONITOR":
@@ -863,8 +856,8 @@ def _what_triggers_buy(signal_data, watchlist_data):
         return "Gate is open. All systems go — just waiting for cash to clear."
 
     gaps = []
-    if r < 72:
-        gaps.append(f"readiness {r:.0f} → 75")
+    if r < 80:
+        gaps.append(f"readiness {r:.0f} → 80")
     if c < 2:
         gaps.append(f"{c} confirmation firing (need 2+)" if c > 0 else "zero confirmations (need 2+)")
 

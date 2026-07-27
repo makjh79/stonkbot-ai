@@ -31,6 +31,8 @@ def load_json(path, default=None):
     except Exception:
         return default
 
+SNAPSHOT_READINESS_MIN = 65.0  # measurement-only threshold; entry gate stays at 80.0
+
 
 def main():
     trades = load_json(TRADES, {}).get("trades", [])

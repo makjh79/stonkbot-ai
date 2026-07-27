@@ -83,3 +83,7 @@ sudo systemctl restart stonk-ai
 ## Backup
 - `/opt/stonk-ai/signal_rules.py.bak-20260727-redesign`
 - `/opt/stonk-ai/readiness_score.py.bak-20260727-redesign`
+
+## Addendum 2026-07-27 15:20 HKT — OWNER RESUMED SAME DAY
+
+Entries resumed by owner decision ~5h after halt. Sentinel removed, service restarted 15:20:30 HKT. New 80/6/2 gate + reweighted readiness score remain LIVE. Validation protocol continues in parallel: snapshots keep accumulating; attribution rerun still planned after 50-100 snapshot-backed round trips. Resume-at-tiny-size step skipped per owner; full caps apply (12% STRONG_NOW / 8% others).

@@ -760,8 +760,9 @@ def _build_tier_reason(
     reasons = []
     if confirmations.get("volume_confirmed"):
         reasons.append("volume confirmation")
-    if confirmations.get("macd_turning"):
-        reasons.append("MACD turning positive")
+    if confirmations.get("vwap_confirmed"):
+        reasons.append("above VWAP")  # hard confirmation since 2026-07-27 redesign
+    # MACD removed from active reason list — zero-weight display-only per redesign
     if confirmations.get("above_ema"):
         reasons.append("above 20d EMA")
     if confirmations.get("sector_strong"):
@@ -770,10 +771,9 @@ def _build_tier_reason(
         reasons.append("intraday momentum")
     if confirmations.get("options_confirmed"):
         reasons.append("low IV (bullish options)")
-    # PEAD dropped
-    if confirmations.get("rsi_signal") == "oversold":
-        reasons.append("RSI oversold (bounce potential)")
-    elif confirmations.get("rsi_signal") == "overbought":
+    # RSI zero-weighted display-only since 2026-07-27 redesign;
+    # show only overbought as caution, never as a buy signal.
+    if confirmations.get("rsi_signal") == "overbought":
         reasons.append("RSI overbought (caution)")
 
     if reasons:

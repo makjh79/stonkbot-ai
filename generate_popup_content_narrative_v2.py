@@ -92,7 +92,7 @@ def new_bot_thinking(symbol, position, signal_data, watchlist_data, stops):
     price = position.get("current", 0) or 0
     conf = signal_data.get("confirmations", {}) or {}
     ema_ok = conf.get("above_ema", False)
-    macd_ok = conf.get("macd_turning", False)
+    vwap_ok = conf.get("vwap_confirmed", False)
     vol_ok = conf.get("volume_confirmed", False)
     rsi_ok = conf.get("rsi_neutral_not_overbought", False)
 
@@ -108,7 +108,7 @@ def new_bot_thinking(symbol, position, signal_data, watchlist_data, stops):
                 "Top-tier conviction. Price action is backing the thesis so far.",
             ]))
         elif pl > 0:
-            if ema_ok and macd_ok and vol_ok:
+            if ema_ok and vwap_ok and vol_ok:
                 sentences.append("Highest-conviction setup with trend, momentum, and volume all green. The bot would add if cash allowed.")
             else:
                 sentences.append(_hash_choice(symbol, [
@@ -330,20 +330,20 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
     reasons = []
     if not above_ema:
         reasons.append("reclaim the 20-day EMA")
-    if active_count < 5:
-        reasons.append(f"get {5 - active_count} more active chips")
-    if hard < 1:
-        reasons.append("see a hard confirmation from volume, MACD, intraday, options, or relvol")
-    if readiness < 75:
-        reasons.append(f"push readiness above 75 (now {readiness:.0f})")
+    if active_count < 6:
+        reasons.append(f"get {6 - active_count} more active chips")
+    if hard < 2:
+        reasons.append("see 2 hard confirmations from volume, VWAP, intraday, options, or relative volume")
+    if readiness < 80:
+        reasons.append(f"push readiness above 80 (now {readiness:.0f})")
     if not conf.get("volume_confirmed") and not reasons:
         reasons.append("see volume confirm")
-    if not conf.get("macd_turning") and len(reasons) < 2:
-        reasons.append("get MACD turning positive")
+    if not conf.get("vwap_confirmed") and len(reasons) < 2:
+        reasons.append("reclaim VWAP")
 
     if reasons:
         return "Bot buys when " + " and ".join(reasons[:2]) + "."
-    return "Waiting for readiness to climb back above 72."
+    return "Waiting for readiness to climb back above 80."
 
 # ── Watchlist: Risk ────────────────────────────────────────────────
 
