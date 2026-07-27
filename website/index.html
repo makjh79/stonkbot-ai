@@ -4344,7 +4344,7 @@ async function loadPerformanceStats() {
             const spRet = mi.indices && mi.indices['S&P 500'] && mi.indices['S&P 500'].return_pct;
             if (pv) {
                 // Rebase Jul 23: compare to post-reset pv (Jul 7 16:00 UTC snapshot)
-                const BOT_RESET_PV = 99866.86;
+                const BOT_RESET_PV = 100000.00;  // aligned with hero card: total return since inception
                 const botRet = ((pv - BOT_RESET_PV) / BOT_RESET_PV) * 100;
                 setT('perf-bot-ret', retLive(botRet));
                 const elB = document.getElementById('perf-bot-ret');
@@ -8408,7 +8408,7 @@ function updateDashboard(data, marketStatus) {
 
                 // Calculate StonkBOT.AI return
                 // Rebase Jul 23: compare bot to post-reset pv (Jul 7 16:00 UTC snapshot)
-                const BOT_RESET_PV = 99866.86;
+                const BOT_RESET_PV = 100000.00;  // aligned with hero card: total return since inception
                 const stonkReturn = ((currentValue - BOT_RESET_PV) / BOT_RESET_PV * 100);
 
                 // Update S&P 500 display
