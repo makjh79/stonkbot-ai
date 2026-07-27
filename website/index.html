@@ -4052,7 +4052,7 @@
 
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
             <p style="margin:0 0 0.75rem 0;">It might lose everything. That's literally the point of an experiment.</p>
-            <p style="margin:0 0 0.75rem 0;">The $100K is real money. The losses would be real too. The bot has circuit breakers, stop losses, and sector caps, but <strong style="color:var(--text-primary);">risk is not the same as safety.</strong></p>
+            <p style="margin:0 0 0.75rem 0;">The $100K is paper capital. The losses would be real too. The bot has circuit breakers, stop losses, and sector caps, but <strong style="color:var(--text-primary);">risk is not the same as safety.</strong></p>
             <p style="margin:0 0 0.75rem 0;">The experiment is designed so that even a total wipeout teaches us something about how AI behaves with real capital. That's why it's public - so others can learn from what goes right <em>and</em> what goes wrong.</p>
             <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">Max drawdown circuit breaker: trading halts at -10% portfolio level. Not investment advice.</p>
           </div>
@@ -4172,7 +4172,7 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· pre-registered</span></div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">Window <strong style="color:var(--text-primary);">Jul 27 → Aug 29</strong>. If window profit factor &lt; 1.0 <em>and</em> trailing QQQ, momentum entries get shelved and capital moves to index. Amended Jul 27: caps halved, stops widened, earnings + IV entry gates — full rules in How It Works.</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">Window: <strong style="color:var(--text-primary);">ongoing · signal redesign in progress</strong>. If window profit factor &lt; 1.0 <em>and</em> trailing QQQ, momentum entries get shelved and capital moves to index. Amended Jul 27: caps halved, stops widened, earnings + IV entry gates — full rules in How It Works.</div>
             <div id="exp-status" style="font-size:0.68rem;color:#fbbf24;margin-top:0.4rem;">● ARMED — amended rules live from Jul 27 open</div>
           </div>
           <script>
@@ -4191,10 +4191,10 @@
                 if (trips.n) {
                   const pf = trips.profit_factor, holdH = trips.median_hold_hours ?? 0;
                   const holdTxt = holdH >= 48 ? (holdH/24).toFixed(1)+'d' : holdH.toFixed(1)+'h';
-                  statusEl.textContent = `● MEASURING — window PF ${pf != null ? pf.toFixed(2) : '—'} · median hold ${holdTxt} · verdict Aug 29`;
+                  statusEl.textContent = `● MEASURING — window PF ${pf != null ? pf.toFixed(2) : '—'} · median hold ${holdTxt} · verdict: pending validation`;
                   statusEl.style.color = (pf ?? 0) >= 1.0 ? '#22c55e' : '#06b6d4';
                 } else {
-                  statusEl.textContent = '● MEASURING — awaiting first closed trades · verdict Aug 29';
+                  statusEl.textContent = '● MEASURING — awaiting first closed trades · verdict: pending validation';
                   statusEl.style.color = '#06b6d4';
                 }
               }

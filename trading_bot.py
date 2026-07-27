@@ -744,9 +744,16 @@ class PortfolioDataStore:
             except Exception as _e:
                 logger.debug(f"Snapshot enrichment failed: {_e}")
 
-            total_pl = sum(p["unrealized_pl"] for p in positions_data)
-            total_cost = sum(p["cost_basis"] for p in positions_data)
-            total_pl_pct = (total_pl / total_cost * 100) if total_cost > 0 else 0
+            # Bot display P&L is lifetime return vs the $100K experiment starting capital.
+            # This is the same number shown on the website hero card and holdings alerts.
+            STARTING_CAPITAL = 100000.0
+            total_pl = pv - STARTING_CAPITAL
+            total_pl_pct = (total_pl / STARTING_CAPITAL * 100) if STARTING_CAPITAL > 0 else 0
+
+            # Keep legacy open-position-only P&L for diagnostics/trading logic
+            open_total_pl = sum(p["unrealized_pl"] for p in positions_data)
+            open_total_cost = sum(p["cost_basis"] for p in positions_data)
+            open_total_pl_pct = (open_total_pl / open_total_cost * 100) if open_total_cost > 0 else 0
 
             portfolio_data = {
                 "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -762,6 +769,8 @@ class PortfolioDataStore:
                 "positions": positions_data,
                 "total_pl": total_pl,
                 "total_pl_pct": total_pl_pct,
+                "open_total_pl": open_total_pl,
+                "open_total_pl_pct": open_total_pl_pct,
             }
 
             self._save(portfolio_data)
