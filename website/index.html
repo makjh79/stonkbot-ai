@@ -9892,7 +9892,7 @@ function updateDashboard(data, marketStatus) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Readiness ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 8 factors: momentum, RSI, volume, MACD, EMA, sector strength, intraday momentum & options IV.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 8 factors: momentum (25%), volume/relvol (10%), options IV (10%), VWAP (10%), sector strength (25%), intraday momentum (5%). RSI and MACD are computed for display but zero-weighted as of 2026-07-27.</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -12546,7 +12546,7 @@ function updateDashboard(data, marketStatus) {
             const tierBg = tier === 'PRIME' ? 'rgba(6,182,212,0.15)' : tier === 'BUILDING' ? 'rgba(34,197,94,0.12)' : tier === 'WATCHING' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
 
             // Entry gate note (popup only)
-            const entryGateNote = (tier === 'PRIME' && !stock.entry_eligible) ? 'Needs a hard confirmation (volume / MACD / intraday / options / relative volume) to become entry-eligible.' :
+            const entryGateNote = (tier === 'PRIME' && !stock.entry_eligible) ? 'Needs a hard confirmation (volume / VWAP / intraday / options / relative volume) to become entry-eligible.' :
                                   (tier === 'BUILDING' && stock.entry_eligible) ? 'Entry gate passed, but bot only buys PRIME names.' : '';
 
             // Exit levels
