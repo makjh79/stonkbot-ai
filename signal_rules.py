@@ -25,7 +25,7 @@ TIER_BUILDING_MIN = TIER_WATCH_MIN
 # -----------------------------------------------------------------------------
 # Entry gate
 # -----------------------------------------------------------------------------
-ENTRY_READINESS_MIN = 80.0
+ENTRY_READINESS_MIN = 77.0
 ENTRY_MIN_CONFIRMATIONS = 6
 ENTRY_MIN_HARD_CONFIRMATIONS = 2
 

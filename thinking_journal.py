@@ -60,7 +60,7 @@ SIGNAL_STALE_MIN = 40  # don't count a scan if signals.json itself is lagging
 
 # Live entry gate (trading_bot.py startup banner) — used only to explain
 # near-misses in plain language. Keep in sync with the bot if the gate moves.
-GATE_READINESS = 80
+GATE_READINESS = 77
 GATE_CONFIRMATIONS = 6
 
 

@@ -7205,7 +7205,7 @@ function updateDashboard(data, marketStatus) {
                         description: 'Autonomous trading system active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K paper capital. Strategy: Readiness score entry (≥80 + 6+ confirmations + 2+ hard), ATR stops, sector caps, thesis-based exits (recycles capital).'
+                        rationale: 'AI trading bot started with $100K paper capital. Strategy: Readiness score entry (≥77 + 6+ confirmations + 2+ hard), ATR stops, sector caps, thesis-based exits (recycles capital).'
                     }
                 ];
 
@@ -9883,7 +9883,7 @@ function updateDashboard(data, marketStatus) {
                 desc = 'Highest conviction - STRONG_NOW tier, largest position sizing.';
             } else if (score >= 80) {
                 label = 'Entry eligible';
-                desc = 'Bot is confident - readiness ≥80 with 6+ confirmations and 2+ hard. Eligible for new entries.';
+                desc = 'Bot is confident - readiness ≥77 with 6+ confirmations and 2+ hard. Eligible for new entries.';
             } else if (score >= 60) {
                 label = 'Fading conviction';
                 desc = 'Setup weakening. Bot is watching but won\'t add new positions.';
@@ -12244,7 +12244,7 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #22c55e; font-weight: 700; min-width: 72px;">NOW</span>
-                        <span style="color: var(--text-muted);">≥80 - bot buys (6+ conf, 2+ hard)</span>
+                        <span style="color: var(--text-muted);">≥77 - bot buys (6+ conf, 2+ hard)</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #fbbf24; font-weight: 700; min-width: 72px;">WATCH</span>
