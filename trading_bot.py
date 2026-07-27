@@ -138,7 +138,7 @@ class TradingConfig:
     # RISK_ON:  8% max / 5% cash  / NOW entries
     # RISK_OFF: 4% max / 15% cash / STRONG_NOW entries only
     # CRISIS:   4% max / 30% cash / no new entries
-_RISK_OFF_MIN_READINESS = 78.0  # higher readiness bar for STRONG_NOW entries in defensive regime
+_RISK_OFF_MIN_READINESS = 75.0  # higher readiness bar for STRONG_NOW entries in defensive regime
 
 
 

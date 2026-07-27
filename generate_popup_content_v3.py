@@ -466,7 +466,7 @@ def _why_bot_bought(signal_data, position, thesis_data=None):
     entry_price = position.get("avg_entry", 0)
     conf_count = _visible_confirmation_count(signal_data)
 
-    conviction = "high-conviction" if entry_readiness >= 80 else "standard" if entry_readiness >= 60 else "moderate"
+    conviction = "high-conviction" if entry_readiness >= 75 else "standard" if entry_readiness >= 60 else "moderate"
     sigs = []
     if confirmations.get("above_ema"):      sigs.append("price above 20-day EMA")
     if confirmations.get("sector_strong"):  sigs.append("hot sector")

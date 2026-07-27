@@ -267,12 +267,12 @@ def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
     reasons = []
     if not above_ema:
         reasons.append("price is below the 20-day EMA")
-    if readiness < 80:
-        reasons.append(f"readiness is {readiness:.1f} (needs 80+)")
+    if readiness < 75:
+        reasons.append(f"readiness is {readiness:.1f} (needs 75+)")
     if active_count < 6:
         reasons.append(f"only {active_count} active chips (needs 6+)")
     if hard < 2:
-        reasons.append(f"fewer than 2 hard confirmations from volume/VWAP/intraday/options/relvol (needs 2+)")
+        reasons.append(f"fewer than 1 hard confirmation from volume/VWAP/intraday/options/relvol (needs 1+)")
     if reasons:
         return "Not entry eligible: " + "; ".join(reasons) + "."
     return "Entry gate is closed due to a rule not captured above."
@@ -388,7 +388,7 @@ For EACH watchlist symbol below, generate these fields. Output ONLY a single JSO
 
 Rules:
 - whyOnWatchlist MUST use the exact "Active Factors: X/15" count and the exact list of active labels provided.
-- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. fewer than 2 hard confirmations from volume/VWAP/intraday/options/relvol, or readiness below 80).
+- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. fewer than 2 hard confirmations from volume/VWAP/intraday/options/relvol, or readiness below 75).
 - DO NOT mention inactive factors or claim more active factors than listed.
 - DO NOT say "entry eligible" if the prompt says "Entry eligible: no".
 - Keep numbers consistent with the prompt.

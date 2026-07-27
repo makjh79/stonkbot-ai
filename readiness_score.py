@@ -22,7 +22,7 @@ Tiers:
   WATCH    readiness >= 55
   MONITOR  readiness < 55
 
-Entry eligible: readiness >= 77 AND >= 5 confirmations AND above_ema (out of 10).
+Entry eligible: readiness >= 75 AND >= 5 confirmations AND >= 1 hard confirmation AND above_ema.
 """
 
 
