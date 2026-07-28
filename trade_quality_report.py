@@ -220,14 +220,25 @@ def main():
         _cfg = _RC()
         ct = {
             "generated_at": now.isoformat().replace("+00:00", "Z"),
+            "mode": "PAPER",
+            "entry_gate": {
+                "readiness_min": 75,
+                "confirmations_min": 5,
+                "hard_confirmations_min": 1,
+                "hard_confirmations_min_strict": 2,
+                "hard_confirmations_strict_when_below": 7,
+                "above_ema": True,
+                "tradeable_tier": "STRONG_NOW",
+            },
             "caps": {t: _tmpp(t, _cfg.max_single_position_pct) for t in ("STRONG_NOW", "NOW", "WATCH", "MONITOR")},
             "caps_note": "entries from 2026-07-27; pre-amendment holdings grandfathered at legacy caps",
             "stops": {"trailing": "2x ATR from peak", "hard": "1.5x ATR", "abs_cut": "max(5%, 1x ATR)", "vwap": "max(2%, 1x ATR) below VWAP"},
             "gates": {"earnings": "no entries within 2 days of confirmed earnings",
                       "implied_move": "3-7d pre-earnings: no entries when IV daily move > 1.5x ATR",
                       "reentry": "post-stop re-entry only at/below stop price (7d)"},
-            "experiment": {"window": "2026-07-27..2026-08-29", "tripwire": "median hold >= 2 days by Aug 8",
-                           "kill": "all-trades PF < 1.0 AND trailing QQQ -> entries shelved, capital to index"},
+            "experiment": {"window": "2026-07-27..2026-08-29 (historical pre-registration)", "tripwire": "median hold >= 2 days by Aug 8",
+                           "kill": "all-trades PF < 1.0 AND trailing QQQ -> entries shelved, capital to index",
+                           "status": "Ended by owner decision on 2026-07-27; bot trades under live A1+A2 rules"},
         }
         with open("/var/www/hedge-fund-website/config_truth.json", "w") as f:
             json.dump(ct, f, indent=1)

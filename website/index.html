@@ -4057,7 +4057,7 @@
             <p style="margin:0 0 0.75rem 0;">It might lose everything. That's literally the point of an experiment.</p>
             <p style="margin:0 0 0.75rem 0;">The $100K is paper capital. The losses would be real too. The bot has circuit breakers, stop losses, and sector caps, but <strong style="color:var(--text-primary);">risk is not the same as safety.</strong></p>
             <p style="margin:0 0 0.75rem 0;">The experiment is designed so that even a total wipeout teaches us something about how AI behaves with real capital. That's why it's public - so others can learn from what goes right <em>and</em> what goes wrong.</p>
-            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">Max drawdown circuit breaker: trading halts at -10% portfolio level. Not investment advice.</p>
+            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">New entry halt at -10% portfolio drawdown; exits/stops/trims continue. Not investment advice.</p>
           </div>
         </div>
       </div>
@@ -4088,10 +4088,20 @@
           <div class="risk-grid" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.75rem;">
             <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem;font-weight:600;">Risk Guardrails</div>
             <div class="risk-items" style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.68rem;color:var(--text-secondary);">
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops on every trade</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops (ATR-based)</div>
-              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">6% max per new position</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops 1.5× ATR [3%,11%]</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops 2× ATR [3%,14%]</div>
+              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">12% max per new position</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10% cash floor; 12% entry buffer</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries if ATR > 7%</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries within 2 days of earnings</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No pre-earnings entry when IV move > 1.5× ATR</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">20h stop-loss re-entry cooldown</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">4h non-stop sell re-entry cooldown</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Post-stop re-entry at/below stop price (7d)</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">1 new entry per symbol per day</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">High-beta basket cap 35% deployed</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">New entries halted at -10% portfolio DD</div>
             </div>
           </div>
 
@@ -4173,10 +4183,10 @@
           <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· pre-registered</span></div>
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· owner-supervised</span></div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">Window: <strong style="color:var(--text-primary);">ongoing · signal redesign in progress</strong>. If window profit factor &lt; 1.0 <em>and</em> trailing QQQ, momentum entries get shelved and capital moves to index. Amended Jul 27: caps halved, stops widened, earnings + IV entry gates — full rules in How It Works.</div>
-            <div id="exp-status" style="font-size:0.68rem;color:#fbbf24;margin-top:0.4rem;">● ARMED — amended rules live from Jul 27 open</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation (2+ if &lt;7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% others. The Jul 27 pre-registered kill/tripwire was ended by owner decision the same day; it is shown below for transparency only.</div>
+            <div id="exp-status" style="font-size:0.68rem;color:#22c55e;margin-top:0.4rem;">● ACTIVE — trading under live rules</div>
           </div>
           <script>
           (async function(){
@@ -9883,7 +9893,7 @@ function updateDashboard(data, marketStatus) {
                 desc = 'Highest conviction - STRONG_NOW tier, largest position sizing.';
             } else if (score >= 80) {
                 label = 'Entry eligible';
-                desc = 'Bot is confident - readiness ≥75 with 6+ confirmations and 2+ hard. Eligible for new entries.';
+                desc = 'Bot is confident - readiness ≥75 with 5+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips). Eligible for new entries.';
             } else if (score >= 60) {
                 label = 'Fading conviction';
                 desc = 'Setup weakening. Bot is watching but won\'t add new positions.';
@@ -9895,7 +9905,7 @@ function updateDashboard(data, marketStatus) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Readiness ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 8 factors: momentum (25%), volume/relvol (10%), options IV (10%), VWAP (10%), sector strength (25%), intraday momentum (5%). RSI and MACD are computed for display but zero-weighted as of 2026-07-27.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 10 weighted factors: momentum/signal (25%), sector strength (25%), volume (10%), EMA trend (10%), options flow (10%), VWAP (10%), relative strength vs SPY (4%), intraday momentum (5%). RSI and MACD are computed for display but zero-weighted as of 2026-07-27.</div>
             `;
 
             document.body.appendChild(tooltip);

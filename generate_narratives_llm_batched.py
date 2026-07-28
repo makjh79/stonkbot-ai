@@ -257,7 +257,12 @@ def _factor_chip_summary(conf: dict) -> tuple[int, int, str]:
 
 
 def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
-    """Explain why the symbol is or is not entry-eligible, using the canonical gate."""
+    """Explain why the symbol is or is not entry-eligible, using the canonical gate.
+
+    Live gate (2026-07-27): readiness ≥75, ≥5 confirmations, ≥1 hard confirmation
+    (relaxed to 1 hard only when total chips ≥7; otherwise 2 hard), and price above 20d EMA.
+    """
+    from signal_rules import ENTRY_MIN_CONFIRMATIONS, ENTRY_READINESS_MIN
     readiness = signal.get("readiness_score", 0) or 0
     above_ema = bool(conf.get("above_ema"))
     hard = hard_confirmation_count(conf)
@@ -267,12 +272,14 @@ def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
     reasons = []
     if not above_ema:
         reasons.append("price is below the 20-day EMA")
-    if readiness < 75:
-        reasons.append(f"readiness is {readiness:.1f} (needs 75+)")
-    if active_count < 6:
-        reasons.append(f"only {active_count} active chips (needs 6+)")
-    if hard < 2:
-        reasons.append(f"fewer than 1 hard confirmation from volume/VWAP/intraday/options/relvol (needs 1+)")
+    if readiness < ENTRY_READINESS_MIN:
+        reasons.append(f"readiness is {readiness:.1f} (needs {ENTRY_READINESS_MIN:.0f}+)")
+    if active_count < ENTRY_MIN_CONFIRMATIONS:
+        reasons.append(f"only {active_count} active chips (needs {ENTRY_MIN_CONFIRMATIONS}+)")
+    # Canonical hard-confirm rule: 1 hard is enough if ≥7 chips, otherwise 2.
+    hard_min = 1 if active_count >= 7 else 2
+    if hard < hard_min:
+        reasons.append(f"only {hard} hard confirmation(s) from volume/VWAP/intraday/options/relvol (needs {hard_min}+)")
     if reasons:
         return "Not entry eligible: " + "; ".join(reasons) + "."
     return "Entry gate is closed due to a rule not captured above."
@@ -293,14 +300,40 @@ _load_company_knowledge()
 
 
 def _stops_for_symbol(position: dict, signal_data: dict, risk_config: dict) -> dict:
+    """Compute ATR-based stops consistent with generate_popup_content_v3 / risk_engine."""
     avg_entry = position.get("avg_entry", 0) or 0
-    hard_stop = avg_entry * (1 + risk_config.get("hard_stop_loss_pct", -0.10))
-    trailing_stop = avg_entry * (1 + risk_config.get("trailing_stop_pct", -0.10))
+    current = position.get("current", avg_entry) or avg_entry
+    # Use position_high_water_marks if provided; otherwise current price as peak fallback.
+    peak = risk_config.get("position_high_water_marks", {}).get(position.get("symbol"), current)
+    atr_pct = risk_config.get("position_atr_pct", {}).get(position.get("symbol"))
+
+    # Hard stop: 1.5× ATR clamped [3%, 11%]
+    if atr_pct and atr_pct > 0:
+        hard_pct = min(0.11, max(0.03, atr_pct * 1.5))
+    else:
+        hard_pct = 0.11
+    hard_stop = avg_entry * (1 - hard_pct)
+
+    # Trailing stop: 2.0× ATR from peak clamped [3%, 14%]
+    if atr_pct and atr_pct > 0:
+        trailing_pct = min(0.14, max(0.03, atr_pct * 2.0))
+    else:
+        trailing_pct = 0.10
+    trailing_stop = peak * (1 - trailing_pct)
+
     vwap = signal_data.get("daily_vwap")
+    vwap_stop = None
+    if vwap and vwap > 0:
+        vwap_buffer = max(0.02, atr_pct) if atr_pct and atr_pct > 0 else 0.02
+        vwap_stop = round(vwap * (1 - vwap_buffer), 2)
+
     return {
         "hard_stop": round(hard_stop, 2),
+        "hard_pct": round(hard_pct, 4),
         "trailing_stop": round(trailing_stop, 2),
+        "trailing_pct": round(trailing_pct * 100, 1),
         "vwap": round(vwap, 2) if vwap else None,
+        "vwap_stop": vwap_stop,
     }
 
 
@@ -317,7 +350,7 @@ COMPANY: {signal.get('company') or symbol}
 SECTOR: {signal.get('sector', 'Other')}
 TIER: {signal.get('display_tier') or signal.get('tier', 'MONITOR')}
 P&L%: {position.get('unrealized_plpc', 0):.2f}% | Price: ${position.get('current', 0):.2f} | Entry: ${position.get('avg_entry', 0):.2f}
-Stop: ${stops['hard_stop']:.2f} | Trailing: ${stops['trailing_stop']:.2f} | VWAP: {f"${stops['vwap']:.2f}" if stops.get('vwap') else "n/a"}
+Stop: ${stops['hard_stop']:.2f} ({stops.get('hard_pct', 0.10)*100:.1f}% / 1.5x ATR) | Trailing: ${stops['trailing_stop']:.2f} ({stops.get('trailing_pct', 10.0):.1f}% / 2x ATR) | VWAP stop: {f"${stops['vwap_stop']:.2f}" if stops.get('vwap_stop') else "n/a"}
 Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | MACD: {'+ve' if conf.get('macd_turning') else '-ve'} | Vol: {'yes' if conf.get('volume_confirmed') else 'no'} | RVOL: {'yes' if conf.get('relvol_confirmed') else 'no'} | EMA: {'above' if conf.get('above_ema') else 'below'} | VWAP: {'above' if conf.get('vwap_confirmed') else 'below'}
 Readiness: {signal.get('readiness_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels})
 Entry gate: {entry_gate}
@@ -388,7 +421,7 @@ For EACH watchlist symbol below, generate these fields. Output ONLY a single JSO
 
 Rules:
 - whyOnWatchlist MUST use the exact "Active Factors: X/15" count and the exact list of active labels provided.
-- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. fewer than 2 hard confirmations from volume/VWAP/intraday/options/relvol, or readiness below 75).
+- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. fewer than 5 active chips, fewer than 1 hard confirmation from volume/VWAP/intraday/options/relvol — 2 if fewer than 7 chips — or readiness below 75).
 - DO NOT mention inactive factors or claim more active factors than listed.
 - DO NOT say "entry eligible" if the prompt says "Entry eligible: no".
 - Keep numbers consistent with the prompt.
