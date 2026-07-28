@@ -8074,7 +8074,7 @@ function updateDashboard(data, marketStatus) {
             maxPositionSize: 0.08,      // Max 8% per new entry
             minPositionSize: 0.05,      // Min 5% per entry
             maxDailyEntries: 10,        // Max 10 new positions/day (effectively unlimited)
-            rsiThreshold: 80,           // Readiness score >= 80 with 6+ conf and 2+ hard
+            rsiThreshold: 75,           // Readiness score >= 75 with 5+ conf and 1+ hard (2+ if <7 chips)
             volumeMultiplier: 1.5,      // 1.5x average volume
             convictionThreshold: 80,    // 80% AI confidence
             sectorLimit: 0.25           // No sector above 25%
@@ -9891,10 +9891,10 @@ function updateDashboard(data, marketStatus) {
             if (score >= 85) {
                 label = 'Strong conviction';
                 desc = 'Highest conviction - STRONG_NOW tier, largest position sizing.';
-            } else if (score >= 80) {
+            } else if (score >= 75) {
                 label = 'Entry eligible';
                 desc = 'Bot is confident - readiness ≥75 with 5+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips). Eligible for new entries.';
-            } else if (score >= 60) {
+            } else if (score >= 50) {
                 label = 'Fading conviction';
                 desc = 'Setup weakening. Bot is watching but won\'t add new positions.';
             } else {
@@ -12443,7 +12443,7 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">What triggers a buy</div>
-                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Readiness >= 80 with 6+ confirmations and 2+ hard.'}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Readiness >= 75 with 5+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips).'}</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Catalyst</div>

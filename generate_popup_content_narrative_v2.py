@@ -334,8 +334,8 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
         reasons.append(f"get {6 - active_count} more active chips")
     if hard < 2:
         reasons.append("see 2 hard confirmations from volume, VWAP, intraday, options, or relative volume")
-    if readiness < 80:
-        reasons.append(f"push readiness above 80 (now {readiness:.0f})")
+    if readiness < 75:
+        reasons.append(f"push readiness above 75 (now {readiness:.0f})")
     if not conf.get("volume_confirmed") and not reasons:
         reasons.append("see volume confirm")
     if not conf.get("vwap_confirmed") and len(reasons) < 2:
@@ -343,7 +343,7 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
 
     if reasons:
         return "Bot buys when " + " and ".join(reasons[:2]) + "."
-    return "Waiting for readiness to climb back above 80."
+    return "Waiting for readiness to climb back above 75."
 
 # ── Watchlist: Risk ────────────────────────────────────────────────
 

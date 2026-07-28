@@ -824,7 +824,7 @@ def _why_on_watchlist(signal_data, watchlist_data):
     elif tier == "NOW" and entry:
         return f"Entry-ready. Readiness at {r:.0f}, {c} confirmations in the green. Bot will buy as soon as portfolio cash frees up."
     elif tier == "WATCH" and entry:
-        return f"Mean reversion play. Readiness at {r:.0f}, {c} lights green. Readiness is below the 80 gate but the setup is mathematically valid."
+        return f"Mean reversion play. Readiness at {r:.0f}, {c} lights green. Readiness is below the 75 gate but the setup is mathematically valid."
     elif tier == "WATCH":
         gap = max(0, 80 - r)
         missing = _missing_factors(signal_data)
@@ -857,7 +857,7 @@ def _what_triggers_buy(signal_data, watchlist_data):
 
     gaps = []
     if r < 80:
-        gaps.append(f"readiness {r:.0f} → 80")
+        gaps.append(f"readiness {r:.0f} → 75")
     if c < 2:
         gaps.append(f"{c} confirmation firing (need 2+)" if c > 0 else "zero confirmations (need 2+)")
 
