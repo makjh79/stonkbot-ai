@@ -2009,6 +2009,7 @@ class STONKAIBot:
 
                 readiness = sig.get("readiness_score", 0)
                 multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
+                strategy_type = sig.get("strategy_type", "momentum")
                 multiplier *= self._strategy_sizing_cap(strategy_type)
                 # Scale by hard confirmation count (2026-07-08)
                 _confirms = sig.get("confirmations", {})
@@ -2025,6 +2026,11 @@ class STONKAIBot:
                 if multiplier <= 0:
                     continue
                 adjusted_qty = max(1, int(sizing.qty * multiplier))
+
+                # Enforce tier cap after all multipliers are applied (2026-07-28)
+                _max_notional_for_tier = pv * _tier_max_pct
+                if adjusted_qty * price > _max_notional_for_tier:
+                    adjusted_qty = max(1, int(_max_notional_for_tier / price))
 
                 cost = adjusted_qty * price
                 cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
@@ -2154,6 +2160,11 @@ class STONKAIBot:
                 if multiplier <= 0:
                     continue
                 adjusted_qty = max(1, int(sizing.qty * multiplier))
+
+                # Enforce tier cap after all multipliers are applied (2026-07-28)
+                _max_notional_for_tier = pv * _tier_max_pct
+                if adjusted_qty * price > _max_notional_for_tier:
+                    adjusted_qty = max(1, int(_max_notional_for_tier / price))
 
                 cost = adjusted_qty * price
                 cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
