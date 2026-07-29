@@ -4313,7 +4313,7 @@ async function loadPerformanceStats() {
             // NOTE (2026-07-29): bot/benchmark returns + verdict are NOT painted from
             // risk_stats here — those use the post-reset (Jul 7) window and flash
             // conflicting numbers vs the hero card. Live-sync below paints them from
-            // portfolio_data + market_indices (Jun 4 inception window), same as hero.
+            // portfolio_data + market_indices (Jul 7 reset window), same as hero.
             const wparts = [];
             if (w.reset_date) wparts.push('Post-reset window · ' + (w.calendar_days || 0) + ' days');
             if (w.trading_days) wparts.push(w.trading_days + ' trading days');
@@ -4344,9 +4344,10 @@ async function loadPerformanceStats() {
             const pv = pd.account && pd.account.portfolio_value;
             const spRet = mi.indices && mi.indices['S&P 500'] && mi.indices['S&P 500'].return_pct;
             if (pv) {
-                // Single window everywhere: bot return = live pv vs $100K (Jun 4 inception,
-                // same as hero card); S&P return = live market_indices feed (Jun 4 baseline).
-                const BOT_RESET_PV = 100000.00;
+                // Single window everywhere: bot return = live pv vs the Jul 7 reset
+                // snapshot ($99,866.86, 16:00 UTC); S&P return = live market_indices
+                // feed baselined to the Jul 7 close. Same window as risk_stats + race card.
+                const BOT_RESET_PV = 99866.86;
                 const botRet = ((pv - BOT_RESET_PV) / BOT_RESET_PV) * 100;
                 setT('perf-bot-ret', retLive(botRet));
                 const elB = document.getElementById('perf-bot-ret');
@@ -4692,7 +4693,7 @@ async function loadPnlAttribution() {
                     <span style="font-size: 1.25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
                     <div>
                         <span class="chart-modal-title" style="font-size: 1rem;">Performance History</span>
-                        <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 500;">From inception to today</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 500;">Since the Jul 7 reset</div>
                     </div>
                 </div>
                 <button class="chart-modal-close" onclick="closePerformanceLog()">✕</button>
@@ -6102,7 +6103,7 @@ function updateDashboard(data, marketStatus) {
                 });
 
                 const portfolioValue = data.account.portfolio_value;
-                const initialValue = 100000;
+                const initialValue = 99866.86;  // Jul 7 reset snapshot (16:00 UTC)
                 const totalReturn = ((portfolioValue - initialValue) / initialValue * 100).toFixed(2);
                 const cash = data.account.cash;
 
@@ -6970,8 +6971,8 @@ function updateDashboard(data, marketStatus) {
 
             const portfolioValue = data.account?.portfolio_value || 0;
             const totalPl = data.total_pl || 0;
-            // Calculate total return from $100K baseline (not Alpaca's cost basis %)
-            const STARTING_VALUE = 100000;
+            // Calculate total return vs the Jul 7 reset pv (not Alpaca's cost basis %)
+            const STARTING_VALUE = 99866.86;
             const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
 
             // Get day change from Alpaca (calculated from last_equity vs current equity)
@@ -7977,9 +7978,9 @@ function updateDashboard(data, marketStatus) {
                 const diffTime = Math.abs(now - experimentStartDate);
                 const daysElapsed = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
 
-                // Calculate return
-                const returnPct = ((currentValue - 100000) / 100000 * 100);
-                const pnl = currentValue - 100000;
+                // Calculate return vs the Jul 7 reset snapshot
+                const returnPct = ((currentValue - 99866.86) / 99866.86 * 100);
+                const pnl = currentValue - 99866.86;
 
                 // Update Day Counter Badge
                 const dayCounterText = document.getElementById('dayCounterText');
@@ -8260,8 +8261,8 @@ function updateDashboard(data, marketStatus) {
                     stonkValueEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
                     stonkValueEl.classList.remove('skeleton', 'skeleton-value');
                 }
-                // Rebase Jul 23: compare bot to post-reset pv (Jul 7 16:00 UTC snapshot)
-                const raceBotReturn = d.portfolio_value != null ? ((d.portfolio_value - 100000.00) / 100000.00 * 100) : null;
+                // Bot return vs post-reset pv (Jul 7 16:00 UTC snapshot)
+                const raceBotReturn = d.portfolio_value != null ? ((d.portfolio_value - 99866.86) / 99866.86 * 100) : null;
                 const stonkReturnEl = document.getElementById('stonkAiReturn');
                 if (stonkReturnEl && raceBotReturn != null) {
                     stonkReturnEl.textContent = (raceBotReturn >= 0 ? '+' : '') + raceBotReturn.toFixed(2) + '%';
@@ -8409,8 +8410,9 @@ function updateDashboard(data, marketStatus) {
                 console.log('updateRaceValues: Got data', { currentValue, spReturn, spValue });
 
                 // Calculate StonkBOT.AI return
-                // Rebase Jul 23: compare bot to post-reset pv (Jul 7 16:00 UTC snapshot)
-                const BOT_RESET_PV = 100000.00;  // aligned with hero card: total return since inception
+                // Bot return vs post-reset pv (Jul 7 16:00 UTC snapshot) — same
+                // window as scoreboard, hero card and risk_stats.
+                const BOT_RESET_PV = 99866.86;
                 const stonkReturn = ((currentValue - BOT_RESET_PV) / BOT_RESET_PV * 100);
 
                 // Update S&P 500 display
@@ -8993,9 +8995,10 @@ function updateDashboard(data, marketStatus) {
         let timeRangeData = {};
 
         // Load actual performance data: REAL daily closes for the bot AND the
-        // benchmark indices, on ONE window (Jun 4 inception) — same baseline as
-        // the hero card, scoreboard and progress bars. (2026-07-29 rewrite:
-        // previously filtered to Jul 7 while valuing vs $100K, fabricated points
+        // benchmark indices, on ONE window — the Jul 7 reset (pv $99,866.86 at
+        // 16:00 UTC; indices baselined to Jul 7 closes). Same baseline as the
+        // hero card, scoreboard, race card and risk_stats. (2026-07-29 rewrite:
+        // previously mixed Jun-4 values with Jul-7 filtering, fabricated points
         // for 1M/3M/1Y/ALL, and drew index lines as straight ramps.)
         async function loadPerformanceData() {
             try {
@@ -9016,8 +9019,10 @@ function updateDashboard(data, marketStatus) {
                 const dowReturn = indices['Dow Jones'] ? indices['Dow Jones'].return_pct : null;
                 const nasdaqReturn = indices['NASDAQ'] ? indices['NASDAQ'].return_pct : null;
 
-                const STARTING_VALUE = 100000;
-                const sortedChecks = (historyData.checks || []).slice()
+                const STARTING_VALUE = 99866.86;  // Jul 7 reset pv (16:00 UTC)
+                const RESET_DATE = '2026-07-07';
+                const sortedChecks = (historyData.checks || [])
+                    .filter(c => (c.timestamp || '') >= RESET_DATE)
                     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
                 if (sortedChecks.length === 0) {
@@ -9150,8 +9155,8 @@ function updateDashboard(data, marketStatus) {
         function updatePerformanceSummary(checks) {
             if (!checks || checks.length === 0) return;
 
-            // Calculate returns from $100K baseline
-            const STARTING_VALUE = 100000;
+            // Calculate returns vs the Jul 7 reset pv
+            const STARTING_VALUE = 99866.86;
             const returns = checks.map(c => ((c.portfolio_value - STARTING_VALUE) / STARTING_VALUE) * 100);
 
             // Period return (from $100K baseline to latest)
@@ -10328,7 +10333,7 @@ function updateDashboard(data, marketStatus) {
                 const checks = historyData.checks || [];
                 const currentValue = currentData.account?.portfolio_value || 0;
                 const currentPL = currentData.positions?.reduce((sum, p) => sum + p.unrealized_pl, 0) || 0;
-                const currentPLPct = ((currentValue - 100000) / 100000 * 100);
+                const currentPLPct = ((currentValue - 99866.86) / 99866.86 * 100);
 
                 // Add current snapshot
                 const allEntries = [...checks];
@@ -10373,10 +10378,10 @@ function updateDashboard(data, marketStatus) {
 
                 // Convert to array and calculate daily changes
                 const dailySummaries = Object.values(dailyData).map(day => {
-                    const prevDayValue = 100000; // Starting value
+                    const prevDayValue = 99866.86; // Jul 7 reset pv
                     const change = day.endValue - day.startValue;
                     const changePct = (change / day.startValue) * 100;
-                    const totalReturn = ((day.endValue - 100000) / 100000) * 100;
+                    const totalReturn = ((day.endValue - 99866.86) / 99866.86) * 100;
 
                     return {
                         ...day,

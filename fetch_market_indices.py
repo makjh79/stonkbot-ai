@@ -20,15 +20,14 @@ logger = logging.getLogger(__name__)
 # Alpaca config
 ALPACA_CONFIG_FILE = Path(__file__).parent / "alpaca_config.json"
 
-# June 4, 2026 inception closes — ONE window for the whole site (2026-07-29 fix).
-# Hero card, scoreboard and progress bars all measure from experiment inception;
-# previously these were Jul 7 reset prices, which made the 'Bot vs S&P' gap mix
-# windows (bot return since Jun 4 vs index return since Jul 7, ~1pp overstated).
-# SPY 755.15 matches portfolio_history.benchmark_base.spy_close exactly.
+# July 7, 2026 reset closes — ONE window for the whole site (2026-07-29, owner call).
+# Hero card, scoreboard, race card, progress bars and risk_stats all measure
+# from the Jul 7 strategy reset; bot pv baseline is the Jul 7 16:00 UTC check
+# ($99,866.86). Earlier Jun 4 baselines mixed windows across surfaces.
 RESET_PRICES = {
-    'SPY': 755.15,       # S&P 500 ETF (Alpaca, Jun 4 2026 close)
-    'DIA': 515.15,       # SPDR Dow Jones ETF (Alpaca, Jun 4 2026 close)
-    'QQQ': 739.80        # Invesco QQQ NASDAQ ETF (Alpaca, Jun 4 2026 close)
+    'SPY': 747.71,       # S&P 500 ETF (Alpaca, Jul 7 2026 close)
+    'DIA': 528.30,       # SPDR Dow Jones ETF (Alpaca, Jul 7 2026 close)
+    'QQQ': 709.43        # Invesco QQQ NASDAQ ETF (Alpaca, Jul 7 2026 close)
 }
 
 EXPERIMENT_START_VALUE = 100000  # $100K starting value
@@ -204,7 +203,7 @@ HISTORY_TTL_SEC = 6 * 3600  # daily bars; refresh 4x/day is plenty
 
 
 def maybe_write_index_history():
-    """Daily closes since experiment inception (Jun 4) for SPY/DIA/QQQ.
+    """Daily closes since the Jul 7 reset for SPY/DIA/QQQ.
 
     Single source for the site's performance-chart benchmark lines, so the
     chart plots REAL index history on the same window as the bot line
@@ -222,12 +221,12 @@ def maybe_write_index_history():
             ts, closes = d.get('timestamps', []), d.get('closes', [])
             pts = [{'d': str(t)[:10], 'c': round(float(c), 2)}
                    for t, c in zip(ts, closes)
-                   if str(t)[:10] >= '2026-06-04' and c]
+                   if str(t)[:10] >= '2026-07-07' and c]
             if pts:
                 series[sym] = pts
         if not series:
             return
-        out = {'start_date': '2026-06-04', 'generated_at': datetime.now().isoformat(), 'series': series}
+        out = {'start_date': '2026-07-07', 'generated_at': datetime.now().isoformat(), 'series': series}
         tmp = HISTORY_STATE.with_suffix('.tmp')
         with open(tmp, 'w') as f:
             json.dump(out, f)
@@ -237,7 +236,7 @@ def maybe_write_index_history():
             os.chown(HISTORY_STATE, 999, 988)  # stonkai:stonkai
         except Exception:
             pass
-        logger.info(f"Index history written: {len(series.get('SPY', []))} SPY points since Jun 4")
+        logger.info(f"Index history written: {len(series.get('SPY', []))} SPY points since Jul 7")
     except Exception as e:
         logger.warning(f"index history write failed: {e}")
 
@@ -246,7 +245,7 @@ def main():
     """Main loop - fetch every 30 seconds"""
     logger.info("Market Indices Fetcher Starting")
     logger.info("SPY source: Alpaca")
-    logger.info(f"Jun 4 inception baselines: SPY=${RESET_PRICES['SPY']}, DIA=${RESET_PRICES['DIA']}, QQQ=${RESET_PRICES['QQQ']}")
+    logger.info(f"Jul 7 reset baselines: SPY=${RESET_PRICES['SPY']}, DIA=${RESET_PRICES['DIA']}, QQQ=${RESET_PRICES['QQQ']}")
     
     while True:
         data = fetch_market_data()
