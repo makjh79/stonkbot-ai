@@ -13,6 +13,7 @@ import sys
 import time
 import requests
 from signal_rules import expected_display_tier_for_signal
+from risk_engine import tier_max_position_pct
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -91,9 +92,12 @@ def _send_alert(summary: str, details: List[str]) -> None:
         msg_parts.append(f"• {d}")
     if len(details) > 20:
         msg_parts.append(f"• ... and {len(details) - 20} more")
-    # Telegram alerts DISABLED — stonkbot_healthcheck.py handles critical alerts
-    # This monitor is now log-audit only
-    pass
+    # Telegram alerts RE-ENABLED 2026-07-29 (audit: noise sources cleaned; the
+    # 'healthcheck handles criticals' offload target was never actually scheduled)
+    try:
+        _TELEGRAM.send(chr(10).join(msg_parts))
+    except Exception as _e:
+        print(f'[alert-fail] {type(_e).__name__}: {_e}', file=sys.stderr)
 # ─── Helpers ──────────────────────────────────────────────────────────────
 def _log_issue(msg: str) -> None:
     ISSUES.append(msg)
@@ -573,6 +577,12 @@ def check_portfolio_sanity() -> None:
     total_value = portfolio.get("portfolio_value", 0)
     if not total_value:
         return
+    # Load tier info from signals for held positions
+    _signals = _load_json(os.path.join(BASE_DIR, "signals.json"))
+    _sig_map: Dict[str, Dict] = {}
+    if _signals:
+        _sig_map = {s.get("symbol"): s for s in _signals.get("signals", []) if s.get("symbol")}
+
     sector_map: Dict[str, float] = {}
     for p in positions:
         mv = p.get("market_value", 0)
@@ -580,8 +590,12 @@ def check_portfolio_sanity() -> None:
         if p.get("qty", 0) <= 0:
             continue  # shorts handled by check_short_positions
         pct = mv / total_value if total_value else 0
-        if pct > 0.105:  # 10% cap + tolerance
-            _log_issue(f"Position {sym} is {pct:.1%} — exceeds 10% cap")
+        # Tier-aware cap (single source of truth: risk_engine.tier_max_position_pct)
+        _tier = _sig_map.get(sym, {}).get("tier", "NOW")
+        _tier_max = tier_max_position_pct(_tier, 0.08)
+        _threshold = _tier_max + 0.005  # tier cap + 0.5pp tolerance
+        if pct > _threshold:
+            _log_issue(f"Position {sym} is {pct:.1%} — exceeds {_tier_max:.1%} {_tier} cap")
         sector = p.get("sector", "unknown")
         sector_map[sector] = sector_map.get(sector, 0) + mv
     for sector, total_mv in sector_map.items():

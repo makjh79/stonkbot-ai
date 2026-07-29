@@ -78,7 +78,9 @@ import shutil
 # watchlist already saved
 # popup content already saved
 # enrichment sync to website
-shutil.copy("/opt/stonk-ai/signal_enrichment.json", "/var/www/hedge-fund-website/signal_enrichment.json")
+import os as _os
+if _os.path.exists("/opt/stonk-ai/signal_enrichment.json"):  # retired 2026-07-29; skip if absent
+    shutil.copy("/opt/stonk-ai/signal_enrichment.json", "/var/www/hedge-fund-website/signal_enrichment.json")
 print("  All data synced to website")
 
 # 7. Final verification

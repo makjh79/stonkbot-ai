@@ -12738,6 +12738,7 @@ function updateDashboard(data, marketStatus) {
         }
 
         async function fetchSignalEnrichment() {
+            return signalEnrichmentCache;  // retired 2026-07-29: enrichment file removed; Alpaca news headline in popup_content/watchlist_narratives is primary
             if (Date.now() - signalEnrichmentLastFetch < 60000) return signalEnrichmentCache;
             try {
                 const res = await fetch('./signal_enrichment.json?t=' + Date.now());
