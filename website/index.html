@@ -4334,14 +4334,20 @@ async function loadPerformanceStats() {
     // risk_stats — those are meant to be computed over daily closes.
     try {
         const retLive = function(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; };
-        const [pdRes, miRes] = await Promise.all([
+        const [pdRes, miRes, lqRes] = await Promise.all([
             fetch('portfolio_data.json?v=' + Date.now()),
-            fetch('market_indices.json?v=' + Date.now())
+            fetch('market_indices.json?v=' + Date.now()),
+            fetch('live_quotes.json?v=' + Date.now()).catch(() => null)
         ]);
         if (pdRes.ok && miRes.ok) {
             const pd = await pdRes.json();
             const mi = await miRes.json();
-            const pv = pd.account && pd.account.portfolio_value;
+            // Prefer the 15s live-quotes layer when fresh so scoreboard matches hero/race card.
+            let lq = null;
+            try { if (lqRes && lqRes.ok) lq = await lqRes.json(); } catch (e) { lq = null; }
+            const lqFresh = lq && lq.portfolio_value && lq.timestamp &&
+                (Date.now() - new Date(lq.timestamp).getTime()) < 90000;
+            const pv = lqFresh ? lq.portfolio_value : (pd.account && pd.account.portfolio_value);
             const spRet = mi.indices && mi.indices['S&P 500'] && mi.indices['S&P 500'].return_pct;
             if (pv) {
                 // Single window everywhere: bot return = live pv vs the Jul 7 reset
@@ -6950,9 +6956,28 @@ function updateDashboard(data, marketStatus) {
             if (latestPortfolioData) return latestPortfolioData;
 
             try {
-                const response = await fetch('./portfolio_data.json?t=' + Date.now());
-                if (response.ok) {
-                    latestPortfolioData = await response.json();
+                // Use 15s live quotes when fresh, else fall back to 5-min portfolio_data.
+                const [pdRes, lqRes] = await Promise.all([
+                    fetch('./portfolio_data.json?t=' + Date.now()),
+                    fetch('./live_quotes.json?t=' + Date.now()).catch(() => null)
+                ]);
+                let lq = null;
+                try { if (lqRes && lqRes.ok) lq = await lqRes.json(); } catch (e) { lq = null; }
+                const lqFresh = lq && lq.portfolio_value && lq.timestamp &&
+                    (Date.now() - new Date(lq.timestamp).getTime()) < 90000;
+                if (lqFresh) {
+                    latestPortfolioData = {
+                        account: { portfolio_value: lq.portfolio_value, cash: lq.cash },
+                        positions: [],
+                        timestamp: lq.timestamp,
+                        total_pl: lq.total_pl,
+                        total_return_pct: lq.total_return_pct,
+                        _fromLiveQuotes: true
+                    };
+                    return latestPortfolioData;
+                }
+                if (pdRes.ok) {
+                    latestPortfolioData = await pdRes.json();
                     return latestPortfolioData;
                 }
             } catch (e) {
