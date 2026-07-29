@@ -5767,7 +5767,7 @@ function updateDashboard(data, marketStatus) {
             const returnEl = document.getElementById('portfolio-return');
             const pnlEl = document.getElementById('portfolio-pnl');
             if (data.account) {
-                const STARTING_VALUE = 100000;
+                const STARTING_VALUE = 99866.86;  // Jul 7 reset snapshot (16:00 UTC)
                 const portfolioValue = (liveQuotesFresh() ? _liveQuotes.portfolio_value : data.account.portfolio_value) || 0;
                 const totalPl = portfolioValue - STARTING_VALUE;
                 const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
@@ -5821,9 +5821,9 @@ function updateDashboard(data, marketStatus) {
                 lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()} • <span style="color: var(--accent-green);">Live Data</span>`;
             }
 
-            // Update stonk meter if available (using $100K baseline)
+            // Update stonk meter if available (using Jul 7 reset pv baseline)
             if (data.account) {
-                const STARTING_VALUE = 100000;
+                const STARTING_VALUE = 99866.86;  // Jul 7 reset snapshot
                 const portfolioValue = data.account.portfolio_value || 0;
                 const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
                 fetchMarketIndices().then(indices => {
@@ -8032,9 +8032,9 @@ function updateDashboard(data, marketStatus) {
             if (!path || !area) return;
 
             // Calculate Y position (10 = $100K at top, 75 = approx $97K at bottom)
-            // Map: $100K -> y=10, $90K -> y=80
+            // Map: Jul 7 reset pv -> y=10, $90K -> y=80
             const minValue = 90000;
-            const maxValue = 100000;
+            const maxValue = 99866.86;  // Jul 7 reset snapshot
             const valueRange = maxValue - minValue;
             const yPos = 10 + ((maxValue - currentValue) / valueRange) * 70;
             const clampedY = Math.max(10, Math.min(80, yPos));
@@ -8223,7 +8223,8 @@ function updateDashboard(data, marketStatus) {
                 pvEl.dataset.value = d.portfolio_value;
                 pvEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
             }
-            const totalReturn = d.total_return_pct;
+            const portfolioValue = d.portfolio_value || 0;
+            const totalReturn = d.total_return_pct != null ? d.total_return_pct : ((portfolioValue - 99866.86) / 99866.86 * 100);
             const totalPl = d.total_pl;
             const isPositive = (totalReturn || 0) >= 0;
             const returnBadge = document.getElementById('portfolio-return-badge');
@@ -8686,7 +8687,7 @@ function updateDashboard(data, marketStatus) {
             }
 
             const positions = portfolioData.positions || [];
-            const totalValue = portfolioData.account?.portfolio_value || 100000;
+            const totalValue = portfolioData.account?.portfolio_value || 99866.86;
 
             // Sector definitions - DYNAMIC from actual portfolio holdings
             const sectorConfig = {

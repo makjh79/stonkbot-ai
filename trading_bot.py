@@ -746,9 +746,12 @@ class PortfolioDataStore:
 
             # Bot display P&L is lifetime return vs the $100K experiment starting capital.
             # This is the same number shown on the website hero card and holdings alerts.
+            # Display return is vs the Jul 7 reset snapshot ($99,866.86), per owner call.
+            # total_pl stays the actual lifetime P&L vs the original $100K capital.
             STARTING_CAPITAL = 100000.0
+            RESET_PV = 99866.86  # Jul 7 2026 16:00 UTC check
             total_pl = pv - STARTING_CAPITAL
-            total_pl_pct = (total_pl / STARTING_CAPITAL * 100) if STARTING_CAPITAL > 0 else 0
+            total_pl_pct = ((pv - RESET_PV) / RESET_PV * 100) if RESET_PV > 0 else 0
 
             # Keep legacy open-position-only P&L for diagnostics/trading logic
             open_total_pl = sum(p["unrealized_pl"] for p in positions_data)
