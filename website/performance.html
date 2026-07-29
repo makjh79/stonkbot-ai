@@ -427,12 +427,15 @@
             const visible = filterRange(portfolioData, rangeDays);
             const labels = visible.map(s => s.label || s.date);
             const values = visible.map(s => s.value);
-            // Benchmark: SPY returns from index_history.json normalized to Jul 7 close.
+            // Benchmark: SPY from index_history.json, scaled to start at the same
+            // Jul 7 reset value as the bot ($99,866.86) so the two lines share a
+            // common origin and the comparison is visually honest.
+            const RESET_PV = 99866.86;
             const idxHist = window._perfIndexHistory || {};
             const spySeries = (idxHist.series && idxHist.series.SPY) || [];
             const spyMap = {};
             const spyBase = spySeries.length ? spySeries[0].c : 747.71;
-            spySeries.forEach(p => { spyMap[p.d] = ((p.c - spyBase) / spyBase) * 100000.0; });
+            spySeries.forEach(p => { spyMap[p.d] = RESET_PV * (p.c / spyBase); });
             const benchmarks = visible.map(s => spyMap[s.date] ?? s.benchmark ?? null);
             const tradePoints = buildTradePoints(visible, tradeData);
 
