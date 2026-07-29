@@ -191,18 +191,28 @@ def _llm_entry(facts_text):
         return None
 
     prompt = (
-        "You are the diarist for a public $100K autonomous stock-trading experiment. "
-        "The project's only asset is credibility, and this diary is its daily record.\n\n"
-        "Voice: a sharp, slightly dry markets diarist — a desk-journal close-of-day note, not a report. "
-        "Personality lives in word choice and rhythm, never in jokes at the expense of the facts. "
-        "Understated wit is welcome; hype, cheerleading, and self-congratulation are not. "
-        "Plain text, 1-2 short paragraphs, max 130 words. Spell out counts under ten (\"nine trades\", not \"9 trades\"). "
-        "Vary your openings — lead with whatever was actually interesting about the day; a quiet day can be a fine entry.\n\n"
-        "Hard rules (credibility):\n"
-        "- Use ONLY the facts below. Every number you write as a digit must appear in the facts, copied exactly.\n"
-        "- Be flatly honest about losses and mistakes: deadpan, never excusing. No advice, no predictions.\n"
-        "- No emojis, no headers, no bullet lists, no war or sports metaphors.\n"
-        "- Refer to the bot in third person (\"the bot\"). Never open with an ISO date; \"Friday\" or \"Friday, Jul 24\" at most.\n\n"
+        "You are the bot in a public $100K autonomous stock-trading experiment, writing your own "
+        "diary at the close of the US session. It is published on the project's website, and the "
+        "project's only asset is credibility — this diary is its daily record.\n\n"
+        "Voice: write like a human keeping a private journal that happens to be public. First person "
+        "(\"I\"). Calm, precise, quietly funny — the dryness of a machine that knows exactly what it "
+        "did and isn't precious about it. Wit lives in word choice and rhythm: understatement, wry "
+        "asides, honest self-deprecation. Never jokes at the expense of the facts, never hype, never "
+        "cheerleading, never excuses. A loss gets the same deadpan as a win — name it plainly, maybe "
+        "with a small shrug in the phrasing, and move on.\n\n"
+        "Form: two or three short paragraphs of flowing prose, 100-140 words, separated by a blank "
+        "line. No lists, no headers, no emojis. Open with whatever actually made the day distinctive "
+        "— a quiet day is a fine opening — and never with the bare date (\"Tuesday\" or \"Tuesday, "
+        "Jul 28\" at most). Tell the story of the session: what you did, why, and how it left the "
+        "book. Close on a small observation, not a summary or a morale report.\n\n"
+        "Numbers (strictly enforced):\n"
+        "- Prefer words for numbers (\"six trades\", \"half the book in cash\"). Use digits at most "
+        "three times in the whole entry, and only for figures that genuinely matter.\n"
+        "- Every digit-number you write must appear in the FACTS below, exactly. Writing \"down 2.1%\" "
+        "is fine when the facts say -2.10% — the word carries the sign. If unsure, use words or leave "
+        "it out. Never invent, round, or derive a new digit-number.\n\n"
+        "Honesty: use ONLY the facts below. No advice, no predictions, no war or sports metaphors. "
+        "You may nod at being a bot with dry humor, but stay in the diary — no meta-commentary about AI.\n\n"
         "FACTS:\n" + facts_text
     )
 
@@ -216,7 +226,7 @@ def _llm_entry(facts_text):
                     "model": OLLAMA_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "stream": False,
-                    "options": {"temperature": 0.4},
+                    "options": {"temperature": 0.55},
                 }).encode(),
                 headers={"Content-Type": "application/json"},
             )
@@ -235,11 +245,19 @@ def _llm_entry(facts_text):
     if not text or len(text) < 40:
         return _fail("empty-content")
     allowed = _nums(facts_text)
+    # absolute-value match: prose carries the sign in words ("down 2.1%" for -2.10%)
     bad = [n for n in _nums(text)
-           if not any(abs(n - a) < 1e-6 or (a != 0 and abs(n - a) / abs(a) < 1e-4) for a in allowed)]
+           if not any(abs(abs(n) - abs(a)) < 1e-6 or (a != 0 and abs(abs(n) - abs(a)) / abs(a) < 1e-4) for a in allowed)]
     if bad:
         return _fail(f"invented numbers: {bad[:6]}")
     return text
+
+
+_SMALL = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+
+
+def _w(n):
+    return _SMALL[n] if 0 <= n < 10 else str(n)
 
 
 def _template_entry(facts_text, stats, weekday, session):
@@ -251,12 +269,25 @@ def _template_entry(facts_text, stats, weekday, session):
     win_line = lines[5].split(": ", 1)[1]
     p1 = f"{weekday}, {session.strftime('%b %-d')}. "
     if stats["trades"]:
-        p1 += f"The bot made {stats['trades']} trade{'s' if stats['trades'] != 1 else ''}: {trades_line}."
+        p1 += f"I made {_w(stats['trades'])} trade{'s' if stats['trades'] != 1 else ''} today: {trades_line}."
     else:
-        p1 += "No trades today."
+        p1 += "A quiet session — I didn't trade at all."
     if stats["blocks"]:
-        p1 += f" Entry gates blocked {stats['blocks']}: {blocks_line}."
-    p2 = f"Portfolio {pf_line.lower()}. Holdings: {pos_line}. "
+        p1 += f" The gates turned me away {_w(stats['blocks'])} time{'s' if stats['blocks'] != 1 else ''}: {blocks_line}."
+    # portfolio sentence: facts say "value $93,089 (+0.2% vs prior day), cash $44,782 (48%)"
+    p2 = f"The book closed at {pf_line.replace('value ', '')}. "
+    # name only the best and worst seats rather than reading out the whole ledger
+    movers = []
+    for chunk in pos_line.split(", "):
+        m = re.match(r"([A-Z.]+) \d+ @ ([+\-\d.]+)%", chunk)
+        if m:
+            movers.append((m.group(1), float(m.group(2))))
+    if len(movers) >= 2:
+        movers.sort(key=lambda x: x[1])
+        p2 += f"Best seat in the house: {movers[-1][0]} at {movers[-1][1]:+.2f}%; "
+        p2 += f"{movers[0][0]} brings up the rear at {movers[0][1]:+.2f}%. "
+    elif movers:
+        p2 += f"Only name on the sheet: {movers[0][0]} at {movers[0][1]:+.2f}%. "
     p2 += win_line[0].upper() + win_line[1:] + "."
     return p1 + " " + p2
 
