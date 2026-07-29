@@ -9028,10 +9028,11 @@ function updateDashboard(data, marketStatus) {
         // for 1M/3M/1Y/ALL, and drew index lines as straight ramps.)
         async function loadPerformanceData() {
             try {
-                const [historyRes, marketRes, idxHistRes] = await Promise.all([
+                const [historyRes, marketRes, idxHistRes, lqRes] = await Promise.all([
                     fetch('portfolio_history.json?t=' + Date.now()),
                     fetch('market_indices.json?t=' + Date.now()),
-                    fetch('index_history.json?t=' + Date.now()).catch(() => null)
+                    fetch('index_history.json?t=' + Date.now()).catch(() => null),
+                    fetch('live_quotes.json?t=' + Date.now()).catch(() => null)
                 ]);
 
                 const historyData = await historyRes.json();
@@ -9041,9 +9042,18 @@ function updateDashboard(data, marketStatus) {
 
                 // Live index returns (same feed as hero/scoreboard/progress bars)
                 const indices = marketData.indices || {};
-                const sp500Return = indices['S&P 500'] ? indices['S&P 500'].return_pct : null;
+                let sp500Return = indices['S&P 500'] ? indices['S&P 500'].return_pct : null;
                 const dowReturn = indices['Dow Jones'] ? indices['Dow Jones'].return_pct : null;
                 const nasdaqReturn = indices['NASDAQ'] ? indices['NASDAQ'].return_pct : null;
+
+                // Prefer 15s live_quotes layer when fresh so the chart endpoint matches hero/race.
+                let liveQuotes = null;
+                try { if (lqRes && lqRes.ok) liveQuotes = await lqRes.json(); } catch (e) { liveQuotes = null; }
+                const liveFresh = liveQuotes && liveQuotes.portfolio_value && liveQuotes.timestamp &&
+                    (Date.now() - new Date(liveQuotes.timestamp).getTime()) < 90000;
+                const livePV = liveFresh ? liveQuotes.portfolio_value : null;
+                const liveSPY = (liveFresh && liveQuotes.spy) ? liveQuotes.spy.return_pct : null;
+                if (liveSPY != null) sp500Return = liveSPY;
 
                 const STARTING_VALUE = 99866.86;  // Jul 7 reset pv (16:00 UTC)
                 const RESET_DATE = '2026-07-07';
@@ -9145,9 +9155,12 @@ function updateDashboard(data, marketStatus) {
                 };
 
                 // Pin final points to the live feed so chart endpoints match the
-                // hero card and scoreboard to the cent.
-                const lastBot = botPts[botPts.length - 1].r;
-                ['1W', '1M', '3M', '1Y', 'ALL'].forEach(k => {
+                // hero card and scoreboard to the cent. Use live_quotes when fresh.
+                const lastHistBot = botPts[botPts.length - 1].r;
+                const lastBot = livePV != null
+                    ? ((livePV - STARTING_VALUE) / STARTING_VALUE) * 100
+                    : lastHistBot;
+                ['1D', '1W', '1M', '3M', '1Y', 'ALL'].forEach(k => {
                     const r = timeRangeData[k];
                     if (!r || !r.data.length) return;
                     r.data[r.data.length - 1] = parseFloat(lastBot.toFixed(2));
@@ -9156,6 +9169,7 @@ function updateDashboard(data, marketStatus) {
                     if (nasdaqReturn != null && r.nasdaq.length) r.nasdaq[r.nasdaq.length - 1] = nasdaqReturn;
                 });
 
+                window._chartLiveQuotes = liveQuotes;
                 applyTimeRange(currentTimeRange);
                 updatePerformanceSummary(sortedChecks);
 
@@ -9185,8 +9199,12 @@ function updateDashboard(data, marketStatus) {
             const STARTING_VALUE = 99866.86;
             const returns = checks.map(c => ((c.portfolio_value - STARTING_VALUE) / STARTING_VALUE) * 100);
 
-            // Period return (from $100K baseline to latest)
-            const periodReturn = returns[returns.length - 1];
+            // Period return: prefer live_quotes when fresh, else last historical check
+            let periodReturn = returns[returns.length - 1];
+            if (window._chartLiveQuotes && window._chartLiveQuotes.portfolio_value) {
+                const livePct = ((window._chartLiveQuotes.portfolio_value - STARTING_VALUE) / STARTING_VALUE) * 100;
+                periodReturn = livePct;
+            }
 
             // Best and worst (from all historical returns)
             const best = Math.max(...returns);
