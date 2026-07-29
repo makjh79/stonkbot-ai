@@ -4310,22 +4310,10 @@ async function loadPerformanceStats() {
             const d = await res.json();
             const w = d.window || {}, p = d.portfolio || {}, t = d.trades || {};
             const ret = function(v) { return (v >= 0 ? '+' : '') + v + '%'; };
-            if (p.total_return_pct != null) {
-                setT('perf-bot-ret', ret(p.total_return_pct));
-                const el = document.getElementById('perf-bot-ret');
-                if (el) el.style.color = p.total_return_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-            }
-            if (p.benchmark_return_pct != null) {
-                setT('perf-bench-ret', ret(p.benchmark_return_pct));
-                const el = document.getElementById('perf-bench-ret');
-                if (el) el.style.color = p.benchmark_return_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-            }
-            if (p.total_return_pct != null && p.benchmark_return_pct != null) {
-                const spread = p.total_return_pct - p.benchmark_return_pct;
-                setT('perf-verdict', spread >= 0
-                    ? 'Ahead of the S&P 500 by ' + spread.toFixed(1) + ' pts'
-                    : 'Trailing the S&P 500 by ' + Math.abs(spread).toFixed(1) + ' pts');
-            }
+            // NOTE (2026-07-29): bot/benchmark returns + verdict are NOT painted from
+            // risk_stats here — those use the post-reset (Jul 7) window and flash
+            // conflicting numbers vs the hero card. Live-sync below paints them from
+            // portfolio_data + market_indices (Jun 4 inception window), same as hero.
             const wparts = [];
             if (w.reset_date) wparts.push('Post-reset window · ' + (w.calendar_days || 0) + ' days');
             if (w.trading_days) wparts.push(w.trading_days + ' trading days');
@@ -4356,8 +4344,9 @@ async function loadPerformanceStats() {
             const pv = pd.account && pd.account.portfolio_value;
             const spRet = mi.indices && mi.indices['S&P 500'] && mi.indices['S&P 500'].return_pct;
             if (pv) {
-                // Rebase Jul 23: compare to post-reset pv (Jul 7 16:00 UTC snapshot)
-                const BOT_RESET_PV = 100000.00;  // aligned with hero card: total return since inception
+                // Single window everywhere: bot return = live pv vs $100K (Jun 4 inception,
+                // same as hero card); S&P return = live market_indices feed (Jun 4 baseline).
+                const BOT_RESET_PV = 100000.00;
                 const botRet = ((pv - BOT_RESET_PV) / BOT_RESET_PV) * 100;
                 setT('perf-bot-ret', retLive(botRet));
                 const elB = document.getElementById('perf-bot-ret');
@@ -6154,8 +6143,8 @@ function updateDashboard(data, marketStatus) {
                 if (statInvested) statInvested.textContent = '$' + ((portfolioValue - data.account.cash) / 1000).toFixed(1) + 'K';
                 if (statPositions) statPositions.textContent = data.positions.length;
 
-                // Update performance chart
-                if (performanceChart) {
+                // Update performance chart only when no real history series is loaded
+                if (performanceChart && (typeof timeRangeData === 'undefined' || Object.keys(timeRangeData).length === 0)) {
                     performanceChart.data.datasets[0].data = [0, parseFloat(totalReturn)];
                     performanceChart.update('none');
                 }
@@ -9003,128 +8992,158 @@ function updateDashboard(data, marketStatus) {
         let currentTimeRange = 'ALL';
         let timeRangeData = {};
 
-        // Load actual performance data from portfolio_history.json and market indices
+        // Load actual performance data: REAL daily closes for the bot AND the
+        // benchmark indices, on ONE window (Jun 4 inception) — same baseline as
+        // the hero card, scoreboard and progress bars. (2026-07-29 rewrite:
+        // previously filtered to Jul 7 while valuing vs $100K, fabricated points
+        // for 1M/3M/1Y/ALL, and drew index lines as straight ramps.)
         async function loadPerformanceData() {
             try {
-                // Fetch portfolio history AND live market indices in parallel
-                const [historyRes, marketRes] = await Promise.all([
+                const [historyRes, marketRes, idxHistRes] = await Promise.all([
                     fetch('portfolio_history.json?t=' + Date.now()),
-                    fetch('market_indices.json?t=' + Date.now())
+                    fetch('market_indices.json?t=' + Date.now()),
+                    fetch('index_history.json?t=' + Date.now()).catch(() => null)
                 ]);
 
                 const historyData = await historyRes.json();
                 const marketData = await marketRes.json();
-                // Window to post-reset history: bot restarted Jul 7, 2026; earlier data is the old strategy incarnation
-                const RESET_DATE = '2026-07-07';
-                const checks = (historyData.checks || []).filter(c => (c.timestamp || '') >= RESET_DATE);
+                let idxHist = null;
+                try { if (idxHistRes && idxHistRes.ok) idxHist = await idxHistRes.json(); } catch (e) { idxHist = null; }
 
-                // Get live market returns
+                // Live index returns (same feed as hero/scoreboard/progress bars)
                 const indices = marketData.indices || {};
-                const sp500Return = indices['S&P 500']?.return_pct ?? -2.60;
-                const dowReturn = indices['Dow Jones']?.return_pct ?? -1.35;
-                const nasdaqReturn = indices['NASDAQ']?.return_pct ?? -4.18;
+                const sp500Return = indices['S&P 500'] ? indices['S&P 500'].return_pct : null;
+                const dowReturn = indices['Dow Jones'] ? indices['Dow Jones'].return_pct : null;
+                const nasdaqReturn = indices['NASDAQ'] ? indices['NASDAQ'].return_pct : null;
 
-                if (checks.length === 0) {
-                    // Fallback to current data if no history
+                const STARTING_VALUE = 100000;
+                const sortedChecks = (historyData.checks || []).slice()
+                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                if (sortedChecks.length === 0) {
                     const currentRes = await fetch('portfolio_data.json?t=' + Date.now());
                     const currentData = await currentRes.json();
-                    const STARTING_VALUE = 100000;
                     const portfolioValue = currentData.account?.portfolio_value || STARTING_VALUE;
                     const currentPLPct = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
-
-                    timeRangeData = {
-                        'ALL': { labels: ['Start', 'Current'], data: [0, currentPLPct] }
-                    };
-
-                    // Update market indices on chart
-                    updateMarketIndicesOnChart(sp500Return, dowReturn, nasdaqReturn);
+                    timeRangeData = { 'ALL': { labels: ['Start', 'Current'], data: [0, currentPLPct] } };
+                    applyTimeRange(currentTimeRange);
                     return;
                 }
 
-                // Process data for different time ranges
-                const sortedChecks = checks.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-                // ALL - Start to current
-                const STARTING_VALUE = 100000;
-                const firstCheck = sortedChecks[0];
-                const lastCheck = sortedChecks[sortedChecks.length - 1];
-
-                // Calculate returns from $100K baseline for all checks
-                const getReturn = (check) => ((check.portfolio_value - STARTING_VALUE) / STARTING_VALUE) * 100;
-                const lastReturn = getReturn(lastCheck);
-
-                // Build intraday data (1D) - group by hour
-                const hourlyData = {};
-                sortedChecks.forEach(check => {
-                    const date = new Date(check.timestamp);
-                    const hour = date.getHours();
-                    const hourKey = `${hour}:00`;
-                    hourlyData[hourKey] = getReturn(check);
+                // One bot point per day: the day's last check, return vs $100K.
+                const byDay = {};
+                sortedChecks.forEach(c => {
+                    const d = (c.timestamp || '').slice(0, 10);
+                    if (d) byDay[d] = c;
                 });
+                const days = Object.keys(byDay).sort();
+                const botPts = days.map(d => ({
+                    d: d,
+                    r: ((byDay[d].portfolio_value - STARTING_VALUE) / STARTING_VALUE) * 100
+                }));
 
-                // Build daily data (1W, 1M) - group by day
-                const dailyData = {};
-                sortedChecks.forEach(check => {
-                    const date = new Date(check.timestamp);
-                    const dayOfWeek = date.getDay();
-                    // Skip weekends
-                    if (dayOfWeek === 0 || dayOfWeek === 6) return;
-
-                    const dayKey = date.toLocaleDateString('en-US', { weekday: 'short' });
-                    dailyData[dayKey] = getReturn(check);
-                });
-
-                const dayLabels = Object.keys(dailyData);
-                const dayValues = Object.values(dailyData);
-
-                timeRangeData = {
-                    '1D': {
-                        labels: Object.keys(hourlyData).length > 0 ? Object.keys(hourlyData) : ['Start', 'Current'],
-                        data: Object.keys(hourlyData).length > 0 ? Object.values(hourlyData) : [0, lastReturn]
-                    },
-                    '1W': {
-                        labels: dayLabels.length >= 5 ? dayLabels.slice(-5) : dayLabels.length > 0 ? dayLabels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                        data: dayValues.length >= 5 ? dayValues.slice(-5) : dayValues.length > 0 ? dayValues : [0, lastReturn]
-                    },
-                    '1M': {
-                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                        data: [0, lastReturn * 0.3, lastReturn * 0.6, lastReturn]
-                    },
-                    '3M': {
-                        labels: ['Month 1', 'Month 2', 'Month 3'],
-                        data: [0, lastReturn * 0.5, lastReturn]
-                    },
-                    '1Y': {
-                        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-                        data: [0, 0, 0, lastReturn]
-                    },
-                    'ALL': {
-                        labels: ['Start', 'Current'],
-                        data: [0, lastReturn]
+                // Real index history aligned to bot days (carry-forward over weekends)
+                const idxMaps = {};
+                if (idxHist && idxHist.series) {
+                    ['SPY', 'DIA', 'QQQ'].forEach(sym => {
+                        const pts = (idxHist.series[sym] || []).slice().sort((a, b) => a.d < b.d ? -1 : 1);
+                        if (pts.length >= 2) {
+                            const base = pts[0].c;
+                            idxMaps[sym] = {
+                                days: pts.map(p => p.d),
+                                rets: pts.map(p => ((p.c - base) / base) * 100)
+                            };
+                        }
+                    });
+                }
+                function idxRetAt(sym, day) {
+                    const m = idxMaps[sym];
+                    if (!m) return null;
+                    let lo = 0, hi = m.days.length - 1, ans = 0;
+                    while (lo <= hi) {
+                        const mid = (lo + hi) >> 1;
+                        if (m.days[mid] <= day) { ans = mid; lo = mid + 1; } else { hi = mid - 1; }
                     }
-                };
-
-                // Update chart if it exists
-                if (performanceChart && timeRangeData[currentTimeRange]) {
-                    const rangeData = timeRangeData[currentTimeRange];
-                    performanceChart.data.labels = rangeData.labels;
-                    performanceChart.data.datasets[0].data = rangeData.data;
-                    performanceChart.update('active');
+                    return m.rets[ans];
+                }
+                function sliceByDays(n) {
+                    if (n === 0) return botPts;
+                    const cutoff = new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
+                    const s = botPts.filter(p => p.d >= cutoff);
+                    return s.length >= 2 ? s : botPts.slice(-2);
+                }
+                function toRange(pts) {
+                    return {
+                        labels: pts.map(p => p.d.slice(5)),
+                        data: pts.map(p => parseFloat(p.r.toFixed(2))),
+                        sp500: pts.map(p => { const v = idxRetAt('SPY', p.d); return v == null ? null : parseFloat(v.toFixed(2)); }),
+                        dow: pts.map(p => { const v = idxRetAt('DIA', p.d); return v == null ? null : parseFloat(v.toFixed(2)); }),
+                        nasdaq: pts.map(p => { const v = idxRetAt('QQQ', p.d); return v == null ? null : parseFloat(v.toFixed(2)); })
+                    };
+                }
+                function constSeries(sym, n, day, liveRet) {
+                    const base = idxRetAt(sym, day);
+                    const out = [];
+                    for (let i = 0; i < n; i++) out.push(base == null ? null : parseFloat(base.toFixed(2)));
+                    if (liveRet != null && out.length) out[out.length - 1] = liveRet;
+                    return out;
                 }
 
-                // Update market indices on chart
-                updateMarketIndicesOnChart(sp500Return, dowReturn, nasdaqReturn);
+                // 1D: the last session's raw intraday checks, real points
+                const lastDay = days[days.length - 1];
+                const intra = sortedChecks.filter(c => (c.timestamp || '').slice(0, 10) === lastDay);
+                const intraPts = intra.map(c => ({
+                    d: (c.timestamp || '').slice(11, 16),
+                    r: ((c.portfolio_value - STARTING_VALUE) / STARTING_VALUE) * 100
+                }));
+                const oneDay = intraPts.length >= 2 ? {
+                    labels: intraPts.map(p => p.d),
+                    data: intraPts.map(p => parseFloat(p.r.toFixed(2))),
+                    sp500: constSeries('SPY', intraPts.length, lastDay, sp500Return),
+                    dow: constSeries('DIA', intraPts.length, lastDay, dowReturn),
+                    nasdaq: constSeries('QQQ', intraPts.length, lastDay, nasdaqReturn)
+                } : toRange(botPts.slice(-2));
 
-                // Calculate and update summary statistics
+                timeRangeData = {
+                    '1D': oneDay,
+                    '1W': toRange(sliceByDays(7)),
+                    '1M': toRange(sliceByDays(30)),
+                    '3M': toRange(botPts),   // experiment is ~8 weeks old — full honest series
+                    '1Y': toRange(botPts),
+                    'ALL': toRange(botPts)
+                };
+
+                // Pin final points to the live feed so chart endpoints match the
+                // hero card and scoreboard to the cent.
+                const lastBot = botPts[botPts.length - 1].r;
+                ['1W', '1M', '3M', '1Y', 'ALL'].forEach(k => {
+                    const r = timeRangeData[k];
+                    if (!r || !r.data.length) return;
+                    r.data[r.data.length - 1] = parseFloat(lastBot.toFixed(2));
+                    if (sp500Return != null && r.sp500.length) r.sp500[r.sp500.length - 1] = sp500Return;
+                    if (dowReturn != null && r.dow.length) r.dow[r.dow.length - 1] = dowReturn;
+                    if (nasdaqReturn != null && r.nasdaq.length) r.nasdaq[r.nasdaq.length - 1] = nasdaqReturn;
+                });
+
+                applyTimeRange(currentTimeRange);
                 updatePerformanceSummary(sortedChecks);
 
             } catch (error) {
                 console.error('Failed to load performance data:', error);
-                // Fallback data
-                timeRangeData = {
-                    'ALL': { labels: ['Start', 'Current'], data: [0, -4.26] }
-                };
+                timeRangeData = { 'ALL': { labels: ['Start', 'Current'], data: [0, 0] } };
             }
+        }
+
+        function applyTimeRange(range) {
+            if (!performanceChart || !timeRangeData[range]) return;
+            const r = timeRangeData[range];
+            const dsets = performanceChart.data.datasets;
+            performanceChart.data.labels = r.labels;
+            dsets[0].data = r.data;
+            if (dsets.length > 1) dsets[1].data = r.sp500 || [];
+            if (dsets.length > 2) dsets[2].data = r.dow || [];
+            if (dsets.length > 3) dsets[3].data = r.nasdaq || [];
+            performanceChart.update('active');
         }
 
         // Calculate and update performance summary statistics
@@ -9184,32 +9203,11 @@ function updateDashboard(data, marketStatus) {
             }
         }
 
-        // Update market indices datasets on the performance chart
+        // Re-apply the current range's real index series (legacy hook kept so
+        // older call sites stay harmless — range data already carries aligned
+        // SPY/DIA/QQQ arrays since the 2026-07-29 rewrite).
         function updateMarketIndicesOnChart(sp500Return, dowReturn, nasdaqReturn) {
-            if (!performanceChart) return;
-
-            // Get current number of data points
-            const numPoints = performanceChart.data.labels.length;
-
-            // Plot indices as straight lines from 0% to current return
-            // (linear interpolation - honest single-point comparison)
-            function linearRamp(numPoints, endValue) {
-                const data = [];
-                for (let i = 0; i < numPoints; i++) {
-                    data.push((endValue * i) / Math.max(numPoints - 1, 1));
-                }
-                return data;
-            }
-            const sp500Data = linearRamp(numPoints, sp500Return);
-            const dowData = linearRamp(numPoints, dowReturn);
-            const nasdaqData = linearRamp(numPoints, nasdaqReturn);
-
-            // Update datasets
-            performanceChart.data.datasets[1].data = sp500Data;  // S&P 500
-            performanceChart.data.datasets[2].data = dowData;     // DOW
-            performanceChart.data.datasets[3].data = nasdaqData;  // NASDAQ
-
-            performanceChart.update('active');
+            applyTimeRange(currentTimeRange);
         }
 
         async function setTimeRange(range) {
@@ -9229,12 +9227,7 @@ function updateDashboard(data, marketStatus) {
             }
 
             // Update chart data
-            if (performanceChart && timeRangeData[range]) {
-                const rangeData = timeRangeData[range];
-                performanceChart.data.labels = rangeData.labels;
-                performanceChart.data.datasets[0].data = rangeData.data;
-                performanceChart.update('active');
-            }
+            applyTimeRange(range);
         }
 
         // ============================================

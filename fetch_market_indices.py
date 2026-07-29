@@ -199,6 +199,49 @@ def save_market_data(data):
         logger.error(f"Failed to save to web: {e}")
         return False
 
+HISTORY_STATE = Path('/var/www/hedge-fund-website/index_history.json')
+HISTORY_TTL_SEC = 6 * 3600  # daily bars; refresh 4x/day is plenty
+
+
+def maybe_write_index_history():
+    """Daily closes since experiment inception (Jun 4) for SPY/DIA/QQQ.
+
+    Single source for the site's performance-chart benchmark lines, so the
+    chart plots REAL index history on the same window as the bot line
+    (replaces the old straight-line ramp to a single endpoint)."""
+    try:
+        if HISTORY_STATE.exists():
+            age = time.time() - HISTORY_STATE.stat().st_mtime
+            if age < HISTORY_TTL_SEC:
+                return
+        hub = _get_hub()
+        bars = hub.get_daily_bars(['SPY', 'DIA', 'QQQ'], days=70)
+        series = {}
+        for sym in ('SPY', 'DIA', 'QQQ'):
+            d = bars.get(sym, {})
+            ts, closes = d.get('timestamps', []), d.get('closes', [])
+            pts = [{'d': str(t)[:10], 'c': round(float(c), 2)}
+                   for t, c in zip(ts, closes)
+                   if str(t)[:10] >= '2026-06-04' and c]
+            if pts:
+                series[sym] = pts
+        if not series:
+            return
+        out = {'start_date': '2026-06-04', 'generated_at': datetime.now().isoformat(), 'series': series}
+        tmp = HISTORY_STATE.with_suffix('.tmp')
+        with open(tmp, 'w') as f:
+            json.dump(out, f)
+        tmp.replace(HISTORY_STATE)
+        try:
+            import os
+            os.chown(HISTORY_STATE, 999, 988)  # stonkai:stonkai
+        except Exception:
+            pass
+        logger.info(f"Index history written: {len(series.get('SPY', []))} SPY points since Jun 4")
+    except Exception as e:
+        logger.warning(f"index history write failed: {e}")
+
+
 def main():
     """Main loop - fetch every 30 seconds"""
     logger.info("Market Indices Fetcher Starting")
@@ -209,6 +252,7 @@ def main():
         data = fetch_market_data()
         if data and data.get('indices'):
             save_market_data(data)
+            maybe_write_index_history()
         else:
             logger.warning("Failed to fetch market indices")
         
