@@ -98,6 +98,47 @@ def _send_alert(summary: str, details: List[str]) -> None:
         _TELEGRAM.send(chr(10).join(msg_parts))
     except Exception as _e:
         print(f'[alert-fail] {type(_e).__name__}: {_e}', file=sys.stderr)
+
+_ALERT_STATE_PATH = os.path.join(BASE_DIR, 'run', 'monitor_alert_state.json')
+_ALERT_RESEND_SEC = 4 * 3600
+
+
+def _send_alert_throttled(summary: str, issues: List[str]) -> None:
+    """Telegram only for genuinely new issues; re-send ongoing set every 4h.
+
+    Keys are digit-normalized so pct jitter (11.7% -> 11.8%) doesn't re-alert,
+    and tier flap (NOW<->STRONG_NOW) is capped at one alert per 4h per class.
+    Warnings are deliberately log-only (narrative/popup drift checks compare
+    pipelines on different cadences; instant-equality is expected skew).
+    """
+    now = time.time()
+    try:
+        state = _load_json(_ALERT_STATE_PATH) or {}
+    except Exception:
+        state = {}
+    sent = state.get('sent', {})
+    fresh = {k: ts for k, ts in sent.items() if isinstance(ts, (int, float)) and now - ts < _ALERT_RESEND_SEC}
+    keys = {}
+    for i in issues:
+        k = re.sub(r'[\d.,]+', '', i)
+        keys[k] = i
+    new = [txt for k, txt in keys.items() if k not in fresh]
+    if not new:
+        return
+    payload = list(new)
+    suppressed = len(keys) - len(new)
+    if suppressed > 0:
+        payload.append(f'+{suppressed} ongoing issue(s), suppressed (4h window)')
+    _send_alert(summary, payload)
+    for k in keys:
+        fresh[k] = now
+    try:
+        tmp = _ALERT_STATE_PATH + '.tmp'
+        with open(tmp, 'w') as fh:
+            json.dump({'sent': fresh}, fh)
+        os.replace(tmp, _ALERT_STATE_PATH)
+    except Exception:
+        pass
 # ─── Helpers ──────────────────────────────────────────────────────────────
 def _log_issue(msg: str) -> None:
     ISSUES.append(msg)
@@ -1489,9 +1530,9 @@ def main() -> int:
         # Only print JSON report when there is something to say
         print(json.dumps(report, indent=2))
         # Send Telegram alert with issue summary
-        _send_alert(
-            f"{len(ISSUES)} issues, {len(WARNINGS)} warnings",
-            ISSUES + WARNINGS,
+        _send_alert_throttled(
+            f"{len(ISSUES)} issues, {len(WARNINGS)} warnings (warnings log-only)",
+            ISSUES,
         )
 
     return exit_code
