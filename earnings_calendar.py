@@ -38,7 +38,7 @@ def main():
         json.dump(out, f)
     os.replace(tmp, OUT)
     try:
-        os.chown(OUT, 1000, 1000)  # stonkai
+        os.chown(OUT, 999, 988)  # stonkai:stonkai (was uid 1000 = xcloud)
     except Exception:
         pass
     print(f"earnings_cache.json: {len(best)} symbols ({len(events)} events, {frm}..{to})")

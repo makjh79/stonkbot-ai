@@ -319,7 +319,7 @@ def maybe_generate():
         json.dump(diary, f)
     os.replace(tmp, DIARY_PATH)
     try:
-        os.chown(DIARY_PATH, 1000, 1000)
+        os.chown(DIARY_PATH, 999, 988)  # stonkai:stonkai (was uid 1000 = xcloud)
     except Exception:
         pass
     return f"written ({session}, {entry['source']})"

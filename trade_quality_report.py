@@ -242,7 +242,7 @@ def main():
         }
         with open("/var/www/hedge-fund-website/config_truth.json", "w") as f:
             json.dump(ct, f, indent=1)
-        try: os.chown("/var/www/hedge-fund-website/config_truth.json", 1000, 1000)
+        try: os.chown("/var/www/hedge-fund-website/config_truth.json", 999, 988)  # stonkai:stonkai (was uid 1000 = xcloud)
         except Exception: pass
 
         syms = set()
@@ -263,7 +263,7 @@ def main():
         emap = {s: {"date": ec[s]["date"], "hour": ec[s].get("hour", "")} for s in sorted(syms) if s in ec}
         with open("/var/www/hedge-fund-website/earnings.json", "w") as f:
             json.dump({"generated_at": ct["generated_at"], "earnings": emap}, f)
-        try: os.chown("/var/www/hedge-fund-website/earnings.json", 1000, 1000)
+        try: os.chown("/var/www/hedge-fund-website/earnings.json", 999, 988)  # stonkai:stonkai (was uid 1000 = xcloud)
         except Exception: pass
     except Exception as e:
         print(f"config_truth/earnings export skipped: {e}")
@@ -288,7 +288,7 @@ def main():
     with open(OUT, "w") as f:
         json.dump(out, f, indent=1)
     try:
-        os.chown(OUT, 1000, 1000)  # stonkai
+        os.chown(OUT, 999, 988)  # stonkai:stonkai (was uid 1000 = xcloud)
     except Exception:
         pass
     # Daily diary — idempotent, one entry per completed US session
