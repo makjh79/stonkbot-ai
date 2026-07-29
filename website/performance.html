@@ -306,16 +306,24 @@
         }
 
         async function loadData() {
-            const [phRaw, tlRaw, pdRaw] = await Promise.all([
+            const [phRaw, tlRaw, pdRaw, lqRaw, idxRaw] = await Promise.all([
                 fetch('portfolio_history.json?t=' + Date.now()).then(r => r.json()).catch(() => ({checks:[]})),
                 fetch('trades_log.json?t=' + Date.now()).then(r => r.json()).catch(() => ({trades:[]})),
-                fetch('portfolio_data.json?t=' + Date.now()).then(r => r.json()).catch(() => ({}))
+                fetch('portfolio_data.json?t=' + Date.now()).then(r => r.json()).catch(() => ({})),
+                fetch('live_quotes.json?t=' + Date.now()).then(r => r.json()).catch(() => null),
+                fetch('index_history.json?t=' + Date.now()).then(r => r.json()).catch(() => null)
             ]);
-            const checks = phRaw.checks || [];
+            window._perfLiveQuotes = lqRaw;
+            window._perfIndexHistory = idxRaw;
+            let checks = phRaw.checks || [];
+            checks = checks.filter(c => (c.timestamp || '') >= '2026-07-07');
             const reconstructed = phRaw.reconstructed || false;
             portfolioData = computeDailyDeltas(buildSeries(checks));
             tradeData = tlRaw.trades || [];
-            const liveValue = pdRaw.account?.portfolio_value || null;
+            let liveValue = pdRaw.account?.portfolio_value || null;
+            const lqFresh = lqRaw && lqRaw.portfolio_value && lqRaw.timestamp &&
+                (Date.now() - new Date(lqRaw.timestamp).getTime()) < 90000;
+            if (lqFresh) liveValue = lqRaw.portfolio_value;
             const badge = reconstructed ? ' · reconstructed from Alpaca fills' : '';
             document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) + badge;
             updateStats(portfolioData, liveValue);
@@ -324,7 +332,7 @@
 
         function updateStats(snapshots, liveValue) {
             if (!snapshots.length) return;
-            const STARTING_VALUE = 100000;
+            const STARTING_VALUE = 99866.86;  // Jul 7 reset snapshot (16:00 UTC)
             const latest = liveValue !== null ? liveValue : snapshots[snapshots.length-1].value;
             const ret = latest - STARTING_VALUE;
             const pct = (ret / STARTING_VALUE) * 100;
@@ -419,7 +427,13 @@
             const visible = filterRange(portfolioData, rangeDays);
             const labels = visible.map(s => s.label || s.date);
             const values = visible.map(s => s.value);
-            const benchmarks = visible.map(s => s.benchmark || null);
+            // Benchmark: SPY returns from index_history.json normalized to Jul 7 close.
+            const idxHist = window._perfIndexHistory || {};
+            const spySeries = (idxHist.series && idxHist.series.SPY) || [];
+            const spyMap = {};
+            const spyBase = spySeries.length ? spySeries[0].c : 747.71;
+            spySeries.forEach(p => { spyMap[p.d] = ((p.c - spyBase) / spyBase) * 100000.0; });
+            const benchmarks = visible.map(s => spyMap[s.date] ?? s.benchmark ?? null);
             const tradePoints = buildTradePoints(visible, tradeData);
 
             if (chart) chart.destroy();

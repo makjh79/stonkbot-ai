@@ -11006,218 +11006,73 @@ function updateDashboard(data, marketStatus) {
         }
 
         // ==================== INTERACTIVE CHART FEATURES ====================
+        // NOTE (2026-07-29): the previous hardcoded chartDataStore block was
+        // overwriting the real performance chart with stale fabricated values
+        // 500ms after page load, causing the chart to flip on every refresh.
+        // The canonical chart is now driven by loadPerformanceData() / setTimeRange()
+        // / applyTimeRange() using real portfolio_history + index_history data.
 
-        // Time Range Data Storage
-        const chartDataStore = {
-            '1D': {
-                labels: ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'],
-                stonkAI: [0, -0.5, -0.8, -1.2, -1.5, -1.8, -2.0, -2.3, -2.5, -2.7, -2.9, -3.0, -3.0, -3.0],
-                sp500: [0, -0.2, -0.4, -0.8, -1.0, -1.3, -1.5, -1.8, -2.0, -2.2, -2.4, -2.5, -2.6, -2.6],
-                dow: [0, -0.1, -0.3, -0.5, -0.7, -0.9, -1.0, -1.1, -1.2, -1.3, -1.35, -1.35, -1.35, -1.35],
-                nasdaq: [0, -0.8, -1.5, -2.2, -2.8, -3.2, -3.5, -3.8, -4.0, -4.1, -4.15, -4.18, -4.18, -4.18]
-            },
-            '1W': {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-                stonkAI: [0, -0.5, -1.2, -2.1, -3.0],
-                sp500: [0, -0.3, -0.9, -1.8, -2.6],
-                dow: [0, -0.2, -0.5, -0.9, -1.35],
-                nasdaq: [0, -0.9, -2.0, -3.1, -4.18]
-            },
-            '1M': {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                stonkAI: [0, -0.8, -1.8, -3.0],
-                sp500: [0, -0.5, -1.5, -2.6],
-                dow: [0, -0.4, -0.9, -1.35],
-                nasdaq: [0, -1.2, -2.6, -4.18]
-            },
-            '3M': {
-                labels: ['Month 1', 'Month 2', 'Month 3'],
-                stonkAI: [0, -1.5, -3.0],
-                sp500: [0, -1.3, -2.6],
-                dow: [0, -0.7, -1.35],
-                nasdaq: [0, -2.1, -4.18]
-            },
-            'ALL': {
-                labels: ['Start', 'Current'],
-                stonkAI: [0, -3.00],
-                sp500: [0, -2.60],
-                dow: [0, -1.35],
-                nasdaq: [0, -4.18]
-            }
-        };
-
-        let currentRange = '1M';
-        let visibleBenchmarks = ['S&P 500', 'DOW', 'NASDAQ'];
-
-        // Update Chart Range
         function updateChartRange(range) {
-            currentRange = range;
-
-            // Update button states
-            document.querySelectorAll('.time-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.range === range) {
-                    btn.classList.add('active');
-                }
-            });
-
-            const data = chartDataStore[range];
-            if (!data || !performanceChart) return;
-
-            // Update chart data
-            performanceChart.data.labels = data.labels;
-            performanceChart.data.datasets[0].data = data.stonkAI;
-
-            // Update visible benchmarks
-            performanceChart.data.datasets[1].hidden = !visibleBenchmarks.includes('S&P 500');
-            performanceChart.data.datasets[2].hidden = !visibleBenchmarks.includes('DOW');
-            performanceChart.data.datasets[3].hidden = !visibleBenchmarks.includes('NASDAQ');
-
-            performanceChart.data.datasets[1].data = data.sp500;
-            performanceChart.data.datasets[2].data = data.dow;
-            performanceChart.data.datasets[3].data = data.nasdaq;
-
-            performanceChart.update('active');
-
-            // Update summary stats
-            updateChartSummary(range, data);
-        }
-
-        // Toggle Benchmark Lines
-        function toggleBenchmark(benchmark) {
-            const index = visibleBenchmarks.indexOf(benchmark);
-            if (index > -1) {
-                visibleBenchmarks.splice(index, 1);
-            } else {
-                visibleBenchmarks.push(benchmark);
-            }
-
-            if (!performanceChart) return;
-
-            const datasetMap = {
-                'S&P 500': 1,
-                'DOW': 2,
-                'NASDAQ': 3
-            };
-
-            const datasetIndex = datasetMap[benchmark];
-            if (datasetIndex !== undefined) {
-                const meta = performanceChart.getDatasetMeta(datasetIndex);
-                meta.hidden = !visibleBenchmarks.includes(benchmark);
-                performanceChart.update();
+            // Delegates to the real chart controller so any legacy callers stay safe.
+            if (typeof setTimeRange === 'function') {
+                setTimeRange(range);
+            } else if (typeof applyTimeRange === 'function') {
+                applyTimeRange(range);
             }
         }
 
-        // Update Chart Summary Statistics
         function updateChartSummary(range, data) {
-            const stonkData = data.stonkAI;
-            const start = stonkData[0];
-            const end = stonkData[stonkData.length - 1];
-            const min = Math.min(...stonkData);
-            const max = Math.max(...stonkData);
-
-            // Calculate volatility (standard deviation)
-            const mean = stonkData.reduce((a, b) => a + b, 0) / stonkData.length;
-            const variance = stonkData.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / stonkData.length;
-            const volatility = Math.sqrt(variance);
-
-            // Update summary cards if they exist
-            const summaryContainer = document.getElementById('chart-summary');
-            if (summaryContainer) {
-                summaryContainer.innerHTML = `
-                    <div class="summary-card">
-                        <div class="summary-label">Period Return</div>
-                        <div class="summary-value ${end >= 0 ? 'positive' : 'negative'}">${end >= 0 ? '+' : ''}${end.toFixed(2)}%</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">Best</div>
-                        <div class="summary-value positive">+${max.toFixed(2)}%</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">Worst</div>
-                        <div class="summary-value negative">${min.toFixed(2)}%</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">Volatility</div>
-                        <div class="summary-value">${volatility.toFixed(2)}%</div>
-                    </div>
-                `;
-            }
+            // Legacy no-op; real summary is rendered by updatePerformanceSummary.
         }
 
-        // Export Chart Data
         function exportChartData() {
-            const data = chartDataStore[currentRange];
-            const csvContent = [
-                ['Date/Time', 'StonkBOT.AI', 'S&P 500', 'DOW', 'NASDAQ'].join(','),
-                ...data.labels.map((label, i) => [
-                    label,
-                    data.stonkAI[i],
-                    data.sp500[i],
-                    data.dow[i],
-                    data.nasdaq[i]
-                ].join(','))
-            ].join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
+            if (!timeRangeData || !timeRangeData[currentTimeRange]) return;
+            const r = timeRangeData[currentTimeRange];
+            const rows = [['Date/Time', 'StonkBOT.AI', 'S&P 500', 'DOW', 'NASDAQ']];
+            for (let i = 0; i < r.labels.length; i++) {
+                rows.push([
+                    r.labels[i],
+                    r.data[i] ?? '',
+                    r.sp500[i] ?? '',
+                    r.dow[i] ?? '',
+                    r.nasdaq[i] ?? ''
+                ].join(','));
+            }
+            const blob = new Blob([rows.join('\\n')], { type: 'text/csv' });
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `stonkai-performance-${currentRange.toLowerCase()}-${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a);
+            a.href = URL.createObjectURL(blob);
+            a.download = 'stonkbot-performance-' + currentTimeRange + '.csv';
             a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
         }
 
-        // Export Chart Image
+        function shareOnTwitter() {
+            const r = timeRangeData && timeRangeData[currentTimeRange];
+            const ret = r && r.data.length ? r.data[r.data.length - 1] : 0;
+            const text = `StonkBOT.AI Performance: ${currentTimeRange} return ${ret}%\n\nAutonomous AI trading bot - transparent, automated, zero emotions.\n\nSee live performance:`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+        }
+
+        function addChartAnnotations() {
+            // Annotations plugin not currently enabled; safe no-op.
+        }
+
+        function toggleBenchmark(benchmark) {
+            if (!performanceChart) return;
+            const map = { 'S&P 500': 1, 'DOW': 2, 'NASDAQ': 3 };
+            const idx = map[benchmark];
+            if (idx == null) return;
+            const meta = performanceChart.getDatasetMeta(idx);
+            meta.hidden = meta.hidden === null ? !performanceChart.data.datasets[idx].hidden : null;
+            performanceChart.update();
+        }
+
         function exportChartImage() {
             if (!performanceChart) return;
             const link = document.createElement('a');
-            link.download = `stonkai-chart-${new Date().toISOString().split('T')[0]}.png`;
+            link.download = 'stonkbot-performance.png';
             link.href = performanceChart.toBase64Image();
             link.click();
         }
-
-        // Share on Twitter
-        function shareOnTwitter() {
-            const text = `StonkBOT.AI Performance: ${currentRange} return ${chartDataStore[currentRange].stonkAI.slice(-1)[0]}%\n\nAutonomous AI trading bot - transparent, automated, zero emotions.\n\nSee live performance:`;
-            const url = window.location.href;
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-        }
-
-        // Add Chart Annotations (Key Events)
-        function addChartAnnotations() {
-            if (!performanceChart) return;
-
-            // Add annotations plugin if available
-            // This would mark: trade entries, stop losses, profit exits, market events
-            const annotations = {
-                line1: {
-                    type: 'line',
-                    xMin: 'Current',
-                    xMax: 'Current',
-                    borderColor: 'rgba(6, 182, 212, 0.5)',
-                    borderWidth: 1,
-                    borderDash: [5, 5],
-                    label: {
-                        content: 'Current',
-                        enabled: true,
-                        position: 'end'
-                    }
-                }
-            };
-        }
-
-        // Initialize with current range on load
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                if (performanceChart) {
-                    updateChartRange('1M');
-                }
-            }, 500);
-
-        });
 
         // Add click handler for activity log modal background
         document.addEventListener('click', function(e) {
