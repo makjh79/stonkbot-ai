@@ -20,11 +20,15 @@ logger = logging.getLogger(__name__)
 # Alpaca config
 ALPACA_CONFIG_FILE = Path(__file__).parent / "alpaca_config.json"
 
-# July 7, 2026 baseline prices (bot reset date — race is measured from the reset)
+# June 4, 2026 inception closes — ONE window for the whole site (2026-07-29 fix).
+# Hero card, scoreboard and progress bars all measure from experiment inception;
+# previously these were Jul 7 reset prices, which made the 'Bot vs S&P' gap mix
+# windows (bot return since Jun 4 vs index return since Jul 7, ~1pp overstated).
+# SPY 755.15 matches portfolio_history.benchmark_base.spy_close exactly.
 RESET_PRICES = {
-    'SPY': 747.71,       # S&P 500 ETF (Alpaca, Jul 7 close)
-    'DIA': 528.45,       # SPDR Dow Jones ETF (Alpaca, Jul 7 close)
-    'QQQ': 709.43        # Invesco QQQ NASDAQ ETF (Alpaca, Jul 7 close)
+    'SPY': 755.15,       # S&P 500 ETF (Alpaca, Jun 4 2026 close)
+    'DIA': 515.15,       # SPDR Dow Jones ETF (Alpaca, Jun 4 2026 close)
+    'QQQ': 739.80        # Invesco QQQ NASDAQ ETF (Alpaca, Jun 4 2026 close)
 }
 
 EXPERIMENT_START_VALUE = 100000  # $100K starting value
@@ -199,7 +203,7 @@ def main():
     """Main loop - fetch every 30 seconds"""
     logger.info("Market Indices Fetcher Starting")
     logger.info("SPY source: Alpaca")
-    logger.info(f"Jul 7 reset baselines: SPY=${RESET_PRICES['SPY']}, DIA=${RESET_PRICES['DIA']}, QQQ=${RESET_PRICES['QQQ']}")
+    logger.info(f"Jun 4 inception baselines: SPY=${RESET_PRICES['SPY']}, DIA=${RESET_PRICES['DIA']}, QQQ=${RESET_PRICES['QQQ']}")
     
     while True:
         data = fetch_market_data()
