@@ -140,8 +140,12 @@ def _send_alert_throttled(summary: str, issues: List[str]) -> None:
     except Exception:
         pass
 # ─── Helpers ──────────────────────────────────────────────────────────────
+ISSUES_TAGGED: List[Any] = []  # (check_name, msg) pairs for the persistence gate
+
+
 def _log_issue(msg: str) -> None:
     ISSUES.append(msg)
+    ISSUES_TAGGED.append((_CURRENT_CHECK, msg))
     if _CURRENT_CHECK in PUBLIC_CHECKS:
         PUBLIC_ISSUES.append(msg)
     print(f"[ISSUE] {msg}", file=sys.stderr)
@@ -1493,6 +1497,55 @@ def _check_process_health():
                 except Exception as e:
                     _log_warn(f"Failed to kill root-owned {label} pid={pid}: {e}")
 
+
+# ─── Persistence gate (2026-07-29 permanent anti-noise architecture) ────────
+# Exact state checks (process dead, crash, pipeline stale, services down) alert
+# immediately. EVERYTHING ELSE — any cross-pipeline value comparison, present
+# or future — must persist 3 consecutive runs (15 min) before it can set
+# DEGRADED or page Telegram. Cadence skew never survives 3 fresh samples.
+_IMMEDIATE_CHECKS = frozenset({
+    "check_process_health", "check_bot_crash", "check_signals_write_health",
+    "check_file_freshness", "check_services", "check_system_time",
+    "check_open_orders", "check_alpaca_portfolio_sync",
+})
+_PERSIST_RUNS = 3
+_PERSIST_STATE = os.path.join(BASE_DIR, "run", "monitor_persist_state.json")
+
+
+def _persistence_gate(tagged):
+    """Split tagged issues into (confirmed, transient). Confirmed = immediate
+    checks + issues seen in _PERSIST_RUNS consecutive runs."""
+    confirmed, seen = [], set()
+    try:
+        state = _load_json(_PERSIST_STATE) or {}
+        counts = state.get("counts", {})
+    except Exception:
+        counts = {}
+    for check, msg in tagged:
+        if check in _IMMEDIATE_CHECKS:
+            confirmed.append((check, msg))
+            continue
+        key = check + ":" + re.sub(r"[\d.,]+", "", msg)
+        seen.add(key)
+        try:
+            counts[key] = int(counts.get(key, 0)) + 1
+        except Exception:
+            counts[key] = 1
+        if counts[key] >= _PERSIST_RUNS:
+            confirmed.append((check, msg))
+    try:
+        counts = {k: v for k, v in counts.items() if k in seen}
+        tmp = _PERSIST_STATE + ".tmp"
+        with open(tmp, "w") as fh:
+            json.dump({"counts": counts}, fh)
+        os.replace(tmp, _PERSIST_STATE)
+    except Exception:
+        pass
+    confirmed_set = {id(m) for _, m in confirmed}
+    transient = [(c, m) for c, m in tagged if id(m) not in confirmed_set]
+    return confirmed, transient
+
+
 def main() -> int:
     print("StonkBOT Integrity Monitor running ...")
     _run(_check_file_permissions)
@@ -1530,27 +1583,30 @@ def main() -> int:
     _run(check_cron_heartbeats)
     _run(check_cron_entries)
 
+    _confirmed, _transient = _persistence_gate(ISSUES_TAGGED)
+    _confirmed_msgs = [m for _, m in _confirmed]
+    _confirmed_public = [m for c, m in _confirmed if c in PUBLIC_CHECKS]
+
     status = "HEALTHY"
     exit_code = 0
-    if WARNINGS and not ISSUES:
-        status = "HEALTHY"  # warnings are informational only
-        exit_code = 0
-    if ISSUES:
+    if _confirmed_msgs:
         status = "DEGRADED"
         exit_code = 1
 
     report = {
         "status": status,
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "issue_count": len(ISSUES),
+        "issue_count": len(_confirmed_msgs),
         "warning_count": len(WARNINGS),
-        "issues": ISSUES,
+        "issues": _confirmed_msgs,
+        "transient_issues": [m for _, m in _transient],
+        "raw_issue_count": len(ISSUES),
         "warnings": WARNINGS,
         # Public banner view: only visitor-visible breakage lights the site
         # anomaly banner. Ops-only issues (churn, narrative drift, cron audits)
         # still set overall status / Telegram, but not the banner.
-        "public_status": "DEGRADED" if PUBLIC_ISSUES else "HEALTHY",
-        "public_issues": PUBLIC_ISSUES,
+        "public_status": "DEGRADED" if _confirmed_public else "HEALTHY",
+        "public_issues": _confirmed_public,
     }
 
     # Publish status for the website anomaly banner (it fetches
@@ -1571,8 +1627,8 @@ def main() -> int:
         print(json.dumps(report, indent=2))
         # Send Telegram alert with issue summary
         _send_alert_throttled(
-            f"{len(ISSUES)} issues, {len(WARNINGS)} warnings (warnings log-only)",
-            ISSUES,
+            f"{len(_confirmed_msgs)} confirmed issues, {len(WARNINGS)} warnings",
+            _confirmed_msgs,
         )
 
     return exit_code
