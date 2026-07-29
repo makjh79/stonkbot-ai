@@ -363,13 +363,39 @@ def check_shadow_company_names() -> None:
         # Only flag dict definitions, not imports or .get() references
         if re.search(r"^[^#]*COMPANY_NAMES\s*=\s*\{", txt, re.MULTILINE):
             _log_issue(f"Shadow COMPANY_NAMES definition found in {p.name}")
+_ALIGN_STATE_PATH = os.path.join(BASE_DIR, "run", "alignment_state.json")
+
+
 def check_alignment_signals_vs_watchlist() -> None:
-    """ai_watchlist_live.json must mirror signals.json (tiers, entry, readiness, conf)."""
+    """ai_watchlist_live.json must mirror signals.json (tiers, entry, readiness, conf).
+
+    Cadence-aware since 2026-07-29: watchlist writer and signal engine regenerate
+    on different clocks, so instant-equality produced constant skew alerts.
+    Numeric fields get tolerances (readiness >5, conf count >2); entry_eligible
+    flips must persist 3 consecutive runs (15 min) before flagging. Tier mapping
+    and missing-symbol checks stay strict (deterministic, no skew excuse).
+    """
     signals = _load_json(os.path.join(BASE_DIR, "signals.json"))
     watchlist = _load_json(os.path.join(WEB_DIR, "ai_watchlist_live.json"))
     if signals is None or watchlist is None:
         _log_issue("Missing signals.json or ai_watchlist_live.json")
         return
+
+    try:
+        _pstate = _load_json(_ALIGN_STATE_PATH) or {}
+        _counts = _pstate.get("counts", {})
+    except Exception:
+        _counts = {}
+    _seen = set()
+
+    def _elig_gate(sym):
+        key = "elig:" + sym
+        _seen.add(key)
+        try:
+            _counts[key] = int(_counts.get(key, 0)) + 1
+        except Exception:
+            _counts[key] = 1
+        return _counts[key] >= 3
 
     sig_map: Dict[str, Dict] = {s.get("symbol"): s for s in signals.get("signals", []) if s.get("symbol")}
     for item in watchlist.get("watchlist", []):
@@ -383,42 +409,56 @@ def check_alignment_signals_vs_watchlist() -> None:
 
         t = item.get("targets", {}) or {}
 
-        # readiness
-        if item.get("readiness_score") != sig.get("readiness_score"):
-            _log_issue(
-                f"ALIGNMENT {sym}: readiness_score watchlist={item.get('readiness_score')} "
-                f"signal={sig.get('readiness_score')}"
-            )
+        # readiness (tolerance 5 pts — cadence skew)
+        wr, sr = item.get("readiness_score"), sig.get("readiness_score")
+        try:
+            if wr is not None and sr is not None and abs(float(wr) - float(sr)) > 5.0:
+                _log_issue(
+                    f"ALIGNMENT {sym}: readiness_score watchlist={wr} signal={sr}"
+                )
+        except (TypeError, ValueError):
+            pass
 
-        # backend tier vs display tier mapping must be consistent
+        # backend tier vs display tier mapping must be consistent (strict)
         backend_tier = sig.get("tier")
         display_tier = item.get("display_tier") or t.get("display_tier") or item.get("signal_tier")
         expected = expected_display_tier_for_signal(sig)
         if display_tier != expected:
             _log_issue(f"ALIGNMENT {sym}: backend {backend_tier} should map to {expected}, got {display_tier}")
 
-        # entry_eligible must agree
+        # entry_eligible: only flag after 3 consecutive runs of disagreement
         w_entry = item.get("entry_eligible") or t.get("entry_eligible")
-        if w_entry != sig.get("entry_eligible"):
+        if w_entry != sig.get("entry_eligible") and _elig_gate(sym):
             _log_issue(
-                f"ALIGNMENT {sym}: entry_eligible watchlist={w_entry} signal={sig.get('entry_eligible')}"
+                f"ALIGNMENT {sym}: entry_eligible watchlist={w_entry} signal={sig.get('entry_eligible')} (persistent)"
             )
 
-        # confirmation_count must agree
+        # confirmation_count (tolerance 2 — cadence skew; canonical-count
+        # unification for the stored signal field is queued in the freeze)
         w_conf = item.get("confirmation_count") or t.get("confirmation_count")
-        if w_conf != sig.get("confirmation_count"):
-            _log_issue(
-                f"ALIGNMENT {sym}: confirmation_count watchlist={w_conf} signal={sig.get('confirmation_count')}"
-            )
+        s_conf = sig.get("confirmation_count")
+        try:
+            if w_conf is not None and s_conf is not None and abs(int(w_conf) - int(s_conf)) > 2:
+                _log_issue(
+                    f"ALIGNMENT {sym}: confirmation_count watchlist={w_conf} signal={s_conf}"
+                )
+        except (TypeError, ValueError):
+            pass
 
-        # momentum_score field must exist and agree
+        # momentum_score field must exist (exact value skews; presence matters)
         if "momentum_score" not in item:
             _log_warn(f"Watchlist {sym} missing momentum_score field")
-        elif item.get("momentum_score") != sig.get("momentum_score"):
-            _log_warn(
-                f"ALIGNMENT {sym}: momentum_score watchlist={item.get('momentum_score')} "
-                f"signal={sig.get('momentum_score')}"
-            )
+
+    try:
+        _counts = {k: v for k, v in _counts.items() if k in _seen}
+        _tmp = _ALIGN_STATE_PATH + ".tmp"
+        with open(_tmp, "w") as _fh:
+            json.dump({"counts": _counts}, _fh)
+        os.replace(_tmp, _ALIGN_STATE_PATH)
+    except Exception:
+        pass
+
+
 def check_factor_confirmation_integrity() -> None:
     """Every signal must have a consistent confirmations dict and plausible confirmation_count."""
     signals = _load_json(os.path.join(BASE_DIR, "signals.json"))
