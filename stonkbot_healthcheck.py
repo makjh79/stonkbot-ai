@@ -141,7 +141,17 @@ def check_db_integrity(conn: sqlite3.Connection) -> List[str]:
     try:
         result = conn.execute("PRAGMA integrity_check").fetchone()[0]
         if result != "ok":
-            warnings.append(f"DB integrity check failed: {result}")
+            # SQLite reports "never used" free pages as non-ok but they are benign.
+            # Only treat as corruption if there is any line that is not a free-page note.
+            bad_lines = [
+                line.strip()
+                for line in result.strip().splitlines()
+                if line.strip()
+                and "never used" not in line.lower()
+                and "* in database main *" not in line.lower()
+            ]
+            if bad_lines:
+                warnings.append(f"DB integrity check failed: {result}")
     except Exception as e:
         warnings.append(f"DB integrity check error: {e}")
     return warnings
@@ -303,7 +313,7 @@ def get_consecutive_ok_count(conn: sqlite3.Connection) -> int:
     """)
     count = 0
     for row in cur.fetchall():
-        if row[0] == 'ok':
+        if row[0] in ('ok', 'stale'):  # non-fail == no critical findings == recovering
             count += 1
         else:
             break
@@ -423,7 +433,8 @@ def main():
 
     # ── Critical checks (always run) ──
     critical.extend(check_db_integrity(conn))
-    critical.extend(check_circuit_breaker())
+    warnings.extend(check_circuit_breaker())  # already-open breaker = warn;
+    # critical would deadlock auto-reset (elif below never reached)
 
     stale_jobs = check_stale_jobs(stale_minutes=20)
     critical_stale = [j for j in stale_jobs if j["job_name"] in CRITICAL_JOBS]
@@ -456,8 +467,21 @@ def main():
             critical.append("🛑 CIRCUIT BREAKER TRIPPED — trading halted")
     elif cb.is_open():
         ok_count = get_consecutive_ok_count(conn)
-        if ok_count >= 3:
-            cb.reset()
+        _st = cb.status()
+        _reason = _st.get("reason") or ""
+        _manual = _reason == CircuitBreaker._HALT_REASONS.get("manual")
+        # Time gate: >=10 min since trip, so a fast/flapping cadence can't
+        # bounce the breaker back open during a brief healthy blip.
+        _age_ok = True
+        _ta = _st.get("tripped_at")
+        if _ta:
+            try:
+                _t0 = datetime.strptime(_ta, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+                _age_ok = (datetime.now(timezone.utc) - _t0).total_seconds() >= 600
+            except ValueError:
+                _age_ok = False
+        if ok_count >= 3 and _age_ok and not _manual:
+            cb.reset(by="auto_recovery")
             warnings.append(f"✅ Circuit breaker auto-reset after {ok_count} consecutive healthy cycles")
         else:
             warnings.append("Circuit breaker still OPEN — manual reset or wait for 3 clean checks")
