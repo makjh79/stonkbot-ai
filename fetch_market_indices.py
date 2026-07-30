@@ -37,12 +37,28 @@ def _get_hub():
     from alpaca_data import get_data_hub
     return get_data_hub()
 
+def _get_index_price(hub, symbol):
+    """Latest trade while the market is open; latest daily-bar close when closed.
+
+    After-hours trades otherwise leak into current_price (QQQ showed 666.07 AH
+    vs official close 661.73), contradicting the site's own chart. Fail-open:
+    if the clock check or bars are unavailable, keep the latest trade."""
+    try:
+        if not hub.is_market_open():
+            bars = hub.get_daily_bars([symbol], days=5)
+            closes = bars.get(symbol, {}).get('closes', [])
+            if closes:
+                return float(closes[-1])
+    except Exception as e:
+        logger.warning(f"{symbol} close-snap failed, using latest trade: {e}")
+    price = hub.get_latest_price(symbol)
+    return float(price) if price else None
+
 def fetch_spy_from_alpaca():
     """Fetch SPY price from Alpaca data hub"""
     try:
         hub = _get_hub()
-        price = hub.get_latest_price('SPY')
-        return float(price) if price else None
+        return _get_index_price(hub, 'SPY')
     except Exception as e:
         logger.warning(f"Alpaca SPY fetch failed: {e}")
         return None
@@ -112,7 +128,7 @@ def fetch_market_data():
     dia_price = None
     try:
         hub = _get_hub()
-        dia_price = hub.get_latest_price('DIA')
+        dia_price = _get_index_price(hub, 'DIA')
     except Exception as e:
         logger.warning(f"Alpaca DIA fetch failed: {e}")
     if not dia_price:
@@ -143,7 +159,7 @@ def fetch_market_data():
     qqq_price = None
     try:
         hub = _get_hub()
-        qqq_price = hub.get_latest_price('QQQ')
+        qqq_price = _get_index_price(hub, 'QQQ')
     except Exception as e:
         logger.warning(f"Alpaca QQQ fetch failed: {e}")
     if not qqq_price:
