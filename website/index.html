@@ -10100,7 +10100,7 @@ function updateDashboard(data, marketStatus) {
             const position = currentData.positions.find(p => p.symbol === symbol);
 
             const companyName = position?.name || position?.company || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
-            const livePrice = liveData.price || (position ? position.current : 0) || preGenerated.price || 0;
+            const livePrice = (position ? position.current : 0) || liveData.price || preGenerated.price || 0;
             const readiness = preGenerated.readiness_score != null ? preGenerated.readiness_score : 50;
             // Align tier with backend tier from preGenerated popup data or watchlist backend_tier
             const watchlistItem = typeof aiWatchlist !== 'undefined' ? aiWatchlist.find(s => s.symbol === symbol) : null;
