@@ -11839,6 +11839,10 @@ function updateDashboard(data, marketStatus) {
             if (!container) return;
 
             aiWatchlist = getWatchlistWithLivePrices();
+            // Held symbols render as holdings cards priced from portfolio_data.json.
+            // Listing them here too priced one stock from two feeds (frozen overnight
+            // vs live pre-market). Feed untouched: popups keep full signal context.
+            aiWatchlist = aiWatchlist.filter(s => s.buy_status !== 'hold');
 
             // Use server's signal tier (calculated by AI scoring system)
             const watchlistWithTiers = aiWatchlist.map(stock => {
