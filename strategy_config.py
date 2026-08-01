@@ -164,6 +164,23 @@ def export_for_website() -> Dict[str, Any]:
             "abs_cut": f"max({ABS_HARD_CUT_PCT:.0%}, 1x ATR)",
             "vwap": f"max({VWAP_STOP_MAX_PCT:.0%}, 1x ATR) below VWAP",
         },
+        # Raw values for the website Risk Guardrails panel — the panel renders
+        # from these so it can never drift from strategy_config.py.
+        "guardrails": {
+            "hard_stop_atr_mult": HARD_STOP_ATR_MULTIPLIER,
+            "hard_stop_min_pct": HARD_STOP_MIN_PCT,
+            "hard_stop_max_pct": HARD_STOP_MAX_PCT,
+            "trailing_stop_atr_mult": TRAILING_STOP_ATR_MULTIPLIER,
+            "trailing_stop_min_pct": TRAILING_STOP_MIN_PCT,
+            "trailing_stop_max_pct": TRAILING_STOP_MAX_PCT,
+            "max_sector_pct": MAX_SECTOR_PCT,
+            "cash_floor_pct": CASH_FLOOR_PCT,
+            "entry_cash_buffer_pct": ENTRY_CASH_BUFFER_PCT,
+            "atr_entry_max_pct": ATR_ENTRY_MAX_PCT,
+            "earnings_blackout_days": EARNINGS_BLACKOUT_DAYS,
+            "implied_move_max_atr_mult": IMPLIED_MOVE_MAX_ATR_MULT,
+            "high_beta_basket_cap_pct": HIGH_BETA_BASKET_CAP_PCT,
+        },
     }
 
 

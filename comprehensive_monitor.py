@@ -1260,6 +1260,36 @@ def check_open_orders() -> None:
             _log_issue(f"Stuck open {side} order for {symbol}: {age_min:.0f} min old (id {o.get('id', '?')})")
         elif age_min > 15:
             _log_warn(f"Old open {side} order for {symbol}: {age_min:.0f} min old")
+def check_strategy_alignment() -> None:
+    """Run verify_strategy_alignment.py — every strategy surface must match
+    strategy_config.py (single source of truth). The verifier derives all
+    expected values from strategy_config imports, so it never needs updating
+    when the strategy changes. Failures here mean drift between config and
+    displayed/enforced strategy copy."""
+    import subprocess
+    script = os.path.join(BASE_DIR, "verify_strategy_alignment.py")
+    if not os.path.exists(script):
+        _log_warn("verify_strategy_alignment.py missing — skipping strategy alignment check")
+        return
+    try:
+        proc = subprocess.run(
+            ["python3", script],
+            capture_output=True, text=True, timeout=120, cwd=BASE_DIR,
+        )
+    except Exception as exc:
+        _log_warn(f"verify_strategy_alignment.py failed to run: {exc}")
+        return
+    out = (proc.stdout or "") + (proc.stderr or "")
+    if proc.returncode != 0:
+        # Each FAIL line becomes its own issue for actionable alerting
+        fail_lines = [l.strip()[6:] for l in out.splitlines() if l.strip().startswith("FAIL:")]
+        if fail_lines:
+            for fl in fail_lines:
+                _log_issue(f"[STRATEGY-DRIFT] {fl}")
+        else:
+            _log_issue(f"[STRATEGY-DRIFT] verify_strategy_alignment.py exit {proc.returncode}: {out[-400:]}")
+
+
 def check_cron_entries() -> None:
     """Ensure critical cron jobs are actually installed."""
     import subprocess
@@ -1271,7 +1301,7 @@ def check_cron_entries() -> None:
     required = {
         "sync_alpaca_trades.py": "sync Alpaca trades",
         "dynamic_watchlist_manager.py": "watchlist rotation",
-        "snapshot_portfolio.py": "portfolio snapshot",
+        # Portfolio snapshot is now performed live by trading_bot.py each cycle; no cron needed.
         "thinking_journal.py": "Bot Thinking journal",
         "generate_thinking_explainers.py": "Bot Thinking LLM explainers",
     }
@@ -1582,6 +1612,7 @@ def main() -> int:
     _run(check_alpaca_portfolio_sync)
     _run(check_cron_heartbeats)
     _run(check_cron_entries)
+    _run(check_strategy_alignment)
 
     _confirmed, _transient = _persistence_gate(ISSUES_TAGGED)
     _confirmed_msgs = [m for _, m in _confirmed]

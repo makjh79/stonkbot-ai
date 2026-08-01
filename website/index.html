@@ -4088,21 +4088,21 @@
           <div class="risk-grid" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.75rem;">
             <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem;font-weight:600;">Risk Guardrails</div>
             <div class="risk-items" style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.68rem;color:var(--text-secondary);">
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops 1.5× ATR [5%,11%]</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops 2× ATR [5%,14%]</div>
+              <div id="rg-hard-stop" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops 1.5× ATR [5%,11%]</div>
+              <div id="rg-trailing-stop" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops 2× ATR [5%,14%]</div>
               <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">12% max per new position</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Min hold 5d (RISK_ON) / 3d (RISK_OFF)</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rotation disabled 2026-08-01</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10% cash floor; 12% entry buffer</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries if ATR > 7%</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries within 2 days of earnings</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No pre-earnings entry when IV move > 1.5× ATR</div>
+              <div id="rg-sector-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
+              <div id="rg-min-hold" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Min hold 5d (RISK_ON) / 3d (RISK_OFF)</div>
+              <div id="rg-rotation" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rotation disabled 2026-08-01</div>
+              <div id="rg-cash-floor" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10% cash floor; 12% entry buffer</div>
+              <div id="rg-atr-max" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries if ATR > 7%</div>
+              <div id="rg-earnings-blackout" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries within 2 days of earnings</div>
+              <div id="rg-iv-move" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No pre-earnings entry when IV move > 1.5× ATR</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">20h stop-loss re-entry cooldown</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">4h non-stop sell re-entry cooldown</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Post-stop re-entry at/below stop price (7d)</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">1 new entry per symbol per day</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">High-beta basket cap 35% deployed</div>
+              <div id="rg-beta-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">High-beta basket cap 35% deployed</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">New entries halted at -10% portfolio DD</div>
             </div>
           </div>
@@ -4197,6 +4197,26 @@
               if (ct?.caps) {
                 const rc = document.getElementById('risk-cell-poscap');
                 if (rc) rc.textContent = `${(ct.caps.STRONG_NOW*100).toFixed(0)}% max per new position`;
+              }
+              // Risk Guardrails panel renders from config_truth.guardrails so
+              // it can never drift from strategy_config.py (single source of truth).
+              const g = ct?.guardrails;
+              if (g) {
+                const setTxt = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+                const pc = v => `${(v*100).toFixed(0)}%`;
+                setTxt('rg-hard-stop', `Hard stops ${g.hard_stop_atr_mult}× ATR [${pc(g.hard_stop_min_pct)},${pc(g.hard_stop_max_pct)}]`);
+                setTxt('rg-trailing-stop', `Trailing stops ${g.trailing_stop_atr_mult}× ATR [${pc(g.trailing_stop_min_pct)},${pc(g.trailing_stop_max_pct)}]`);
+                setTxt('rg-sector-cap', `${pc(g.max_sector_pct)} max per sector`);
+                setTxt('rg-cash-floor', `${pc(g.cash_floor_pct)} cash floor; ${pc(g.entry_cash_buffer_pct)} entry buffer`);
+                setTxt('rg-atr-max', `No entries if ATR > ${pc(g.atr_entry_max_pct)}`);
+                setTxt('rg-earnings-blackout', `No entries within ${g.earnings_blackout_days} days of earnings`);
+                setTxt('rg-iv-move', `No pre-earnings entry when IV move > ${g.implied_move_max_atr_mult}× ATR`);
+                setTxt('rg-beta-cap', `High-beta basket cap ${pc(g.high_beta_basket_cap_pct)} deployed`);
+              }
+              const pm = ct?.position_management;
+              if (pm?.min_hold_days) {
+                const mh = document.getElementById('rg-min-hold');
+                if (mh) mh.textContent = `Min hold ${pm.min_hold_days.RISK_ON}d (RISK_ON) / ${pm.min_hold_days.RISK_OFF}d (RISK_OFF)`;
               }
               const tq = await fetch('trade_quality.json').then(r=>r.ok?r.json():null).catch(()=>null);
               const statusEl = document.getElementById('exp-status');
