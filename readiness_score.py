@@ -37,9 +37,11 @@ from signal_rules import (
     ENTRY_MIN_CONFIRMATIONS,
     ENTRY_MIN_HARD_CONFIRMATIONS,
     ENTRY_READINESS_MIN,
+    HARD_CONFIRMATION_KEYS,
     TIER_NOW_MIN,
     TIER_STRONG_NOW_MIN,
     TIER_WATCH_MIN,
+    V3_REQUIRED_POSITIVE_KEYS,
 )
 
 # PEAD removed — Alpaca has no earnings API, factor dropped for zero external deps
@@ -689,12 +691,9 @@ def compute_readiness(
     # Confirmation count: canonical boolean count (single source of truth via signal_rules)
     confirmation_count = compute_confirmation_count(confirmations)
 
-    # v3 2026-08-01: removed macd_turning and intraday_confirmed from hard keys
-    # (negative live edge: MACD -15.5pp, intraday -8.9pp).
-    # Aligned with signal_rules.HARD_CONFIRMATION_KEYS v3.
+    # v3: hard keys imported from strategy_config via signal_rules (single source of truth)
     hard_confirmations = sum(
-        1 for k in ("volume_confirmed", "options_confirmed",
-                    "vwap_confirmed", "relvol_confirmed")
+        1 for k in HARD_CONFIRMATION_KEYS
         if confirmations.get(k)
     )
 
@@ -715,11 +714,9 @@ def compute_readiness(
         and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
     )
 
-    # v3 2026-08-01: require at least one positive-edge hard confirmation
-    # (volume or VWAP — the only consistently positive-edge factors in live attribution).
-    _has_positive_hard = (
-        confirmations.get("volume_confirmed", False)
-        or confirmations.get("vwap_confirmed", False)
+    # v3: at least one positive-edge hard confirmation (volume or VWAP) required
+    _has_positive_hard = any(
+        confirmations.get(k, False) for k in V3_REQUIRED_POSITIVE_KEYS
     )
 
     entry_eligible = (

@@ -12,6 +12,15 @@ should import from here, not re-derive locally.
 
 from typing import Any, Dict, Iterable, Optional
 
+# v3 2026-08-01: single source of truth for strategy parameters
+from strategy_config import (
+    ENTRY_READINESS_MIN,
+    ENTRY_MIN_CONFIRMATIONS,
+    ENTRY_MIN_HARD_CONFIRMATIONS,
+    HARD_CONFIRMATION_KEYS,
+    REQUIRED_POSITIVE_HARD_KEYS as V3_REQUIRED_POSITIVE_KEYS,
+)
+
 # -----------------------------------------------------------------------------
 # Tier thresholds (backend names)
 # -----------------------------------------------------------------------------
@@ -22,12 +31,9 @@ TIER_WATCH_MIN = 55.0        # raised from 50
 # Minimum readiness for any "scored" frontend visibility (BUILDING/WATCHING)
 TIER_BUILDING_MIN = TIER_WATCH_MIN
 
-# -----------------------------------------------------------------------------
-# Entry gate
-# -----------------------------------------------------------------------------
-ENTRY_READINESS_MIN = 75.0
-ENTRY_MIN_CONFIRMATIONS = 5
-ENTRY_MIN_HARD_CONFIRMATIONS = 1
+# Entry gate — imported from strategy_config (single source of truth)
+# ENTRY_READINESS_MIN, ENTRY_MIN_CONFIRMATIONS, ENTRY_MIN_HARD_CONFIRMATIONS
+# are now defined in strategy_config.py and imported above.
 
 # -----------------------------------------------------------------------------
 # Confirmation chips
@@ -53,17 +59,7 @@ CONFIRMATION_CHIPS: Dict[str, Any] = {
     "no_corporate_action_risk": bool,
 }
 
-HARD_CONFIRMATION_KEYS = {
-    "volume_confirmed",
-    "options_confirmed",
-    "vwap_confirmed",
-    "relvol_confirmed",
-}
-
-# v3 2026-08-01: intraday_confirmed REMOVED from hard keys (live attribution -8.9pp edge).
-# v3 2026-08-01: at least one of volume OR vwap must be true for entry (the only
-# consistently positive-edge hard confirmations in the live window).
-V3_REQUIRED_POSITIVE_KEYS = {"volume_confirmed", "vwap_confirmed"}
+# HARD_CONFIRMATION_KEYS and V3_REQUIRED_POSITIVE_KEYS imported from strategy_config
 
 # -----------------------------------------------------------------------------
 # Tier naming

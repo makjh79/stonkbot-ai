@@ -70,6 +70,7 @@ from readiness_score import (
     ENTRY_MIN_HARD_CONFIRMATIONS,
     TIER_STRONG_NOW_MIN,
 )
+from strategy_config import HARD_CONFIRMATION_KEYS, REQUIRED_POSITIVE_HARD_KEYS
 
 import requests
 
@@ -1001,15 +1002,12 @@ class STONKAIBot:
         tier = sig.get("tier", "")
         confirmations = sig.get("confirmations", {})
         above_ema = sig.get("above_ema20", False) or confirmations.get("above_ema", False)
-        # v3 2026-08-01: removed macd_turning and intraday_confirmed from hard keys
-        # (negative live edge: MACD -15.5pp, intraday -8.9pp).
-        # v3: require at least one positive-edge hard confirmation (volume or VWAP).
+        # v3: hard keys and positive-edge requirement from strategy_config (single source of truth)
         hard_conf = sum(
-            1 for k in ("volume_confirmed", "options_confirmed",
-                        "vwap_confirmed", "relvol_confirmed")
+            1 for k in HARD_CONFIRMATION_KEYS
             if confirmations.get(k)
         )
-        _has_positive = confirmations.get("volume_confirmed", False) or confirmations.get("vwap_confirmed", False)
+        _has_positive = any(confirmations.get(k, False) for k in REQUIRED_POSITIVE_HARD_KEYS)
         return (tier == "STRONG_NOW" and readiness >= ENTRY_READINESS_MIN
                 and conf >= ENTRY_MIN_CONFIRMATIONS
                 and hard_conf >= ENTRY_MIN_HARD_CONFIRMATIONS
@@ -2023,7 +2021,7 @@ class STONKAIBot:
                 multiplier *= self._strategy_sizing_cap(strategy_type)
                 # Scale by hard confirmation count (2026-07-08)
                 _confirms = sig.get("confirmations", {})
-                _hard = sum(1 for k in ("volume_confirmed", "options_confirmed", "vwap_confirmed", "relvol_confirmed") if _confirms.get(k))
+                _hard = sum(1 for k in HARD_CONFIRMATION_KEYS if _confirms.get(k))
                 if _hard >= 3:
                     _hm = 1.0
                 elif _hard == 2:
@@ -2157,7 +2155,7 @@ class STONKAIBot:
                 multiplier *= self._strategy_sizing_cap(strategy_type)
                 # Scale by hard confirmation count (2026-07-08)
                 _confirms = sig.get("confirmations", {})
-                _hard = sum(1 for k in ("volume_confirmed", "options_confirmed", "vwap_confirmed", "relvol_confirmed") if _confirms.get(k))
+                _hard = sum(1 for k in HARD_CONFIRMATION_KEYS if _confirms.get(k))
                 if _hard >= 3:
                     _hm = 1.0
                 elif _hard == 2:

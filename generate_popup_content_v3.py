@@ -110,16 +110,20 @@ def load_risk_state() -> dict:
 def load_risk_config() -> dict:
     if RISK_CONFIG_FILE.exists():
         return load_json(RISK_CONFIG_FILE)
-    # Defaults matching risk_engine.py (Amendment 1, 2026-07-25)
+    # v3 2026-08-01: defaults imported from strategy_config (single source of truth)
+    from strategy_config import (
+        HARD_STOP_ATR_MULTIPLIER, HARD_STOP_MIN_PCT, HARD_STOP_MAX_PCT,
+        TRAILING_STOP_PCT, TRAILING_STOP_ATR_MULTIPLIER,
+        TRIM_PROFIT_PCT, FULL_EXIT_PROFIT_PCT,
+    )
     return {
-        "hard_stop_atr_multiplier": 1.5,
-        # v3 2026-08-01: widened from 3% to 5% to match trading_bot
-        "hard_stop_min_pct": 0.05,
-        "hard_stop_max_pct": 0.11,
-        "trailing_stop_pct": -0.10,
-        "trailing_stop_atr_multiplier": 2.0,
-        "trim_profit_pct": 0.25,
-        "full_exit_profit_pct": 0.50,
+        "hard_stop_atr_multiplier": HARD_STOP_ATR_MULTIPLIER,
+        "hard_stop_min_pct": HARD_STOP_MIN_PCT,
+        "hard_stop_max_pct": HARD_STOP_MAX_PCT,
+        "trailing_stop_pct": TRAILING_STOP_PCT,
+        "trailing_stop_atr_multiplier": TRAILING_STOP_ATR_MULTIPLIER,
+        "trim_profit_pct": TRIM_PROFIT_PCT,
+        "full_exit_profit_pct": FULL_EXIT_PROFIT_PCT,
     }
 
 

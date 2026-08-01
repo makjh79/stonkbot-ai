@@ -217,42 +217,23 @@ def main():
     # Website config-of-truth + earnings chip map (site copy must never drift from code)
     try:
         from risk_engine import RiskConfig as _RC, tier_max_position_pct as _tmpp
+        from strategy_config import export_for_website, validate as _sc_validate
         _cfg = _RC()
+        # v3 2026-08-01: use strategy_config as single source of truth
+        _sc_issues = _sc_validate()
+        if _sc_issues:
+            print(f"WARNING: strategy_config validation issues: {_sc_issues}")
+        _sc = export_for_website()
         ct = {
             "generated_at": now.isoformat().replace("+00:00", "Z"),
             "mode": "PAPER",
-            "entry_gate": {
-                "readiness_min": 75,
-                "confirmations_min": 5,
-                "hard_confirmations_min": 1,
-                "hard_confirmations_min_strict": 2,
-                "hard_confirmations_strict_when_below": 7,
-                "above_ema": True,
-                "tradeable_tier": "STRONG_NOW",
-                "hard_confirmation_keys": ["volume_confirmed", "options_confirmed", "vwap_confirmed", "relvol_confirmed"],
-                "hard_confirmation_note": "v3 2026-08-01: macd_turning and intraday_confirmed REMOVED (negative live edge). At least one of volume OR vwap required.",
-            },
-            "position_management": {
-                "rotation_enabled": False,
-                "rotation_note": "Disabled 2026-08-01: rotation loop was trimming winners to fund new entries and bleeding ~$2,200/window.",
-                "min_hold_days": {"RISK_ON": 5, "RISK_OFF": 3, "CRISIS": 0},
-                "min_hold_note": "Raised 2026-08-01 from 2/1/0 to stop same-week churn.",
-                "thesis_broken_exit": "gated by min_hold_days (was immediate)",
-                "profit_taking": "v3 ATR scale-out: 1/3 at +1x ATR, 1/3 at +2x ATR, then trim at +25%; full exit at +50%",
-                "v3_scaleout": {
-                    "enabled": True,
-                    "tier_1": "+1x ATR, sell 1/3",
-                    "tier_2": "+2x ATR, sell 1/3",
-                    "note": "Runs BEFORE trailing stop so winners get harvested. Added 2026-08-01.",
-                },
-            },
+            **_sc,
             "caps": {t: _tmpp(t, _cfg.max_single_position_pct) for t in ("STRONG_NOW", "NOW", "WATCH", "MONITOR")},
             "caps_note": "single source of truth: risk_engine.tier_max_position_pct",
-            "stops": {"trailing": "2x ATR from peak", "hard": "1.5x ATR", "abs_cut": "max(5%, 1x ATR)", "vwap": "max(2%, 1x ATR) below VWAP", "hard_cut_note": "Widened from 3% to 5% floor on 2026-08-01 to match risk_engine and reduce noise stops"},
             "gates": {"earnings": "no entries within 2 days of confirmed earnings",
                       "implied_move": "3-7d pre-earnings: no entries when IV daily move > 1.5x ATR",
                       "reentry": "post-stop re-entry only at/below stop price (7d)"},
-            "experiment": {"window": "Jul 7 2026 reset ongoing", "status": "Live A1+A2+v3 rules. Jul 27 pre-registered protocol ended. Aug 1 2026: churn fix + v3 signal/profit architecture deployed."},
+            "experiment": {"window": "Jul 7 2026 reset ongoing", "status": "Live A1+A2+v3 rules. Jul 27 pre-registered protocol ended. Aug 1 2026: churn fix + v3 signal/profit architecture deployed. strategy_config.py is single source of truth."},
         }
         with open("/var/www/hedge-fund-website/config_truth.json", "w") as f:
             json.dump(ct, f, indent=1)

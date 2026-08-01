@@ -153,22 +153,36 @@ class RiskConfig:
     high_beta_spy_corr_threshold: float = 0.70      # SPY correlation threshold
 
     # --- Loss / drawdown controls ---
-    new_entry_max_drawdown_pct: float = -0.10     # halt new buys at -10% DD (tightened from -15%) 
+    new_entry_max_drawdown_pct: float = -0.10     # halt new buys at -10% DD
+    # v3 2026-08-01: stop parameters imported from strategy_config (single source of truth)
+    from strategy_config import (
+        HARD_STOP_ATR_MULTIPLIER as _SC_HARD_ATR,
+        HARD_STOP_MIN_PCT as _SC_HARD_MIN,
+        HARD_STOP_MAX_PCT as _SC_HARD_MAX,
+        TRAILING_STOP_ATR_MULTIPLIER as _SC_TRAIL_ATR,
+        TRAILING_STOP_PCT as _SC_TRAIL_PCT,
+        ABS_HARD_CUT_PCT as _SC_ABS_CUT,
+        TRIM_PROFIT_PCT as _SC_TRIM,
+        FULL_EXIT_PROFIT_PCT as _SC_FULL_EXIT,
+        V3_SCALEOUT_ENABLED as _SC_V3_ENABLED,
+        V3_SCALEOUT_T1_ATR as _SC_V3_T1,
+        V3_SCALEOUT_T2_ATR as _SC_V3_T2,
+        V3_SCALEOUT_FRACTION as _SC_V3_FRAC,
+    )
     hard_stop_loss_pct: float = -0.10               # sell any position down 10%
-    trailing_stop_pct: float = -0.10               # base: sell if position falls 10% from its peak
-    trailing_stop_atr_multiplier: float = 2.0       # ATR multiple for trailing stop
-    hard_stop_atr_multiplier: float = 1.5           # ATR multiple for hard stop (replaces fixed 10%)
-    max_hard_stop_pct: float = -0.11                # never wider than 11% — covers 1.5x ATR up to the 7% ATR entry limit (was -8%, which sat inside the noise band of 5-7% ATR names)
-    min_hard_stop_pct: float = -0.03                # never tighter than 3% (avoid noise kills)
-    abs_hard_cut_pct: float = -0.05                 # absolute last-resort cut; ATR-widened up to 1x ATR when ATR is known (2026-07-22)
-    max_entry_atr_pct: float = 0.07                 # no new entries/avg-ins on names with daily ATR > 7% — untradeable with stop-based exits (LCID lesson)
-    trim_profit_pct: float = 0.25                  # trim 1/3 at +25%
-    # v3 2026-08-01: ATR-based scale-out profit-taking (before trailing stop)
-    v3_scaleout_enabled: bool = True              # scale out at 1x and 2x ATR before trailing stop
-    v3_scaleout_1_atr: float = 1.0               # first scale-out trigger: +1x ATR
-    v3_scaleout_2_atr: float = 2.0               # second scale-out trigger: +2x ATR
-    v3_scaleout_fraction: float = 0.33            # sell 1/3 of remaining at each level
-    full_exit_profit_pct: float = 0.50             # full exit at +50%
+    trailing_stop_pct: float = _SC_TRAIL_PCT
+    trailing_stop_atr_multiplier: float = _SC_TRAIL_ATR
+    hard_stop_atr_multiplier: float = _SC_HARD_ATR
+    max_hard_stop_pct: float = -_SC_HARD_MAX
+    min_hard_stop_pct: float = -_SC_HARD_MIN
+    abs_hard_cut_pct: float = _SC_ABS_CUT
+    max_entry_atr_pct: float = 0.07                 # no new entries/avg-ins on names with daily ATR > 7%
+    trim_profit_pct: float = _SC_TRIM
+    v3_scaleout_enabled: bool = _SC_V3_ENABLED
+    v3_scaleout_1_atr: float = _SC_V3_T1
+    v3_scaleout_2_atr: float = _SC_V3_T2
+    v3_scaleout_fraction: float = _SC_V3_FRAC
+    full_exit_profit_pct: float = _SC_FULL_EXIT
 
     # --- Sizing ---
     target_position_risk: float = 0.0075            # halved 2026-07-25 (Amendment 1C): matches ~2x wider effective stops, same dollar risk
