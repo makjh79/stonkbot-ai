@@ -99,15 +99,17 @@ def compute_confirmation_count(confirmations: Optional[Dict[str, Any]]) -> int:
 
 
 def active_confirmation_labels(confirmations: Optional[Dict[str, Any]]) -> list[str]:
-    """Return short labels of active chips, matching the UI factor chips."""
+    """Return short labels of active chips, matching the UI factor chips.
+    v3 2026-08-01: MACD and INT are display-only (not used for entry gate).
+    They are marked with * in narrative text."""
     labels = {
         "momentum_score": "MOM",
         "rsi_signal": "RSI",
         "volume_confirmed": "VOL",
-        "macd_turning": "MACD",
+        "macd_turning": "MACD*",   # display-only, not used for entry (v3)
         "above_ema": "EMA",
         "sector_strong": "SEC",
-        "intraday_confirmed": "INT",
+        "intraday_confirmed": "INT*",  # display-only, not used for entry (v3)
         "options_confirmed": "OPT",
         "relvol_confirmed": "RVOL",
         "vwap_confirmed": "VWAP",
