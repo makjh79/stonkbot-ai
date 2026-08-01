@@ -4187,7 +4187,7 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· owner-supervised</span></div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation (2+ if &lt;7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% others. The Jul 27 pre-registered protocol ended by owner decision the same day. The Aug 1 2026 churn fix disabled rotation and raised minimum holds to 5d (RISK_ON) / 3d (RISK_OFF); the hard-cut floor was widened to 5% to match the advertised guardrails and reduce noise stops.</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2+v3 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation (2+ if &lt;7 chips), above 20-day EMA. Entries require volume or VWAP confirmation (MACD and intraday removed 2026-08-01). Position caps: 12% STRONG_NOW, 8% others. Profit-taking: ATR scale-out (1/3 at +1×ATR, 1/3 at +2×ATR) then +25% trim. The Jul 27 pre-registered protocol ended by owner decision the same day. The Aug 1 2026 churn fix disabled rotation and raised minimum holds to 5d (RISK_ON) / 3d (RISK_OFF); the hard-cut floor was widened to 5% to match the advertised guardrails and reduce noise stops.</div>
             <div id="exp-status" style="font-size:0.68rem;color:#22c55e;margin-top:0.4rem;">● ACTIVE — trading under live rules</div>
           </div>
           <script>
@@ -7508,9 +7508,9 @@ function updateDashboard(data, marketStatus) {
                     <div style="font-size: 0.8rem; margin-bottom: 1.5rem;">No trades yet. The AI is monitoring for opportunities.</div>
                     <div style="font-size: 0.75rem; opacity: 0.7; background: var(--bg-elevated); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
                         <div style="margin-bottom: 0.5rem;">📊 <strong>Strategy Active</strong></div>
-                        <div>• RSI-based entry signals</div>
-                        <div>• -15% stop losses</div>
-                        <div>• +25% profit trimming (or RSI >75 overbought trim)</div>
+                        <div>• Readiness-based entry (≥75, 5+ conf, volume/VWAP required)</div>
+                        <div>• 1.5× ATR hard stops [5%, 11%]</div>
+                        <div>• +1×ATR scale-out, +2×ATR scale-out, then +25% trim (v3)</div>
                     </div>
                 </div>
             `;
@@ -9950,7 +9950,7 @@ function updateDashboard(data, marketStatus) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Readiness ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 10 weighted factors: momentum/signal (25%), sector strength (25%), volume (10%), EMA trend (10%), options flow (10%), VWAP (10%), relative strength vs SPY (4%), intraday momentum (5%). RSI and MACD are computed for display but zero-weighted as of 2026-07-27.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 10 weighted factors: momentum/signal (25%), sector strength (25%), volume (10%), EMA trend (10%), options flow (10%), VWAP (10%), relative strength vs SPY (4%), intraday momentum (5%). RSI and MACD are computed for display but zero-weighted; MACD and intraday removed from entry hard keys as of 2026-08-01 (v3).</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -10626,8 +10626,8 @@ function updateDashboard(data, marketStatus) {
                                 badge: day.maxPL < -3 ? 'Alert' : day.maxPL < -1 ? 'Watch' : 'Update',
                                 badgeClass: day.maxPL < -3 ? 'alert' : 'info',
                                 rationale: `Holdings movement of ${Math.abs(day.maxPL).toFixed(2)}% detected. ${day.maxPL < -2 ? 'This is a significant move requiring close monitoring.' : day.maxPL < -1 ? 'This is above normal daily volatility range.' : 'Normal market fluctuation within expected range.'} All positions remain above stop-loss thresholds.`,
-                                botResponse: severity === 'critical' ? 'System monitoring for continuation. No automatic action triggered. Will alert if losses exceed -5% or any position approaches -15% stop loss.' : severity === 'warning' ? 'System tracking momentum. Current allocation maintained.' : 'Market noise filtered. No action required.',
-                                recommendation: day.maxPL < 0 ? 'Consider deploying dry powder if thesis remains intact. Review individual positions for stop-loss proximity.' : 'Monitor for profit-taking opportunities at +25% targets.'
+                                botResponse: severity === 'critical' ? 'System monitoring for continuation. No automatic action triggered. Will alert if losses exceed -5% or any position approaches ATR hard stop.' : severity === 'warning' ? 'System tracking momentum. Current allocation maintained.' : 'Market noise filtered. No action required.',
+                                recommendation: day.maxPL < 0 ? 'Consider deploying dry powder if thesis remains intact. Review individual positions for stop-loss proximity.' : 'Monitor for ATR scale-out profit-taking (1/3 at +1×ATR, 1/3 at +2×ATR).'
                             });
                         }
                     });
@@ -11392,7 +11392,7 @@ function updateDashboard(data, marketStatus) {
 
                     <div style="padding: 20px;">
                         <div style="text-align: center; padding: 20px; background: var(--bg-surface); border-radius: 12px; margin-bottom: 16px;">
-                            <div style="font-size: 48px; font-weight: 800; color: ${winRateColor}; font-family: 'JetBrains Mono', monospace;">${winRate}%<span class="info-icon" style="font-size: 8px; width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Win Rate:</strong> Percentage of completed signals that hit profit targets (+25% or +50%).<br><br>0% = no signals have closed yet (still active).<br><br>Calculated as: Wins ÷ Closed Signals × 100')">i</span></div>
+                            <div style="font-size: 48px; font-weight: 800; color: ${winRateColor}; font-family: 'JetBrains Mono', monospace;">${winRate}%<span class="info-icon" style="font-size: 8px; width: 16px; height: 16px; margin-left: 8px; vertical-align: middle;" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Win Rate:</strong> Percentage of completed signals that hit profit targets (ATR scale-out, +25% or +50%).<br><br>0% = no signals have closed yet (still active).<br><br>Calculated as: Wins ÷ Closed Signals × 100')">i</span></div>
                             <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">${stats.closed_signals || 0} closed signals</div>
                         </div>
 
@@ -11403,7 +11403,7 @@ function updateDashboard(data, marketStatus) {
                             </div>
                             <div style="text-align: center; padding: 12px; background: var(--bg-surface); border-radius: 10px;">
                                 <div style="font-size: 20px; font-weight: 700; color: var(--accent-red);">${stats.losses || 0}</div>
-                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Losses <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Losses:</strong> Signals that hit -15% stop loss.<br><br>Stop loss triggers immediate sell to limit downside risk.')">i</span></div>
+                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Losses <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Losses:</strong> Signals that hit ATR hard stop.<br><br>Stop loss triggers immediate sell to limit downside risk.')">i</span></div>
                             </div>
                             <div style="text-align: center; padding: 12px; background: var(--bg-surface); border-radius: 10px;">
                                 <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);">${stats.avg_return ? stats.avg_return.toFixed(1) : 0}%</div>
@@ -11411,7 +11411,7 @@ function updateDashboard(data, marketStatus) {
                             </div>
                             <div style="text-align: center; padding: 12px; background: var(--bg-surface); border-radius: 10px;">
                                 <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);">${stats.pending_signals || 0}</div>
-                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Active <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Active Signals:</strong> Open positions awaiting exit.<br><br>Waiting to hit +25%/+50% profit targets or -15% stop loss.')">i</span></div>
+                                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">Active <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Active Signals:</strong> Open positions awaiting exit.<br><br>Waiting to hit ATR scale-out/+25%/+50% profit targets or ATR hard stop.')">i</span></div>
                             </div>
                         </div>
 
@@ -12154,7 +12154,7 @@ function updateDashboard(data, marketStatus) {
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #06b6d4; font-weight: 700; min-width: 72px;">STRONG NOW</span>
-                        <span style="color: var(--text-muted);">≥78 - highest conviction, 1.5x sizing</span>
+                        <span style="color: var(--text-muted);">≥76 - highest conviction, 1.5x sizing</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #22c55e; font-weight: 700; min-width: 72px;">NOW</span>
@@ -12463,7 +12463,7 @@ function updateDashboard(data, marketStatus) {
             const tierBg = tier === 'PRIME' ? 'rgba(6,182,212,0.15)' : tier === 'BUILDING' ? 'rgba(34,197,94,0.12)' : tier === 'WATCHING' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
 
             // Entry gate note (popup only)
-            const entryGateNote = (tier === 'PRIME' && !stock.entry_eligible) ? 'Needs a hard confirmation (volume / VWAP / intraday / options / relative volume) to become entry-eligible.' :
+            const entryGateNote = (tier === 'PRIME' && !stock.entry_eligible) ? 'Needs a hard confirmation (volume / VWAP / options / relative volume) to become entry-eligible.' :
                                   (tier === 'BUILDING' && stock.entry_eligible) ? 'Entry gate passed, but bot only buys PRIME names.' : '';
 
             // Exit levels
