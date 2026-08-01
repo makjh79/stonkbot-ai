@@ -126,8 +126,9 @@ def _tier_position_cap(tier: str) -> float:
 def _entry_gate_reason(s: dict, conf_count: int, hard_count: int) -> str:
     """Short reason why a symbol is or is not entry-eligible."""
     readiness = s.get("readiness_score", 0) or 0
-    above_ema = s.get("confirmations", {}).get("above_ema", False)
-    if is_entry_eligible(readiness, conf_count, above_ema, hard_count):
+    conf = s.get("confirmations", {})
+    above_ema = conf.get("above_ema", False)
+    if is_entry_eligible(readiness, conf_count, above_ema, hard_count, confirmations=conf):
         return "eligible"
     if not above_ema:
         return "below_ema"
@@ -148,6 +149,7 @@ def _entry_eligible_from_signal(s: dict) -> bool:
         confirmation_count=compute_confirmation_count(conf),
         above_ema=conf.get("above_ema", False),
         hard_confirmations=s.get("hard_confirmations", 0),
+        confirmations=conf,
     )
 
 

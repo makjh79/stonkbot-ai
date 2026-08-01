@@ -165,18 +165,23 @@ def is_entry_eligible(
     confirmation_count: int,
     above_ema: bool,
     hard_confirmations: int = 0,
+    confirmations: Optional[Dict[str, Any]] = None,
 ) -> bool:
     """Canonical entry eligibility gate.
 
     Matches the logic in readiness_score.py / trading_bot.py.
     When a symbol has very strong confirmation breadth (>=7), we relax the hard-
     confirm requirement to 1.
+    v3 2026-08-01: requires at least one positive-edge hard confirmation
+    (volume or VWAP) when confirmations dict is available.
     """
     min_hard = 1 if confirmation_count >= 7 else ENTRY_MIN_HARD_CONFIRMATIONS
     # v3: at least one positive-edge hard confirmation (volume or VWAP) required
-    _has_positive = any(
-        (confirmations or {}).get(k, False) for k in V3_REQUIRED_POSITIVE_KEYS
-    )
+    _has_positive = True  # default True for backward compat when confirmations not provided
+    if confirmations is not None:
+        _has_positive = any(
+            confirmations.get(k, False) for k in V3_REQUIRED_POSITIVE_KEYS
+        )
     return (
         above_ema
         and readiness >= ENTRY_READINESS_MIN

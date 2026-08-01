@@ -689,9 +689,12 @@ def compute_readiness(
     # Confirmation count: canonical boolean count (single source of truth via signal_rules)
     confirmation_count = compute_confirmation_count(confirmations)
 
+    # v3 2026-08-01: removed macd_turning and intraday_confirmed from hard keys
+    # (negative live edge: MACD -15.5pp, intraday -8.9pp).
+    # Aligned with signal_rules.HARD_CONFIRMATION_KEYS v3.
     hard_confirmations = sum(
-        1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed",
-                    "options_confirmed", "relvol_confirmed")
+        1 for k in ("volume_confirmed", "options_confirmed",
+                    "vwap_confirmed", "relvol_confirmed")
         if confirmations.get(k)
     )
 
@@ -712,11 +715,19 @@ def compute_readiness(
         and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
     )
 
+    # v3 2026-08-01: require at least one positive-edge hard confirmation
+    # (volume or VWAP — the only consistently positive-edge factors in live attribution).
+    _has_positive_hard = (
+        confirmations.get("volume_confirmed", False)
+        or confirmations.get("vwap_confirmed", False)
+    )
+
     entry_eligible = (
         readiness >= ENTRY_READINESS_MIN
         and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
         and hard_confirmations >= effective_hard_min
         and confirmations.get("above_ema", False)  # strongest live predictor (+0.572 correlation)
+        and _has_positive_hard  # v3: volume or VWAP required
     ) or dip_override
 
     # Tier: decoupled from entry eligibility (2026-07-13).

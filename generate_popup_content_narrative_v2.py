@@ -310,7 +310,7 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
     active_count = len(active_confirmation_labels(conf))
     hard = hard_confirmation_count(conf)
     above_ema = bool(conf.get("above_ema"))
-    eligible = is_entry_eligible(readiness, active_count, above_ema, hard)
+    eligible = is_entry_eligible(readiness, active_count, above_ema, hard, confirmations=conf)
 
     if tier == "STRONG_NOW" and eligible:
         return _hash_choice(symbol, [

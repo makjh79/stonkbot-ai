@@ -266,7 +266,7 @@ def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
     readiness = signal.get("readiness_score", 0) or 0
     above_ema = bool(conf.get("above_ema"))
     hard = hard_confirmation_count(conf)
-    eligible = is_entry_eligible(readiness, active_count, above_ema, hard)
+    eligible = is_entry_eligible(readiness, active_count, above_ema, hard, confirmations=conf)
     if eligible:
         return "Entry gate is open; waiting on portfolio cash or sizing rules."
     reasons = []
