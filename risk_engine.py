@@ -100,7 +100,7 @@ class RiskConfig:
     cash_raise_readiness_threshold: float = 50.0  # only trim positions with readiness below this
 
     # --- Rotation logic: rebalance from weak to strong ---
-    rotation_enabled: bool = True              # trim overweight low-readiness to fund high-readiness entries
+    rotation_enabled: bool = False  # DISABLED 2026-08-01: rotation was bleeding ~,200/window and churning winners              # trim overweight low-readiness to fund high-readiness entries
     rotation_min_position_pct: float = 0.05    # only trim positions > 5% of portfolio
     rotation_max_trims_per_cycle: int = 2       # max positions to rotate per cycle
     rotation_readiness_gap: float = 15.0        # min readiness gap between trim target and buy target

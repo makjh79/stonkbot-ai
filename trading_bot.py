@@ -1669,12 +1669,13 @@ class STONKAIBot:
                 _crisis_exit_symbols.add(sig["symbol"])
 
         # Determine min hold days based on regime
+        # 2026-08-01: raised from 2/1/0 to 5/3/0 to stop same-week churn of decent positions.
         if self._regime == "CRISIS":
             _min_hold_days = 0
         elif self._regime == "RISK_OFF":
-            _min_hold_days = 1
+            _min_hold_days = 3
         else:
-            _min_hold_days = 2  # RISK_ON: 2-day minimum hold to reduce intraday churn
+            _min_hold_days = 5  # RISK_ON: 5-day minimum hold to reduce churn
 
         # Track which symbols have already had an exit attempt this cycle
         # to prevent multiple overlapping exit rules firing on the same position.
@@ -1693,9 +1694,9 @@ class STONKAIBot:
                 _exited_today.add(sym)
                 continue
 
-            # Thesis broken: readiness < 40 = exit immediately, no holding period
-            if sym in _thesis_broken_symbols:
-                logger.info(f"💀 Thesis exit: {sym} readiness below 40 (held {_days} days) — immediate exit")
+            # Thesis broken: readiness < 40 — exit only after min hold to avoid panic-selling new positions on noise.
+            if _days >= _min_hold_days and sym in _thesis_broken_symbols:
+                logger.info(f"💀 Thesis exit: {sym} readiness below 40 (held {_days} days, min hold {_min_hold_days})")
                 self._exit_position(sym, reason="thesis_broken_below_40")
                 _exited_today.add(sym)
                 continue

@@ -175,3 +175,36 @@ entry gate banner verified live.
   daily), entry_factor_snapshots (15-min), gate_blocks.jsonl, risk_stats.
 - No kill criteria are active. Any future halt/resume is an owner decision,
   executed via the sentinel mechanism.
+
+## Post-protocol fix — 2026-08-01 (owner directive: fix the churn)
+
+Owner: Howie · Operator: Einstein
+
+### Problem diagnosed
+Live factor attribution (167 closed trades, Jul 7 rebase window):
+- Rotation strategy: 205 sells, −$2,241 realized; buy-and-hold of first
+  purchases would be roughly flat vs the strategy's −$8,402 / −8.12%.
+- Average hold: 0.4 days; profit exits/trims: 0; win-rate 29.3%; PF 0.56.
+- Readiness score correlation with outcomes ≈ 0; MACD edge −15.5 pp,
+  intraday edge −8.9 pp; volume + VWAP are the only positive-edge
+  confirmations.
+
+### Changes made (market closed, effective Monday Aug 3 2026 open)
+1. `risk_engine.py` — `rotation_enabled = False` (was True).
+   Disables the 2-hour-cooldown rotation loop that trims overweight
+   low-readiness positions to fund new high-readiness entries.
+2. `trading_bot.py` — minimum hold period raised:
+   - RISK_ON: 2 → 5 days
+   - RISK_OFF: 1 → 3 days
+   - CRISIS: 0 days (unchanged)
+3. `trading_bot.py` — thesis-broken exit (readiness < 40) now gated by
+   the same min-hold period, preventing panic-sells on noisy signals.
+
+### Backups
+- `/opt/stonk-ai/backups/risk_engine-pre-rotation-disable-20260801-1455.py`
+- `/opt/stonk-ai/backups/trading_bot-pre-minhold-20260801-1458.py`
+
+### Next
+Monitor early-week turnover and forward returns. If churn drops but
+winner capture remains poor, next candidates are: profit-taking rule,
+hard-cut floor raise, and demoting MACD/intraday confirmations.
