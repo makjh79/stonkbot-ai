@@ -2,7 +2,9 @@
 """
 StonkBOT Comprehensive Pipeline Integrity Monitor
 Alerts ONLY when issues are found (stderr + optional Telegram).
-Exit codes: 0 = healthy, 1 = degraded, 2 = system error.
+Telegram pages are reserved for SERIOUS issues only (see SERIOUS_CHECKS);
+everything else is recorded in the report JSON for the daily maintenance
+review. Exit codes: 0 = healthy, 1 = degraded, 2 = system error.
 """
 
 import json
@@ -41,6 +43,32 @@ PUBLIC_CHECKS = frozenset({
     "check_trade_execution_health",
     "check_open_orders",
     "check_alpaca_portfolio_sync",
+})
+
+# ─── Telegram severity routing (owner directive 2026-08-02) ────────────────
+# Silence alerts unless serious. Only checks whose confirmed issues mean
+# "bot down / trading data stale / money-truth or execution broken /
+# visitor-visible site breakage / system hazard" may page Telegram.
+# Everything else — ops metrics, strategy-drift & cron audits, portfolio
+# concentration the bot is actively managing, gracefully-degrading layers —
+# is still recorded in the report JSON (and still sets overall status) but
+# stays SILENT; Einstein reviews non-serious findings in the daily
+# maintenance pass and escalates if anything festers.
+# Non-serious issues also stay OFF the public anomaly banner: if it isn't
+# worth waking the owner, it isn't worth scaring visitors.
+SERIOUS_CHECKS = frozenset({
+    "_check_process_health",         # duplicate / root-owned pipeline processes
+    "check_bot_crash",               # service failed / crash-looping (also alerts directly)
+    "check_services",                # stonk-ai / live-quotes services down
+    "check_file_freshness",          # core pipeline JSONs stale/missing (market hours)
+    "check_signals_write_health",    # signal engine not writing — bot flying blind
+    "check_portfolio_history_freshness",  # performance chart frozen (2026-07-20 incident)
+    "check_short_positions",         # long-only book holding a short (manual activity)
+    "check_trade_execution_health",  # repeated order failures / execution code errors
+    "check_open_orders",             # stuck / duplicate orders at the broker
+    "check_alpaca_portfolio_sync",   # broker truth diverges from bot/site
+    "check_market_hours_sanity",     # bot believes market closed while open → stops trading
+    "check_system_time",             # clock drift (also alerts directly)
 })
 
 # ─── Telegram Alerter (import from sibling monitor.py, fallback inline) ────
@@ -140,13 +168,19 @@ def _send_alert_throttled(summary: str, issues: List[str]) -> None:
     except Exception:
         pass
 # ─── Helpers ──────────────────────────────────────────────────────────────
-ISSUES_TAGGED: List[Any] = []  # (check_name, msg) pairs for the persistence gate
+ISSUES_TAGGED: List[Any] = []  # (check_name, msg, serious) triples for the persistence gate
 
 
-def _log_issue(msg: str) -> None:
+def _log_issue(msg: str, serious: Optional[bool] = None) -> None:
+    """Record an issue. Telegram severity defaults to the current check's
+    membership in SERIOUS_CHECKS; pass serious=True/False to override per
+    message (e.g. runaway order-spam inside the otherwise non-serious churn
+    check, or a failed permission auto-repair)."""
+    if serious is None:
+        serious = _CURRENT_CHECK in SERIOUS_CHECKS
     ISSUES.append(msg)
-    ISSUES_TAGGED.append((_CURRENT_CHECK, msg))
-    if _CURRENT_CHECK in PUBLIC_CHECKS:
+    ISSUES_TAGGED.append((_CURRENT_CHECK, msg, serious))
+    if serious and _CURRENT_CHECK in PUBLIC_CHECKS:
         PUBLIC_ISSUES.append(msg)
     print(f"[ISSUE] {msg}", file=sys.stderr)
 
@@ -839,7 +873,7 @@ def check_trade_churn() -> None:
     todays = [t for t in trades if str(t.get("timestamp", "")).startswith(today)]
     n = len(todays)
     if n > 50:
-        _log_issue(f"Runaway trade count: {n} trades today — possible order-spam bug")
+        _log_issue(f"Runaway trade count: {n} trades today — possible order-spam bug", serious=True)
 
     by_symbol: Dict[str, List[str]] = {}
     for t in sorted(todays, key=lambda x: str(x.get("timestamp", ""))):
@@ -1371,7 +1405,7 @@ def check_system_time() -> None:
         if drift is not None and abs(drift) > 5.0:
             details.append(f"System clock drift from NTP: {drift:.3f}s (threshold 5s).")
     except Exception as e:
-        details.append(f"Could not measure NTP drift: {e}")
+        _log_warn(f"Could not measure NTP drift: {e}")
     if details:
         _send_alert("[HEALTH] System time check failed", details)
 
@@ -1471,7 +1505,7 @@ def _check_file_permissions():
                     shutil.chown(fpath, user=expected_user, group=expected_user)
                     p.chmod(expected_mode)
                 except Exception as e:
-                    _log_issue(f"Failed to fix permissions for {fpath}: {e}")
+                    _log_issue(f"Failed to fix permissions for {fpath}: {e}", serious=True)
         except Exception:
             pass
 
@@ -1551,9 +1585,9 @@ def _persistence_gate(tagged):
         counts = state.get("counts", {})
     except Exception:
         counts = {}
-    for check, msg in tagged:
+    for check, msg, serious in tagged:
         if check in _IMMEDIATE_CHECKS:
-            confirmed.append((check, msg))
+            confirmed.append((check, msg, serious))
             continue
         key = check + ":" + re.sub(r"[\d.,]+", "", msg)
         seen.add(key)
@@ -1562,7 +1596,7 @@ def _persistence_gate(tagged):
         except Exception:
             counts[key] = 1
         if counts[key] >= _PERSIST_RUNS:
-            confirmed.append((check, msg))
+            confirmed.append((check, msg, serious))
     try:
         counts = {k: v for k, v in counts.items() if k in seen}
         tmp = _PERSIST_STATE + ".tmp"
@@ -1571,8 +1605,8 @@ def _persistence_gate(tagged):
         os.replace(tmp, _PERSIST_STATE)
     except Exception:
         pass
-    confirmed_set = {id(m) for _, m in confirmed}
-    transient = [(c, m) for c, m in tagged if id(m) not in confirmed_set]
+    confirmed_set = {id(m) for _, m, _ in confirmed}
+    transient = [(c, m, s) for c, m, s in tagged if id(m) not in confirmed_set]
     return confirmed, transient
 
 
@@ -1615,8 +1649,9 @@ def main() -> int:
     _run(check_strategy_alignment)
 
     _confirmed, _transient = _persistence_gate(ISSUES_TAGGED)
-    _confirmed_msgs = [m for _, m in _confirmed]
-    _confirmed_public = [m for c, m in _confirmed if c in PUBLIC_CHECKS]
+    _confirmed_msgs = [m for _, m, _ in _confirmed]
+    _confirmed_serious = [m for _, m, s in _confirmed if s]
+    _confirmed_public = [m for c, m, s in _confirmed if s and c in PUBLIC_CHECKS]
 
     status = "HEALTHY"
     exit_code = 0
@@ -1628,9 +1663,11 @@ def main() -> int:
         "status": status,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "issue_count": len(_confirmed_msgs),
+        "serious_issue_count": len(_confirmed_serious),
+        "serious_issues": _confirmed_serious,
         "warning_count": len(WARNINGS),
         "issues": _confirmed_msgs,
-        "transient_issues": [m for _, m in _transient],
+        "transient_issues": [m for _, m, _ in _transient],
         "raw_issue_count": len(ISSUES),
         "warnings": WARNINGS,
         # Public banner view: only visitor-visible breakage lights the site
@@ -1656,11 +1693,15 @@ def main() -> int:
     if status != "HEALTHY":
         # Only print JSON report when there is something to say
         print(json.dumps(report, indent=2))
-        # Send Telegram alert with issue summary
-        _send_alert_throttled(
-            f"{len(_confirmed_msgs)} confirmed issues, {len(WARNINGS)} warnings",
-            _confirmed_msgs,
-        )
+        # Page Telegram ONLY for serious issues (owner directive 2026-08-02).
+        # Non-serious confirmed issues stay in the report JSON for the daily
+        # maintenance review — silent by design.
+        if _confirmed_serious:
+            _send_alert_throttled(
+                f"{len(_confirmed_serious)} serious issues "
+                f"({len(_confirmed_msgs)} confirmed total, {len(WARNINGS)} warnings)",
+                _confirmed_serious,
+            )
 
     return exit_code
 def _record_heartbeat():
