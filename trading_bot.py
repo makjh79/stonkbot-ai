@@ -1001,15 +1001,20 @@ class STONKAIBot:
         tier = sig.get("tier", "")
         confirmations = sig.get("confirmations", {})
         above_ema = sig.get("above_ema20", False) or confirmations.get("above_ema", False)
+        # v3 2026-08-01: removed macd_turning and intraday_confirmed from hard keys
+        # (negative live edge: MACD -15.5pp, intraday -8.9pp).
+        # v3: require at least one positive-edge hard confirmation (volume or VWAP).
         hard_conf = sum(
-            1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed",
-                        "options_confirmed", "relvol_confirmed")
+            1 for k in ("volume_confirmed", "options_confirmed",
+                        "vwap_confirmed", "relvol_confirmed")
             if confirmations.get(k)
         )
+        _has_positive = confirmations.get("volume_confirmed", False) or confirmations.get("vwap_confirmed", False)
         return (tier == "STRONG_NOW" and readiness >= ENTRY_READINESS_MIN
                 and conf >= ENTRY_MIN_CONFIRMATIONS
                 and hard_conf >= ENTRY_MIN_HARD_CONFIRMATIONS
-                and above_ema)
+                and above_ema
+                and _has_positive)
 
     def _entry_has_exit_conflict(self, sig: dict, price: float) -> Optional[str]:
         """Pre-entry sanity: return a reason string if any EXIT condition is already
@@ -2018,7 +2023,7 @@ class STONKAIBot:
                 multiplier *= self._strategy_sizing_cap(strategy_type)
                 # Scale by hard confirmation count (2026-07-08)
                 _confirms = sig.get("confirmations", {})
-                _hard = sum(1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed", "options_confirmed", "relvol_confirmed") if _confirms.get(k))
+                _hard = sum(1 for k in ("volume_confirmed", "options_confirmed", "vwap_confirmed", "relvol_confirmed") if _confirms.get(k))
                 if _hard >= 3:
                     _hm = 1.0
                 elif _hard == 2:
@@ -2152,7 +2157,7 @@ class STONKAIBot:
                 multiplier *= self._strategy_sizing_cap(strategy_type)
                 # Scale by hard confirmation count (2026-07-08)
                 _confirms = sig.get("confirmations", {})
-                _hard = sum(1 for k in ("volume_confirmed", "macd_turning", "intraday_confirmed", "options_confirmed", "relvol_confirmed") if _confirms.get(k))
+                _hard = sum(1 for k in ("volume_confirmed", "options_confirmed", "vwap_confirmed", "relvol_confirmed") if _confirms.get(k))
                 if _hard >= 3:
                     _hm = 1.0
                 elif _hard == 2:

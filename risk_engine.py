@@ -163,6 +163,11 @@ class RiskConfig:
     abs_hard_cut_pct: float = -0.05                 # absolute last-resort cut; ATR-widened up to 1x ATR when ATR is known (2026-07-22)
     max_entry_atr_pct: float = 0.07                 # no new entries/avg-ins on names with daily ATR > 7% — untradeable with stop-based exits (LCID lesson)
     trim_profit_pct: float = 0.25                  # trim 1/3 at +25%
+    # v3 2026-08-01: ATR-based scale-out profit-taking (before trailing stop)
+    v3_scaleout_enabled: bool = True              # scale out at 1x and 2x ATR before trailing stop
+    v3_scaleout_1_atr: float = 1.0               # first scale-out trigger: +1x ATR
+    v3_scaleout_2_atr: float = 2.0               # second scale-out trigger: +2x ATR
+    v3_scaleout_fraction: float = 0.33            # sell 1/3 of remaining at each level
     full_exit_profit_pct: float = 0.50             # full exit at +50%
 
     # --- Sizing ---
@@ -213,6 +218,7 @@ class RiskEngine:
         self.last_state_date: Optional[str] = None
         self.position_high_water_marks: Dict[str, float] = {}
         self.position_atr_pct: Dict[str, float] = {}
+        self.position_profit_tiers: Dict[str, set] = {}  # tracks which scale-out levels have fired per symbol
         self.position_last_add_time: Dict[str, str] = {}
         self.position_last_trim_time: Dict[str, str] = {}   # anti-churn: per-symbol trim cooldown
         self.stopped_out: Dict[str, str] = {}               # symbol -> ISO timestamp of last stop-loss sell
@@ -241,6 +247,8 @@ class RiskEngine:
             self.last_state_date = data.get("last_state_date")
             self.position_high_water_marks = data.get("position_high_water_marks", {})
             self.position_atr_pct = data.get("position_atr_pct", {})
+            _raw_tiers = data.get("position_profit_tiers", {})
+            self.position_profit_tiers = {k: set(v) if isinstance(v, list) else v for k, v in _raw_tiers.items()}
             self.position_last_add_time = data.get("position_last_add_time", {})
             self.position_last_trim_time = data.get("position_last_trim_time", {})
             self.stopped_out = data.get("stopped_out", {})
@@ -263,6 +271,7 @@ class RiskEngine:
                     "last_state_date": self.last_state_date,
                     "position_high_water_marks": self.position_high_water_marks,
                     "position_atr_pct": self.position_atr_pct,
+                    "position_profit_tiers": {k: sorted(v) for k, v in self.position_profit_tiers.items()},
                     "position_last_add_time": self.position_last_add_time,
                     "position_last_trim_time": self.position_last_trim_time,
                     "stopped_out": self.stopped_out,
@@ -406,6 +415,7 @@ class RiskEngine:
         """
         removed = self.position_high_water_marks.pop(symbol, None)
         self.position_atr_pct.pop(symbol, None)
+        self.position_profit_tiers.pop(symbol, None)
         if removed is not None:
             logger.info(f"Peak reset: {symbol} high-water mark ${removed:.2f} cleared on full exit")
             self._save_state()
@@ -825,6 +835,40 @@ class RiskEngine:
                         })
                         logger.warning(f"VWAP STOP: {symbol} at {vwap_deviation:.1%} below VWAP ${vwap:.2f}")
                         self.record_stop_out(symbol, reason)
+                        continue
+
+            # 1.5. v3 ATR scale-out profit-taking (2026-08-01)
+            # Scale out 1/3 at +1x ATR, another 1/3 at +2x ATR.
+            # This runs BEFORE the trailing stop so winners get harvested.
+            if self.config.v3_scaleout_enabled and atr_pct and atr_pct > 0:
+                _tiers_done = self.position_profit_tiers.get(symbol, set())
+                # Tier 1: +1x ATR
+                if "t1" not in _tiers_done and plpc >= self.config.v3_scaleout_1_atr * atr_pct:
+                    trim_qty = max(1, int(qty * self.config.v3_scaleout_fraction))
+                    if trim_qty < qty:
+                        trades.append({
+                            "symbol": symbol,
+                            "qty": trim_qty,
+                            "action": "SELL",
+                            "reason": f"v3 scale-out T1: {plpc:.1%} (target +{self.config.v3_scaleout_1_atr:.0f}x ATR = {self.config.v3_scaleout_1_atr * atr_pct:.1%}), selling {trim_qty}/{qty}",
+                        })
+                        logger.info(f"V3 SCALE-OUT T1: {symbol} at {plpc:.1%}, sell {trim_qty}")
+                        _tiers_done.add("t1")
+                        self.position_profit_tiers[symbol] = _tiers_done
+                        continue
+                # Tier 2: +2x ATR
+                if "t2" not in _tiers_done and plpc >= self.config.v3_scaleout_2_atr * atr_pct:
+                    trim_qty = max(1, int(qty * self.config.v3_scaleout_fraction))
+                    if trim_qty < qty:
+                        trades.append({
+                            "symbol": symbol,
+                            "qty": trim_qty,
+                            "action": "SELL",
+                            "reason": f"v3 scale-out T2: {plpc:.1%} (target +{self.config.v3_scaleout_2_atr:.0f}x ATR = {self.config.v3_scaleout_2_atr * atr_pct:.1%}), selling {trim_qty}/{qty}",
+                        })
+                        logger.info(f"V3 SCALE-OUT T2: {symbol} at {plpc:.1%}, sell {trim_qty}")
+                        _tiers_done.add("t2")
+                        self.position_profit_tiers[symbol] = _tiers_done
                         continue
 
             # 2. Trailing stop — pure ATR-based (2.0x ATR from peak)
