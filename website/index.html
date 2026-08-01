@@ -4082,16 +4082,18 @@
               <span style="flex:1;text-align:center;padding:0.4rem 0.25rem;background:rgba(255,255,255,0.04);color:var(--text-muted);border-radius:8px;font-size:0.65rem;font-weight:700;border:1px solid rgba(255,255,255,0.08);">TRACKING</span>
             </div>
 
-            <p style="margin:0 0 0.75rem 0;"><strong style="color:var(--text-primary);">Only PRIME-tier stocks are tradeable.</strong> The rest are watched. If a stock's thesis breaks, it gets cut loose. No emotions, no bag-holding, no "it'll come back."</p>
+            <p style="margin:0 0 0.75rem 0;"><strong style="color:var(--text-primary);">Only PRIME-tier stocks are tradeable.</strong> The rest are watched. A broken thesis triggers an exit only after the minimum hold period, so a single noisy signal can't panic-sell a fresh position. No emotions, no bag-holding, no "it'll come back."</p>
           </div>
 
           <div class="risk-grid" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.75rem;">
             <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem;font-weight:600;">Risk Guardrails</div>
             <div class="risk-items" style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.68rem;color:var(--text-secondary);">
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops 1.5× ATR [3%,11%]</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops 2× ATR [3%,14%]</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops 1.5× ATR [5%,11%]</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops 2× ATR [5%,14%]</div>
               <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">12% max per new position</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Min hold 5d (RISK_ON) / 3d (RISK_OFF)</div>
+              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rotation disabled 2026-08-01</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10% cash floor; 12% entry buffer</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries if ATR > 7%</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries within 2 days of earnings</div>
@@ -4185,7 +4187,7 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· owner-supervised</span></div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation (2+ if &lt;7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% others. The Jul 27 pre-registered kill/tripwire was ended by owner decision the same day; it is shown below for transparency only.</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation (2+ if &lt;7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% others. The Jul 27 pre-registered protocol ended by owner decision the same day. The Aug 1 2026 churn fix disabled rotation and raised minimum holds to 5d (RISK_ON) / 3d (RISK_OFF); the hard-cut floor was widened to 5% to match the advertised guardrails and reduce noise stops.</div>
             <div id="exp-status" style="font-size:0.68rem;color:#22c55e;margin-top:0.4rem;">● ACTIVE — trading under live rules</div>
           </div>
           <script>
@@ -7231,7 +7233,7 @@ function updateDashboard(data, marketStatus) {
                         description: 'Autonomous trading system active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K paper capital. Strategy: Readiness score entry (≥75 + 6+ confirmations + 2+ hard), ATR stops, sector caps, thesis-based exits (recycles capital).'
+                        rationale: 'AI trading bot started with $100K paper capital. Strategy: Readiness score entry (≥75 + 5+ confirmations + 1+ hard), ATR stops, sector caps, thesis-based exits gated by min hold, rotation disabled Aug 2026.'
                     }
                 ];
 
@@ -12156,11 +12158,11 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #22c55e; font-weight: 700; min-width: 72px;">NOW</span>
-                        <span style="color: var(--text-muted);">≥75 - bot buys (6+ conf, 2+ hard)</span>
+                        <span style="color: var(--text-muted);">≥75 - bot buys (5+ conf, 1+ hard)</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #fbbf24; font-weight: 700; min-width: 72px;">WATCH</span>
-                        <span style="color: var(--text-muted);">55-71 - approaching entry</span>
+                        <span style="color: var(--text-muted);">55-74 - approaching entry</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: var(--text-muted); font-weight: 700; min-width: 72px;">MONITOR</span>

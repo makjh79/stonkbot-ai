@@ -1738,9 +1738,10 @@ class STONKAIBot:
                                 self._exit_position(sym, reason="flat_dead_money")
                                 _exited_today.add(sym)
 
-        # Hard cut: anything down -3% gets exited regardless of holding period or flatness
+        # Hard cut: anything down -5% gets exited regardless of holding period or flatness
         # Threshold widens to 1x ATR for high-ATR names so the cut sits OUTSIDE the
-        # normal daily noise band (2026-07-22; flat -3% noise-killed 4-7% ATR names)
+        # normal daily noise band. Raised from 3% to 5% floor on 2026-08-01 to align
+        # with risk_engine abs_hard_cut_pct and reduce churn from noise stops.
         for sym in list(self._positions.keys()):
             if sym in _exited_today:
                 continue
@@ -1750,10 +1751,10 @@ class STONKAIBot:
             if _entry > 0 and _current > 0:
                 _loss_pct = (_current - _entry) / _entry * 100
                 _atr_pct = self.risk_engine.position_atr_pct.get(sym, 0) * 100
-                _cut = max(3.0, _atr_pct) if _atr_pct > 0 else 3.0
+                _cut = max(5.0, _atr_pct) if _atr_pct > 0 else 5.0
                 if _loss_pct <= -_cut:
                     logger.info(f"🛑 Hard cut: {sym} down {_loss_pct:.1f}% — hitting -{_cut:.0f}% limit")
-                    self._exit_position(sym, reason="hard_stop_3pct")
+                    self._exit_position(sym, reason="hard_stop_5pct")
                     _exited_today.add(sym)
 
         # 1d. Max-hold exit: prevent long-term bag-holding (14+ days bucket was deeply unprofitable)

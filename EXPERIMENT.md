@@ -199,12 +199,20 @@ Live factor attribution (167 closed trades, Jul 7 rebase window):
    - CRISIS: 0 days (unchanged)
 3. `trading_bot.py` — thesis-broken exit (readiness < 40) now gated by
    the same min-hold period, preventing panic-sells on noisy signals.
+4. `trading_bot.py` — hard-cut floor widened from 3% to **5%** (was
+   `max(3%, 1×ATR)`; now `max(5%, 1×ATR)`) to match the advertised
+   risk_engine guardrail and reduce noise stops.
+5. `website/index.html` + `trade_quality_report.py` — aligned public
+   copy and `config_truth.json` export to reflect rotation disabled,
+   min-hold rules, and the 5% hard-cut floor.
 
 ### Backups
 - `/opt/stonk-ai/backups/risk_engine-pre-rotation-disable-20260801-1455.py`
 - `/opt/stonk-ai/backups/trading_bot-pre-minhold-20260801-1458.py`
+- `/opt/stonk-ai/backups/trade_quality_report-pre-website-align-20260801-1504.py`
+- `/opt/stonk-ai/backups/website-index-pre-align-20260801-1504.html`
 
 ### Next
 Monitor early-week turnover and forward returns. If churn drops but
 winner capture remains poor, next candidates are: profit-taking rule,
-hard-cut floor raise, and demoting MACD/intraday confirmations.
+and demoting MACD/intraday confirmations.

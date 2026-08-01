@@ -230,15 +230,21 @@ def main():
                 "above_ema": True,
                 "tradeable_tier": "STRONG_NOW",
             },
+            "position_management": {
+                "rotation_enabled": False,
+                "rotation_note": "Disabled 2026-08-01: rotation loop was trimming winners to fund new entries and bleeding ~$2,200/window.",
+                "min_hold_days": {"RISK_ON": 5, "RISK_OFF": 3, "CRISIS": 0},
+                "min_hold_note": "Raised 2026-08-01 from 2/1/0 to stop same-week churn.",
+                "thesis_broken_exit": "gated by min_hold_days (was immediate)",
+                "profit_taking": "trim 1/3 at +25% (STRONG_NOW) / +20% (others); full exit at target",
+            },
             "caps": {t: _tmpp(t, _cfg.max_single_position_pct) for t in ("STRONG_NOW", "NOW", "WATCH", "MONITOR")},
-            "caps_note": "entries from 2026-07-27; pre-amendment holdings grandfathered at legacy caps",
-            "stops": {"trailing": "2x ATR from peak", "hard": "1.5x ATR", "abs_cut": "max(5%, 1x ATR)", "vwap": "max(2%, 1x ATR) below VWAP"},
+            "caps_note": "single source of truth: risk_engine.tier_max_position_pct",
+            "stops": {"trailing": "2x ATR from peak", "hard": "1.5x ATR", "abs_cut": "max(5%, 1x ATR)", "vwap": "max(2%, 1x ATR) below VWAP", "hard_cut_note": "Widened from 3% to 5% floor on 2026-08-01 to match risk_engine and reduce noise stops"},
             "gates": {"earnings": "no entries within 2 days of confirmed earnings",
                       "implied_move": "3-7d pre-earnings: no entries when IV daily move > 1.5x ATR",
                       "reentry": "post-stop re-entry only at/below stop price (7d)"},
-            "experiment": {"window": "2026-07-27..2026-08-29 (historical pre-registration)", "tripwire": "median hold >= 2 days by Aug 8",
-                           "kill": "all-trades PF < 1.0 AND trailing QQQ -> entries shelved, capital to index",
-                           "status": "Ended by owner decision on 2026-07-27; bot trades under live A1+A2 rules"},
+            "experiment": {"window": "Jul 7 2026 reset ongoing", "status": "Live A1+A2 rules. Jul 27 pre-registered protocol ended by owner decision. Aug 1 2026 churn fix applied (rotation off, min hold raised)."},
         }
         with open("/var/www/hedge-fund-website/config_truth.json", "w") as f:
             json.dump(ct, f, indent=1)
