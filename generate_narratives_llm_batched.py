@@ -279,7 +279,7 @@ def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
     # Canonical hard-confirm rule: 1 hard is enough if ≥7 chips, otherwise 2.
     hard_min = 1 if active_count >= 7 else 2
     if hard < hard_min:
-        reasons.append(f"only {hard} hard confirmation(s) from volume/VWAP/intraday/options/relvol (needs {hard_min}+)")
+        reasons.append(f"only {hard} hard confirmation(s) from volume/VWAP/options/relvol (needs {hard_min}+)")
     if reasons:
         return "Not entry eligible: " + "; ".join(reasons) + "."
     return "Entry gate is closed due to a rule not captured above."
@@ -421,7 +421,7 @@ For EACH watchlist symbol below, generate these fields. Output ONLY a single JSO
 
 Rules:
 - whyOnWatchlist MUST use the exact "Active Factors: X/15" count and the exact list of active labels provided.
-- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. fewer than 5 active chips, fewer than 1 hard confirmation from volume/VWAP/intraday/options/relvol — 2 if fewer than 7 chips — or readiness below 75).
+- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. fewer than 5 active chips, fewer than 1 hard confirmation from volume/VWAP/options/relvol — 2 if fewer than 7 chips — or readiness below 75).
 - DO NOT mention inactive factors or claim more active factors than listed.
 - DO NOT say "entry eligible" if the prompt says "Entry eligible: no".
 - Keep numbers consistent with the prompt.

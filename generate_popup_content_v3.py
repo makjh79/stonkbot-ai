@@ -113,7 +113,8 @@ def load_risk_config() -> dict:
     # Defaults matching risk_engine.py (Amendment 1, 2026-07-25)
     return {
         "hard_stop_atr_multiplier": 1.5,
-        "hard_stop_min_pct": 0.03,
+        # v3 2026-08-01: widened from 3% to 5% to match trading_bot
+        "hard_stop_min_pct": 0.05,
         "hard_stop_max_pct": 0.11,
         "trailing_stop_pct": -0.10,
         "trailing_stop_atr_multiplier": 2.0,
@@ -128,7 +129,7 @@ def get_stop_levels(symbol: str, position: dict, risk_config: dict, risk_state: 
     peak = risk_state.get("position_high_water_marks", {}).get(symbol, avg_entry)
     atr_pct = risk_state.get("position_atr_pct", {}).get(symbol)
 
-    # Hard stop from cost basis — 1.5× ATR clamped [3%, 11%] (Amendment 1); fallback 11%
+    # Hard stop from cost basis — 1.5× ATR clamped [5%, 11%] (Amendment 1); fallback 11%
     if atr_pct and atr_pct > 0:
         hard_pct = min(risk_config.get("hard_stop_max_pct", 0.11),
                        max(risk_config.get("hard_stop_min_pct", 0.03),
@@ -137,7 +138,7 @@ def get_stop_levels(symbol: str, position: dict, risk_config: dict, risk_state: 
         hard_pct = risk_config.get("hard_stop_max_pct", 0.11)
     hard_stop = avg_entry * (1 - hard_pct)
 
-    # Trailing stop from peak — 2.0× ATR clamped [3%, 14%] (Amendment 1); fallback 10%
+    # Trailing stop from peak — 2.0× ATR clamped [5%, 14%] (Amendment 1); fallback 10%
     base_trailing_pct = abs(risk_config.get("trailing_stop_pct", -0.10))
     if atr_pct and atr_pct > 0:
         atr_mult = risk_config.get("trailing_stop_atr_multiplier", 2.0)
@@ -415,13 +416,13 @@ def _visible_confirmation_count(signal_data):
         count += 1
     if conf.get("volume_confirmed") is True:
         count += 1
-    if conf.get("macd_turning") is True:
+    if conf.get("macd_turning") is True:  # display-only, not used for entry (v3)
         count += 1
     if conf.get("above_ema") is True:
         count += 1
     if conf.get("sector_strong") is True:
         count += 1
-    if conf.get("intraday_confirmed") is True:
+    if conf.get("intraday_confirmed") is True:  # display-only, not used for entry (v3)
         count += 1
     if conf.get("options_confirmed") is True:
         count += 1
@@ -471,7 +472,7 @@ def _why_bot_bought(signal_data, position, thesis_data=None):
     if confirmations.get("above_ema"):      sigs.append("price above 20-day EMA")
     if confirmations.get("sector_strong"):  sigs.append("hot sector")
     if confirmations.get("volume_confirmed"): sigs.append("volume confirming the move")
-    if confirmations.get("intraday_confirmed"): sigs.append("intraday momentum")
+    if confirmations.get("intraday_confirmed"): sigs.append("intraday momentum")  # display-only (v3)
     if confirmations.get("options_confirmed"): sigs.append("options skew bullish")
     if confirmations.get("relvol_confirmed"): sigs.append("volume surge confirming move")
     if confirmations.get("vwap_confirmed"): sigs.append("price above VWAP -- buyers in control")
@@ -805,8 +806,8 @@ def _missing_factors(signal_data):
         missing.append("EMA")
     if not conf.get("sector_strong"):
         missing.append("sector")
-    if not conf.get("intraday_confirmed"):
-        missing.append("intraday")
+    if not conf.get("intraday_confirmed"):  # display-only, not required for entry (v3)
+        missing.append("intraday")  # display-only (v3)
     if not conf.get("options_confirmed"):
         missing.append("options")
     return missing
