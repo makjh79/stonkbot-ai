@@ -229,6 +229,8 @@ def main():
                 "hard_confirmations_strict_when_below": 7,
                 "above_ema": True,
                 "tradeable_tier": "STRONG_NOW",
+                "hard_confirmation_keys": ["volume_confirmed", "options_confirmed", "vwap_confirmed", "relvol_confirmed"],
+                "hard_confirmation_note": "v3 2026-08-01: macd_turning and intraday_confirmed REMOVED (negative live edge). At least one of volume OR vwap required.",
             },
             "position_management": {
                 "rotation_enabled": False,
@@ -236,7 +238,13 @@ def main():
                 "min_hold_days": {"RISK_ON": 5, "RISK_OFF": 3, "CRISIS": 0},
                 "min_hold_note": "Raised 2026-08-01 from 2/1/0 to stop same-week churn.",
                 "thesis_broken_exit": "gated by min_hold_days (was immediate)",
-                "profit_taking": "trim 1/3 at +25% (STRONG_NOW) / +20% (others); full exit at target",
+                "profit_taking": "v3 ATR scale-out: 1/3 at +1x ATR, 1/3 at +2x ATR, then trim at +25%; full exit at +50%",
+                "v3_scaleout": {
+                    "enabled": True,
+                    "tier_1": "+1x ATR, sell 1/3",
+                    "tier_2": "+2x ATR, sell 1/3",
+                    "note": "Runs BEFORE trailing stop so winners get harvested. Added 2026-08-01.",
+                },
             },
             "caps": {t: _tmpp(t, _cfg.max_single_position_pct) for t in ("STRONG_NOW", "NOW", "WATCH", "MONITOR")},
             "caps_note": "single source of truth: risk_engine.tier_max_position_pct",
@@ -244,7 +252,7 @@ def main():
             "gates": {"earnings": "no entries within 2 days of confirmed earnings",
                       "implied_move": "3-7d pre-earnings: no entries when IV daily move > 1.5x ATR",
                       "reentry": "post-stop re-entry only at/below stop price (7d)"},
-            "experiment": {"window": "Jul 7 2026 reset ongoing", "status": "Live A1+A2 rules. Jul 27 pre-registered protocol ended by owner decision. Aug 1 2026 churn fix applied (rotation off, min hold raised)."},
+            "experiment": {"window": "Jul 7 2026 reset ongoing", "status": "Live A1+A2+v3 rules. Jul 27 pre-registered protocol ended. Aug 1 2026: churn fix + v3 signal/profit architecture deployed."},
         }
         with open("/var/www/hedge-fund-website/config_truth.json", "w") as f:
             json.dump(ct, f, indent=1)
