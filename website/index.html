@@ -9849,6 +9849,7 @@ function updateDashboard(data, marketStatus) {
         let popupContentCache = {};
         let popupContentLastFetch = 0;
         let watchlistNarrativesCache = {};
+        let xSentimentCache = null;
         let tradesLogCache = { trades: [], lastFetch: 0 };
 
         async function fetchTradesLog() {
@@ -9913,6 +9914,16 @@ function updateDashboard(data, marketStatus) {
                 watchlistNarrativesCache = data.narratives || {};
             } catch (e) {
                 console.log('Watchlist narratives fetch failed:', e);
+            }
+        }
+
+        async function fetchXSentiment() {
+            try {
+                const response = await fetch('./x_sentiment.json?t=' + Date.now());
+                if (!response.ok) return;
+                xSentimentCache = await response.json();
+            } catch (e) {
+                console.log('X sentiment fetch failed:', e);
             }
         }
 
@@ -10115,10 +10126,21 @@ function updateDashboard(data, marketStatus) {
             }
             await fetchTradesLog();
             await fetchEarningsMap();
+            await fetchXSentiment();
 
             const liveData = (typeof aiWatchlistPrices !== 'undefined' ? aiWatchlistPrices[symbol] : {}) || {};
             const staticData = tradeRationale[symbol];
-            const preGenerated = popupContentCache[symbol] || {};
+            let preGenerated = popupContentCache[symbol] || {};
+            if (xSentimentCache && xSentimentCache.sentiments && xSentimentCache.sentiments[symbol]) {
+                const xs = xSentimentCache.sentiments[symbol];
+                preGenerated = {
+                    ...preGenerated,
+                    xSentiment: xs.text || xs.one_liner || '',
+                    xSentimentThreads: xs.threads || '',
+                    xSentimentColor: xs.mood_color || 'var(--text-muted)',
+                    xSentimentLabel: xs.label || xs.mood || 'X'
+                };
+            }
             const currentData = window.lastPortfolioData || FALLBACK_DATA;
             const position = currentData.positions.find(p => p.symbol === symbol);
 
@@ -10280,16 +10302,23 @@ function updateDashboard(data, marketStatus) {
                         <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${preGenerated.howItsDoing || ''}</div>
                     </div>
 
-                    <!-- Confidence -->
-                    <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
-                        <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Confidence</div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${preGenerated.confidence || ''}</div>
-                    </div>
-
                     <!-- Catalyst -->
                     <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
                         <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Catalyst</div>
                         <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${preGenerated.catalyst || ''}</div>
+                        ${preGenerated.xSentiment ? `
+                        <div style="margin-top: 0.7rem; padding: 0.6rem 0.75rem; background: rgba(255,255,255,0.04); border: none; border-left: 3px solid ${preGenerated.xSentimentColor || 'var(--accent-cyan)'}; border-radius: 0 10px 10px 0;">
+                            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.35rem;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="${preGenerated.xSentimentColor || 'var(--text-muted)'}"/>
+                                </svg>
+                                <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">X Chatter</span>
+                                <span style="font-size: 0.6rem; font-weight: 700; color: ${preGenerated.xSentimentColor || 'var(--text-muted)'}; margin-left: auto;">${preGenerated.xSentimentLabel || 'X'}</span>
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.35rem;">${preGenerated.xSentiment}</div>
+                            ${preGenerated.xSentimentThreads ? `<div style="font-size: 0.62rem; color: var(--text-muted); line-height: 1.4;">${preGenerated.xSentimentThreads}</div>` : ''}
+                        </div>
+                        ` : ''}
                     </div>
 
                     <!-- Risk -->

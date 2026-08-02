@@ -1121,6 +1121,32 @@ def check_trade_quality_freshness() -> None:
         _log_issue(f"Stale file: trade_quality.json is {age_h:.1f}h old (max 26h)")
 
 
+def check_x_sentiment_freshness() -> None:
+    """X sentiment JSON for holding popups should be present and refreshed on weekdays.
+    Runs daily at 00:30 UTC (08:30 HKT) weekdays; allow 30h slack so Monday/Tuesday gaps
+    and US holidays don't false-fire. Pure site content, not trading input.
+    """
+    path = os.path.join(WEB_DIR, "x_sentiment.json")
+    if not os.path.exists(path):
+        _log_warn("x_sentiment.json missing (x_sentiment_generator.py not yet run)")
+        return
+    age_h = (time.time() - os.path.getmtime(path)) / 3600
+    if age_h > 30:
+        _log_warn(f"x_sentiment.json is {age_h:.1f}h old (max 30h)")
+
+    data = _load_json(path)
+    if not data:
+        _log_warn("x_sentiment.json present but invalid")
+        return
+    sentiments = data.get("sentiments", {})
+    if not sentiments:
+        _log_warn("x_sentiment.json has no sentiment entries")
+        return
+    stale_count = sum(1 for s in sentiments.values() if not s.get("text"))
+    if stale_count:
+        _log_warn(f"x_sentiment.json has {stale_count} symbol(s) with empty text")
+
+
 def check_llm_narrative_pipeline() -> None:
     """Verify the LLM narrative generator is healthy and output is fresh."""
     timer = "stonk-ai-llm-narrative.timer"
@@ -1647,6 +1673,7 @@ def main() -> int:
     _run(check_cron_heartbeats)
     _run(check_cron_entries)
     _run(check_strategy_alignment)
+    _run(check_x_sentiment_freshness)
 
     _confirmed, _transient = _persistence_gate(ISSUES_TAGGED)
     _confirmed_msgs = [m for _, m, _ in _confirmed]
