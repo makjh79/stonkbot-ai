@@ -1375,7 +1375,7 @@ class SignalEngine:
     ) -> Tuple[str, List[str]]:
         """Build a human-readable, quantitative + qualitative thesis using enrichment data."""
         enrichment = enrichment or {}
-        e = enrichment.get(symbol, {})
+        e = enrichment.get(symbol) or {}
         sector = self._sector(symbol)
 
         ema20 = sum(closes[-20:]) / 20 if len(closes) >= 20 else price
@@ -1383,8 +1383,8 @@ class SignalEngine:
         atr_pct = (atr14 / price * 100) if price > 0 else 0.0
         avg_vol = sum(volumes[-20:]) / 20 if len(volumes) >= 20 else 0
         recent_vol = sum(volumes[-5:]) / 5 if len(volumes) >= 5 else 0
-        week_52_high = e.get("metrics", {}).get("week_52_high")
-        week_52_low = e.get("metrics", {}).get("week_52_low")
+        week_52_high = (e.get("metrics") or {}).get("week_52_high")
+        week_52_low = (e.get("metrics") or {}).get("week_52_low")
         high_52_pct = ((week_52_high - price) / price * 100) if week_52_high and price > 0 else None
         low_52_pct = ((price - week_52_low) / week_52_low * 100) if week_52_low and week_52_low > 0 else None
 
