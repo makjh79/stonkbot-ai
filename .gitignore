@@ -45,3 +45,4 @@ venv/
 Thumbs.db
 data_fetcher.log
 ENTRIES_HALTED
+.secrets/
