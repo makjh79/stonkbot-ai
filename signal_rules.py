@@ -174,10 +174,10 @@ def is_entry_eligible(
     (volume or VWAP) when confirmations dict is available.
     """
     min_hard = 1 if confirmation_count >= 7 else ENTRY_MIN_HARD_CONFIRMATIONS
-    # v3: at least one positive-edge hard confirmation (volume or VWAP) required
+    # v3: ALL positive-edge hard confirmations are required.
     _has_positive = True  # default True for backward compat when confirmations not provided
     if confirmations is not None:
-        _has_positive = any(
+        _has_positive = all(
             confirmations.get(k, False) for k in V3_REQUIRED_POSITIVE_KEYS
         )
     return (

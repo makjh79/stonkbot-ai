@@ -259,7 +259,11 @@ the only factors that are working.
      (computed from existing daily bars vs QQQ) into `compute_readiness`.
    - Added hard confirmation requirement: `entry_eligible` now additionally requires
      `vwap_confirmed=True` **AND** `options_confirmed=True` on top of the existing
-     readiness ≥75, ≥5 confirmations, ≥1 hard, above_ema, and positive-edge volume/VWAP gate.
+     readiness ≥75, ≥5 confirmations, ≥1 hard, above_ema.  This is enforced identically
+     in strategy_config.py, signal_rules.py, readiness_score.py, signal_engine.py,
+     and trading_bot.py (paper fallback) — the positive-edge gate is now the same
+     everywhere, and verify_strategy_alignment.py + validate_strategy_consistency.py
+     detect any future drift.
    - New `vs_qqq_5d_return_delta` field persisted on each `Signal` output.
 
 3. No tier thresholds, `ENTRY_READINESS_MIN`, or `signal_rules.py` constants were changed.

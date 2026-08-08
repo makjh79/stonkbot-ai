@@ -279,7 +279,7 @@ def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
     # Canonical hard-confirm rule: 1 hard is enough if ≥7 chips, otherwise 2.
     hard_min = 1 if active_count >= 7 else 2
     if hard < hard_min:
-        reasons.append(f"only {hard} hard confirmation(s) from volume/VWAP/options/relvol (needs {hard_min}+)")
+        reasons.append(f"only {hard} hard confirmation(s) from VWAP/options/relvol/volume (needs {hard_min}+); v3 also requires BOTH vwap_confirmed AND options_confirmed")
     if reasons:
         return "Not entry eligible: " + "; ".join(reasons) + "."
     return "Entry gate is closed due to a rule not captured above."
@@ -414,14 +414,14 @@ Rules:
 - Explain your reasoning in plain English. No jargon, no templates, no corporate speak.
 - Write like a person, not a machine. Use "I" not "the bot" or "the system".
 - If the entry gate is closed, explain what's blocking it in plain terms ("needs more volume confirmation" not "hard confirmation count below threshold").
-- MACD and RSI are zero-weight display-only factors since the 2026-07-27 signal redesign. NEVER cite MACD or RSI as a reason to buy, a bullish signal, or what is blocking entry. The hard confirmations that matter are volume, VWAP, intraday, options, and relative volume.
+- RSI >70 and late-stage MACD histogram act as negative risk vetoes in v3 (2026-08-08); cite them only as reasons to AVOID or wait, never as bullish triggers. The required hard confirmations for entry are VWAP confirmed AND options-flow confirmed; volume and relative volume are supportive chips but no longer satisfy the positive-edge gate on their own.
 
 For EACH watchlist symbol below, generate these fields. Output ONLY a single JSON object where each TOP-LEVEL KEY is the SYMBOL (e.g. "AAPL") and the value is an object with:
 {"whatItIs": "1 sentence", "whyOnWatchlist": "2-3 sentences", "whatTriggersBuy": "1-2 sentences", "catalyst": "1-2 sentences", "risk": "2-3 sentences"}
 
 Rules:
 - whyOnWatchlist MUST use the exact "Active Factors: X/15" count and the exact list of active labels provided.
-- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (e.g. fewer than 5 active chips, fewer than 1 hard confirmation from volume/VWAP/options/relvol — 2 if fewer than 7 chips — or readiness below 75).
+- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (fewer than 5 active chips, readiness below 75, price below 20-day EMA, or missing either VWAP hard confirmation or options-flow hard confirmation).
 - DO NOT mention inactive factors or claim more active factors than listed.
 - DO NOT say "entry eligible" if the prompt says "Entry eligible: no".
 - Keep numbers consistent with the prompt.

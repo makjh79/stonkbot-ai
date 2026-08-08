@@ -135,9 +135,26 @@ def check_html_values() -> None:
     # rotation state
     if not sc.ROTATION_ENABLED and "Rotation disabled" not in html:
         fail("HTML missing 'Rotation disabled' (config ROTATION_ENABLED=False)")
-    # hard keys annotation: display-only keys must be annotated where mentioned
-    if "MACD and intraday removed" not in html and "MACD*" not in html:
-        fail("HTML missing MACD/intraday removal annotation")
+    # Required positive-edge hard confirmations must be named in the HTML.
+    # (Website copy is not machine-derived, so we only check that the current
+    # config keys are reflected in the human-readable strategy section.)
+    required_labels = {
+        "vwap_confirmed": ["VWAP", "vwap"],
+        "options_confirmed": ["options-flow", "options flow", "options-flow"],
+    }
+    for key, labels in required_labels.items():
+        if key in sc.REQUIRED_POSITIVE_HARD_KEYS:
+            if not any(lbl in html for lbl in labels):
+                fail(f"HTML missing required hard-confirmation label for {key} (looked for {labels})")
+    # Display-only keys must not be described as entry drivers.
+    for key in sc.DISPLAY_ONLY_CONFIRMATION_KEYS:
+        # Accept only if annotated as "removed" / "display-only" / "veto" / "not used for entry"
+        if key == "macd_turning" and "MACD" in html:
+            if not any(ph in html for ph in ["display-only", "veto", "not used for entry", "removed"]):
+                fail("HTML describes MACD without noting it is display-only / veto / not an entry driver")
+        if key == "intraday_confirmed" and "intraday" in html:
+            if not any(ph in html for ph in ["display-only", "veto", "not used for entry", "removed"]):
+                fail("HTML describes intraday without noting it is display-only / veto / not an entry driver")
 
 
 # =============================================================================

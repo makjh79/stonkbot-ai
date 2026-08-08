@@ -1016,7 +1016,7 @@ class STONKAIBot:
             1 for k in HARD_CONFIRMATION_KEYS
             if confirmations.get(k)
         )
-        _has_positive = any(confirmations.get(k, False) for k in REQUIRED_POSITIVE_HARD_KEYS)
+        _has_positive = all(confirmations.get(k, False) for k in REQUIRED_POSITIVE_HARD_KEYS)
         return (tier == "STRONG_NOW" and readiness >= ENTRY_READINESS_MIN
                 and conf >= ENTRY_MIN_CONFIRMATIONS
                 and hard_conf >= ENTRY_MIN_HARD_CONFIRMATIONS

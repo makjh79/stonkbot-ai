@@ -1266,16 +1266,14 @@ class SignalEngine:
             price_above_5m_vwap=_5min_signals["price_above_5m_vwap"],
         )
 
-        # v3 2026-08-08: hard confirmation requirement. entry_eligible requires
-        # both VWAP and options flow confirmed (in addition to existing >=5 conf,
-        # >=1 hard, above_ema, and the positive-edge volume/VWAP key).  This
-        # reflects live attribution: VWAP (+28pp) and options flow (+11pp) are
-        # the strongest confirmed edges.  Falls back to existing readiness gate
-        # if the new fields are missing (should not happen here).
+        # v3 2026-08-08: hard confirmation requirement.  Enforce that all keys
+        # in REQUIRED_POSITIVE_HARD_KEYS are confirmed, in addition to the
+        # readiness gate computed by readiness_score.py.  This keeps the live
+        # gate identical to the config-of-truth in strategy_config.py.
+        from strategy_config import REQUIRED_POSITIVE_HARD_KEYS
         conf = readiness.confirmations or {}
-        vwap_confirmed = bool(conf.get("vwap_confirmed"))
-        options_confirmed = bool(conf.get("options_confirmed"))
-        if readiness.entry_eligible and not (vwap_confirmed and options_confirmed):
+        _missing = [k for k in REQUIRED_POSITIVE_HARD_KEYS if not conf.get(k)]
+        if readiness.entry_eligible and _missing:
             readiness.entry_eligible = False
 
         # MACD histogram value for storage

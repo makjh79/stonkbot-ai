@@ -333,7 +333,7 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
     if active_count < 6:
         reasons.append(f"get {6 - active_count} more active chips")
     if hard < 2:
-        reasons.append("see hard confirmations from volume, VWAP, options, or relative volume (intraday removed v3)")
+        reasons.append("see both VWAP and options-flow hard confirmations (intraday removed v3)")
     if readiness < 75:
         reasons.append(f"push readiness above 75 (now {readiness:.0f})")
     if not conf.get("volume_confirmed") and not reasons:

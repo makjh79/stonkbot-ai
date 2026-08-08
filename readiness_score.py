@@ -744,8 +744,8 @@ def compute_readiness(
         and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
     )
 
-    # v3: at least one positive-edge hard confirmation (volume or VWAP) required
-    _has_positive_hard = any(
+    # v3: ALL positive-edge hard confirmations (vwap + options) required
+    _has_positive_hard = all(
         confirmations.get(k, False) for k in V3_REQUIRED_POSITIVE_KEYS
     )
 

@@ -20,10 +20,12 @@ ENTRY_ABOVE_EMA_REQUIRED: bool = True
 ENTRY_TRADEABLE_TIER: str = "STRONG_NOW"
 
 # =============================================================================
-# Hard Confirmation Keys (v3 2026-08-01)
+# Hard Confirmation Keys (v3 2026-08-08)
 # Evidence-based: only factors with positive live edge are hard confirmations.
 # REMOVED: macd_turning (live edge -15.5pp), intraday_confirmed (-8.9pp)
-# REQUIRED: at least one of volume_confirmed OR vwap_confirmed
+# REQUIRED: both vwap_confirmed AND options_confirmed (the two strongest live edges).
+# volume_confirmed and relvol_confirmed remain positive chips but are no longer
+# sufficient on their own for the positive-edge gate.
 # =============================================================================
 HARD_CONFIRMATION_KEYS: Set[str] = {
     "volume_confirmed",
@@ -32,10 +34,11 @@ HARD_CONFIRMATION_KEYS: Set[str] = {
     "relvol_confirmed",
 }
 
-# At least one of these MUST be True for entry (the only positive-edge factors)
+# ALL of these MUST be True for entry.  v3 evidence: VWAP (+28pp) and options
+# flow (+11pp) are the only confirmed positive-edge hard confirmations.
 REQUIRED_POSITIVE_HARD_KEYS: Set[str] = {
-    "volume_confirmed",
     "vwap_confirmed",
+    "options_confirmed",
 }
 
 # Display-only keys: still computed and shown in UI, but NOT used for entry
