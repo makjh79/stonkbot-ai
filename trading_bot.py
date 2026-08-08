@@ -765,6 +765,13 @@ class PortfolioDataStore:
             total_pl = pv - STARTING_CAPITAL
             total_pl_pct = ((pv - RESET_PV) / RESET_PV * 100) if RESET_PV > 0 else 0
 
+            # Day change vs Alpaca's last_equity (prior close equity). Mirrors the
+            # semantics the site expects for "Day Change" and matches live_quotes.
+            last_equity = float(account.get("last_equity", 0)) if account.get("last_equity") else 0
+            day_change = 0.0
+            if last_equity > 0:
+                day_change = ((equity - last_equity) / last_equity) * 100
+
             # Keep legacy open-position-only P&L for diagnostics/trading logic
             open_total_pl = sum(p["unrealized_pl"] for p in positions_data)
             open_total_cost = sum(p["cost_basis"] for p in positions_data)
@@ -780,12 +787,14 @@ class PortfolioDataStore:
                     "cash": cash,
                     "equity": equity,
                     "buying_power": float(account.get("buying_power", cash)),
+                    "last_equity": last_equity,
                 },
                 "positions": positions_data,
                 "total_pl": total_pl,
                 "total_pl_pct": total_pl_pct,
                 "open_total_pl": open_total_pl,
                 "open_total_pl_pct": open_total_pl_pct,
+                "day_change": round(day_change, 2),
             }
 
             self._save(portfolio_data)
