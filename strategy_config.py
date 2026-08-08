@@ -147,7 +147,7 @@ def export_for_website() -> Dict[str, Any]:
             "above_ema": ENTRY_ABOVE_EMA_REQUIRED,
             "tradeable_tier": ENTRY_TRADEABLE_TIER,
             "hard_confirmation_keys": sorted(HARD_CONFIRMATION_KEYS),
-            "hard_confirmation_note": "v3: macd_turning and intraday_confirmed REMOVED (negative live edge). At least one of volume OR vwap required.",
+            "hard_confirmation_note": "v3 2026-08-08: macd_turning and intraday_confirmed REMOVED (negative live edge). REQUIRED_POSITIVE_HARD_KEYS = {vwap_confirmed, options_confirmed}: both must be true for entry. volume_confirmed and relvol_confirmed remain supportive chips but no longer satisfy the positive-edge gate on their own.",
         },
         "position_management": {
             "rotation_enabled": ROTATION_ENABLED,
