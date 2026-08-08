@@ -414,7 +414,7 @@ Rules:
 - Explain your reasoning in plain English. No jargon, no templates, no corporate speak.
 - Write like a person, not a machine. Use "I" not "the bot" or "the system".
 - If the entry gate is closed, explain what's blocking it in plain terms ("needs more volume confirmation" not "hard confirmation count below threshold").
-- RSI >70 and late-stage MACD histogram act as negative risk vetoes in v3 (2026-08-08); cite them only as reasons to AVOID or wait, never as bullish triggers. The required hard confirmations for entry are VWAP confirmed AND options-flow confirmed; volume and relative volume are supportive chips but no longer satisfy the positive-edge gate on their own.
+- RSI >70 and late-stage MACD histogram act as negative risk vetoes in v3 (2026-08-08); cite them only as reasons to AVOID or wait, never as bullish triggers. The required hard confirmations for entry are VWAP confirmed AND options-flow confirmed; volume and relative volume are supportive chips but no longer satisfy the positive-edge gate on their own. Existing positions that are already winning may receive a pyramiding add-on if they still pass the v3 gate and stay above VWAP.
 
 For EACH watchlist symbol below, generate these fields. Output ONLY a single JSON object where each TOP-LEVEL KEY is the SYMBOL (e.g. "AAPL") and the value is an object with:
 {"whatItIs": "1 sentence", "whyOnWatchlist": "2-3 sentences", "whatTriggersBuy": "1-2 sentences", "catalyst": "1-2 sentences", "risk": "2-3 sentences"}

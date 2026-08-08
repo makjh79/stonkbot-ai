@@ -95,6 +95,20 @@ ROTATION_ENABLED: bool = False          # disabled 2026-08-01
 THESIS_BROKEN_GATED_BY_MIN_HOLD: bool = True
 
 # =============================================================================
+# Pyramiding / Add-to-Winners (v3.1 2026-08-08)
+# Active by owner decision. Adds to existing positions when they are winning
+# AND the setup still passes the full v3 entry gate. Never averages down.
+# =============================================================================
+PYRAMIDING_ENABLED: bool = True
+PYRAMIDING_MIN_UNREALIZED_PCT: float = 0.05     # position must be +5% or more
+PYRAMIDING_MAX_ADDON_PCT_OF_ORIGINAL: float = 0.50  # add up to 50% of original shares
+PYRAMIDING_COOLDOWN_DAYS: int = 5               # max one add-on per position per 5 days
+PYRAMIDING_SUSPEND_IF_BELOW_PCT: float = 0.02  # if position drops below +2%, block for 10d
+PYRAMIDING_SUSPEND_DAYS: int = 10
+PYRAMIDING_REQUIRES_ENTRY_GATE: bool = True     # must pass full v3 entry gate incl. VWAP+options
+PYRAMIDING_REQUIRES_ABOVE_VWAP: bool = True     # price must be above daily VWAP
+
+# =============================================================================
 # Cash & Risk Guardrails
 # =============================================================================
 CASH_FLOOR_PCT: float = 0.10

@@ -70,7 +70,18 @@ from readiness_score import (
     ENTRY_MIN_HARD_CONFIRMATIONS,
     TIER_STRONG_NOW_MIN,
 )
-from strategy_config import HARD_CONFIRMATION_KEYS, REQUIRED_POSITIVE_HARD_KEYS
+from strategy_config import (
+    HARD_CONFIRMATION_KEYS,
+    REQUIRED_POSITIVE_HARD_KEYS,
+    PYRAMIDING_ENABLED,
+    PYRAMIDING_MIN_UNREALIZED_PCT,
+    PYRAMIDING_MAX_ADDON_PCT_OF_ORIGINAL,
+    PYRAMIDING_COOLDOWN_DAYS,
+    PYRAMIDING_SUSPEND_IF_BELOW_PCT,
+    PYRAMIDING_SUSPEND_DAYS,
+    PYRAMIDING_REQUIRES_ENTRY_GATE,
+    PYRAMIDING_REQUIRES_ABOVE_VWAP,
+)
 
 import requests
 
@@ -964,6 +975,7 @@ class STONKAIBot:
         self._signals: List[Dict] = []
         self._dry_run = TradingConfig.DRY_RUN or (not self.alpaca.is_paper() and not TradingConfig.LIVE_MODE)
         self._failed_buy_symbols: set = set()  # symbols that failed to buy (e.g. not tradable)
+        self._pyramid_addons: Dict[str, list] = {}  # symbol -> list of add-on records
         self._positions: Dict = {}  # synced from portfolio_data each cycle for exit logic
         self._short_alerts_sent: Dict[str, str] = {}  # symbol -> date alerted (1/day)
         self._persistent_eligible: set = set()  # symbols eligible on BOTH last and current scan
@@ -2368,6 +2380,41 @@ class STONKAIBot:
             self._execute_buy(trade, portfolio_data, is_avg_in=True)
             self.risk_engine.record_average_in(symbol, sizing.intended_notional)
             current_positions[symbol]["market_value"] = current_positions[symbol].get("market_value", 0) + sizing.qty * price
+
+        # 3c. Pyramiding: add to winning positions that still pass the v3 gate
+        if PYRAMIDING_ENABLED:
+            for pos in portfolio_data.get("positions", []):
+                symbol = pos.get("symbol")
+                if not symbol or symbol not in signal_map:
+                    continue
+                sig = signal_map[symbol]
+                allowed, reason, addon_qty = self._can_pyramid_into(pos, sig, portfolio_data)
+                if not allowed:
+                    logger.debug(f"Pyramid skip {symbol}: {reason}")
+                    continue
+
+                price = self.alpaca.get_latest_quote(symbol)
+                if price is None or price <= 0:
+                    continue
+
+                # Suspend future add-ons if position has fallen below threshold
+                pl_pct = pos.get("unrealized_plpc", 0) or 0.0
+                will_suspend = pl_pct < PYRAMIDING_SUSPEND_IF_BELOW_PCT
+
+                trade = {
+                    "symbol": symbol,
+                    "qty": addon_qty,
+                    "action": "BUY",
+                    "reason": f"Pyramid add-on: {symbol} up {pl_pct:.2%}, still passes v3 gate",
+                    "intended_notional": addon_qty * price,
+                    "tier": sig.get("tier", "STRONG_NOW"),
+                    "is_pyramid_addon": True,
+                }
+                self._execute_buy(trade, portfolio_data, is_avg_in=True)
+                self._record_pyramid_addon(symbol, addon_qty, price, suspended=will_suspend)
+                if current_positions.get(symbol):
+                    current_positions[symbol]["market_value"] = current_positions[symbol].get("market_value", 0) + addon_qty * price
+                logger.info(f"PYRAMID BUY {symbol}: {addon_qty} shares @ ${price:.2f} (reason: {reason})")
             portfolio_data["account"]["cash"] -= sizing.intended_notional
 
     def _execute_sell(self, trade: Dict, portfolio_data: Dict):
@@ -2498,6 +2545,90 @@ class STONKAIBot:
             reason = f"MAX_POSITIONS auto-trim (#{i+1}/{trim})"
             logger.info(f"🪓 Auto-trimming {sym} — off_watchlist={off_wl}, readiness={readiness:.0f}, P&L={plpc:.1f}%")
             self._exit_position(sym, reason=reason)
+
+    def _can_pyramid_into(self, pos: Dict, sig: Dict, portfolio_data: Dict) -> tuple[bool, str, int]:
+        """Check whether we may add to a winning existing position.
+
+        Returns (allowed, reason, qty).
+        Never averages down; only adds when position is up, still passes the v3
+        entry gate, and is above daily VWAP.
+        """
+        if not PYRAMIDING_ENABLED:
+            return False, "pyramiding disabled", 0
+
+        symbol = pos.get("symbol", "")
+        pl_pct = pos.get("unrealized_plpc", 0) or 0.0
+        if pl_pct < PYRAMIDING_MIN_UNREALIZED_PCT:
+            return False, f"unrealized {pl_pct:.2%} below min {PYRAMIDING_MIN_UNREALIZED_PCT:.0%}", 0
+
+        # Check full v3 entry gate if required
+        if PYRAMIDING_REQUIRES_ENTRY_GATE:
+            if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
+                return False, "does not pass current v3 entry gate", 0
+
+        # Price above daily VWAP if required
+        if PYRAMIDING_REQUIRES_ABOVE_VWAP:
+            conf = sig.get("confirmations", {})
+            if not conf.get("vwap_confirmed", False):
+                return False, "price not above daily VWAP", 0
+
+        # Cooldown and suspension from prior add-ons
+        symbol_addons = self._pyramid_addons.get(symbol, [])
+        now = datetime.now(timezone.utc)
+        recent_addons = [
+            a for a in symbol_addons
+            if (now - a["timestamp"]).days < PYRAMIDING_COOLDOWN_DAYS
+        ]
+        if recent_addons:
+            return False, f"add-on cooldown active ({len(recent_addons)} recent)", 0
+        suspended = any(
+            (now - a["timestamp"]).days < PYRAMIDING_SUSPEND_DAYS
+            for a in symbol_addons if a.get("suspended", False)
+        )
+        if suspended:
+            return False, "add-on suspended after drawdown", 0
+
+        # Determine add-on size: up to 50% of original position qty
+        original_qty = pos.get("qty", 0)
+        if original_qty <= 0:
+            return False, "no original position qty", 0
+        max_addon_qty = int(original_qty * PYRAMIDING_MAX_ADDON_PCT_OF_ORIGINAL)
+        if max_addon_qty < 1:
+            return False, "add-on qty rounds to zero", 0
+
+        # Respect tier cap and sector cap via risk_engine sizing
+        price = self.alpaca.get_latest_quote(symbol) or sig.get("last_price", 0)
+        if price <= 0:
+            return False, "no usable price", 0
+        _tier = sig.get("tier", "STRONG_NOW")
+        _tier_max_pct = self._tier_max_position_pct(_tier, self.risk_engine.config.max_single_position_pct)
+        sizing = self.risk_engine.size_position(
+            symbol=symbol,
+            price=price,
+            atr=sig.get("atr14", price * 0.02),
+            portfolio_data=portfolio_data,
+            tier=_tier,
+        )
+        if sizing.blocked:
+            return False, f"sizing blocked: {sizing.block_reason}", 0
+
+        # Cap add-on at 50% of original, but also don't exceed normal position size cap
+        allowed_qty = min(max_addon_qty, sizing.qty)
+        if allowed_qty < 1:
+            return False, "allowed add-on qty below 1", 0
+
+        return True, "pyramid add-on approved", allowed_qty
+
+    def _record_pyramid_addon(self, symbol: str, qty: int, price: float, suspended: bool = False):
+        """Record a pyramid add-on for cooldown/suspension tracking."""
+        from datetime import datetime, timezone
+        entry = {
+            "timestamp": datetime.now(timezone.utc),
+            "qty": qty,
+            "price": price,
+            "suspended": suspended,
+        }
+        self._pyramid_addons.setdefault(symbol, []).append(entry)
 
     def _execute_buy(self, trade: Dict, portfolio_data: Dict, is_avg_in: bool = False):
         symbol = trade["symbol"]

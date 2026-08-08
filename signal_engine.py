@@ -1272,8 +1272,7 @@ class SignalEngine:
         # gate identical to the config-of-truth in strategy_config.py.
         from strategy_config import REQUIRED_POSITIVE_HARD_KEYS
         conf = readiness.confirmations or {}
-        _missing = [k for k in REQUIRED_POSITIVE_HARD_KEYS if not conf.get(k)]
-        if readiness.entry_eligible and _missing:
+        if readiness.entry_eligible and not all(conf.get(k) for k in REQUIRED_POSITIVE_HARD_KEYS):
             readiness.entry_eligible = False
 
         # MACD histogram value for storage

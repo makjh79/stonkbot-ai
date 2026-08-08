@@ -286,7 +286,17 @@ round trips are generated under the new signal, whichever first.
    < 0.9 → disable new hard confirmation gate first; if PF still < 0.9, revert weights.
 3. **VWAP/options hard confirmation count**: if either confirmation is false for > 80% of
    entry-eligible signals due to missing data, relax the gate to require only one of the two.
-4. **No changes** to stop architecture, position caps, min-hold, or regime approach during
+4. **Pyramiding add-on (v3.1, active from 2026-08-08 by owner decision)**:
+   - Adds to winning existing positions (+5% unrealized or more) only when the symbol
+     still passes the full v3 entry gate (readiness ≥75, VWAP + options confirmed,
+     above EMA, QQQ relative strength not negative) and price is above daily VWAP.
+   - Add-on size is capped at 50% of the original position size and respects the existing
+     12% STRONG_NOW / 8% other tier caps and 25% sector cap.
+   - Max one add-on per position per 5 trading days; suspended for 10 days if the position
+     drops below +2% unrealized after an add-on.
+   - If pyramiding materially increases drawdown or degrades PF, disable PYRAMIDING_ENABLED
+     in strategy_config.py and restart.
+5. **No other changes** to stop architecture, position caps, min-hold, or regime approach during
    the window unless the bot is down or data-integrity failure occurs.
 
 ## Process
