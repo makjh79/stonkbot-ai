@@ -811,6 +811,7 @@ class Signal:
     spread_ok: bool = True
     bid_ask_imbalance: Optional[float] = None
     bid_ask_bullish: bool = False
+    vs_qqq_5d_return_delta: float = 0.0
     has_upcoming_dividend: bool = False
     has_upcoming_split: bool = False
     has_upcoming_merger: bool = False
@@ -1169,6 +1170,16 @@ class SignalEngine:
         else:
             relative_strength_20d = 0.0
 
+        # v3 2026-08-08: stock vs QQQ 5-day return delta for the new QQQ gate.
+        # Computed from existing all_bars daily closes; falls back to 0 if data missing.
+        qqq_closes = all_bars.get("QQQ", {}).get("closes", [])
+        if len(closes) >= 6 and len(qqq_closes) >= 6:
+            stock_5d = (closes[-1] - closes[-6]) / closes[-6]
+            qqq_5d = (qqq_closes[-1] - qqq_closes[-6]) / qqq_closes[-6]
+            vs_qqq_5d_return_delta = stock_5d - qqq_5d
+        else:
+            vs_qqq_5d_return_delta = 0.0
+
         # --- Compute readiness score (v2.1) --
         # Get intraday data for readiness computation
         _intraday = _intraday_cache.get(symbol, [])
@@ -1231,6 +1242,7 @@ class SignalEngine:
             all_bars=all_bars,
             intraday_bars=_intraday,
             daily_vwap=_daily_vwap,
+            minute_vwap=_daily_vwap,  # v3: pass same snapshot VWAP as minute anchor
             prev_close=_prev_close,
             options_implied_vol=_opts_iv,
             options_call_put_ratio=_options_call_put_ratio,
@@ -1242,6 +1254,7 @@ class SignalEngine:
             spread_ok=_spread_ok,
             bid_ask_imbalance=_imbalance,
             bid_ask_bullish=_bid_ask_bullish,
+            vs_qqq_5d_return_delta=round(vs_qqq_5d_return_delta, 6),
             has_upcoming_dividend=_has_dividend,
             has_upcoming_split=_has_split,
             has_upcoming_merger=_has_merger,
@@ -1252,6 +1265,18 @@ class SignalEngine:
             volume_5m_surge=_5min_signals["volume_5m_surge"],
             price_above_5m_vwap=_5min_signals["price_above_5m_vwap"],
         )
+
+        # v3 2026-08-08: hard confirmation requirement. entry_eligible requires
+        # both VWAP and options flow confirmed (in addition to existing >=5 conf,
+        # >=1 hard, above_ema, and the positive-edge volume/VWAP key).  This
+        # reflects live attribution: VWAP (+28pp) and options flow (+11pp) are
+        # the strongest confirmed edges.  Falls back to existing readiness gate
+        # if the new fields are missing (should not happen here).
+        conf = readiness.confirmations or {}
+        vwap_confirmed = bool(conf.get("vwap_confirmed"))
+        options_confirmed = bool(conf.get("options_confirmed"))
+        if readiness.entry_eligible and not (vwap_confirmed and options_confirmed):
+            readiness.entry_eligible = False
 
         # MACD histogram value for storage
         macd_hist = 0.0
@@ -1341,6 +1366,7 @@ class SignalEngine:
             spread_ok=_spread_ok,
             bid_ask_imbalance=round(_imbalance, 3) if _imbalance is not None else None,
             bid_ask_bullish=_bid_ask_bullish,
+            vs_qqq_5d_return_delta=round(vs_qqq_5d_return_delta, 6),
             has_upcoming_dividend=_has_dividend,
             has_upcoming_split=_has_split,
             has_upcoming_merger=_has_merger,

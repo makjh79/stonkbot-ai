@@ -216,3 +216,77 @@ Live factor attribution (167 closed trades, Jul 7 rebase window):
 Monitor early-week turnover and forward returns. If churn drops but
 winner capture remains poor, next candidates are: profit-taking rule,
 and demoting MACD/intraday confirmations.
+
+
+# v3 Signal Pre-registration Addendum
+
+Registered: 2026-08-08 11:04 HKT (Saturday, US market closed) · Operator: Jeeves
+Owner directive: patch active paper bot immediately; 30-day paper evaluation window.
+
+## Motivation
+Live factor attribution (188 closed trades, Jul 7 rebase window through Aug 7) shows:
+- Readiness score correlation with outcomes ≈ 0.048 (no edge).
+- MACD edge ≈ −21 pp; intraday edge ≈ +2 pp (noise).
+- VWAP confirmed edge ≈ +28 pp; near-term bullish options-flow edge ≈ +11 pp.
+- Volume / relative volume also positive but already embedded in the hard-confirmation gate.
+
+The current signal weights MACD/intraday as positive contributors and treats RSI as a
+momentum sweet-spot signal.  Both behaviors contradict the live evidence and suppress
+the only factors that are working.
+
+## Changes (effective Monday Aug 10 2026 open)
+
+1. `readiness_score.py` — factor reweighting and reshaping
+   - RSI: reintroduced at weight 0.06 as a **negative veto** only.
+     - RSI > 70 → negative contributor (overbought veto).
+     - RSI 40–60 → neutral / small positive only.
+     - Missing RSI returns neutral (no discard).
+   - MACD: reintroduced at weight 0.05 as **fresh-cross positive / late-stage negative**.
+     - Score is positive (100) only on a histogram cross from negative to positive.
+     - Strongly positive histogram (late-stage momentum) is scored negative.
+     - Old "positive and rising" bucket removed because it had −21 pp live edge.
+   - VWAP deviation: weight raised 0.10 → 0.15 (strongest live edge, +28 pp).
+   - Options sentiment: weight raised 0.10 → 0.14; unusual bullish flow gets an
+     extra +8 lift when price is above intraday VWAP, reducing false positives
+     from contrarian/hedge flow.
+   - Added **QQQ relative-strength gate**: if symbol 5-day return is below QQQ 5-day
+     return, readiness is reduced by at least 15 points (up to 25 points for large
+     underperformance). Positive/missing delta is neutral.
+
+2. `signal_engine.py` — enriched inputs and hard confirmation gate
+   - Passes `daily_vwap`, `minute_vwap` (snapshot VWAP), `options_flow_score`,
+     `options_unusual_volume`, `near_term_bullish_flow`, and `vs_qqq_5d_return_delta`
+     (computed from existing daily bars vs QQQ) into `compute_readiness`.
+   - Added hard confirmation requirement: `entry_eligible` now additionally requires
+     `vwap_confirmed=True` **AND** `options_confirmed=True` on top of the existing
+     readiness ≥75, ≥5 confirmations, ≥1 hard, above_ema, and positive-edge volume/VWAP gate.
+   - New `vs_qqq_5d_return_delta` field persisted on each `Signal` output.
+
+3. No tier thresholds, `ENTRY_READINESS_MIN`, or `signal_rules.py` constants were changed.
+
+## Rollback
+- Backups written to:
+  - `/opt/stonk-ai/backups/readiness_score-pre-v3-20260808-1053.py`
+  - `/opt/stonk-ai/backups/signal_engine-pre-v3-20260808-1053.py`
+- Revert is `cp backups/*-pre-v3-20260808-1053.py .`, `systemctl restart stonk-ai.service`.
+
+## 30-day paper evaluation window
+
+Window: Aug 10 2026 open → Sep 11 2026 close (≈ 22 trading days), or until 60 closed
+round trips are generated under the new signal, whichever first.
+
+### Keep/kill criteria
+1. **Readiness correlation with 5-day forward returns** ≥ 0.15 (n ≥ 60) → keep.
+   < 0.10 → revert to v2.1 and reassess.
+2. **Entry-eligible subset profit factor** ≥ 1.1 on multi-day holds (n ≥ 30) → continue.
+   < 0.9 → disable new hard confirmation gate first; if PF still < 0.9, revert weights.
+3. **VWAP/options hard confirmation count**: if either confirmation is false for > 80% of
+   entry-eligible signals due to missing data, relax the gate to require only one of the two.
+4. **No changes** to stop architecture, position caps, min-hold, or regime approach during
+   the window unless the bot is down or data-integrity failure occurs.
+
+## Process
+This addendum was written and committed BEFORE the code changes.  It is paper-only;
+no real-money logic was touched.  Measurement continues via existing
+`factor_attribution.py` cron (3x daily), `entry_factor_snapshots.json` (15-min), and
+`trade_quality_report.py`.

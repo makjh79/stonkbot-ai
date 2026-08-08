@@ -51,16 +51,17 @@ logger = logging.getLogger(__name__)
 # Weights (sum to 1.0)
 # Rebalanced to reduce momentum collinearity (70%→55%) and add non-price factors
 WEIGHT_SIGNAL = 0.25  # raised 2026-07-27 to compensate dropped RSI/MACD
-WEIGHT_RSI = 0.00      # dropped 2026-07-27: attribution shows -13pp edge
+WEIGHT_RSI = 0.06      # v3 2026-08-08: reintroduced as negative veto only
 WEIGHT_VOLUME = 0.10   # raised 2026-07-27: volume/relvol had +31pp edge
-WEIGHT_MACD = 0.00     # dropped 2026-07-27: attribution shows -19pp edge
+WEIGHT_MACD = 0.05     # v3 2026-08-08: reintroduced as fresh-cross only / late-stage negative
 WEIGHT_EMA = 0.10      # restored toward 12% — strongest live predictor (+0.572 corr); keep RS too
 WEIGHT_SECTOR = 0.25   # held 2026-07-27 as stabilizer after dropping RSI/MACD
 WEIGHT_INTRADAY = 0.05 # reduced 2026-07-27: intraday had -2.2pp edge
-WEIGHT_OPTIONS = 0.10  # raised 2026-07-27: options flow had +9.8pp edge
+# v3 2026-08-08: boosted options and VWAP — the only positive hard edges in attribution
+WEIGHT_OPTIONS = 0.14  # raised: options flow/near-term bullish edge
 WEIGHT_REL_VOLUME = 0.00  # kept as boolean confirmation chip only; volume score already captures same ratio
 
-WEIGHT_VWAP_DEV = 0.10   # raised 2026-07-27: VWAP had +3.1pp edge
+WEIGHT_VWAP_DEV = 0.15   # raised 2026-08-08: VWAP confirmed edge strongest (+28 pp)
 
 WEIGHT_RELATIVE_STRENGTH = 0.04  # NEW — stock vs SPY 20-day alpha; complements EMA, not replaces
 
@@ -94,39 +95,35 @@ class ReadinessResult:
 
 def _rsi_component_score(rsi: float) -> float:
     """
-    Score RSI on a 0-100 scale.
+    v3 2026-08-08: RSI is a negative contributor when overbought (>70),
+    neutral/small positive in the 40-60 range, and otherwise muted.
 
-    Momentum strategy: RSI 50-65 is the sweet spot (score 100).
-    - Below 30: falling knife risk, score tapers toward 20
-    - 30-40: recovering, score rises 40->80
-    - 40-50: decent, score 80->95
-    - 50-65: ideal, score 100
-    - 65-70: slightly overbought, score 95->80
-    - 70-80: overbought, score 60->30
-    - Above 80: very overbought, score 10
+    Attribution shows the old "sweet spot" RSI signal had no edge; we now
+    use it only as a risk veto.  The neutral band (40-60) avoids penalizing
+    stocks that are not extended.  Missing RSI returns neutral to avoid
+    discarding valid setups when data is absent.
     """
     if rsi <= 0:
-        return 20.0
-    if rsi < 30:
-        # Falling knife zone: 0-30 maps to 20-40
-        return 20.0 + (rsi / 30.0) * 20.0
-    if rsi < 40:
-        # 30-40 maps to 40-80
-        return 40.0 + ((rsi - 30) / 10.0) * 40.0
-    if rsi < 50:
-        # 40-50 maps to 80-95
-        return 80.0 + ((rsi - 40) / 10.0) * 15.0
-    if rsi <= 65:
-        # Sweet spot: 50-65 = 100
-        return 100.0
-    if rsi <= 70:
-        # 65-70 maps to 95-80
-        return 95.0 - ((rsi - 65) / 5.0) * 15.0
-    if rsi <= 80:
-        # 70-80 maps to 60-30
-        return 60.0 - ((rsi - 70) / 10.0) * 30.0
-    # Above 80: very overbought
-    return max(10.0, 30.0 - (rsi - 80) * 1.0)
+        return 50.0  # missing = neutral (no information)
+    if rsi > 80:
+        return 0.0   # very overbought, full veto
+    if rsi > 70:
+        # 70-80 maps 30 -> 0 (strong negative)
+        return max(0.0, 30.0 - (rsi - 70) * 3.0)
+    if rsi > 65:
+        # 65-70 maps 70 -> 30 (modest negative)
+        return 70.0 - (rsi - 65) * 8.0
+    if rsi >= 60:
+        # 60-65 maps 85 -> 70 (slightly warm)
+        return 85.0 - (rsi - 60) * 3.0
+    if rsi >= 40:
+        # 40-60 ideal zone (neutral-small positive)
+        return 50.0 + (rsi - 50) * 1.5
+    if rsi >= 30:
+        # 30-40 oversold but not panic: small positive
+        return 35.0 + (rsi - 30) * 1.5
+    # Below 30: falling knife risk, mild negative
+    return 20.0 + rsi * 0.5
 
 
 def _rsi_signal_label(rsi: float) -> str:
@@ -181,11 +178,13 @@ def _volume_component_score(recent_vol: float, avg_vol: float,
 
 def _macd_component_score(closes: List[float]) -> Tuple[float, bool]:
     """
-    Simple MACD histogram estimate from EMA12/EMA26.
-    Returns (score 0-100, turning_positive: bool).
+    v3 2026-08-08: MACD is negative in late-stage strongly-positive histogram
+    territory, and positive only on a fresh cross from negative to positive.
+    The old "positive and rising" bucket had negative live edge, so it is
+    removed.  Missing/bare data returns neutral to avoid discarding setups.
     """
     if len(closes) < 35:
-        return 50.0, False
+        return 50.0, False  # missing = neutral
 
     ema12_prev = _ema(closes[-27:-1], 12)
     ema26_prev = _ema(closes[-27:-1], 26)
@@ -196,17 +195,21 @@ def _macd_component_score(closes: List[float]) -> Tuple[float, bool]:
     hist_now = ema12_now - ema26_now
 
     turning_positive = hist_prev <= 0 and hist_now > 0
-    positive_and_rising = hist_now > 0 and hist_now > hist_prev
+    strongly_positive = hist_now > 0 and hist_now > abs(hist_prev) * 0.5
+    still_positive = hist_now > 0
 
     if turning_positive:
         return 100.0, True
-    if positive_and_rising:
-        return 80.0, True
-    if hist_now > 0:
-        return 60.0, False
-    if hist_now > hist_prev:  # negative but rising
+    if strongly_positive:
+        # late-stage momentum, mean-reversion risk — negative
+        return 20.0, False
+    if still_positive:
+        # positive but not strongly extended — neutral/slightly negative
         return 40.0, False
-    return 20.0, False
+    if hist_now > hist_prev:
+        # negative but improving — neutral
+        return 50.0, False
+    return 30.0, False
 
 
 def _ema(values: List[float], period: int) -> float:
@@ -384,11 +387,16 @@ def _intraday_momentum_score(intraday_bars: List[Dict], daily_vwap: Optional[flo
 def _options_sentiment_score(
     iv_summary: Optional[Dict],
     options_flow: Optional[Dict] = None,
+    minute_vwap: Optional[float] = None,
+    price: Optional[float] = None,
 ) -> Tuple[float, bool]:
     """
     Score options sentiment from IV summary dict and options flow data.
     Uses 30d ATM IV and IV rank if available; falls back to raw implied_vol field.
     Incorporates options flow (call/put ratio, near-term bullish flow, unusual volume).
+    v3 2026-08-08: options flow score now gets amplified when near-term bullish
+    flow is confirmed AND the price is above intraday VWAP, reducing false
+    positives from contrarian/hedge flow.
     Returns (score 0-100, confirmed: bool).
 
     Logic:
@@ -440,6 +448,11 @@ def _options_sentiment_score(
         # Unusual volume with bullish near-term flow is a strong confirmation
         if options_flow.get("near_term_bullish_flow"):
             flow_score = min(100.0, flow_score + 10.0)
+            # v3: add extra lift when price is above intraday VWAP (momentum
+            # alignment) so options flow amplifies rather than contradicts
+            # the live technical picture.
+            if minute_vwap and price and price > minute_vwap:
+                flow_score = min(100.0, flow_score + 8.0)
         else:
             flow_score = max(0.0, flow_score - 10.0)
 
@@ -514,6 +527,8 @@ def compute_readiness(
     daily_vwap: Optional[float] = None,
     prev_close: Optional[float] = None,
     options_implied_vol: Optional[Union[float, Dict]] = None,
+    minute_vwap: Optional[float] = None,
+    vs_qqq_5d_return_delta: Optional[float] = None,
     **kwargs,
 ) -> ReadinessResult:
     """
@@ -537,6 +552,12 @@ def compute_readiness(
     all_bars : Dict[str, Dict], optional
         All symbol bars for sector relative strength calculation.
     """
+    # v3 2026-08-08: enriched fields that must be present for the new signal
+    # are explicitly listed here.  Missing values fall back cleanly to
+    # neutral/old behavior, so the engine never breaks on partial data.
+    daily_vwap = daily_vwap or kwargs.get("daily_vwap")
+    minute_vwap = minute_vwap or kwargs.get("minute_vwap") or daily_vwap
+    vs_qqq_5d_return_delta = vs_qqq_5d_return_delta or kwargs.get("vs_qqq_5d_return_delta")
     all_bars = all_bars or {}
 
     # 1. Signal engine total_score component (40%)
@@ -584,7 +605,7 @@ def compute_readiness(
         "options_unusual_volume": kwargs.get("options_unusual_volume", False),
         "near_term_bullish_flow": kwargs.get("near_term_bullish_flow", False),
     }
-    options_component, options_confirmed = _options_sentiment_score(options_implied_vol, options_flow)
+    options_component, options_confirmed = _options_sentiment_score(options_implied_vol, options_flow, minute_vwap, price)
 
     # 9. Relative volume confirmation (already have recent_vol / avg_vol from volume step)
     relvol_component = _relative_volume_score(recent_vol, avg_vol)
@@ -593,6 +614,14 @@ def compute_readiness(
     # 10. VWAP deviation (momentum signal)
     vwap_component = _vwap_deviation_score(price, daily_vwap)
     vwap_confirmed = vwap_component >= 60.0  # price above VWAP or close
+
+    # v3 2026-08-08: QQQ relative-strength gate.  If the symbol's 5-day return
+    # is below QQQ's 5-day return, it is underperforming the growth benchmark;
+    # reduce readiness by at least 15 points.  A positive delta is rewarded
+    # modestly; a zero/missing delta is neutral.
+    qqq_gate_penalty = 0.0
+    if vs_qqq_5d_return_delta is not None and vs_qqq_5d_return_delta < 0:
+        qqq_gate_penalty = 15.0 + min(10.0, abs(vs_qqq_5d_return_delta) * 500.0)
 
     # Pull explicit 5-minute / options / spread / corporate-action chips from kwargs (populated by signal_engine)
     momentum_5m_up = kwargs.get("momentum_5m_up", False)
@@ -651,6 +680,7 @@ def compute_readiness(
         + WEIGHT_NO_CORPORATE_ACTION * (100 if not corporate_action_risk else 0)
         + WEIGHT_BID_ASK_IMBALANCE * (100 if bid_ask_bullish else 0)
     ) / total_weight
+    readiness = readiness - qqq_gate_penalty
     readiness = round(max(0.0, min(100.0, readiness)), 1)
 
     # Confirmations dict (canonical boolean signals)
@@ -710,7 +740,7 @@ def compute_readiness(
         kwargs.get("dip_opportunity", False)
         and confirmations.get("above_ema", False)
         and hard_confirmations >= DIP_HARD_CONF_MIN
-        and readiness >= ENTRY_READINESS_MIN
+        and readiness >= ENTRY_READINESS_MIN + qqq_gate_penalty  # pre-penalty readiness would have cleared
         and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
     )
 
