@@ -25,7 +25,7 @@
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
     <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
-    <!-- CACHE BUST: v=20260718-v2 -->
+    <!-- CACHE BUST: v=20260808-v3 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -4187,7 +4187,7 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· owner-supervised</span></div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2+v3 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation (2+ if &lt;7 chips), above 20-day EMA. Entries require volume or VWAP confirmation (MACD and intraday removed 2026-08-01). Position caps: 12% STRONG_NOW, 8% others. Profit-taking: ATR scale-out (1/3 at +1×ATR, 1/3 at +2×ATR) then +25% trim. The Jul 27 pre-registered protocol ended by owner decision the same day. The Aug 1 2026 churn fix disabled rotation and raised minimum holds to 5d (RISK_ON) / 3d (RISK_OFF); the hard-cut floor was widened to 5% to match the advertised guardrails and reduce noise stops.</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2+v3 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation, above 20-day EMA. Entries require both VWAP and options-flow hard confirmations; RSI &gt;70 and late-stage MACD act as negative vetoes. A QQQ relative-strength gate penalizes names underperforming the index. Position caps: 12% STRONG_NOW, 8% others. Profit-taking: ATR scale-out (1/3 at +1×ATR, 1/3 at +2×ATR) then +25% trim. The Jul 27 pre-registered protocol ended by owner decision the same day; the Aug 8 2026 v3 patch is pre-registered for a 30-day paper evaluation.</div>
             <div id="exp-status" style="font-size:0.68rem;color:#22c55e;margin-top:0.4rem;">● ACTIVE — trading under live rules</div>
           </div>
           <script>
@@ -4297,7 +4297,7 @@
           <div id="perf-risknote" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.35rem;text-align:center;">Unlocks after 20 trading days — before that, they would be noise dressed as precision.</div>
 
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Which Signals Actually Work</div>
-          <div style="font-size:0.7rem;color:var(--text-secondary);line-height:1.5;margin-bottom:0.4rem;">Every entry is scored on 15 signal checks (momentum, volume, VWAP…). As trades close, we measure which checks actually predicted winners — and which are just decoration.</div>
+          <div style="font-size:0.7rem;color:var(--text-secondary);line-height:1.5;margin-bottom:0.4rem;">Every entry is scored on weighted signal checks. As trades close, we measure which checks actually predicted winners — and which are just decoration. v3 emphasizes VWAP and options-flow confirmation while treating RSI and MACD as late-momentum risk vetoes.</div>
           <div id="fa-scores" style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin-bottom:0.5rem;"></div>
           <div id="fa-factors" style="display:flex;flex-direction:column;gap:0.3rem;"></div>
           <div id="fa-takeaway" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
@@ -7528,7 +7528,7 @@ function updateDashboard(data, marketStatus) {
                     <div style="font-size: 0.8rem; margin-bottom: 1.5rem;">No trades yet. The AI is monitoring for opportunities.</div>
                     <div style="font-size: 0.75rem; opacity: 0.7; background: var(--bg-elevated); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
                         <div style="margin-bottom: 0.5rem;">📊 <strong>Strategy Active</strong></div>
-                        <div>• Readiness-based entry (≥75, 5+ conf, volume/VWAP required)</div>
+                        <div>• Readiness-based entry (≥75, 5+ conf, VWAP + options-flow hard confirmations, QQQ relative-strength gate)</div>
                         <div>• 1.5× ATR hard stops [5%, 11%]</div>
                         <div>• +1×ATR scale-out, +2×ATR scale-out, then +25% trim (v3)</div>
                     </div>
@@ -9981,7 +9981,7 @@ function updateDashboard(data, marketStatus) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Readiness ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite of 10 weighted factors: momentum/signal (25%), sector strength (25%), volume (10%), EMA trend (10%), options flow (10%), VWAP (10%), relative strength vs SPY (4%), intraday momentum (5%). RSI and MACD are computed for display but zero-weighted; MACD and intraday removed from entry hard keys as of 2026-08-01 (v3).</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite weighted factors: momentum/signal (25%), sector strength (25%), VWAP (15%), options flow (14%), volume (10%), EMA trend (10%), intraday momentum (5%), RSI risk veto (6%), MACD fresh-cross / late-stage veto (5%), relative strength vs SPY (4%). Entries require VWAP + options-flow hard confirmations.</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -11423,7 +11423,7 @@ function updateDashboard(data, marketStatus) {
                 activeSignalsHtml = `
                     <div style="margin-top: 20px; text-align: center; padding: 20px; background: var(--bg-surface); border-radius: 12px;">
                         <div style="font-size: 14px; color: var(--text-muted);">No active signals</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Signals appear when readiness ≥75 + 5+ confirmations + volume/VWAP hard confirmation</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Signals appear when readiness ≥75 + 5+ confirmations + VWAP + options-flow hard confirmations</div>
                     </div>
                 `;
             }
@@ -11467,7 +11467,7 @@ function updateDashboard(data, marketStatus) {
                         <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 12px; padding: 14px;">
                             <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">💡 HOW WE TRACK</div>
                             <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                                <div style="margin-bottom: 6px;">• Logged when readiness ≥75 + volume/VWAP confirms entry</div>
+                                <div style="margin-bottom: 6px;">• Logged when readiness ≥75 + VWAP + options-flow confirm entry</div>
                                 <div style="margin-bottom: 6px;">• <strong style="color: #22c55e;">WIN:</strong> Stock hits ATR scale-out or +25%/+50% target</div>
                                 <div style="margin-bottom: 6px;">• <strong style="color: var(--accent-red);">LOSS:</strong> Stock hits ATR hard stop</div>
                                 <div>• Tracks from entry signal to exit</div>
