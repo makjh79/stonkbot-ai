@@ -756,20 +756,20 @@ def _compute_5min_signals(intraday_bars: List[Dict]) -> Dict:
 @dataclass
 class Signal:
     symbol: str
-    momentum_score: float
-    quality_score: float
-    risk_score: float
-    regime_score: float
-    total_score: float
-    rank: int
-    price: float
-    atr14: float
-    rsi14: float
-    momentum_20d: float
-    momentum_50d: float
-    volatility_20d: float
-    avg_volume: int
-    spy_corr_20d: float
+    momentum_score: float = 0.0
+    quality_score: float = 0.0
+    risk_score: float = 0.0
+    regime_score: float = 0.0
+    total_score: float = 0.0
+    rank: int = 0
+    price: float = 0.0
+    atr14: float = 0.0
+    rsi14: float = 0.0
+    momentum_20d: float = 0.0
+    momentum_50d: float = 0.0
+    volatility_20d: float = 0.0
+    avg_volume: int = 0
+    spy_corr_20d: float = 0.0
     ai_score: Optional[float] = None
     sector: str = "Other"
     company: str = ""
@@ -827,6 +827,15 @@ class Signal:
         if d.get("confirmations") is None:
             d["confirmations"] = {}
         return d
+
+    @staticmethod
+    def from_dict(d: Dict) -> "Signal":
+        """Reconstruct a Signal from a serialized dict (used by fail-open fallback)."""
+        # Start with defaults and overlay known keys
+        from dataclasses import fields
+        known = {f.name for f in fields(Signal)}
+        kwargs = {k: v for k, v in d.items() if k in known}
+        return Signal(**kwargs)
 
 
 class SignalEngine:
@@ -915,7 +924,23 @@ class SignalEngine:
             _corporate_actions_cache.clear()
 
         if not raw_data:
-            raise RuntimeError("No price data retrieved from Alpaca; cannot generate signals.")
+            # Permanent fail-open: keep last-known signals alive rather than crash.
+            # Trading bot needs signals to size stops and evaluate exits. A stale
+            # signal is strictly better than no signal (which can halt risk logic).
+            logger.error("No price data retrieved from Alpaca; returning prior signals marked stale.")
+            try:
+                prior_path = Path(__file__).parent / "signals.json"
+                prior = json.loads(prior_path.read_text(encoding="utf-8"))
+                prior_signals = prior.get("signals", [])
+                if prior_signals:
+                    for s in prior_signals:
+                        s["stale"] = True
+                        s["stale_reason"] = "Alpaca market data unavailable"
+                    logger.warning(f"Fail-open: preserving {len(prior_signals)} prior signals as stale.")
+                    return [Signal.from_dict(s) for s in prior_signals]
+            except Exception as e:
+                logger.error(f"Fail-open fallback failed: {e}")
+            raise RuntimeError("No price data retrieved from Alpaca and no prior signals available.")
 
         # Regime data already included in composite fetch
         regime_data = {k: v for k, v in raw_data.items() if k in REGIME_SYMBOLS}
@@ -1047,6 +1072,7 @@ class SignalEngine:
             "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "count": len(all_signals),
             "signals": all_signals,
+            "stale": any(s.get("stale") for s in all_signals),
         }
 
         # PHASE 1+: Write to SQLite + JSON mirror

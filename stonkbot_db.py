@@ -296,11 +296,77 @@ def update_watchlist_item(symbol: str, updates: Dict[str, Any]) -> bool:
 # Portfolio
 # ---------------------------------------------------------------------------
 
+def _normalize_holding(h: Dict[str, Any], tier_fallback: str = "") -> Dict[str, Any]:
+    """Accept both DB-style and trading_bot JSON-style field names."""
+    def pick(*keys):
+        for k in keys:
+            if k in h and h[k] is not None:
+                return h[k]
+        return None
+
+    shares = pick("shares", "qty", "quantity", "position_qty")
+    avg_entry = pick("avg_entry_price", "avg_entry", "avg_price", "avg_cost")
+    current = pick("current_price", "current", "last_price", "price")
+    mv = pick("market_value", "market_value_usd", "position_value")
+    upl = pick("unrealized_pnl_usd", "unrealized_pnl", "unrealized_pl", "unrealized_profit")
+    upl_pct = pick("unrealized_pnl_pct", "unrealized_plpc", "unrealized_pl_pct")
+    day_pnl = pick("day_pnl_usd", "day_pnl", "day_pl")
+    day_pnl_pct = pick("day_pnl_pct", "day_plpc")
+    cost_basis = pick("cost_basis_usd", "cost_basis", "cost")
+    stop = pick("stop_price")
+    atr = pick("atr_14", "atr")
+    tier = pick("tier", "backend_tier") or tier_fallback
+    sector = pick("sector", "industry_group")
+    added_at = pick("added_at", "entry_date", "opened_at")
+    is_active = h.get("is_active", True)
+    if isinstance(is_active, str):
+        is_active = is_active.lower() not in {"false", "0", "no"}
+
+    return {
+        "symbol": h.get("symbol", ""),
+        "shares": shares,
+        "avg_entry_price": avg_entry,
+        "current_price": current,
+        "market_value": mv,
+        "unrealized_pnl_usd": upl,
+        "unrealized_pnl_pct": upl_pct,
+        "day_pnl_usd": day_pnl,
+        "day_pnl_pct": day_pnl_pct,
+        "cost_basis_usd": cost_basis,
+        "stop_price": stop,
+        "atr_14": atr,
+        "tier": tier,
+        "sector": sector,
+        "added_at": added_at,
+        "is_active": bool(is_active),
+    }
+
+
 def save_portfolio(summary: Dict[str, Any], holdings: List[Dict[str, Any]]) -> None:
-    """Replace portfolio snapshot + holdings."""
+    """Replace portfolio snapshot + holdings.
+
+    Accepts summary in either trading_bot JSON shape (portfolio_value,
+    cash, total_pl, ...) or DB shape (cash_usd, equity_usd, ...).
+    Holdings are normalized from trading_bot positions or DB rows.
+    """
     with transaction() as conn:
         # Snapshot
         snap = summary
+        cash = snap.get("cash") if "cash" in snap else snap.get("cash_usd")
+        equity = snap.get("equity") if "equity" in snap else snap.get("equity_usd")
+        total_value = (
+            snap.get("total_value")
+            if "total_value" in snap
+            else snap.get("total_value_usd", snap.get("portfolio_value"))
+        )
+        day_pnl = snap.get("day_pnl") if "day_pnl" in snap else snap.get("day_pnl_usd")
+        day_pnl_pct = snap.get("day_pnl_pct") if "day_pnl_pct" in snap else snap.get("day_pnl_pct")
+        total_pnl = snap.get("total_pnl") if "total_pnl" in snap else snap.get("total_pnl_usd")
+        total_pnl_pct = snap.get("total_pnl_pct") if "total_pnl_pct" in snap else snap.get("total_pnl_pct")
+        open_positions = snap.get("open_positions", len(holdings))
+        max_positions = snap.get("max_positions", 12)
+        margin_used_pct = snap.get("margin_used_pct")
+
         conn.execute("DELETE FROM portfolio_snapshots")
         conn.execute(
             """
@@ -311,27 +377,31 @@ def save_portfolio(summary: Dict[str, Any], holdings: List[Dict[str, Any]]) -> N
             ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
-                snap.get("cash"),
-                snap.get("equity"),
-                snap.get("total_value"),
-                snap.get("day_pnl"),
-                snap.get("day_pnl_pct"),
-                snap.get("total_pnl"),
-                snap.get("total_pnl_pct"),
-                snap.get("open_positions"),
-                snap.get("max_positions", 12),
-                snap.get("margin_used_pct"),
-                _json_extra(snap, {"cash", "equity", "total_value", "day_pnl",
-                                   "day_pnl_pct", "total_pnl", "total_pnl_pct",
-                                   "open_positions", "max_positions"}),
+                cash,
+                equity,
+                total_value,
+                day_pnl,
+                day_pnl_pct,
+                total_pnl,
+                total_pnl_pct,
+                open_positions,
+                max_positions,
+                margin_used_pct,
+                _json_extra(snap, {"cash", "cash_usd", "equity", "equity_usd",
+                                   "total_value", "total_value_usd", "portfolio_value",
+                                   "day_pnl", "day_pnl_usd", "day_pnl_pct",
+                                   "total_pnl", "total_pnl_usd", "total_pnl_pct",
+                                   "open_positions", "max_positions", "margin_used_pct"}),
             ),
         )
 
         # Holdings
         conn.execute("DELETE FROM holdings")
         for h in holdings:
-            tier = h.get("tier", "")
-            frontend_tier = BACKEND_TO_FRONTEND.get(tier, tier)
+            n = _normalize_holding(h)
+            if not n["symbol"]:
+                continue
+            frontend_tier = BACKEND_TO_FRONTEND.get(n["tier"], n["tier"])
             conn.execute(
                 """
                 INSERT INTO holdings (
@@ -343,27 +413,25 @@ def save_portfolio(summary: Dict[str, Any], holdings: List[Dict[str, Any]]) -> N
                 ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """,
                 (
-                    h.get("symbol"),
-                    h.get("shares") or h.get("qty"),
-                    h.get("avg_entry_price") or h.get("avg_price"),
-                    h.get("current_price") or h.get("last_price"),
-                    h.get("market_value"),
-                    h.get("unrealized_pnl") or h.get("unrealized_pnl_usd"),
-                    h.get("unrealized_pnl_pct"),
-                    h.get("day_pnl") or h.get("day_pnl_usd"),
-                    h.get("day_pnl_pct"),
-                    h.get("cost_basis") or h.get("cost_basis_usd"),
-                    h.get("stop_price"),
-                    h.get("atr_14"),
-                    tier,
+                    n["symbol"],
+                    n["shares"],
+                    n["avg_entry_price"],
+                    n["current_price"],
+                    n["market_value"],
+                    n["unrealized_pnl_usd"],
+                    n["unrealized_pnl_pct"],
+                    n["day_pnl_usd"],
+                    n["day_pnl_pct"],
+                    n["cost_basis_usd"],
+                    n["stop_price"],
+                    n["atr_14"],
+                    n["tier"],
                     frontend_tier,
-                    h.get("sector"),
-                    h.get("added_at"),
+                    n["sector"],
+                    n["added_at"],
                     _now_iso(),
-                    1 if h.get("is_active", True) else 0,
-                    _json_extra(h, {"symbol", "shares", "avg_entry_price",
-                                    "current_price", "market_value", "unrealized_pnl",
-                                    "tier", "sector", "added_at"}),
+                    1 if n["is_active"] else 0,
+                    _json_extra(h, {"symbol"}),
                 ),
             )
 

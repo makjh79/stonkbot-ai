@@ -796,6 +796,15 @@ class PortfolioDataStore:
         except Exception as e:
             logger.debug(f"Could not write web portfolio file: {e}")
 
+        # Mirror canonical portfolio state to SQLite so DB consumers
+        # (monitor, future dashboards, Jeeves/Einstein queries) see
+        # the same Alpaca truth that drives trading decisions.
+        try:
+            import stonkbot_db as db
+            db.save_portfolio(data, data.get("positions", []))
+        except Exception as e:
+            logger.warning(f"Could not mirror portfolio to SQLite: {e}")
+
 
 class ThesisManager:
     """Manages entry theses for positions and thesis-based exits."""

@@ -43,6 +43,7 @@ PUBLIC_CHECKS = frozenset({
     "check_trade_execution_health",
     "check_open_orders",
     "check_alpaca_portfolio_sync",
+    "check_alpaca_db_alignment",
 })
 
 # ─── Telegram severity routing (owner directive 2026-08-02) ────────────────
@@ -67,6 +68,7 @@ SERIOUS_CHECKS = frozenset({
     "check_trade_execution_health",  # repeated order failures / execution code errors
     "check_open_orders",             # stuck / duplicate orders at the broker
     "check_alpaca_portfolio_sync",   # broker truth diverges from bot/site
+    "check_alpaca_db_alignment",     # SQLite holdings diverge from broker truth
     "check_market_hours_sanity",     # bot believes market closed while open → stops trading
     "check_system_time",             # clock drift (also alerts directly)
 })
@@ -309,7 +311,11 @@ def check_file_freshness() -> None:
             # After hours, allow 6x longer
             _log_warn(f"Stale file (after-hours): {fname} is {age:.0f}s old")
 def check_signals_write_health():
-    """Detect silent signal write failures (critical for trading)."""
+    """Detect silent signal write failures (critical for trading).
+
+    Also detects stale fail-open signals. A single stale batch is tolerated
+    (Alpaca blip); persistent staleness across 3 consecutive runs escalates.
+    """
     now = time.time()
     opt_path = os.path.join(BASE_DIR, "signals.json")
     web_path = os.path.join(WEB_DIR, "signals.json")
@@ -330,6 +336,11 @@ def check_signals_write_health():
         # i.e. the mirror is genuinely failing, not just mid-cycle.
         if opt_mtime - web_mtime > 20 * 60:
             _log_issue(f"signals.json web mirror stale: opt_age={now - opt_mtime:.0f}s web_age={now - web_mtime:.0f}s")
+
+    # Fail-open stale flag: mark as a transient warning unless it persists.
+    signals = _load_json(opt_path)
+    if signals and signals.get("stale"):
+        _log_warn("signals.json is flagged stale (Alpaca data unavailable; using prior signals)")
 
 def check_extended_hours_prices() -> None:
     """All universe symbols (and watchlist) must carry live / extended-hours price data."""
@@ -721,6 +732,59 @@ def check_portfolio_sanity() -> None:
         pct = total_mv / total_value
         if pct > 0.26:  # 25% cap + tolerance
             _log_issue(f"Sector {sector} is {pct:.1%} — exceeds 25% cap")
+
+
+def check_alpaca_db_alignment() -> None:
+    """Ensure SQLite holdings match Alpaca broker truth.
+
+    The Jul 6 SQLite migration created holdings/portfolio_snapshots, but the
+    live JSON pipeline never wrote to them again. This check catches any future
+    drift between DB and broker before it festers.
+    """
+    try:
+        sys.path.insert(0, BASE_DIR)
+        from stonkbot_db import get_holdings
+        from alpaca_data import get_data_hub
+    except Exception as e:
+        _log_warn(f"Alpaca/DB alignment check import failed: {e}")
+        return
+
+    try:
+        hub = get_data_hub()
+        account = hub.get_account()
+        alp_positions = hub.get_positions()
+    except Exception as e:
+        _log_issue(f"Could not fetch Alpaca positions for DB alignment: {e}")
+        return
+
+    alp_map = {}
+    for p in alp_positions:
+        qty = float(p.get("qty", 0))
+        if qty > 0:
+            alp_map[p.get("symbol")] = qty
+
+    try:
+        db_positions = get_holdings()
+    except Exception as e:
+        _log_issue(f"Could not read DB holdings: {e}")
+        return
+
+    db_map = {p.get("symbol"): float(p.get("shares", p.get("qty", 0)) or 0) for p in db_positions}
+    all_syms = set(db_map) | set(alp_map)
+    mismatches = []
+    for sym in sorted(all_syms):
+        db_qty = db_map.get(sym, 0)
+        alp_qty = alp_map.get(sym, 0)
+        if abs(db_qty - alp_qty) > 0.001:
+            mismatches.append(f"{sym}: DB={db_qty:.0f} Alpaca={alp_qty:.0f}")
+
+    if mismatches:
+        summary = f"{len(mismatches)} position(s) diverged from Alpaca"
+        _log_issue(summary)
+        for m in mismatches[:5]:
+            _log_issue(f"  {m}")
+        if len(mismatches) > 5:
+            _log_issue(f"  ... and {len(mismatches) - 5} more")
 
 
 def check_portfolio_history_freshness() -> None:
@@ -1597,6 +1661,7 @@ _IMMEDIATE_CHECKS = frozenset({
     "check_process_health", "check_bot_crash", "check_signals_write_health",
     "check_file_freshness", "check_services", "check_system_time",
     "check_open_orders", "check_alpaca_portfolio_sync",
+    "check_alpaca_db_alignment",
 })
 _PERSIST_RUNS = 3
 _PERSIST_STATE = os.path.join(BASE_DIR, "run", "monitor_persist_state.json")
