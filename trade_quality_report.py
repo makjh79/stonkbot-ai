@@ -22,19 +22,17 @@ def parse_ts(s):
 
 def classify(r):
     r = (r or "").lower()
-    if "trailing stop" in r: return "trailing_stop"
-    if "hard stop" in r or "hard cut" in r or "hard_stop" in r: return "hard_stop"
-    if "vwap stop" in r: return "vwap_stop"
-    if "high-beta basket" in r: return "basket_trim"
-    if "tier cap" in r: return "tier_cap_trim"
-    if "max_positions" in r: return "maxpos_trim"
-    if "concentration" in r: return "conc_trim"
-    if "sector trim" in r: return "sector_trim"
-    if "rotation" in r: return "rotation"
-    if "thesis exit" in r: return "thesis_exit"
-    if "profit" in r: return "profit"
-    if "cash" in r: return "cash_raise"
-    if "full sell" in r: return "full_sell_unattributed"
+    if "concentration trim:" in r: return "conc_trim"
+    if "sector trim:" in r: return "sector_trim"
+    if "v3 scale-out t1:" in r or "v3 scale-out t2:" in r: return "profit_trim"
+    if "thesis exit:" in r: return "thesis_exit"
+    if "hard cut:" in r: return "hard_stop"
+    if "hard stop:" in r: return "hard_stop"
+    if "trailing stop:" in r: return "trailing_stop"
+    if "vwap stop:" in r: return "vwap_stop"
+    if "rotation:" in r: return "rotation"
+    if "cash raise:" in r: return "cash_raise"
+    if "full sell" in r or "unattributed" in r: return "full_sell_unattributed"
     return "other"
 
 STOP_KINDS = {"trailing_stop", "hard_stop", "vwap_stop"}

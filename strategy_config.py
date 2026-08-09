@@ -11,9 +11,10 @@ from typing import Dict, Any, Set, List
 # =============================================================================
 # Entry Gate
 # =============================================================================
-# TEMPORARY DEFENSIVE GATE (2026-08-09): raised based on entry-side sensitivity
-# analysis. Re-evaluate after ~1 week; do not leave at 85.0 without review.
-ENTRY_READINESS_MIN: float = 85.0
+# NOTE 2026-08-09: an entry-side sensitivity test on true strategy=entry BUYs found
+# that raising this to 85.0 eliminated all but 4 trades (DUOL), all losers. Leave at 75.0
+# while we investigate exit-side causes (early rotation/trim/concentration exits).
+ENTRY_READINESS_MIN: float = 75.0
 ENTRY_MIN_CONFIRMATIONS: int = 5
 ENTRY_MIN_HARD_CONFIRMATIONS: int = 1
 ENTRY_HARD_CONFIRMATIONS_STRICT: int = 2  # when total chips < 7
