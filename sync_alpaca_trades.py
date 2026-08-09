@@ -76,15 +76,14 @@ def load_existing_rationale():
         return {}
 
 
-def infer_rationale(trades):
+def infer_rationale(trades, rotation_enabled=False):
     """Infer rationale for trades without explicit reasoning.
 
-    Patterns:
-    - Sell + same-day buy of different symbol → "Rotation: trim X to fund Y"
-    - Sell 1/3 of position with +25%+ gain → "Profit trim at +X%"
-    - Full sell at -10% → "Stop loss at -X%"
-    - Small sell (<25% of position) → "Cash raise" or "Concentration trim"
-    - Initial buy → "Entry signal" or "Quality-momentum entry"
+    v2.1 changes (2026-08-09):
+    - Only infer "Rotation" when rotation was actually enabled in policy at the time.
+    - Classify full sells by magnitude into stop_loss / vwap_stop / thesis_exit /
+      profit_exit, so the trade_quality report and diagnostics are not polluted
+      by a generic "Full sell at X%" bucket.
     """
     # Build a timeline and look for patterns
     by_day = defaultdict(list)
@@ -133,16 +132,22 @@ def infer_rationale(trades):
                     if pnl_pct <= -10:
                         t["rationale"] = f"Stop loss at {pnl_pct:+.1f}% (full exit)"
                         t["strategy"] = "stop_loss"
-                    elif pnl_pct >= 50:
+                    elif pnl_pct <= -5:
+                        t["rationale"] = f"Hard stop at {pnl_pct:+.1f}% (full exit)"
+                        t["strategy"] = "hard_stop"
+                    elif pnl_pct <= -1.5:
+                        t["rationale"] = f"VWAP stop at {pnl_pct:+.1f}% (full exit)"
+                        t["strategy"] = "vwap_stop"
+                    elif pnl_pct >= 30:
                         t["rationale"] = f"Full profit exit at {pnl_pct:+.1f}%"
                         t["strategy"] = "profit_exit"
                     else:
-                        t["rationale"] = f"Full sell at {pnl_pct:+.1f}%"
-                        t["strategy"] = "exit"
+                        t["rationale"] = f"Thesis exit at {pnl_pct:+.1f}% (full sell)"
+                        t["strategy"] = "thesis_exit"
                 elif sell_pct <= 0.35 and pnl_pct >= 25:
                     t["rationale"] = f"Profit trim at {pnl_pct:+.1f}% (trimmed {sell_pct:.0%})"
                     t["strategy"] = "profit_trim"
-                elif same_day_buys:
+                elif same_day_buys and rotation_enabled:
                     # Dedupe preserving order (multiple buys of same symbol → "AAPL, AAPL" spam)
                     seen = []
                     for x in same_day_buys:
@@ -151,6 +156,16 @@ def infer_rationale(trades):
                     buy_syms = ", ".join(seen[:3])
                     t["rationale"] = f"Rotation: trim {sym} to fund {buy_syms}"
                     t["strategy"] = "rotation"
+                elif same_day_buys:
+                    # Rotation is disabled in policy; reclassify as concentration trim
+                    # (same-day reallocation that the policy now treats as churn).
+                    seen = []
+                    for x in same_day_buys:
+                        if x["symbol"] not in seen:
+                            seen.append(x["symbol"])
+                    buy_syms = ", ".join(seen[:3])
+                    t["rationale"] = f"Concentration trim: reallocate {sym} to fund {buy_syms} (rotation disabled in policy)"
+                    t["strategy"] = "conc_trim"
                 elif sell_pct <= 0.25:
                     t["rationale"] = f"Cash raise: trim {sym} ({sell_pct:.0%} of position)"
                     t["strategy"] = "cash_raise"
@@ -220,7 +235,10 @@ def main():
             t["strategy"] = existing_rationale[strat_key]
 
     # Infer rationale for any remaining empty entries
-    trades = infer_rationale(trades)
+    # 2026-08-09: rotation has been disabled in policy since 2026-08-01.
+    # Only label same-day reallocation trades as "Rotation" if the flag
+    # was actually on at the time; otherwise call them concentration trims.
+    trades = infer_rationale(trades, rotation_enabled=False)
 
     # Sort and save
     trades.sort(key=lambda x: x["timestamp"])
