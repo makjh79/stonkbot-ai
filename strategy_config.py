@@ -20,10 +20,11 @@ ENTRY_ABOVE_EMA_REQUIRED: bool = True
 ENTRY_TRADEABLE_TIER: str = "STRONG_NOW"
 
 # =============================================================================
-# Hard Confirmation Keys (v3 2026-08-08)
+# Hard Confirmation Keys (v3 2026-08-08, updated 2026-08-09)
 # Evidence-based: only factors with positive live edge are hard confirmations.
 # REMOVED: macd_turning (live edge -15.5pp), intraday_confirmed (-8.9pp)
-# REQUIRED: both vwap_confirmed AND options_confirmed (the two strongest live edges).
+# REMOVED on 2026-08-09: options_confirmed (live edge -5pp).
+# REQUIRED: vwap_confirmed (the strongest live edge).
 # volume_confirmed and relvol_confirmed remain positive chips but are no longer
 # sufficient on their own for the positive-edge gate.
 # =============================================================================
@@ -34,11 +35,10 @@ HARD_CONFIRMATION_KEYS: Set[str] = {
     "relvol_confirmed",
 }
 
-# ALL of these MUST be True for entry.  v3 evidence: VWAP (+28pp) and options
-# flow (+11pp) are the only confirmed positive-edge hard confirmations.
+# ALL of these MUST be True for entry.  v3 evidence: VWAP (+28pp) is the only
+# confirmed positive-edge hard confirmation.
 REQUIRED_POSITIVE_HARD_KEYS: Set[str] = {
     "vwap_confirmed",
-    "options_confirmed",
 }
 
 # Display-only keys: still computed and shown in UI, but NOT used for entry
@@ -77,11 +77,11 @@ VWAP_STOP_ATR_MULTIPLIER: float = 1.0
 # Profit-Taking (v3 ATR Scale-Out)
 # =============================================================================
 V3_SCALEOUT_ENABLED: bool = True
-V3_SCALEOUT_T1_ATR: float = 1.0       # first scale-out: +1x ATR, sell 1/3
-V3_SCALEOUT_T2_ATR: float = 2.0       # second scale-out: +2x ATR, sell 1/3
+V3_SCALEOUT_T1_ATR: float = 0.5       # first scale-out: +0.5x ATR, sell 1/3
+V3_SCALEOUT_T2_ATR: float = 1.0       # second scale-out: +1x ATR, sell 1/3
 V3_SCALEOUT_FRACTION: float = 0.33    # fraction to sell at each level
-TRIM_PROFIT_PCT: float = 0.25          # legacy trim at +25%
-FULL_EXIT_PROFIT_PCT: float = 0.50     # full exit at +50%
+TRIM_PROFIT_PCT: float = 0.15          # legacy trim at +15%
+FULL_EXIT_PROFIT_PCT: float = 0.30     # full exit at +30%
 
 # =============================================================================
 # Position Management
@@ -161,7 +161,7 @@ def export_for_website() -> Dict[str, Any]:
             "above_ema": ENTRY_ABOVE_EMA_REQUIRED,
             "tradeable_tier": ENTRY_TRADEABLE_TIER,
             "hard_confirmation_keys": sorted(HARD_CONFIRMATION_KEYS),
-            "hard_confirmation_note": "v3 2026-08-08: macd_turning and intraday_confirmed REMOVED (negative live edge). REQUIRED_POSITIVE_HARD_KEYS = {vwap_confirmed, options_confirmed}: both must be true for entry. volume_confirmed and relvol_confirmed remain supportive chips but no longer satisfy the positive-edge gate on their own.",
+            "hard_confirmation_note": "v3 2026-08-08: macd_turning and intraday_confirmed REMOVED (negative live edge). Updated 2026-08-09: options_confirmed REMOVED (negative live edge -5pp). REQUIRED_POSITIVE_HARD_KEYS = {vwap_confirmed}: must be true for entry. volume_confirmed and relvol_confirmed remain supportive chips but no longer satisfy the positive-edge gate on their own.",
         },
         "position_management": {
             "rotation_enabled": ROTATION_ENABLED,
