@@ -11,7 +11,9 @@ from typing import Dict, Any, Set, List
 # =============================================================================
 # Entry Gate
 # =============================================================================
-ENTRY_READINESS_MIN: float = 75.0
+# TEMPORARY DEFENSIVE GATE (2026-08-09): raised based on entry-side sensitivity
+# analysis. Re-evaluate after ~1 week; do not leave at 85.0 without review.
+ENTRY_READINESS_MIN: float = 85.0
 ENTRY_MIN_CONFIRMATIONS: int = 5
 ENTRY_MIN_HARD_CONFIRMATIONS: int = 1
 ENTRY_HARD_CONFIRMATIONS_STRICT: int = 2  # when total chips < 7
