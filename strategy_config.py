@@ -182,7 +182,7 @@ def export_for_website() -> Dict[str, Any]:
             "trailing": f"{TRAILING_STOP_ATR_MULTIPLIER}x ATR from peak",
             "hard": f"{HARD_STOP_ATR_MULTIPLIER}x ATR",
             "abs_cut": f"max({ABS_HARD_CUT_PCT:.0%}, 1x ATR)",
-            "vwap": f"max({VWAP_STOP_MAX_PCT:.0%}, 1x ATR) below VWAP",
+            "vwap": "disabled 2026-08-09 — VWAP stops were noise-stopping entries on ordinary intraday dips; risk control now handled by ATR hard/trailing stops.",
         },
         # Raw values for the website Risk Guardrails panel — the panel renders
         # from these so it can never drift from strategy_config.py.

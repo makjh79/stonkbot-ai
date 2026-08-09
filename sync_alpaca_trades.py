@@ -6,7 +6,7 @@ v2 changes:
 - Infers rationale for trades without explicit rationale based on patterns
 - Groups fills by order_id to avoid duplicate entries
 """
-import json, urllib.request, ssl, os
+import json, urllib.request, ssl, os, re
 from datetime import datetime, timezone
 from collections import defaultdict
 
@@ -74,6 +74,32 @@ def load_existing_rationale():
         return lookup
     except Exception:
         return {}
+
+
+def reclassify_old_inferred(t, rotation_enabled=False):
+    """Rewrite historically-inferred bad rationales with v2.1 logic.
+
+    Old inferences polluted diagnostics:
+    - 'Rotation: trim X to fund Y' when rotation is disabled -> concentration trim
+    - 'Full sell at X%' generic -> stop/hard/vwap/thesis/profit exit by magnitude
+    """
+    r = str(t.get("rationale", "")).lower()
+    if not r:
+        return t
+
+    if r.startswith("rotation: trim"):
+        if not rotation_enabled:
+            m = re.match(r"rotation: trim (\w+) to fund (.+)", r)
+            if m:
+                t["rationale"] = f"Concentration trim: reallocate {m.group(1).upper()} to fund {m.group(2).upper()} (rotation disabled in policy)"
+                t["strategy"] = "conc_trim"
+        return t
+
+    if r.startswith("full sell at") or r.startswith("unattributed"):
+        t["rationale"] = ""
+        t["strategy"] = "manual"
+
+    return t
 
 
 def infer_rationale(trades, rotation_enabled=False):
@@ -233,6 +259,10 @@ def main():
         strat_key = key + ("strategy",)
         if strat_key in existing_rationale and t.get("strategy") == "manual":
             t["strategy"] = existing_rationale[strat_key]
+
+    # Reclassify historically-inferred bad rationales before inference.
+    for t in trades:
+        t = reclassify_old_inferred(t, rotation_enabled=False)
 
     # Infer rationale for any remaining empty entries
     # 2026-08-09: rotation has been disabled in policy since 2026-08-01.

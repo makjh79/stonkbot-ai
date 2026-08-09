@@ -10263,13 +10263,7 @@ function updateDashboard(data, marketStatus) {
                         </div>` : '';
                     })()}
 
-                    <!-- VWAP stop (only if losing and available) -->
-                    ${parseFloat(plValue) < -5 && preGenerated.vwapStop ? `
-                    <div style="padding: 0.4rem 0.7rem; background: rgba(255,255,255,0.03); border: none; border-radius: 8px; margin-bottom: 0.9rem; display: flex; justify-content: space-between; align-items: baseline;">
-                        <span style="font-size: 0.65rem; color: var(--text-muted);">📊 VWAP stop</span>
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-red); opacity: 0.8;">$${preGenerated.vwapStop.toFixed(2)}</span>
-                    </div>
-                    ` : ''}
+                    <!-- VWAP stop disabled 2026-08-09 (was noise-stopping entries) -->
 
                     <!-- Factor breakdown -->
                     ${factorChipsHtml}

@@ -22,17 +22,20 @@ def parse_ts(s):
 
 def classify(r):
     r = (r or "").lower()
-    if "concentration trim:" in r: return "conc_trim"
+    if "concentration trim:" in r or "reallocate" in r: return "conc_trim"
     if "sector trim:" in r: return "sector_trim"
     if "v3 scale-out t1:" in r or "v3 scale-out t2:" in r: return "profit_trim"
     if "thesis exit:" in r: return "thesis_exit"
-    if "hard cut:" in r: return "hard_stop"
-    if "hard stop:" in r: return "hard_stop"
-    if "trailing stop:" in r: return "trailing_stop"
-    if "vwap stop:" in r: return "vwap_stop"
+    if "hard cut:" in r or "hard cut at" in r: return "hard_stop"
+    if "hard stop:" in r or "hard stop at" in r: return "hard_stop"
+    if "trailing stop:" in r or "trailing stop at" in r: return "trailing_stop"
+    if "vwap stop:" in r or "vwap stop at" in r: return "vwap_stop"
+    if "stop loss" in r: return "stop_loss"
     if "rotation:" in r: return "rotation"
     if "cash raise:" in r: return "cash_raise"
     if "full sell" in r or "unattributed" in r: return "full_sell_unattributed"
+    # Partial trims that do not match explicit bucket patterns
+    if r.startswith("trim "): return "conc_trim"
     return "other"
 
 STOP_KINDS = {"trailing_stop", "hard_stop", "vwap_stop"}

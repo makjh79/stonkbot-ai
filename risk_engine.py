@@ -192,7 +192,7 @@ class RiskConfig:
     top_signal_count: int = 20                      # consider top 20 signals (watchlist size); bot holds max 10
 
     # --- VWAP stops (new with Alpaca paid data) ---
-    vwap_stop_enabled: bool = True                 # use intraday VWAP as stop reference
+    vwap_stop_enabled: bool = False               # DISABLED 2026-08-09: VWAP stops noise-stopped entries on ordinary intraday dips (-$5,355 realized drag). ATR hard/trailing stops provide risk control.
     vwap_stop_buffer_pct: float = -0.02            # sell if 2% below VWAP
     vwap_trailing_enabled: bool = True              # use VWAP as dynamic trailing stop
     vwap_trailing_atr_multiplier: float = 2.0      # ATR multiple below VWAP for trailing
