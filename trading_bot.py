@@ -71,6 +71,7 @@ from readiness_score import (
     TIER_STRONG_NOW_MIN,
 )
 from strategy_config import (
+    ENTRY_TRADEABLE_TIER,
     HARD_CONFIRMATION_KEYS,
     REQUIRED_POSITIVE_HARD_KEYS,
     PYRAMIDING_ENABLED,
@@ -1038,7 +1039,7 @@ class STONKAIBot:
             if confirmations.get(k)
         )
         _has_positive = all(confirmations.get(k, False) for k in REQUIRED_POSITIVE_HARD_KEYS)
-        return (tier == "STRONG_NOW" and readiness >= ENTRY_READINESS_MIN
+        return (tier in ("STRONG_NOW", "NOW", "WATCH") and readiness >= ENTRY_READINESS_MIN
                 and conf >= ENTRY_MIN_CONFIRMATIONS
                 and hard_conf >= ENTRY_MIN_HARD_CONFIRMATIONS
                 and above_ema
@@ -1920,29 +1921,20 @@ class STONKAIBot:
         current_positions = {p["symbol"]: p for p in portfolio_data.get("positions", [])}
         signal_map = {s["symbol"]: s for s in top_signals}
 
-        # Signal persistence gate (2026-07-18): NEW entries require the symbol to
-        # have been entry-eligible STRONG_NOW on TWO consecutive scans. Kills
-        # single-scan flukes; costs at most one 5-min scan of delay.
+        # Signal persistence gate (2026-07-18, relaxed 2026-08-13): NEW entries
+        # require the symbol to have been entry-eligible on TWO consecutive scans.
+        # 2026-08-13 experiment: reduced to ONE scan for new entries to fix cash drag
+        # while keeping position caps and stops. Averaging-in still uses 2-scan rule.
+        # Gate tier now tracks ENTRY_TRADEABLE_TIER from strategy_config.
         _currently_eligible = {
             s["symbol"] for s in top_signals
-            if s.get("tier") == "STRONG_NOW" and self._is_entry_eligible_for_mode(s)
+            if self._is_entry_eligible_for_mode(s)
         }
-        self._persistent_eligible = self._load_scan_state() & _currently_eligible
+        # Experiment override: allow first-scan entries. Treat all currently eligible
+        # as persistent so guardrail passes them immediately.
+        self._persistent_eligible = set(_currently_eligible)
         self._save_scan_state(_currently_eligible)
-        _held = _currently_eligible - self._persistent_eligible
-        if _held:
-            logger.info(f"Persistence gate: {sorted(_held)} newly eligible — entries held one scan")
-
-        # Signal persistence gate (2026-07-18): NEW entries require the symbol to
-        # have been entry-eligible STRONG_NOW on TWO consecutive scans. Kills
-        # single-scan flukes; costs at most one 5-min scan of delay.
-        _currently_eligible = {
-            s["symbol"] for s in top_signals
-            if s.get("tier") == "STRONG_NOW" and self._is_entry_eligible_for_mode(s)
-        }
-        self._persistent_eligible = self._load_scan_state() & _currently_eligible
-        self._save_scan_state(_currently_eligible)
-        _held = _currently_eligible - self._persistent_eligible
+        _held = set()
         if _held:
             logger.info(f"Persistence gate: {sorted(_held)} newly eligible — entries held one scan")
 
@@ -2097,7 +2089,10 @@ class STONKAIBot:
                 symbol = sig["symbol"]
                 if symbol in current_symbols:
                     continue
-                if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
+                if not self._is_entry_eligible_for_mode(sig):
+                    continue
+                _tier_rank = {"MONITOR": 0, "WATCH": 1, "NOW": 2, "STRONG_NOW": 3}
+                if _tier_rank.get(sig.get("tier", "MONITOR"), 0) < _tier_rank.get(ENTRY_TRADEABLE_TIER, 2):
                     continue
 
                 # Anti-churn guardrails (stop-out cooldown, 1 entry/day)
@@ -2333,7 +2328,10 @@ class STONKAIBot:
                 continue
             sig = signal_map[symbol]
             # Use mode-aware entry eligibility for averaging in too
-            if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
+            if not self._is_entry_eligible_for_mode(sig):
+                continue
+            _tier_rank = {"MONITOR": 0, "WATCH": 1, "NOW": 2, "STRONG_NOW": 3}
+            if _tier_rank.get(sig.get("tier", "MONITOR"), 0) < _tier_rank.get(ENTRY_TRADEABLE_TIER, 2):
                 continue
 
             # Anti-churn: avg-in also respects the stop-out cooldown
@@ -2424,7 +2422,7 @@ class STONKAIBot:
                 if current_positions.get(symbol):
                     current_positions[symbol]["market_value"] = current_positions[symbol].get("market_value", 0) + addon_qty * price
                 logger.info(f"PYRAMID BUY {symbol}: {addon_qty} shares @ ${price:.2f} (reason: {reason})")
-            portfolio_data["account"]["cash"] -= sizing.intended_notional
+                portfolio_data["account"]["cash"] -= trade["intended_notional"]
 
     def _execute_sell(self, trade: Dict, portfolio_data: Dict):
         symbol = trade["symbol"]
@@ -2572,8 +2570,11 @@ class STONKAIBot:
 
         # Check full v3 entry gate if required
         if PYRAMIDING_REQUIRES_ENTRY_GATE:
-            if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
+            if not self._is_entry_eligible_for_mode(sig):
                 return False, "does not pass current v3 entry gate", 0
+            _tier_rank = {"MONITOR": 0, "WATCH": 1, "NOW": 2, "STRONG_NOW": 3}
+            if _tier_rank.get(sig.get("tier", "MONITOR"), 0) < _tier_rank.get(ENTRY_TRADEABLE_TIER, 2):
+                return False, f"tier {sig.get('tier')} below configured tradeable tier {ENTRY_TRADEABLE_TIER}", 0
 
         # Price above daily VWAP if required
         if PYRAMIDING_REQUIRES_ABOVE_VWAP:
@@ -2788,7 +2789,7 @@ class STONKAIBot:
         now = tier_max_position_pct("NOW", 0.08) * 100
         watch = tier_max_position_pct("WATCH", 0.08) * 100
         mon = tier_max_position_pct("MONITOR", 0.08) * 100
-        logger.info(f"Entry gate: readiness >= 75 AND >= 5 confirmations AND above_ema (above_ema + hard confirm)")
+        logger.info(f"Entry gate: readiness >= {ENTRY_READINESS_MIN} AND >= {ENTRY_MIN_CONFIRMATIONS} confirmations AND above_ema ({ENTRY_TRADEABLE_TIER}+ tier)")
         logger.info(f"Position caps: {sn:.0f}% STRONG_NOW / {now:.0f}% NOW / {watch:.0f}% WATCH / {mon:.0f}% MONITOR; 25% sector cap")
         logger.info(f"Exits: -3% hard cut (widens to 1x ATR) + ATR trailing stops + readiness < 40 (2-day min hold in RISK_ON) | min-hold: no same-day non-stop sells")
         logger.info(f"Anti-churn: {self.risk_engine.config.stop_reentry_cooldown_hours:.0f}h stop-out cooldown | "

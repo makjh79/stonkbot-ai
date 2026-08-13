@@ -11,16 +11,18 @@ from typing import Dict, Any, Set, List
 # =============================================================================
 # Entry Gate
 # =============================================================================
-# NOTE 2026-08-09: an entry-side sensitivity test on true strategy=entry BUYs found
-# that raising this to 85.0 eliminated all but 4 trades (DUOL), all losers. Leave at 75.0
-# while we investigate exit-side causes (early rotation/trim/concentration exits).
-ENTRY_READINESS_MIN: float = 75.0
-ENTRY_MIN_CONFIRMATIONS: int = 5
+# Relaxed 2026-08-13: cash drag was locking the bot out of a constructive tape.
+# Allow WATCH-tier entry, lower readiness to 65, require only 3 total confirmations.
+# Keep vwap_confirmed as the required positive-edge hard confirmation (the one
+# factor with positive live edge in factor attribution). Position caps and stops
+# unchanged. Revisit in one week; if cash stays >60%, the issue is signal scoring.
+ENTRY_READINESS_MIN: float = 65.0
+ENTRY_MIN_CONFIRMATIONS: int = 3
 ENTRY_MIN_HARD_CONFIRMATIONS: int = 1
 ENTRY_HARD_CONFIRMATIONS_STRICT: int = 2  # when total chips < 7
 ENTRY_HARD_CONFIRMATIONS_STRICT_BELOW: int = 7  # threshold for strict mode
 ENTRY_ABOVE_EMA_REQUIRED: bool = True
-ENTRY_TRADEABLE_TIER: str = "STRONG_NOW"
+ENTRY_TRADEABLE_TIER: str = "WATCH"
 
 # =============================================================================
 # Hard Confirmation Keys (v3 2026-08-08, updated 2026-08-09)
