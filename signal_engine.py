@@ -59,6 +59,20 @@ _corporate_actions_cache: Dict = {}
 
 logger = logging.getLogger(__name__)
 
+
+
+def _lean_all_bars(all_bars: Dict[str, Dict]) -> Dict[str, Dict]:
+    """Strip raw all_bars down to the arrays needed for sector attribution."""
+    lean = {}
+    for sym, bars in all_bars.items():
+        if not isinstance(bars, dict):
+            continue
+        lean[sym] = {
+            "closes": bars.get("closes", []),
+            "volumes": bars.get("volumes", []),
+            "timestamps": bars.get("timestamps", []),
+        }
+    return lean
 # Liquid US growth/momentum universe. ~60 names, no ETFs, no micro-caps.
 DEFAULT_UNIVERSE = [
     "AAPL",
@@ -1000,6 +1014,20 @@ class SignalEngine:
                 s.tier = "NOW"
 
         logger.info(f"Generated {len(signals)} signals. Top: {signals[0].symbol if signals else 'none'} (readiness={signals[0].readiness_score if signals else 0:.1f})")
+
+        # Persist lean all_bars for downstream attribution (measure-only sector flow).
+        # This does not change signals.json; it lives in all_bars.json only.
+        try:
+            _base_path = Path(__file__).resolve().parent
+            atomic_write_json(str(_base_path / "all_bars.json"), {
+                "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "symbols": list(all_bars.keys()),
+                "bars": _lean_all_bars(all_bars),
+            })
+            logger.info("Persisted lean all_bars.json for sector flow measurement.")
+        except Exception as e:
+            logger.warning(f"Could not persist all_bars.json: {e}")
+
         return signals
 
     def save_signals(self, signals: List[Signal], path: Optional[Path] = None) -> Path:
