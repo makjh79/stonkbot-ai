@@ -82,7 +82,17 @@ from strategy_config import (
     PYRAMIDING_SUSPEND_DAYS,
     PYRAMIDING_REQUIRES_ENTRY_GATE,
     PYRAMIDING_REQUIRES_ABOVE_VWAP,
+    ENTRY_PERSISTENCE_SCANS,
+    ENTRY_PERSISTENCE_MAX_AGE_MINUTES,
+    SIGNAL_FRESHNESS_POLICY,
+    SIGNAL_MAX_STALE_MINUTES,
+    SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES,
+    SIGNAL_FAIL_OPEN_SIZE_MULT,
+    SIGNAL_FAIL_OPEN_EXTRA_HARD_CONF,
+    OFF_HOURS_BEHAVIOR,
+    V3_ENABLED,
 )
+from signal_rules import has_required_positive_edge
 
 import requests
 
@@ -94,6 +104,7 @@ import dynamic_watchlist_manager
 from circuit_breaker import CircuitBreaker
 from intraday_confirm import should_execute_buy as check_intraday_buy
 from alert_logger import log_alert
+from v3_rebuild.v3_signal_engine import compute_trend_pullback_score
 from regime_detector import get_regime
 from mean_reversion_signal import compute_mean_reversion
 
@@ -983,6 +994,7 @@ class STONKAIBot:
         self.thesis_manager = ThesisManager(TradingConfig.THESES_FILE)
         self._last_signal_refresh: Optional[float] = None
         self._signals: List[Dict] = []
+        self._signals_meta: Dict = {}
         self._dry_run = TradingConfig.DRY_RUN or (not self.alpaca.is_paper() and not TradingConfig.LIVE_MODE)
         self._failed_buy_symbols: set = set()  # symbols that failed to buy (e.g. not tradable)
         self._pyramid_addons: Dict[str, list] = {}  # symbol -> list of add-on records
@@ -1010,6 +1022,127 @@ class STONKAIBot:
 
 
 
+    def _run_v3_entries(self, top_signals, current_symbols, portfolio_data, high_beta_symbols):
+        """Run v3 trend-pullback entries using live daily bars."""
+        from strategy_config import (
+            V3_MAX_POSITIONS,
+            V3_POSITION_PCT,
+            V3_SCORE_THRESHOLD,
+            V3_MELTDOWN_QQQ_5D_MAX,
+            V3_EARNINGS_BLACKOUT_DAYS,
+        )
+
+        symbols = [s["symbol"] for s in top_signals if s["symbol"] not in current_symbols]
+        if not symbols:
+            logger.info("V3: no symbols to evaluate")
+            return
+
+        try:
+            _hub = get_data_hub()
+            bars = _hub.get_daily_bars(symbols + ["QQQ"], days=400)
+            if "QQQ" not in bars or not bars["QQQ"].get("closes"):
+                logger.warning("V3: QQQ bars missing; skipping v3 entries")
+                return
+            qqq_closes = bars["QQQ"]["closes"]
+            qqq_5d = (qqq_closes[-1] - qqq_closes[-6]) / qqq_closes[-6] if len(qqq_closes) >= 6 else 0.0
+            if qqq_5d < V3_MELTDOWN_QQQ_5D_MAX:
+                logger.info(f"V3: QQQ 5d return {qqq_5d:.1%} below meltdown threshold; skipping entries")
+                return
+        except Exception as e:
+            logger.warning(f"V3: failed to fetch daily bars: {e}")
+            return
+
+        scored = []
+        for sig in top_signals:
+            symbol = sig["symbol"]
+            if symbol in current_symbols:
+                continue
+            b = bars.get(symbol)
+            if not b or not b.get("closes") or len(b["closes"]) < 200:
+                logger.info(f"V3: {symbol} skipped — insufficient closes ({len(b.get('closes', [])) if b else 'no bars'})")
+                continue
+            if len(b.get("volumes", [])) < 20:
+                logger.info(f"V3: {symbol} skipped — insufficient volumes ({len(b.get('volumes', []))})")
+                continue
+            try:
+                score, hard_blocked = compute_trend_pullback_score(
+                    b["closes"], b.get("volumes", []), qqq_5d
+                )
+            except Exception as e:
+                logger.debug(f"V3: score failed for {symbol}: {e}")
+                continue
+            if np.isnan(score):
+                logger.info(f"V3: {symbol} score is nan")
+                continue
+            logger.info(f"V3: {symbol} score={score:.2f} hard_blocked={hard_blocked}")
+            if hard_blocked:
+                logger.info(f"V3: {symbol} hard blocked (score {score:.2f})")
+                continue
+            if score < V3_SCORE_THRESHOLD:
+                logger.info(f"V3: {symbol} score {score:.2f} below threshold {V3_SCORE_THRESHOLD}")
+                continue
+            scored.append({"sig": sig, "score": score})
+
+        scored.sort(key=lambda x: x["score"], reverse=True)
+        open_slots = max(0, V3_MAX_POSITIONS - len(current_symbols))
+        selected = scored[:open_slots]
+        logger.info(f"V3: {len(selected)} candidates selected: {[s['sig']['symbol'] for s in selected]}")
+
+        pv = portfolio_data["account"]["portfolio_value"]
+        for item in selected:
+            sig = item["sig"]
+            symbol = sig["symbol"]
+            price = sig.get("price") or sig.get("current_price") or 0
+            if price <= 0:
+                try:
+                    _snap = get_data_hub().get_snapshot(symbol)
+                    price = _snap.get("price") if _snap else None
+                except Exception:
+                    pass
+            if price is None or price <= 0:
+                logger.info(f"V3: {symbol} no valid price; skipping")
+                continue
+
+            earnings = sig.get("earnings") or {}
+            if earnings and earnings.get("days_to_earnings", 999) <= V3_EARNINGS_BLACKOUT_DAYS:
+                logger.info(f"V3: {symbol} within earnings blackout; skipping")
+                continue
+
+            _blocked = self._entry_blocked_by_guardrails(
+                symbol,
+                price=price,
+                iv_30d=((sig.get("options_implied_vol") or {}).get("iv_30d") or 0),
+                atr_pct=((sig.get("atr14") or 0) / sig.get("price") if sig.get("price") else 0),
+            )
+            if _blocked:
+                logger.info(f"V3: {symbol} guardrail blocked: {_blocked}")
+                continue
+
+            target_notional = pv * V3_POSITION_PCT
+            if self._high_beta_buy_blocked(symbol, target_notional, portfolio_data, high_beta_symbols):
+                logger.info(f"V3: {symbol} high-beta basket cap")
+                continue
+
+            qty = max(1, int(target_notional / price))
+            cost = qty * price
+            cash_floor = max(self.risk_engine.config.min_cash_pct * pv, self.risk_engine.config.min_cash_absolute)
+            if cost > (portfolio_data["account"]["cash"] - cash_floor):
+                qty = max(0, int((portfolio_data["account"]["cash"] - cash_floor) / price))
+                cost = qty * price
+            if qty <= 0:
+                continue
+
+            trade = {
+                "symbol": symbol,
+                "qty": qty,
+                "action": "BUY",
+                "reason": f"V3 trend-pullback entry (score {item['score']:.2f})",
+                "intended_notional": cost,
+                "readiness_score": sig.get("readiness_score", 0),
+                "tier": "PULLBACK",
+            }
+            self._execute_buy(trade, portfolio_data, is_avg_in=False)
+
     def _is_entry_eligible_for_mode(self, sig: dict) -> bool:
         """Entry gate: use signal's entry_eligible flag; fall back only in paper mode.
         All strategies (momentum + mean reversion) compete on the same entry_eligible gate.
@@ -1023,9 +1156,15 @@ class STONKAIBot:
         if sig.get("corporate_action_risk", False):
             return False
 
-        if sig.get("entry_eligible", False):
+        entry_eligible = sig.get("entry_eligible", False)
+        if entry_eligible:
             return True
         if not getattr(self.alpaca, "is_paper", lambda: False)():
+            self._log_gate_block(
+                sig.get("symbol", "?"), "entry_eligible_mode",
+                f"entry_eligible={entry_eligible}, wide_spread={sig.get('wide_spread')}, corp_action={sig.get('corporate_action_risk')}",
+                sig.get("price", 0.0),
+            )
             return False
         # Paper fallback only: STRONG_NOW tier only, match gate
         readiness = sig.get("readiness_score", 0)
@@ -1038,12 +1177,60 @@ class STONKAIBot:
             1 for k in HARD_CONFIRMATION_KEYS
             if confirmations.get(k)
         )
-        _has_positive = all(confirmations.get(k, False) for k in REQUIRED_POSITIVE_HARD_KEYS)
-        return (tier in ("STRONG_NOW", "NOW", "WATCH") and readiness >= ENTRY_READINESS_MIN
+        _has_positive = has_required_positive_edge(confirmations)
+        _fallback_ok = (tier in ("STRONG_NOW", "NOW", "WATCH") and readiness >= ENTRY_READINESS_MIN
                 and conf >= ENTRY_MIN_CONFIRMATIONS
                 and hard_conf >= ENTRY_MIN_HARD_CONFIRMATIONS
                 and above_ema
                 and _has_positive)
+        if not _fallback_ok:
+            self._log_gate_block(
+                sig.get("symbol", "?"), "paper_fallback_gate",
+                f"tier={tier} readiness={readiness} conf={conf} hard={hard_conf} above_ema={above_ema} positive_edge={_has_positive}",
+                sig.get("price", 0.0),
+            )
+        return _fallback_ok
+
+    def _signal_freshness_ok(self) -> tuple[bool, str]:
+        """Check whether signals are fresh enough to trade on.
+        Returns (ok, reason). Logs fail-open decisions to gate_blocks.jsonl.
+        """
+        if not self._signals:
+            return False, "no signals loaded"
+        # Use top-level metadata timestamp; individual signal dicts do not carry generated_at.
+        generated_at = None
+        try:
+            generated_at = datetime.fromisoformat(self._signals_meta.get("generated_at", "").replace("Z", "+00:00"))
+        except Exception:
+            pass
+        if generated_at is None:
+            return False, "missing generated_at timestamp"
+        age_min = (datetime.now(timezone.utc) - generated_at).total_seconds() / 60.0
+        if age_min <= SIGNAL_MAX_STALE_MINUTES:
+            return True, f"signals fresh ({age_min:.1f} min)"
+        if SIGNAL_FRESHNESS_POLICY == "strict":
+            return False, f"signals stale ({age_min:.1f} min > {SIGNAL_MAX_STALE_MINUTES})"
+        if age_min <= SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES:
+            self._log_gate_block("__ALL__", "signal_fail_open", f"signals {age_min:.1f} min stale; degraded mode", 0.0)
+            return True, f"signals degraded but fail-open allowed ({age_min:.1f} min)"
+        return False, f"signals too stale even for fail-open ({age_min:.1f} min > {SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES})"
+
+    def _signal_freshness_size_multiplier(self) -> float:
+        """Return size multiplier based on signal freshness policy.
+        1.0 for fresh signals; SIGNAL_FAIL_OPEN_SIZE_MULT for degraded-but-allowed signals.
+        """
+        if SIGNAL_FRESHNESS_POLICY == "strict":
+            return 1.0
+        if not self._signals:
+            return 1.0
+        try:
+            generated_at = datetime.fromisoformat(self._signals_meta.get("generated_at", "").replace("Z", "+00:00"))
+            age_min = (datetime.now(timezone.utc) - generated_at).total_seconds() / 60.0
+            if SIGNAL_MAX_STALE_MINUTES < age_min <= SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES:
+                return SIGNAL_FAIL_OPEN_SIZE_MULT
+        except Exception:
+            pass
+        return 1.0
 
     def _entry_has_exit_conflict(self, sig: dict, price: float) -> Optional[str]:
         """Pre-entry sanity: return a reason string if any EXIT condition is already
@@ -1106,6 +1293,13 @@ class STONKAIBot:
     def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False, price: float = 0.0, iv_30d: float = 0.0, atr_pct: float = 0.0) -> Optional[str]:
         """Anti-churn guardrails shared by all entry paths (2026-07-18).
         Returns a block reason string, or None if entry is allowed."""
+        block = self._entry_blocked_by_guardrails_inner(symbol, is_avg_in, price, iv_30d, atr_pct)
+        if block:
+            self._log_gate_block(symbol, "guardrail", block, price)
+        return block
+
+    def _entry_blocked_by_guardrails_inner(self, symbol: str, is_avg_in: bool = False, price: float = 0.0, iv_30d: float = 0.0, atr_pct: float = 0.0) -> Optional[str]:
+        """Inner guardrail logic (extracted so every block is logged)."""
         # EXPERIMENT ENDED EARLY 2026-07-27 (owner decision - see EXPERIMENT.md termination note).
         # Sentinel halts ALL new entries and avg-ins. Exits/stops/trims unaffected.
         # Resume only by owner decision: sudo -u stonkai rm /opt/stonk-ai/ENTRIES_HALTED
@@ -1137,8 +1331,23 @@ class STONKAIBot:
         if not is_avg_in and self.risk_engine.entries_today_count(symbol) >= self.risk_engine.config.max_entries_per_symbol_per_day:
             return f"already entered today (max {self.risk_engine.config.max_entries_per_symbol_per_day} new entry/day)"
         # Persistence gate: must have been entry-eligible on the PREVIOUS scan too
-        if not is_avg_in and symbol not in self._persistent_eligible:
-            return "not entry-eligible on previous scan (persistence gate)"
+        _required = 2 if is_avg_in else ENTRY_PERSISTENCE_SCANS
+        if _required == 2 and symbol not in self._persistent_eligible:
+            return "not entry-eligible on previous 2 scans (persistence gate)"
+        if _required == 1 and symbol not in self._persistent_eligible:
+            return "not entry-eligible on current scan (persistence gate)"
+        # Signal fail-open extra hard confirmation requirement
+        if SIGNAL_FRESHNESS_POLICY == "fail_open_recent":
+            try:
+                generated_at = datetime.fromisoformat(self._signals_meta.get("generated_at", "").replace("Z", "+00:00"))
+                age_min = (datetime.now(timezone.utc) - generated_at).total_seconds() / 60.0
+                if age_min > SIGNAL_MAX_STALE_MINUTES:
+                    confs = self._signals_meta.get("confirmations", {})
+                    hard = sum(1 for k in HARD_CONFIRMATION_KEYS if confs.get(k))
+                    if hard < ENTRY_MIN_HARD_CONFIRMATIONS + SIGNAL_FAIL_OPEN_EXTRA_HARD_CONF:
+                        return f"fail-open signal: only {hard}/{ENTRY_MIN_HARD_CONFIRMATIONS + SIGNAL_FAIL_OPEN_EXTRA_HARD_CONF} hard confirmations"
+            except Exception:
+                pass
         return None
 
     def _load_scan_state(self) -> set:
@@ -1147,7 +1356,7 @@ class STONKAIBot:
             if self._scan_state_file.exists():
                 data = json.loads(self._scan_state_file.read_text())
                 ts = float(data.get("ts", 0))
-                if time.time() - ts <= 1800:  # must be a recent scan, not stale state
+                if time.time() - ts <= ENTRY_PERSISTENCE_MAX_AGE_MINUTES * 60:
                     return set(data.get("eligible", []))
         except Exception as e:
             logger.debug(f"scan state load failed: {e}")
@@ -1365,7 +1574,9 @@ class STONKAIBot:
             self.signal_engine.save_signals(signals, TradingConfig.SIGNALS_FILE)
             # Load from file to include mean reversion signals merged during save
             with open(TradingConfig.SIGNALS_FILE) as f:
-                self._signals = json.load(f).get("signals", [])
+                _raw = json.load(f)
+                self._signals = _raw.get("signals", [])
+                self._signals_meta = {k: v for k, v in _raw.items() if k != "signals"}
             self._last_signal_refresh = time.time()
             # Log strategy breakdown
             mr_count = sum(1 for s in self._signals if s.get("strategy_type") == "mean_reversion")
@@ -1379,10 +1590,13 @@ class STONKAIBot:
             logger.error(f"Failed to refresh signals: {e}")
             try:
                 with open(TradingConfig.SIGNALS_FILE) as f:
-                    self._signals = json.load(f).get("signals", [])
+                    _raw = json.load(f)
+                    self._signals = _raw.get("signals", [])
+                    self._signals_meta = {k: v for k, v in _raw.items() if k != "signals"}
                 logger.info(f"Loaded cached signals: {len(self._signals)} candidates")
             except Exception:
                 self._signals = []
+                self._signals_meta = {}
 
     def maybe_refresh_signals(self):
         now = time.time()
@@ -1514,7 +1728,7 @@ class STONKAIBot:
         ext_hours = (self.risk_engine.config.extended_hours_enabled
                      and self.alpaca._is_extended_hours()
                      and not self.alpaca._is_us_market_hours())
-        if not market_open and not ext_hours:
+        if OFF_HOURS_BEHAVIOR == "maintain_only" and not market_open and not ext_hours:
             logger.debug("Market closed and extended hours inactive; skipping cycle")
             # Off-hours risk check: alert on concentration breaches that cannot be trimmed now
             try:
@@ -1538,6 +1752,7 @@ class STONKAIBot:
             except Exception as e:
                 logger.warning(f"Off-hours high-beta check failed: {e}")
             return
+        # If OFF_HOURS_BEHAVIOR == "full_strategy", we fall through (legacy behavior).
 
         # If cash is negative, force cash raise before any new buys
         try:
@@ -1921,22 +2136,34 @@ class STONKAIBot:
         current_positions = {p["symbol"]: p for p in portfolio_data.get("positions", [])}
         signal_map = {s["symbol"]: s for s in top_signals}
 
-        # Signal persistence gate (2026-07-18, relaxed 2026-08-13): NEW entries
-        # require the symbol to have been entry-eligible on TWO consecutive scans.
-        # 2026-08-13 experiment: reduced to ONE scan for new entries to fix cash drag
-        # while keeping position caps and stops. Averaging-in still uses 2-scan rule.
-        # Gate tier now tracks ENTRY_TRADEABLE_TIER from strategy_config.
+        # Signal persistence gate (configurable, 2026-08-14 permanent fix).
+        # Load previous scan state first.
+        _previous_eligible = self._load_scan_state()
         _currently_eligible = {
             s["symbol"] for s in top_signals
             if self._is_entry_eligible_for_mode(s)
         }
-        # Experiment override: allow first-scan entries. Treat all currently eligible
-        # as persistent so guardrail passes them immediately.
-        self._persistent_eligible = set(_currently_eligible)
+        # New entries: require N consecutive scans based on ENTRY_PERSISTENCE_SCANS.
+        # Averaging-in / pyramiding always require 2-scan persistence regardless.
+        _required_scans = ENTRY_PERSISTENCE_SCANS
+        if _required_scans == 1:
+            self._persistent_eligible = set(_currently_eligible)
+        else:
+            self._persistent_eligible = _currently_eligible & _previous_eligible
+        # Save current scan state for next cycle.
         self._save_scan_state(_currently_eligible)
-        _held = set()
+        _held = _currently_eligible - _previous_eligible - self._persistent_eligible
+        # Log persistence gate action.
         if _held:
-            logger.info(f"Persistence gate: {sorted(_held)} newly eligible — entries held one scan")
+            logger.info(
+                f"Persistence gate: {sorted(_held)} newly eligible — "
+                f"held one scan (persistence_scans={_required_scans})"
+            )
+        else:
+            logger.info(
+                f"Persistence gate: {_required_scans}-scan mode; "
+                f"{len(self._persistent_eligible)} symbols pass persistence"
+            )
 
         # 3a. Build ranked entry queue by readiness_score (highest first)
         # Regime-adaptive strategy switching:
@@ -1948,6 +2175,11 @@ class STONKAIBot:
         if self._regime == "RISK_OFF":
             # ALPHA: RISK_OFF only allows STRONG_NOW momentum with higher bar
             logger.info("Searching for STRONG_NOW momentum entries (RISK_OFF mode)...")
+            # Off-hours / stale-signal degradation:
+            _freshness_ok, _freshness_reason = self._signal_freshness_ok()
+            if not _freshness_ok:
+                logger.info(f"Signal freshness policy: {_freshness_reason}; no new entries this cycle")
+                return
             for sig in top_signals:
                 symbol = sig["symbol"]
                 if symbol in current_symbols:
@@ -1966,7 +2198,7 @@ class STONKAIBot:
                 if sig.get("tier") != "STRONG_NOW":
                     continue
                 readiness = sig.get("readiness_score", 0)
-                if readiness < _RISK_OFF_MIN_READINESS:
+                if readiness < _RISK_OFF_MIN_READINESS or readiness < ENTRY_READINESS_MIN:
                     continue
                 if not self._is_entry_eligible_for_mode(sig) or sig.get("tier") != "STRONG_NOW":
                     continue
@@ -2083,8 +2315,19 @@ class STONKAIBot:
                 }
                 entry_candidates.append(trade)
 
+        elif V3_ENABLED and self._regime == "RISK_ON":
+            # V3: trend-pullback strategy takes over entry decisions in RISK_ON
+            logger.info("Searching for v3 trend-pullback entries (RISK_ON mode)...")
+            self._run_v3_entries(top_signals, current_symbols, portfolio_data, high_beta_symbols)
+            return
         else:
             # RISK_ON: momentum strategy (default)
+            logger.info("Searching for momentum entries (RISK_ON mode)...")
+            # Off-hours / stale-signal degradation:
+            _freshness_ok, _freshness_reason = self._signal_freshness_ok()
+            if not _freshness_ok:
+                logger.info(f"Signal freshness policy: {_freshness_reason}; no new entries this cycle")
+                return
             for sig in top_signals:
                 symbol = sig["symbol"]
                 if symbol in current_symbols:
@@ -2175,6 +2418,8 @@ class STONKAIBot:
                     continue
 
                 readiness = sig.get("readiness_score", 0)
+                # Apply signal-freshness degradation multiplier (1.0 fresh, 0.5 fail-open)
+                _freshness_mult = self._signal_freshness_size_multiplier()
                 multiplier = self._readiness_sizing_multiplier(readiness) * _iv_multiplier
                 strategy_type = sig.get("strategy_type", "momentum")
                 multiplier *= self._strategy_sizing_cap(strategy_type)
@@ -2190,6 +2435,7 @@ class STONKAIBot:
                 else:
                     _hm = 0.33
                 multiplier *= _hm
+                multiplier *= _freshness_mult
                 if multiplier <= 0:
                     continue
                 adjusted_qty = max(1, int(sizing.qty * multiplier))
@@ -2209,15 +2455,23 @@ class STONKAIBot:
                     logger.info(f"Skipping {symbol}: high-beta basket cap")
                     continue
 
+                reason_text = f"Entry (readiness {readiness:.1f}, {sig.get('confirmation_count', 0)}/10 conf) - {sizing.reason}"
+                if _freshness_mult < 1.0:
+                    reason_text += " | signal-fail-open"
                 trade = {
                     "symbol": symbol,
                     "qty": adjusted_qty,
                     "action": "BUY",
-                    "reason": f"Entry (readiness {readiness:.1f}, {sig.get('confirmation_count', 0)}/10 conf) - {sizing.reason}",
+                    "reason": reason_text,
                     "intended_notional": cost,
                     "readiness_score": readiness,
                     "tier": sig.get("tier", "NOW"),
                 }
+                # Tag fail-open entries for attribution
+                if _freshness_mult < 1.0:
+                    trade["is_fail_open_entry"] = True
+                    self._log_gate_block(symbol, "signal_fail_open_entry", trade["reason"], price)
+
                 entry_candidates.append(trade)
 
         # Sort entry queue by readiness (highest first)
@@ -2374,6 +2628,11 @@ class STONKAIBot:
 
             if sizing.blocked:
                 logger.debug(f"{symbol} avg-in blocked: {sizing.block_reason}")
+                continue
+
+            # Avg-in always requires 2-scan persistence and full signal freshness.
+            if symbol not in (self._persistent_eligible if ENTRY_PERSISTENCE_SCANS == 1 else _currently_eligible & _previous_eligible):
+                logger.info(f"Skipping avg-in {symbol}: not eligible on 2 consecutive scans")
                 continue
 
             trade = {
@@ -2606,18 +2865,24 @@ class STONKAIBot:
         if max_addon_qty < 1:
             return False, "add-on qty rounds to zero", 0
 
+        # Persistence: pyramiding always requires 2-scan persistence.
+        if symbol not in (self._persistent_eligible if ENTRY_PERSISTENCE_SCANS == 1 else _currently_eligible & _previous_eligible):
+            return False, "pyramid add-on not eligible on 2 consecutive scans", 0
+
         # Respect tier cap and sector cap via risk_engine sizing
         price = self.alpaca.get_latest_quote(symbol) or sig.get("last_price", 0)
         if price <= 0:
             return False, "no usable price", 0
         _tier = sig.get("tier", "STRONG_NOW")
         _tier_max_pct = self._tier_max_position_pct(_tier, self.risk_engine.config.max_single_position_pct)
-        sizing = self.risk_engine.size_position(
+        sizing = self.risk_engine.size_buy(
             symbol=symbol,
             price=price,
             atr=sig.get("atr14", price * 0.02),
             portfolio_data=portfolio_data,
-            tier=_tier,
+            current_positions={symbol: pos},
+            signal_score=sig.get("total_score", 0),
+            max_position_pct_override=_tier_max_pct,
         )
         if sizing.blocked:
             return False, f"sizing blocked: {sizing.block_reason}", 0

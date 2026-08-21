@@ -6,7 +6,7 @@ No assembly-line fragments; each field picks from a large set of full sentences.
 import sys, os, json, random
 from pathlib import Path
 
-from signal_rules import compute_confirmation_count, active_confirmation_labels, hard_confirmation_count, is_entry_eligible
+from signal_rules import compute_confirmation_count, active_confirmation_labels, hard_confirmation_count, is_entry_eligible, has_required_positive_edge
 
 BOT_DIR = Path("/opt/stonk-ai")
 if str(BOT_DIR) not in sys.path:
@@ -312,7 +312,7 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
     above_ema = bool(conf.get("above_ema"))
     eligible = is_entry_eligible(readiness, active_count, above_ema, hard, confirmations=conf)
 
-    if tier == "STRONG_NOW" and eligible:
+    if tier in ("STRONG_NOW", "NOW") and eligible:
         return _hash_choice(symbol, [
             "Gate is open. The only missing input is cash.",
             "Highest-conviction setup; the trigger is cash availability.",
@@ -320,30 +320,25 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
             "Ready to buy. Just needs an open cash slot.",
             "Top of the queue. Cash is the only gate.",
         ])
-    if tier in ("STRONG_NOW", "NOW") and eligible:
-        return _hash_choice(symbol, [
-            f"Readiness {readiness:.0f}. Bot buys when cash frees up and the next candle confirms.",
-            f"Clean setup at readiness {readiness:.0f}. Entry on cash release.",
-            f"Wants to buy at readiness {readiness:.0f} — waiting for portfolio room.",
-        ])
 
     reasons = []
     if not above_ema:
         reasons.append("reclaim the 20-day EMA")
-    if active_count < 6:
-        reasons.append(f"get {6 - active_count} more active chips")
-    if hard < 2:
-        reasons.append("see both VWAP and options-flow hard confirmations (intraday removed v3); winning positions may be added to if still passing the gate")
-    if readiness < 75:
-        reasons.append(f"push readiness above 75 (now {readiness:.0f})")
-    if not conf.get("volume_confirmed") and not reasons:
-        reasons.append("see volume confirm")
-    if not conf.get("vwap_confirmed") and len(reasons) < 2:
-        reasons.append("reclaim VWAP")
+    if readiness < 65:
+        reasons.append(f"push readiness above 65 (now {readiness:.0f})")
+    if active_count < 3:
+        reasons.append(f"get {3 - active_count} more active chips")
+    hard_min = 1 if active_count >= 7 else 2
+    if hard < hard_min:
+        reasons.append(f"see {hard_min} hard confirmation(s) from VWAP/options/relvol/volume (now {hard})")
+    if not has_required_positive_edge(conf) and not any(k in reasons for k in ("hard confirmation", "active chips")):
+        reasons.append("satisfy the positive-edge gate (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks)")
+    if not reasons:
+        reasons.append("clear the positive-edge fallback gate and have portfolio cash available")
 
     if reasons:
         return "Bot buys when " + " and ".join(reasons[:2]) + "."
-    return "Waiting for readiness to climb back above 75."
+    return "Waiting for the positive-edge entry gate and an open cash slot."
 
 # ── Watchlist: Risk ────────────────────────────────────────────────
 
@@ -399,7 +394,7 @@ def new_generate_dynamic_narrative(symbol, position, watchlist_data, signal_data
         "risk": new_what_kills_it(symbol, position, signal_data, watchlist_data, stops),
         "confidence": "Solid." if pl_percent >= -3 else "Shaky." if pl_percent >= -8 else "Thin.",
         "entryReason": new_bot_thinking(symbol, position, signal_data, watchlist_data, stops),
-        "stopReason": f"Hard stop {_price_fmt(stops['hard_stop'])} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5x ATR); trailing {_price_fmt(stops['trailing_stop'])} (2x ATR)",
+        "stopReason": f"Hard stop {_price_fmt(stops['hard_stop'])} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5x ATR); trailing {_price_fmt(stops['trailing_stop'])} (2x ATR). VWAP stop disabled 2026-08-09.",
         "entry_eligible": tier in ("STRONG_NOW", "NOW"),
     })
     return result

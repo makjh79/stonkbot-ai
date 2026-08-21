@@ -75,6 +75,7 @@ def load_signals_map() -> dict:
     # For symbols not actively scored, merge enrichment data so popups still have context
     enrichment = load_json(ENRICHMENT_FILE).get("data", {})
     for symbol, e in enrichment.items():
+        e = e or {}
         if symbol not in sig_map:
             sig_map[symbol] = {
                 "symbol": symbol,
@@ -85,7 +86,7 @@ def load_signals_map() -> dict:
                 "regime_score": 0,
                 "thesis": "",
                 "drivers": [],
-                "sector": e.get("metrics", {}).get("sector", "Other"),
+                "sector": (e.get("metrics") or {}).get("sector", "Other"),
                 "earnings": e.get("earnings"),
                 "recommendation": e.get("recommendation"),
                 "news": e.get("news"),
@@ -709,7 +710,7 @@ def generate_dynamic_narrative(symbol, position, watchlist_data, signal_data, ri
         "confirmations": confirmations,
         "company": company,
         "entryReason": why_owned,
-        "stopReason": f"Hard stop ${stops['hard_stop']:.2f} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5× ATR); trailing ${stops['trailing_stop']:.2f} (2× ATR)",
+        "stopReason": f"Hard stop ${stops['hard_stop']:.2f} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5× ATR); trailing ${stops['trailing_stop']:.2f} (2× ATR). VWAP stop disabled 2026-08-09.",
         "totalScore": round(total_score, 1) if total_score > 0 else None,
         "momentumScore": round(momentum_score, 1) if momentum_score > 0 else None,
         "qualityScore": round(quality_score, 1) if quality_score > 0 else None,
@@ -722,7 +723,7 @@ def generate_dynamic_narrative(symbol, position, watchlist_data, signal_data, ri
         "avgEntry": avg_entry,
         "hardStop": stops["hard_stop"],
         "trailingStop": stops["trailing_stop"],
-        "vwapStop": stops.get("vwap_stop"),
+        "vwapStop": None,
         "lastUpdated": now().isoformat().replace("+00:00", "Z"),
         "drivers": drivers,
         "alpacaNewsHeadline": signal_data.get("news", {}).get("alpaca_headline") if isinstance(signal_data.get("news"), dict) else None,
@@ -1040,6 +1041,19 @@ def generate_popup_content():
             logger.info(f"Generated popup content for {symbol}: {narrative['signal']}")
         except Exception as e:
             logger.error(f"Failed to generate narrative for {symbol}: {e}")
+
+    # Sanity check: popup holdings must match portfolio position count. If not,
+    # keep the old file (fail-open) and return None so the next monitor cycle
+    # escalates ALPACA SYNC as a serious issue.
+    portfolio = load_json(PORTFOLIO_FILE)
+    expected = len(portfolio.get("positions", []))
+    actual = len(popup_data.get("holdings", {}))
+    if expected > 0 and actual != expected:
+        logger.error(
+            f"Popup sanity check failed: portfolio has {expected} positions, "
+            f"but generated popup has {actual} holdings. Refusing to overwrite."
+        )
+        return None
 
     try:
         POPUP_FILE.parent.mkdir(parents=True, exist_ok=True)
