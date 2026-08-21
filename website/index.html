@@ -4187,7 +4187,7 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· owner-supervised</span></div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under the live A1+A2+v3 rules: readiness ≥75, 5+ confirmations, 1+ hard confirmation, above 20-day EMA. Entries require only the VWAP hard confirmation (options-flow, volume and relvol remain supportive chips); RSI &gt;70 and late-stage MACD act as negative vetoes. A QQQ relative-strength gate penalizes names underperforming the index. Position caps: 12% STRONG_NOW, 8% others. Profit-taking: ATR scale-out (1/3 at +0.5×ATR, 1/3 at +1.0×ATR) then +15% trim. Pyramiding add-on (v3.1): winning positions up +5% may be added to if they still pass the v3 gate and stay above VWAP, capped at 50% of original size with 5-day cooldown. The Jul 27 pre-registered protocol ended by owner decision the same day; the Aug 8 2026 v3 patch is pre-registered for a 30-day paper evaluation.</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under live A1+A2+v3 rules, paper-evaluated. In RISK_ON regime, the v3 engine searches for trend-pullback bounces: names still above their 200-day EMA, recently down 3–5 days, RSI below 45, underperforming QQQ short-term, and showing a volume spike. Hard vetoes: RSI &gt;75 or price &gt;15% below the 200-day EMA. If no v3 setup passes, the A1+A2 readiness engine acts as fallback: readiness ≥65, 3+ confirmations, 1+ hard confirmation (2+ if fewer than 7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% others. Profit-taking: ATR scale-out (⅓ at +0.5×ATR, ⅓ at +1.0×ATR), then +15% trim. Pyramiding and rotation are disabled. The Jul 27 pre-registered protocol ended by owner decision; the current v3 paper evaluation runs from Aug 2026.</div>
             <div id="exp-status" style="font-size:0.68rem;color:#22c55e;margin-top:0.4rem;">● ACTIVE — trading under live rules</div>
           </div>
           <script>
@@ -4297,7 +4297,7 @@
           <div id="perf-risknote" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.35rem;text-align:center;">Unlocks after 20 trading days — before that, they would be noise dressed as precision.</div>
 
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Which Signals Actually Work</div>
-          <div style="font-size:0.7rem;color:var(--text-secondary);line-height:1.5;margin-bottom:0.4rem;">Every entry is scored on weighted signal checks. As trades close, we measure which checks actually predicted winners — and which are just decoration. v3 emphasizes VWAP and options-flow confirmation while treating RSI and MACD as late-momentum risk vetoes.</div>
+          <div style="font-size:0.7rem;color:var(--text-secondary);line-height:1.5;margin-bottom:0.4rem;">v3 hunts pullbacks, not breakouts. It scores ~500 names on EMA trend alignment, 5-day decline, RSI, underperformance vs QQQ, and volume. When the setup is clean, it enters. Otherwise the older A1+A2 signal engine takes the entry decision.</div>
           <div id="fa-scores" style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin-bottom:0.5rem;"></div>
           <div id="fa-factors" style="display:flex;flex-direction:column;gap:0.3rem;"></div>
           <div id="fa-takeaway" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
@@ -7243,7 +7243,7 @@ function updateDashboard(data, marketStatus) {
                         description: 'Autonomous trading system active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K paper capital. Strategy: Readiness score entry (≥75 + 5+ confirmations + 1+ hard), ATR stops, sector caps, thesis-based exits gated by min hold, ATR scale-out profit-taking, rotation disabled Aug 2026.'
+                        rationale: 'AI trading bot started with $100K paper capital. Strategy: Readiness score entry (≥65 + 3+ confirmations + 1+ hard with positive-edge fallback gate), ATR stops, sector caps, thesis-based exits gated by min hold, ATR scale-out profit-taking, pyramiding disabled, rotation disabled Aug 2026.'
                     }
                 ];
 
@@ -7518,7 +7518,7 @@ function updateDashboard(data, marketStatus) {
                     <div style="font-size: 0.8rem; margin-bottom: 1.5rem;">No trades yet. The AI is monitoring for opportunities.</div>
                     <div style="font-size: 0.75rem; opacity: 0.7; background: var(--bg-elevated); padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
                         <div style="margin-bottom: 0.5rem;">📊 <strong>Strategy Active</strong></div>
-                        <div>• Readiness-based entry (≥75, 5+ conf, VWAP hard confirmation, QQQ relative-strength gate)</div>
+                        <div>• Readiness-based entry (≥65, 3+ conf, positive-edge fallback gate: VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks, QQQ relative-strength gate)</div>
                         <div>• 1.5× ATR hard stops [5%, 11%]</div>
                         <div>• +0.5×ATR scale-out, +1.0×ATR scale-out, then +15% trim (v3)</div>
                     </div>
@@ -8102,7 +8102,7 @@ function updateDashboard(data, marketStatus) {
             maxPositionSize: 0.08,      // Max 8% per new entry
             minPositionSize: 0.05,      // Min 5% per entry
             maxDailyEntries: 10,        // Max 10 new positions/day (effectively unlimited)
-            rsiThreshold: 75,           // Readiness score >= 75 with 5+ conf and 1+ hard (2+ if <7 chips)
+            rsiThreshold: 65,           // Readiness score >= 65 with 3+ conf and 1+ hard (2+ if <7 chips), positive-edge gate
             volumeMultiplier: 1.5,      // 1.5x average volume
             convictionThreshold: 80,    // 80% AI confidence
             sectorLimit: 0.25           // No sector above 25%
@@ -9959,7 +9959,7 @@ function updateDashboard(data, marketStatus) {
                 desc = 'Highest conviction - STRONG_NOW tier, largest position sizing.';
             } else if (score >= 75) {
                 label = 'Entry eligible';
-                desc = 'Bot is confident - readiness ≥75 with 5+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips). Eligible for new entries.';
+                desc = 'Bot is confident - readiness ≥65 with 3+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips), satisfying the positive-edge fallback gate. Eligible for new entries.';
             } else if (score >= 50) {
                 label = 'Fading conviction';
                 desc = 'Setup weakening. Bot is watching but won\'t add new positions.';
@@ -9971,7 +9971,7 @@ function updateDashboard(data, marketStatus) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Readiness ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Composite weighted factors: momentum/signal (25%), sector strength (25%), VWAP (15%), options flow (14%), volume (10%), EMA trend (10%), intraday momentum (5%), RSI risk veto (6%), MACD fresh-cross / late-stage veto (5%), relative strength vs SPY (4%). Entries require VWAP hard confirmation; options flow is supportive but no longer required.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Readiness is the A1+A2 fallback score. Composite factors: momentum/signal (25%), sector strength (25%), VWAP (15%), options flow (14%), volume (10%), EMA trend (10%), intraday momentum (5%), RSI risk veto (6%), MACD fresh-cross / late-stage veto (5%), relative strength vs SPY (4%). Entries require the positive-edge gate (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks). v3 trend-pullback setups bypass this score in RISK_ON regime.</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -11407,7 +11407,7 @@ function updateDashboard(data, marketStatus) {
                 activeSignalsHtml = `
                     <div style="margin-top: 20px; text-align: center; padding: 20px; background: var(--bg-surface); border-radius: 12px;">
                         <div style="font-size: 14px; color: var(--text-muted);">No active signals</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Signals appear when readiness ≥75 + 5+ confirmations + VWAP hard confirmation (options-flow supportive)</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Signals appear when readiness ≥65 + 3+ confirmations + positive-edge hard confirmation (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks)</div>
                     </div>
                 `;
             }
@@ -11451,7 +11451,7 @@ function updateDashboard(data, marketStatus) {
                         <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 12px; padding: 14px;">
                             <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">💡 HOW WE TRACK</div>
                             <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                                <div style="margin-bottom: 6px;">• Logged when readiness ≥75 + VWAP confirms entry (options-flow supportive)</div>
+                                <div style="margin-bottom: 6px;">• Logged when readiness ≥65 + positive-edge gate confirms entry (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks)</div>
                                 <div style="margin-bottom: 6px;">• <strong style="color: #22c55e;">WIN:</strong> Stock hits ATR scale-out or +15%/+30% target</div>
                                 <div style="margin-bottom: 6px;">• <strong style="color: var(--accent-red);">LOSS:</strong> Stock hits ATR hard stop</div>
                                 <div>• Tracks from entry signal to exit</div>
@@ -12191,7 +12191,7 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #22c55e; font-weight: 700; min-width: 72px;">NOW</span>
-                        <span style="color: var(--text-muted);">≥75 - bot buys (5+ conf, 1+ hard)</span>
+                        <span style="color: var(--text-muted);">≥72 - bot buys (3+ conf, 1+ hard, positive-edge gate)</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #fbbf24; font-weight: 700; min-width: 72px;">WATCH</span>
@@ -12380,7 +12380,7 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">What triggers a buy</div>
-                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Readiness >= 75 with 5+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips).'}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Readiness >= 65 with 3+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips), satisfying the positive-edge fallback gate.'}</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Catalyst</div>
@@ -12810,13 +12810,13 @@ function updateDashboard(data, marketStatus) {
                     <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
                         <div style="font-size: 12px; font-weight: 700; color: ${accentColor}; margin-bottom: 8px;">BUY URGENCY</div>
                         <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                            <div style="margin-bottom: 8px;">Buy urgency increases as readiness approaches the <strong style="color: var(--text-primary);">75 entry threshold</strong>:</div>
+                            <div style="margin-bottom: 8px;">Buy urgency increases as readiness approaches the <strong style="color: var(--text-primary);">65 entry threshold</strong>:</div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Readiness ≥75 + VWAP</span>
+                                <span style="background: #22c55e20; color: #22c55e; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Readiness ≥65 + positive-edge gate</span>
                                 <span>Maximum urgency (100)</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Readiness 55-74</span>
+                                <span style="background: #eab30820; color: #eab308; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Readiness 55-64</span>
                                 <span>Scaling urgency (0-100)</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
