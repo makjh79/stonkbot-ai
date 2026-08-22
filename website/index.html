@@ -4075,24 +4075,17 @@
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);margin-bottom:0.75rem;">
             <p style="margin:0 0 0.75rem 0;">This is a fully automated trading bot connected to an Alpaca paper account. It makes every decision — what to buy, how much to buy, when to take profit, when to cut a loss — without human intervention.</p>
 
-            <p style="margin:0 0 0.75rem 0;">Think of it like a picky surfer reading the ocean.</p>
+            <p style="margin:0 0 0.75rem 0;">Let me walk you through how the bot invests, the same way I'd explain it across a desk.</p>
 
-            <p style="margin:0 0 0.75rem 0;">Most days, the bot sits on the beach. It scans hundreds of stocks and waits for a very specific kind of wave: a strong stock that has just pulled back, not a weak stock trying to look strong.</p>
+            <p style="margin:0 0 0.75rem 0;">Before it buys anything, it checks the weather. Every 2 minutes, it looks at the overall market and asks a simple question: are conditions healthy or hostile? If the Nasdaq is trading above its recent trend, conditions are healthy. If the market is falling or whipsawing, they're hostile — and in hostile conditions, we simply don't put new money to work. Preserving capital comes first.</p>
 
-            <p style="margin:0 0 0.45rem 0;">The bot runs three layers:</p>
+            <p style="margin:0 0 0.75rem 0;">When conditions are healthy, the bot looks for one specific opportunity: high-quality companies that have pulled back for 3–5 days. Not broken companies — strong ones, temporarily out of favor. The ideal candidate is oversold on RSI, has lagged the Nasdaq over the past week, and is now showing a surge in trading volume. In plain terms: we buy good companies on sale, just as the sale is ending. We never chase stocks making new highs.</p>
 
-            <p style="margin:0 0 0.45rem 0;"><strong style="color:var(--text-primary);">A1 — Should we even look at this stock?</strong><br>
-            A1 scores every stock on 15 factors: trend, momentum, volume, RSI, MACD, EMA alignment, options activity, intraday strength, and more. If the score is high enough and enough hard factors confirm, the stock passes.</p>
+            <p style="margin:0 0 0.75rem 0;">Before a single dollar is committed, we evaluate every candidate on 15 factors — trend, momentum, volume, moving averages, options activity, intraday strength. One veto applies no matter what: a stock with an RSI above 80 has no pullback left to buy — at that point it's chasing, not buying. If the evidence isn't there, we pass. There is always another opportunity.</p>
 
-            <p style="margin:0 0 0.45rem 0;"><strong style="color:var(--text-primary);">v3 — Is the market giving us a pullback gift?</strong><br>
-            When the market is in a good mood (RISK_ON), v3 hunts strong stocks that have dipped 3–5 days, are oversold on RSI, underperforming the Nasdaq, and showing a volume spike. It buys the bounce, not the breakout.</p>
+            <p style="margin:0 0 0.75rem 0;">Once we own a position, discipline takes over. New ideas start at roughly 3% of the portfolio, and we hold no more than 15 at a time. Our highest-conviction positions may grow to 12%; nothing else exceeds 8%. We take profits in stages as targets are reached, and we cut losses quickly when we're wrong. And if the portfolio itself draws down 10%, new buying stops until it recovers. Protecting the downside matters more than any single trade.</p>
 
-            <p style="margin:0 0 0.75rem 0;"><strong style="color:var(--text-primary);">A2 — Now that we own it, how do we not blow up?</strong><br>
-            A2 handles position sizing, profit targets, and stop losses. The best setups get up to 12% of the portfolio; everything else gets 8% or less. It takes profits in stages and cuts losses before they get ugly.</p>
-
-            <p style="margin:0 0 0.75rem 0;">So a trade flows like this: the market mood turns RISK_ON → v3 spots a pullback → A1 confirms the stock is worth buying → A2 decides the size and exit plan → the bot executes → A2 manages it until exit.</p>
-
-            <p style="margin:0 0 0.75rem 0;">The whole loop runs every five minutes during market hours. No FOMO, no revenge trading, no trust me bro. Just rules.</p>
+            <p style="margin:0 0 0.75rem 0;">No hunches. No emotions. No revenge trading after a loss. Just a process, repeated every 2 minutes of every market day.</p>
           </div>
 
           <div class="risk-grid" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.75rem;">
