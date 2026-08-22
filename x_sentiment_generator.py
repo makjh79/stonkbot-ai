@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 X Sentiment Generator for StonkBOT holding popups.
-Runs weekdays after US close (08:30 HKT / 00:30 UTC), queries xAI X Search
+Runs Mon–Sat after US close (00:30 HKT), queries xAI X Search
 for each current holding, writes x_sentiment.json to the web root.
 No trading decisions use this data. Site content only.
 
@@ -211,12 +211,14 @@ def _atomic_write_json(path: str, data: dict) -> None:
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
     os.replace(tmp, path)
+    os.chmod(path, 0o644)
+    os.chmod(path, 0o644)
 
 
 def main(force: bool = False) -> int:
     now = datetime.now(timezone.utc)
-    if now.weekday() >= 5 and not force:
-        print("Skipping: weekend")
+    if now.weekday() == 6 and not force:  # skip Sunday only (timer runs Mon–Sat; 2026-08-23)
+        print("Skipping: Sunday")
         return 0
 
     api_key = _get_xai_key()
@@ -241,6 +243,28 @@ def main(force: bool = False) -> int:
         "sentiments": results,
         "total_cost_usd": round(total_cost, 6),
     }
+
+    # Fail-open: if most queries errored, do not overwrite the previous file with
+    # a fresh-but-empty result. This keeps stale-but-valid data visible and lets
+    # the monitor flag the auth/API failure instead of silently degrading.
+    error_count = sum(1 for s in results.values() if s.get("error"))
+    if error_count >= len(symbols) // 2:
+        print(
+            f"Refusing to overwrite x_sentiment.json: {error_count}/{len(symbols)} "
+            f"queries failed (total cost ${total_cost:.4f})"
+        )
+        return 2
+
+    # Fail-open: if most queries errored, do not overwrite the previous file with
+    # a fresh-but-empty result. This keeps stale-but-valid data visible and lets
+    # the monitor flag the auth/API failure instead of silently degrading.
+    error_count = sum(1 for s in results.values() if s.get("error"))
+    if error_count >= len(symbols) // 2:
+        print(
+            f"Refusing to overwrite x_sentiment.json: {error_count}/{len(symbols)} "
+            f"queries failed (total cost ${total_cost:.4f})"
+        )
+        return 2
 
     _atomic_write_json(os.path.join(WEB_DIR, "x_sentiment.json"), payload)
     _atomic_write_json(os.path.join(BASE_DIR, "x_sentiment.json"), payload)
