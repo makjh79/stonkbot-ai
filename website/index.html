@@ -10047,13 +10047,18 @@ function updateDashboard(data, marketStatus) {
             let preGenerated = popupContentCache[symbol] || {};
             if (xSentimentCache && xSentimentCache.sentiments && xSentimentCache.sentiments[symbol]) {
                 const xs = xSentimentCache.sentiments[symbol];
-                preGenerated = {
-                    ...preGenerated,
-                    xSentiment: xs.text || xs.one_liner || '',
-                    xSentimentThreads: xs.threads || '',
-                    xSentimentColor: xs.mood_color || 'var(--text-muted)',
-                    xSentimentLabel: xs.label || xs.mood || 'X'
-                };
+                const xsTs = new Date(xs.timestamp || xSentimentCache.generated_at || 0).getTime();
+                const xsAgeH = xsTs ? (Date.now() - xsTs) / 36e5 : Infinity;
+                if (xsAgeH <= 36) {  // hide stale X Chatter (weekend gap) rather than show undated old takes
+                    preGenerated = {
+                        ...preGenerated,
+                        xSentiment: xs.text || xs.one_liner || '',
+                        xSentimentThreads: xs.threads || '',
+                        xSentimentColor: xs.mood_color || 'var(--text-muted)',
+                        xSentimentLabel: xs.label || xs.mood || 'X',
+                        xSentimentAsOf: new Date(xsTs).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                    };
+                }
             }
             const currentData = window.lastPortfolioData || FALLBACK_DATA;
             const position = currentData.positions.find(p => p.symbol === symbol);
@@ -10221,7 +10226,8 @@ function updateDashboard(data, marketStatus) {
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="${preGenerated.xSentimentColor || 'var(--text-muted)'}"/>
                                 </svg>
                                 <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">X Chatter</span>
-                                <span style="font-size: 0.6rem; font-weight: 700; color: ${preGenerated.xSentimentColor || 'var(--text-muted)'}; margin-left: auto;">${preGenerated.xSentimentLabel || 'X'}</span>
+                                ${preGenerated.xSentimentAsOf ? `<span style="font-size: 0.6rem; color: var(--text-muted); margin-left: auto;">as of ${preGenerated.xSentimentAsOf}</span>` : ''}
+                                <span style="font-size: 0.6rem; font-weight: 700; color: ${preGenerated.xSentimentColor || 'var(--text-muted)'}; ${preGenerated.xSentimentAsOf ? 'margin-left: 0.4rem;' : 'margin-left: auto;'}">${preGenerated.xSentimentLabel || 'X'}</span>
                             </div>
                             <div style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.35rem;">${preGenerated.xSentiment}</div>
                             ${preGenerated.xSentimentThreads ? `<div style="font-size: 0.62rem; color: var(--text-muted); line-height: 1.4;">${preGenerated.xSentimentThreads}</div>` : ''}
