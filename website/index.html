@@ -24,7 +24,7 @@
     })();
     </script>
     <title>StonkBOT.AI | Autonomous AI Trading</title>
-    <meta name="description" content="AI-powered autonomous trading experiment. Real portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
+    <meta name="description" content="AI-powered autonomous trading experiment. Paper portfolio, real transparency, 6-month challenge versus the S&amp;P 500.">
     <!-- CACHE BUST: v=20260809-v1 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -4049,15 +4049,15 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);margin-bottom:0.75rem;">
             <p style="margin:0 0 0.75rem 0;">Someone bet <strong style="color:var(--text-primary);">$100,000</strong> that two sleep-deprived AI agents could beat Wall Street.</p>
-            <p style="margin:0 0 0.75rem 0;">No hedge fund pedigree. No quant PhD. No Bloomberg Terminal subscription. Just a builder who wondered: <em>what happens when you give an AI a brokerage account and tell it to figure things out?</em></p>
-            <p style="margin:0 0 0.75rem 0;">Every trade - wins, losses, and embarrassing misfires - is logged in real time. This isn't a product. It's an experiment with a very public lab notebook.</p>
+            <p style="margin:0 0 0.75rem 0;">No hedge fund pedigree. No quant PhD. No Bloomberg Terminal subscription. Just a builder who wondered: <em>what happens when you connect an AI to an Alpaca paper account and let it trade live market data?</em></p>
+            <p style="margin:0 0 0.75rem 0;">Every trade - wins, losses, and embarrassing misfires - is logged in real time on a paper account. This isn't a product. It's an experiment with a very public lab notebook.</p>
           </div>
 
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
             <p style="margin:0 0 0.75rem 0;">It might lose everything. That's literally the point of an experiment.</p>
-            <p style="margin:0 0 0.75rem 0;">The $100K is paper capital. The losses would be real too. The bot has circuit breakers, stop losses, and sector caps, but <strong style="color:var(--text-primary);">risk is not the same as safety.</strong></p>
-            <p style="margin:0 0 0.75rem 0;">The experiment is designed so that even a total wipeout teaches us something about how AI behaves with real capital. That's why it's public - so others can learn from what goes right <em>and</em> what goes wrong.</p>
-            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">New entry halt at -10% portfolio drawdown; exits/stops/trims continue. Not investment advice.</p>
+            <p style="margin:0 0 0.75rem 0;">The $100K is paper capital on Alpaca paper. The bot has circuit breakers, stop losses, and sector caps, but <strong style="color:var(--text-primary);">risk is not the same as safety.</strong></p>
+            <p style="margin:0 0 0.75rem 0;">The experiment is designed so that even a total wipeout teaches us something about how AI behaves in live market conditions. That's why it's public - so others can learn from what goes right <em>and</em> what goes wrong.</p>
+            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">New entries are halted when portfolio drawdown reaches the configured limit; exits/stops/trims continue. Not investment advice.</p>
           </div>
         </div>
       </div>
@@ -4073,16 +4073,9 @@
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);margin-bottom:0.75rem;">
-            <p style="margin:0 0 0.75rem 0;">The bot watches a universe of ~500 stocks, scores them on momentum, quality, risk, and market regime, then assigns each to a tier:</p>
-
-            <div class="tier-badges" style="display:flex;gap:0.35rem;margin-bottom:0.75rem;">
-              <span style="flex:1;text-align:center;padding:0.4rem 0.25rem;background:rgba(6,182,212,0.12);color:#06b6d4;border-radius:8px;font-size:0.65rem;font-weight:700;border:1px solid rgba(6,182,212,0.2);">PRIME</span>
-              <span style="flex:1;text-align:center;padding:0.4rem 0.25rem;background:rgba(34,197,94,0.1);color:#22c55e;border-radius:8px;font-size:0.65rem;font-weight:700;border:1px solid rgba(34,197,94,0.2);">BUILDING</span>
-              <span style="flex:1;text-align:center;padding:0.4rem 0.25rem;background:rgba(251,191,36,0.1);color:#fbbf24;border-radius:8px;font-size:0.65rem;font-weight:700;border:1px solid rgba(251,191,36,0.2);">WATCHING</span>
-              <span style="flex:1;text-align:center;padding:0.4rem 0.25rem;background:rgba(255,255,255,0.04);color:var(--text-muted);border-radius:8px;font-size:0.65rem;font-weight:700;border:1px solid rgba(255,255,255,0.08);">TRACKING</span>
-            </div>
-
-            <p style="margin:0 0 0.75rem 0;"><strong style="color:var(--text-primary);">Only PRIME-tier stocks are tradeable.</strong> The rest are watched. A broken thesis triggers an exit only after the minimum hold period, so a single noisy signal can't panic-sell a fresh position. No emotions, no bag-holding, no "it'll come back."</p>
+            <p style="margin:0 0 0.75rem 0;">Think of the bot like a picky surfer reading the ocean. Most days, it sits on the beach. It scans the water—hundreds of stocks—and waits for a very specific kind of wave: a strong stock that has just pulled back, not a weak stock trying to look strong. When the market is in a good mood (RISK_ON), the bot's v3 engine hunts those pullbacks. It looks for stocks above their long-term trend, resting after a 3–5 day dip, oversold on RSI, underperforming the Nasdaq, and showing a volume spike. That's the entry.</p>
+            <p style="margin:0 0 0.75rem 0;">When the market is messy or uncertain, the bot falls back to the A1+A2 engine—a 15-factor score that asks: is the stock trending, are momentum and volume aligned, is it above key moving averages, and are options and intraday signals confirming? Only if enough factors line up does it even consider buying.</p>
+            <p style="margin:0 0 0.75rem 0;">Then it sizes positions carefully: up to 12% for the strongest setups, 8% for everything else. It takes profits in stages using volatility-based targets, and it cuts losses before they get ugly. No FOMO. No revenge trading. No trust me bro. Just rules, executed every five minutes.</p>
           </div>
 
           <div class="risk-grid" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.75rem;">
@@ -4090,7 +4083,7 @@
             <div class="risk-items" style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.68rem;color:var(--text-secondary);">
               <div id="rg-hard-stop" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops 1.5× ATR [5%,11%]</div>
               <div id="rg-trailing-stop" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops 2× ATR [5%,14%]</div>
-              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">12% max per new position</div>
+              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">12% max STRONG_NOW · 8% others</div>
               <div id="rg-sector-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
               <div id="rg-min-hold" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Min hold 5d (RISK_ON) / 3d (RISK_OFF)</div>
               <div id="rg-rotation" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rotation disabled 2026-08-01</div>
@@ -4103,7 +4096,7 @@
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Post-stop re-entry at/below stop price (7d)</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">1 new entry per symbol per day</div>
               <div id="rg-beta-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">High-beta basket cap 35% deployed</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">New entries halted at -10% portfolio DD</div>
+              <div id="rg-dd-halt" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">New entries halted at portfolio drawdown limit</div>
             </div>
           </div>
 
@@ -4187,7 +4180,7 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· owner-supervised</span></div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot trades under live A1+A2+v3 rules, paper-evaluated. In RISK_ON regime, the v3 engine searches for trend-pullback bounces: names still above their 200-day EMA, recently down 3–5 days, RSI below 45, underperforming QQQ short-term, and showing a volume spike. Hard vetoes: RSI &gt;75 or price &gt;15% below the 200-day EMA. If no v3 setup passes, the A1+A2 readiness engine acts as fallback: readiness ≥65, 3+ confirmations, 1+ hard confirmation (2+ if fewer than 7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% others. Profit-taking: ATR scale-out (⅓ at +0.5×ATR, ⅓ at +1.0×ATR), then +15% trim. Pyramiding and rotation are disabled. The Jul 27 pre-registered protocol ended by owner decision; the current v3 paper evaluation runs from Aug 2026.</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot runs on Alpaca paper trading under live A1+A2+v3 rules. In RISK_ON regime, the v3 engine searches for trend-pullback bounces: names still above their 200-day EMA, recently down 3–5 days, RSI below 45, underperforming QQQ short-term, and showing a volume spike. Hard vetoes: RSI &gt;75 or price &gt;15% below the 200-day EMA. If no v3 setup passes, the A1+A2 readiness engine acts as fallback: readiness ≥65, 3+ confirmations, 1+ hard confirmation (2+ if fewer than 7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% NOW/WATCH/MONITOR. Profit-taking: ATR scale-out (⅓ at +0.5×ATR, ⅓ at +1.0×ATR), then +15% trim. Pyramiding and rotation are disabled. The Jul 27 pre-registered protocol ended by owner decision; the current v3 paper evaluation runs from Aug 2026.</div>
             <div id="exp-status" style="font-size:0.68rem;color:#22c55e;margin-top:0.4rem;">● ACTIVE — trading under live rules</div>
           </div>
           <script>
@@ -4196,7 +4189,7 @@
               const ct = await fetch('config_truth.json').then(r=>r.ok?r.json():null).catch(()=>null);
               if (ct?.caps) {
                 const rc = document.getElementById('risk-cell-poscap');
-                if (rc) rc.textContent = `${(ct.caps.STRONG_NOW*100).toFixed(0)}% max per new position`;
+                if (rc) rc.textContent = `${(ct.caps.STRONG_NOW*100).toFixed(0)}% STRONG_NOW · ${(ct.caps.NOW*100).toFixed(0)}% others`;
               }
               // Risk Guardrails panel renders from config_truth.guardrails so
               // it can never drift from strategy_config.py (single source of truth).
@@ -4212,6 +4205,10 @@
                 setTxt('rg-earnings-blackout', `No entries within ${g.earnings_blackout_days} days of earnings`);
                 setTxt('rg-iv-move', `No pre-earnings entry when IV move > ${g.implied_move_max_atr_mult}× ATR`);
                 setTxt('rg-beta-cap', `High-beta basket cap ${pc(g.high_beta_basket_cap_pct)} deployed`);
+              const pm = ct?.position_management;
+              if (pm?.portfolio_dd_halt_pct != null) {
+                setTxt('rg-dd-halt', `New entries halted at ${(pm.portfolio_dd_halt_pct*100).toFixed(0)}% portfolio drawdown`);
+              }
               }
               const pm = ct?.position_management;
               if (pm?.min_hold_days) {
@@ -7056,9 +7053,9 @@ function updateDashboard(data, marketStatus) {
             const dowData = marketIndices?.['Dow Jones'] || {};
             const nasdaqData = marketIndices?.['NASDAQ'] || {};
 
-            const sp500Num = sp500Data.return_pct ?? -2.60;
-            const dowNum = dowData.return_pct ?? -1.35;
-            const nasdaqNum = nasdaqData.return_pct ?? -4.18;
+            const sp500Num = sp500Data.return_pct ?? null;
+            const dowNum = dowData.return_pct ?? null;
+            const nasdaqNum = nasdaqData.return_pct ?? null;
 
                 // Update all detail elements
                 const portfolioValueEl = document.getElementById('detail-portfolio-value');
@@ -9138,6 +9135,7 @@ function updateDashboard(data, marketStatus) {
                 function constSeries(sym, n, day, liveRet) {
                     const base = idxRetAt(sym, day);
                     const out = [];
+                    // No historical index data => null, so the chart never draws a flat stale line.
                     for (let i = 0; i < n; i++) out.push(base == null ? null : parseFloat(base.toFixed(2)));
                     if (liveRet != null && out.length) out[out.length - 1] = liveRet;
                     return out;
@@ -9971,7 +9969,7 @@ function updateDashboard(data, marketStatus) {
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Readiness ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Readiness is the A1+A2 fallback score. Composite factors: momentum/signal (25%), sector strength (25%), VWAP (15%), options flow (14%), volume (10%), EMA trend (10%), intraday momentum (5%), RSI risk veto (6%), MACD fresh-cross / late-stage veto (5%), relative strength vs SPY (4%). Entries require the positive-edge gate (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks). v3 trend-pullback setups bypass this score in RISK_ON regime.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Readiness is the A1+A2 fallback score. Composite 15 factors, including momentum/signal, sector strength, VWAP, options flow, volume, EMA trend, intraday momentum, RSI risk veto, MACD fresh-cross/late-stage veto, relative strength vs SPY, plus 5-minute momentum/volume/VWAP, options flow confirmation, spread health, corporate-action check, and bid/ask imbalance. Entries require the positive-edge gate (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks). v3 trend-pullback setups bypass this score in RISK_ON regime.</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -11046,7 +11044,7 @@ function updateDashboard(data, marketStatus) {
         // overwriting the real performance chart with stale fabricated values
         // 500ms after page load, causing the chart to flip on every refresh.
         // The canonical chart is now driven by loadPerformanceData() / setTimeRange()
-        // / applyTimeRange() using real portfolio_history + index_history data.
+        // / applyTimeRange() using live portfolio_history + index_history data.
 
         function updateChartRange(range) {
             // Delegates to the real chart controller so any legacy callers stay safe.
