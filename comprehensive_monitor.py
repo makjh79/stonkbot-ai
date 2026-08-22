@@ -1619,8 +1619,11 @@ def _check_process_health():
         "reconstruct_portfolio_history.py": "Portfolio History Reconstructor",
     }
 
-    # Only consider actual python invocations, not SSH shells or cron wrappers
-    python_cmd_re = re.compile(r"python\d*\s+(?:.*/)?(\S+\.py)")
+    # Only count actual direct invocations (`python3 /path/script.py`), matched
+    # at argv[0]. Substring matching false-positives on `python3 -c` harnesses,
+    # import probes, and any python process merely *mentioning* the filename
+    # (root cause of the 2026-08-22 phantom "Duplicate Trading Bot" page).
+    python_cmd_re = re.compile(r"^(?:\S*/)?python\d*(?:\.\d+)?\s+(?:\S*/)?(\S+\.py)\b")
     procs = {}
     for line in out.strip().splitlines()[1:]:
         parts = line.split(None, 2)
@@ -1628,19 +1631,18 @@ def _check_process_health():
             continue
         user, pid, cmd = parts
         cmd = cmd.strip()
-        # Must be a python process (not ssh/bash/cron wrapper)
-        if "/usr/bin/python" not in cmd and "python3" not in cmd:
-            continue
-        # Exclude shell wrappers and SSH sessions
-        if "bash -c" in cmd or "ssh" in cmd.split()[0]:
-            continue
+        m = python_cmd_re.match(cmd)
+        if not m:
+            continue  # not a direct `python script.py` invocation (e.g. python3 -c ...)
+        invoked = m.group(1)
         for script, label in scripts.items():
-            if script in cmd:
+            if invoked == script:
                 procs.setdefault(label, []).append((user.strip(), pid.strip(), cmd[:120]))
 
     for label, instances in procs.items():
         if len(instances) > 1:
-            _log_issue(f"Duplicate {label} process detected: {len(instances)} instances")
+            pid_list = ", ".join(f"{u}:{p}" for u, p, _ in instances)
+            _log_issue(f"Duplicate {label} process detected: {len(instances)} instances ({pid_list})")
         for user, pid, full_cmd in instances:
             if user == "root":
                 _log_issue(f"Root-owned {label}: {user} pid={pid} cmd={full_cmd}")
