@@ -24,6 +24,48 @@ ENTRY_HARD_CONFIRMATIONS_STRICT_BELOW: int = 7  # threshold for strict mode
 ENTRY_ABOVE_EMA_REQUIRED: bool = True
 ENTRY_TRADEABLE_TIER: str = "WATCH"
 
+# v3 trend-pullback engine (experimental, do not enable without owner sign-off)
+V3_ENABLED: bool = True
+V3_MAX_POSITIONS: int = 15
+V3_POSITION_PCT: float = 0.03
+V3_HOLD_DAYS: int = 5
+V3_SCORE_THRESHOLD: float = 0.5
+V3_MELTDOWN_QQQ_5D_MAX: float = -0.08  # skip entries if QQQ 5d return worse than -8%
+V3_EARNINGS_BLACKOUT_DAYS: int = 5
+
+# =============================================================================
+# Entry Persistence Gate (permanent replacement for the 2026-08-13 experiment override)
+# =============================================================================
+# Relaxed from 2-scan to 1-scan on 2026-08-13 to fix cash drag. Kept as a config
+# knob so we can dial it back without another hot patch. Add-ons / pyramiding
+# always require 2 scans regardless of this setting, because adding to an
+# existing position should demand more confirmation, not less.
+ENTRY_PERSISTENCE_SCANS: int = 1              # 1 = first-scan entries allowed, 2 = require 2 consecutive scans
+ENTRY_PERSISTENCE_MAX_AGE_MINUTES: int = 15   # previous scan state expires after this
+ENTRY_PERSISTENCE_TIER_RELAXATION: bool = True  # allow WATCH tier (per ENTRY_TRADEABLE_TIER), not only STRONG_NOW
+
+# =============================================================================
+# Signal Quality / Stale-Data Policy
+# =============================================================================
+# 2026-08-14: instead of a binary fresh/stale stop, degrade gracefully when the
+# data feed hiccups. "strict" = current behavior (skip entries on stale signals).
+# "fail_open_recent" = if the last-good signal is recent, allow entry with a size
+# penalty and an extra hard-confirmation requirement. All fail-open decisions are
+# logged to gate_blocks.jsonl for attribution.
+SIGNAL_FRESHNESS_POLICY: str = "fail_open_recent"  # "strict" | "fail_open_recent"
+SIGNAL_MAX_STALE_MINUTES: int = 20                 # beyond this, signal is unusable
+SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES: int = 30       # within this, degrade gracefully
+SIGNAL_FAIL_OPEN_SIZE_MULT: float = 0.5            # halve position size on degraded signal
+SIGNAL_FAIL_OPEN_EXTRA_HARD_CONF: int = 1          # require +N extra hard confirmations
+
+# =============================================================================
+# Off-Hours / Market-State Behavior
+# =============================================================================
+# 2026-08-14: stop running the full entry scan when the market is closed. Keep
+# exit/stop checks, sync, and data refresh. Prevents entries on stale after-hours
+# quotes and removes the confusing "off-hours high-beta check" + entry logic duality.
+OFF_HOURS_BEHAVIOR: str = "maintain_only"  # "maintain_only" | "full_strategy"
+
 # =============================================================================
 # Hard Confirmation Keys (v3 2026-08-08, updated 2026-08-09)
 # Evidence-based: only factors with positive live edge are hard confirmations.
@@ -104,7 +146,7 @@ THESIS_BROKEN_GATED_BY_MIN_HOLD: bool = True
 # Active by owner decision. Adds to existing positions when they are winning
 # AND the setup still passes the full v3 entry gate. Never averages down.
 # =============================================================================
-PYRAMIDING_ENABLED: bool = True
+PYRAMIDING_ENABLED: bool = False
 PYRAMIDING_MIN_UNREALIZED_PCT: float = 0.05     # position must be +5% or more
 PYRAMIDING_MAX_ADDON_PCT_OF_ORIGINAL: float = 0.50  # add up to 50% of original shares
 PYRAMIDING_COOLDOWN_DAYS: int = 5               # max one add-on per position per 5 days
@@ -151,6 +193,16 @@ def validate() -> List[str]:
         issues.append(f"V3_SCALEOUT_T1_ATR ({V3_SCALEOUT_T1_ATR}) >= V3_SCALEOUT_T2_ATR ({V3_SCALEOUT_T2_ATR})")
     if not (0 < V3_SCALEOUT_FRACTION < 1):
         issues.append(f"V3_SCALEOUT_FRACTION ({V3_SCALEOUT_FRACTION}) not in (0, 1)")
+    if ENTRY_PERSISTENCE_SCANS not in (1, 2):
+        issues.append(f"ENTRY_PERSISTENCE_SCANS must be 1 or 2, got {ENTRY_PERSISTENCE_SCANS}")
+    if SIGNAL_FRESHNESS_POLICY not in ("strict", "fail_open_recent"):
+        issues.append(f"SIGNAL_FRESHNESS_POLICY must be 'strict' or 'fail_open_recent', got {SIGNAL_FRESHNESS_POLICY}")
+    if SIGNAL_MAX_STALE_MINUTES >= SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES:
+        issues.append(f"SIGNAL_MAX_STALE_MINUTES ({SIGNAL_MAX_STALE_MINUTES}) must be < SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES ({SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES})")
+    if not (0 < SIGNAL_FAIL_OPEN_SIZE_MULT <= 1):
+        issues.append(f"SIGNAL_FAIL_OPEN_SIZE_MULT ({SIGNAL_FAIL_OPEN_SIZE_MULT}) must be in (0, 1]")
+    if OFF_HOURS_BEHAVIOR not in ("maintain_only", "full_strategy"):
+        issues.append(f"OFF_HOURS_BEHAVIOR must be 'maintain_only' or 'full_strategy', got {OFF_HOURS_BEHAVIOR}")
     return issues
 
 
@@ -166,7 +218,16 @@ def export_for_website() -> Dict[str, Any]:
             "above_ema": ENTRY_ABOVE_EMA_REQUIRED,
             "tradeable_tier": ENTRY_TRADEABLE_TIER,
             "hard_confirmation_keys": sorted(HARD_CONFIRMATION_KEYS),
-            "hard_confirmation_note": "v3 2026-08-08: macd_turning and intraday_confirmed REMOVED (negative live edge). Updated 2026-08-09: options_confirmed REMOVED (negative live edge -5pp). REQUIRED_POSITIVE_HARD_KEYS = {vwap_confirmed}: must be true for entry. volume_confirmed and relvol_confirmed remain supportive chips but no longer satisfy the positive-edge gate on their own.",
+            "hard_confirmation_note": "v3 2026-08-08: macd_turning and intraday_confirmed REMOVED (negative live edge). Updated 2026-08-09: options_confirmed REMOVED as a standalone positive-edge key. Entry gate uses has_required_positive_edge with fallback hierarchy: primary vwap_confirmed; fallback volume_confirmed + options_confirmed; fallback intraday_confirmed + relvol_confirmed + above_ema. volume_confirmed and relvol_confirmed remain supportive chips but no longer satisfy the positive-edge gate on their own.",
+            "persistence_scans": ENTRY_PERSISTENCE_SCANS,
+            "persistence_max_age_minutes": ENTRY_PERSISTENCE_MAX_AGE_MINUTES,
+            "persistence_tier_relaxation": ENTRY_PERSISTENCE_TIER_RELAXATION,
+            "signal_freshness_policy": SIGNAL_FRESHNESS_POLICY,
+            "signal_max_stale_minutes": SIGNAL_MAX_STALE_MINUTES,
+            "signal_fail_open_max_stale_minutes": SIGNAL_FAIL_OPEN_MAX_STALE_MINUTES,
+            "signal_fail_open_size_mult": SIGNAL_FAIL_OPEN_SIZE_MULT,
+            "signal_fail_open_extra_hard_conf": SIGNAL_FAIL_OPEN_EXTRA_HARD_CONF,
+            "off_hours_behavior": OFF_HOURS_BEHAVIOR,
         },
         "position_management": {
             "rotation_enabled": ROTATION_ENABLED,

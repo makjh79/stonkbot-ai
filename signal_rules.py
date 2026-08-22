@@ -21,6 +21,30 @@ from strategy_config import (
     REQUIRED_POSITIVE_HARD_KEYS as V3_REQUIRED_POSITIVE_KEYS,
 )
 
+
+# -----------------------------------------------------------------------------
+# Positive-edge entry gate with fallbacks
+# -----------------------------------------------------------------------------
+def has_required_positive_edge(confirmations):
+    """V3 positive-edge gate with fallback paths.
+
+    Primary: VWAP confirmed (strongest live edge, +28pp).
+    Fallback 1: volume_confirmed + options_confirmed together.
+    Fallback 2: intraday_confirmed + relvol_confirmed + above_ema together.
+    This keeps the gate evidence-based while avoiding a single-point choke.
+    """
+    if not confirmations:
+        return False
+    if confirmations.get("vwap_confirmed"):
+        return True
+    if confirmations.get("volume_confirmed") and confirmations.get("options_confirmed"):
+        return True
+    if (confirmations.get("intraday_confirmed")
+            and confirmations.get("relvol_confirmed")
+            and confirmations.get("above_ema")):
+        return True
+    return False
+
 # -----------------------------------------------------------------------------
 # Tier thresholds (backend names)
 # -----------------------------------------------------------------------------

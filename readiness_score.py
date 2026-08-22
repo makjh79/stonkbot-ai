@@ -38,6 +38,7 @@ from signal_rules import (
     ENTRY_MIN_HARD_CONFIRMATIONS,
     ENTRY_READINESS_MIN,
     HARD_CONFIRMATION_KEYS,
+    has_required_positive_edge,
     TIER_NOW_MIN,
     TIER_STRONG_NOW_MIN,
     TIER_WATCH_MIN,
@@ -744,10 +745,8 @@ def compute_readiness(
         and confirmation_count >= ENTRY_MIN_CONFIRMATIONS
     )
 
-    # v3: ALL positive-edge hard confirmations (vwap + options) required
-    _has_positive_hard = all(
-        confirmations.get(k, False) for k in V3_REQUIRED_POSITIVE_KEYS
-    )
+    # v3: positive-edge hard confirmations with fallbacks
+    _has_positive_hard = has_required_positive_edge(confirmations)
 
     entry_eligible = (
         readiness >= ENTRY_READINESS_MIN
