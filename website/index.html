@@ -4140,7 +4140,7 @@
               <div id="rg-rotation" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rotation disabled 2026-08-01</div>
               <div id="rg-cash-floor" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10% cash floor; 12% entry buffer</div>
               <div id="rg-atr-max" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries if ATR > 7%</div>
-              <div id="rg-earnings-blackout" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries within 2 days of earnings</div>
+              <div id="rg-earnings-blackout" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Earnings blackout 5d (v3) · 2d (A1)</div>
               <div id="rg-iv-move" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No pre-earnings entry when IV move > 1.5× ATR</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">20h stop-loss re-entry cooldown</div>
               <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">4h non-stop sell re-entry cooldown</div>
@@ -4253,7 +4253,7 @@
                 setTxt('rg-sector-cap', `${pc(g.max_sector_pct)} max per sector`);
                 setTxt('rg-cash-floor', `${pc(g.cash_floor_pct)} cash floor; ${pc(g.entry_cash_buffer_pct)} entry buffer`);
                 setTxt('rg-atr-max', `No entries if ATR > ${pc(g.atr_entry_max_pct)}`);
-                setTxt('rg-earnings-blackout', `No entries within ${g.earnings_blackout_days} days of earnings`);
+                setTxt('rg-earnings-blackout', `Earnings blackout ${g.v3_earnings_blackout_days ?? 5}d (v3) · ${g.earnings_blackout_days}d (A1)`);
                 setTxt('rg-iv-move', `No pre-earnings entry when IV move > ${g.implied_move_max_atr_mult}× ATR`);
                 setTxt('rg-beta-cap', `High-beta basket cap ${pc(g.high_beta_basket_cap_pct)} deployed`);
               const pm = ct?.position_management;

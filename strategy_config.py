@@ -261,6 +261,7 @@ def export_for_website() -> Dict[str, Any]:
             "entry_cash_buffer_pct": ENTRY_CASH_BUFFER_PCT,
             "atr_entry_max_pct": ATR_ENTRY_MAX_PCT,
             "earnings_blackout_days": EARNINGS_BLACKOUT_DAYS,
+            "v3_earnings_blackout_days": V3_EARNINGS_BLACKOUT_DAYS,
             "implied_move_max_atr_mult": IMPLIED_MOVE_MAX_ATR_MULT,
             "high_beta_basket_cap_pct": HIGH_BETA_BASKET_CAP_PCT,
         },
