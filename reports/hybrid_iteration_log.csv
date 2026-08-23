@@ -21,3 +21,4 @@ v19,74.6188%,1.395,-15.21%,840,19.06%,"max allocation: 6%/20%, 30 slots, no buff
 v20,24.8756%,0.861,-11.49%,1171,-30.68%,"balanced: breakout, ema20/ema50, ret20>=5%, rsi55-80, 5%/15%"
 v21,35.5571%,0.997,-12.97%,623,-20.00%,v10 with DD halt -10% and 5% buffers
 v22,40.2096%,1.072,-13.43%,420,-15.35%,v19 with DD halt -10% and 5% buffers
+v23,34.7305%,0.987,-13.97%,681,-20.83%,v21 with tighter stops: trail 1.5x hard 1.2x
