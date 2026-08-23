@@ -18,3 +18,4 @@ v16,27.5978%,0.781,-12.98%,950,-27.96%,"scaleout 1/4 at +1 ATR, breakout, 5%/15%
 v17,9.4792%,0.482,-10.22%,432,-46.08%,"ema20/ema50 pure breakout, 0 ret, 5%/15%, 22 slots"
 v18,5.3067%,0.275,-14.38%,429,-50.25%,"momentum RISK_ON, pullback RISK_OFF, 5%/15%"
 v19,74.6188%,1.395,-15.21%,840,19.06%,"max allocation: 6%/20%, 30 slots, no buffers, trailing only"
+v20,24.8756%,0.861,-11.49%,1171,-30.68%,"balanced: breakout, ema20/ema50, ret20>=5%, rsi55-80, 5%/15%"
