@@ -84,21 +84,16 @@ def run_window(data_dir: str, window_key: str) -> Dict[str, Any]:
     # First valid feature date
     first_feat_date = min(feat_by_date.keys()) if feat_by_date else None
 
-    prev_i = None
-    for i in rebalance_indices:
+    # FIXED 2026-08-23: forward execution. Exposure decided at month-end close i
+    # now applies to days (i, next_rebalance]. The previous loop applied the new
+    # exposure retroactively to the month that had just ended (look-ahead bias).
+    for k, i in enumerate(rebalance_indices):
         d = dates[i].date()
-        # If we don't have macro features for this date yet, stay flat.
+        # If we do not have macro features for this date yet, stay flat.
         if d not in feat_by_date:
             target = 0.0
         else:
             target = allocator.decide_equity_exposure(dates[i], feat_by_date[d].to_dict())
-
-        # Determine period: from current rebalance day close through next rebalance day close
-        period_start = i
-        period_end = i if prev_i is None else i
-        if prev_i is not None:
-            period_start = prev_i + 1  # trade at close following rebalance decision
-            period_end = i
 
         # Transaction cost on change
         if target != exposure:
@@ -107,13 +102,11 @@ def run_window(data_dir: str, window_key: str) -> Dict[str, Any]:
             exposure = target
             trades += 1
 
-        # Mark-to-market daily in the period
+        # Mark-to-market daily from the day AFTER the decision
+        period_start = i + 1
+        period_end = rebalance_indices[k + 1] if k + 1 < len(rebalance_indices) else len(dates) - 1
         for j in range(period_start, period_end + 1):
-            if j == period_start:
-                daily_ret = 0.0
-            else:
-                # Use QQQ as the equity sleeve return; SPY alternative included for diagnostics.
-                daily_ret = (qqq_prices[j] / qqq_prices[j - 1]) - 1.0
+            daily_ret = (qqq_prices[j] / qqq_prices[j - 1]) - 1.0
             equity *= 1.0 + exposure * daily_ret
             equity_curve.append((
                 dates[j].isoformat(),
@@ -124,8 +117,6 @@ def run_window(data_dir: str, window_key: str) -> Dict[str, Any]:
             ))
             exposure_sum += exposure
             exposure_count += 1
-
-        prev_i = i
 
     equity_curve_arr = np.array([e[1] for e in equity_curve])
     running_max = np.maximum.accumulate(equity_curve_arr)

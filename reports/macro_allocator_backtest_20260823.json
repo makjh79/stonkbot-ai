@@ -1,37 +1,37 @@
 {
-  "generated_at": "2026-08-23T04:43:22.286067+00:00",
+  "generated_at": "2026-08-23T08:51:20.106227+00:00",
   "allocator_rules": "MacroAllocator rule set:\n\nTrend-first baseline (primary axis):\n1. SPY trend:\n   - Price vs 200-day EMA: above = bullish, below = bearish.\n   - 50-day EMA 20-day slope: positive = bullish, negative = bearish.\n   Baseline exposure:\n     above 200d + positive 50d slope => 100%\n     above 200d + weak momentum       => 75%\n     below 200d + positive momentum   => 25%\n     below 200d + negative momentum   => 0%\n\nModifiers (each +/- 25%):\n2. Credit spread (LQD/HYG ratio z-score vs 60-day baseline):\n   - z <= -1.0 => credit stress      => -25%\n   - z >= +0.3 => credit easy        => +25%\n3. VIXY level z-score vs 60-day baseline:\n   - z >= +1.0 => elevated risk        => -25%\n   - z <= -0.3 => calm               => +25%\n4. TLT trend (50-day EMA 20-day slope):\n   - slope >= +0.0003 (rising TLT / falling yields) => +25%\n   - slope <= -0.0003 (falling TLT / rising yields) => -25%\n\nSnap to {0, 25, 50, 75, 100}% after applying modifiers.\n\nSafety caps (after snapping):\n- If SPY below 200d EMA AND credit stress AND VIXY elevated => 0% equity.\n- If SPY below 200d EMA AND credit stress => max 25% equity.\n- If SPY 60-day return <= -12% => derisk one notch.\n\nOutput:\n- Long equity exposure only (short sleeve = 0 in this prototype).\n- Monthly rebalancing; no intra-month timing.\n- Transaction cost assumption handled by backtest, not allocator.",
   "cost_per_side": 0.001,
   "windows": [
     {
       "window": "2022 bear",
-      "allocator_equity_return": -0.016817562302470557,
+      "allocator_equity_return": -0.126936465519789,
       "qqq_return": -0.3321985336819241,
       "spy_return": -0.18646400484276593,
-      "max_drawdown": -0.1123428984876973,
-      "avg_equity_exposure": 0.2273706896551724,
+      "max_drawdown": -0.1586587395246645,
+      "avg_equity_exposure": 0.13852813852813853,
       "trades_rebalances": 3,
       "first_date": "2022-01-03T00:00:00+00:00",
       "last_date": "2022-12-30T00:00:00+00:00"
     },
     {
       "window": "2023\u2013Aug 2024",
-      "allocator_equity_return": 0.43753707273536024,
+      "allocator_equity_return": 0.18890895738070013,
       "qqq_return": 0.8185037219149081,
       "spy_return": 0.5122026238478197,
-      "max_drawdown": -0.11412019522922572,
-      "avg_equity_exposure": 0.6560150375939849,
+      "max_drawdown": -0.13557740384777528,
+      "avg_equity_exposure": 0.6036432160804021,
       "trades_rebalances": 7,
       "first_date": "2023-01-03T00:00:00+00:00",
       "last_date": "2024-08-30T00:00:00+00:00"
     },
     {
       "window": "Aug 2024\u2013Aug 2026",
-      "allocator_equity_return": 0.5369338063239577,
+      "allocator_equity_return": 0.09432312738513682,
       "qqq_return": 0.5683810173987096,
       "spy_return": 0.4435225128904472,
-      "max_drawdown": -0.10010682957722736,
-      "avg_equity_exposure": 0.6803030303030303,
+      "max_drawdown": -0.14257197427629859,
+      "avg_equity_exposure": 0.6558704453441295,
       "trades_rebalances": 9,
       "first_date": "2024-08-01T00:00:00+00:00",
       "last_date": "2026-08-21T00:00:00+00:00"
