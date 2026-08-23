@@ -1,0 +1,65 @@
+{
+  "date_tag": "20260823",
+  "config": {
+    "benchmark": "SPY",
+    "trend_ema_fast": 50,
+    "trend_ema_slow": 150,
+    "top_n": 15,
+    "base_size_pct": 0.08,
+    "max_position_pct": 0.15,
+    "max_gross_exposure_pct": 1.5,
+    "max_net_long_pct": 1.0,
+    "max_net_short_pct": 0.5,
+    "max_sector_pct": 0.25,
+    "drawdown_halt_pct": 0.15,
+    "short_alloc_pct": 0.25,
+    "tactical_weight_pct": 0.4,
+    "lookback_mom12": 252,
+    "lookback_mom3": 63,
+    "borrow_cost_annual": 0.02,
+    "execution_mode": "t1_close",
+    "vol_slippage_mult": 0.1,
+    "rebalance_freq_days": 10
+  },
+  "ideal": {
+    "execution_mode": "t1_close",
+    "metrics": {
+      "total_return": 0.5603394652778722,
+      "annualized_return": 0.2474923539281566,
+      "sharpe_ratio": 1.3783113463694334,
+      "max_drawdown": 0.1615728496467154,
+      "win_rate": 0.5151515151515151,
+      "profit_factor": 6.839927632414139,
+      "number_of_trades": 33,
+      "avg_holding_days": 43.696969696969695,
+      "avg_gross_exposure_pct": 0.2897195933555206,
+      "avg_net_exposure_pct": 0.2897195933555206,
+      "final_equity": 156033.94652778722,
+      "final_qqq_equity": 155556.5261066102
+    }
+  },
+  "realistic": {
+    "execution_mode": "next_open",
+    "metrics": {
+      "total_return": 0.6044909233075555,
+      "annualized_return": 0.2649143677289785,
+      "sharpe_ratio": 1.4802305933490794,
+      "max_drawdown": 0.15947142253828647,
+      "win_rate": 0.5454545454545454,
+      "profit_factor": 8.371821616878133,
+      "number_of_trades": 33,
+      "avg_holding_days": 43.696969696969695,
+      "avg_gross_exposure_pct": 0.29671237167242415,
+      "avg_net_exposure_pct": 0.29671237167242415,
+      "final_equity": 160449.09233075555,
+      "final_qqq_equity": 155556.5261066102
+    }
+  },
+  "degradation": {
+    "total_return_delta": 0.044151458029683344,
+    "sharpe_delta": 0.10191924697964594,
+    "max_drawdown_delta": -0.0021014271084289216,
+    "final_equity_delta": 4415.145802968327,
+    "return_pct_degradation": 0.0787941252858009
+  }
+}
