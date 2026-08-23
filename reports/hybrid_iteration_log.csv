@@ -15,3 +15,4 @@ v13,57.7562%,1.289,-13.64%,2449,2.20%,"very aggressive: no buffers, 30 slots, 5%
 v14,14.3402%,0.589,-12.64%,1271,-41.22%,"moderate breakout 4%/12%, 18 slots, normal buffers"
 v15,7.4331%,0.364,-12.04%,416,-48.12%,"momentum everywhere, pullback only RISK_ON, 5%/15%"
 v16,27.5978%,0.781,-12.98%,950,-27.96%,"scaleout 1/4 at +1 ATR, breakout, 5%/15%"
+v17,9.4792%,0.482,-10.22%,432,-46.08%,"ema20/ema50 pure breakout, 0 ret, 5%/15%, 22 slots"
