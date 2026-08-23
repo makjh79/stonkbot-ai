@@ -1,0 +1,57 @@
+{
+  "best_variant": "v48",
+  "best_config": {
+    "mom_trend_filter": "ema20_ema50",
+    "mom_entry_timing": "breakout",
+    "mom_base_pct": 0.06,
+    "mom_strong_cap_pct": 0.2,
+    "mom_profit_take": "trailing_only",
+    "mom_regimes": [
+      "RISK_ON"
+    ],
+    "mom_rsi_low": 45,
+    "mom_rsi_high": 80,
+    "mom_min_ret20d": 0.0,
+    "mom_max_positions": 30,
+    "mom_use_rank": true,
+    "pb_threshold": 0.45,
+    "pb_max_positions": 20,
+    "pb_base_pct": 0.03,
+    "pb_strong_cap_pct": 0.12,
+    "pb_regimes": [
+      "RISK_ON"
+    ],
+    "pb_rsi_max": 75,
+    "pb_dist_ema200_min": -0.15,
+    "pb_use_rank": true,
+    "cash_floor_pct": 0.0,
+    "entry_buffer_pct": 0.0,
+    "sector_cap_pct": 0.25,
+    "drawdown_halt_pct": 1.0,
+    "hard_stop_atr_mult": 1.2,
+    "hard_stop_min_pct": 0.05,
+    "hard_stop_max_pct": 0.11,
+    "trailing_stop_atr_mult": 1.5,
+    "trailing_stop_min_pct": 0.05,
+    "trailing_stop_max_pct": 0.14,
+    "scaleout_t1_atr": 0.5,
+    "scaleout_t2_atr": 1.0,
+    "scaleout_frac": 0.3333333333333333,
+    "full_exit_profit_pct": 0.3
+  },
+  "2022_bear": {
+    "total_return": -0.29521510640756166,
+    "sharpe_ratio": -1.3823514450778003,
+    "max_drawdown": 0.32583192858581905,
+    "trades": 347,
+    "avg_trades_per_month": 29.03187250996016
+  },
+  "2023_trans": {
+    "total_return": 0.2041016966268392,
+    "sharpe_ratio": 0.5658522607170634,
+    "max_drawdown": 0.2556300055732336,
+    "trades": 592,
+    "avg_trades_per_month": 29.741626794258373
+  },
+  "verdict": "reject"
+}
