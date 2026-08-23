@@ -2,3 +2,4 @@ variant,return,sharpe,max_dd,trades,vs_qqq,notes
 v01,19.2941%,1.199,-8.05%,1170,-36.26%,baseline hybrid: mom ema20/ema50 pullback_5ema 3%/12% scaleout_1_3 RISK_ON rsi55-80 ret20>=5% max15 + pb RISK_ON
 v02,19.8981%,0.823,-13.20%,979,-35.66%,"aggressive sizing 5%/15%, 20 max pos, small buffers"
 v03,32.3279%,1.060,-12.20%,1359,-23.23%,"breakout timing, aggressive sizing"
+v04,7.4614%,0.381,-11.58%,426,-48.10%,"momentum in RISK_ON+RISK_OFF, breakout, 5%/15%"
