@@ -1,21 +1,40 @@
 #!/usr/bin/env python3
 """
-STONK.AI v3 Regime-Aware HYBRID Backtest
-========================================
+STONK.AI v3 HYBRID Engine — Regime-Aware Momentum + Pullback Backtest
+=====================================================================
 
-Two signal modules run on the same daily bars and the active module is selected
-by regime state:
-  * RISK_ON  -> Module B (momentum/trend-following)
-  * CAUTION/RISK_OFF -> Module A (existing v3 pullback mean-reversion)
+Combines a breakout/momentum module with the existing trend-pullback module,
+with regime-aware switching.  Designed for autonomous iteration over the
+lever space defined in the subagent task.
 
-Execution rules match the deployed v3 harness plus optional wider momentum
-profit targets / looser scaleouts.
+Data / execution / costs are identical to proper_backtest_deployed.py:
+- daily_bars_2yr.json + features_2yr.json + Yahoo Finance regime ETFs
+- walk-forward, t signal -> t+1 close execution
+- 0.1% cost per side
 
-Outputs
--------
-- JSON report: /opt/stonk-ai/reports/v3_hybrid_backtest_YYYYMMDD.json
-- Equity curve CSV: /opt/stonk-ai/reports/v3_hybrid_equity_YYYYMMDD.csv
-- Equity curve PNG: /opt/stonk-ai/reports/v3_hybrid_equity_YYYYMMDD.png
+Configurable levers
+-------------------
+- Momentum trend filter: EMA20/EMA50, EMA20/EMA200 (computed on the fly),
+  or price vs 52-week high.
+- Momentum entry timing: pullback to 5-day EMA, 10-day low, 20-day low,
+  or breakout (no pullback).
+- Momentum base / STRONG_NOW position sizing.
+- Momentum profit-taking: full trailing only, 1/4 at +1 ATR, or 1/3 at
+  +0.5/+1 ATR.
+- Regime usage: momentum only in RISK_ON, or also in CAUTION.
+- Momentum RSI band.
+- Minimum 20-day return threshold for momentum candidates.
+- Max momentum positions.
+
+The pullback module keeps the existing v3 signal scoring and the original
+risk constraints can be loosened/tightened via config.
+
+Outputs per variant
+-------------------
+- /opt/stonk-ai/reports/v3_hybrid_vNN_backtest_YYYYMMDD.json
+- /opt/stonk-ai/reports/v3_hybrid_vNN_equity_YYYYMMDD.csv
+- /opt/stonk-ai/reports/v3_hybrid_vNN_equity_YYYYMMDD.png
+- /opt/stonk-ai/reports/hybrid_iteration_log.csv (append)
 
 Author: OpenClaw subagent
 Date: 2026-08-23
@@ -23,6 +42,8 @@ Date: 2026-08-23
 
 from __future__ import annotations
 
+import csv
+import inspect
 import json
 import math
 import os
@@ -30,16 +51,14 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 import numpy as np
 import pandas as pd
 import yfinance as yf
 
-from hybrid_engine import score_symbol, entry_eligible
-
 # ---------------------------------------------------------------------------
-# Configuration
+# Paths
 # ---------------------------------------------------------------------------
 
 DATA_DIR = Path("/opt/stonk-ai/v3_rebuild/data")
@@ -56,61 +75,84 @@ END_DATE = "2026-08-21"
 START_VALUE = 100_000.0
 COST_PER_SIDE = 0.001
 
-# Live v3 thresholds
-PULLBACK_SCORE_THRESHOLD = 0.5
-V3_MELTDOWN_QQQ_5D_MAX = -0.08
-V3_POSITION_PCT = 0.03
-V3_MAX_POSITIONS = 15
-V3_CASH_FLOOR_PCT = 0.10
-V3_ENTRY_CASH_BUFFER_PCT = 0.12
-V3_SECTOR_CAP_PCT = 0.25
-V3_DRAWDOWN_HALT_PCT = -0.10
+QQQ_TOTAL_RETURN = 0.5555652610661019  # known from prior runs
 
-# Tier caps
-TIER_CAP = {
-    "STRONG_NOW": 0.12,
-    "NOW": 0.08,
-    "WATCH": 0.08,
-    "MONITOR": 0.08,
-    "MOMENTUM": 0.12,
+# ---------------------------------------------------------------------------
+# Default config (will be overridden per variant)
+# ---------------------------------------------------------------------------
+
+DEFAULT_CONFIG: Dict[str, Any] = {
+    # Momentum module
+    "mom_trend_filter": "ema20_ema50",       # ema20_ema50 | ema20_ema200 | price_52w_high
+    "mom_entry_timing": "pullback_5ema",     # breakout | pullback_5ema | pullback_10d_low | pullback_20d_low
+    "mom_base_pct": 0.03,
+    "mom_strong_cap_pct": 0.12,
+    "mom_profit_take": "scaleout_1_3",       # trailing_only | scaleout_1_4 | scaleout_1_3
+    "mom_regimes": ["RISK_ON"],                # list including RISK_ON and optionally CAUTION
+    "mom_rsi_low": 55,
+    "mom_rsi_high": 80,
+    "mom_min_ret20d": 0.05,
+    "mom_max_positions": 15,
+    "mom_use_rank": True,
+
+    # Pullback module (existing v3)
+    "pb_threshold": 0.5,
+    "pb_max_positions": 15,
+    "pb_base_pct": 0.03,
+    "pb_strong_cap_pct": 0.12,
+    "pb_regimes": ["RISK_ON"],                 # pullback entries in these regimes
+    "pb_rsi_max": 75,
+    "pb_dist_ema200_min": -0.15,
+    "pb_use_rank": True,
+
+    # Shared risk
+    "cash_floor_pct": 0.05,
+    "entry_buffer_pct": 0.06,
+    "sector_cap_pct": 0.25,
+    "drawdown_halt_pct": 0.10,
+
+    # Stops / targets
+    "hard_stop_atr_mult": 1.5,
+    "hard_stop_min_pct": 0.05,
+    "hard_stop_max_pct": 0.11,
+    "trailing_stop_atr_mult": 2.0,
+    "trailing_stop_min_pct": 0.05,
+    "trailing_stop_max_pct": 0.14,
+    "scaleout_t1_atr": 0.5,
+    "scaleout_t2_atr": 1.0,
+    "scaleout_frac": 1 / 3.0,
+    "full_exit_profit_pct": 0.30,
 }
-
-# Stops / targets
-HARD_STOP_ATR_MULT = 1.5
-HARD_STOP_MIN_PCT = 0.05
-HARD_STOP_MAX_PCT = 0.11
-TRAILING_STOP_ATR_MULT = 2.0
-TRAILING_STOP_MIN_PCT = 0.05
-TRAILING_STOP_MAX_PCT = 0.14
-
-# Pullback module scaleouts (v3 default)
-PULLBACK_SCALEOUT_T1_ATR = 0.5
-PULLBACK_SCALEOUT_T2_ATR = 1.0
-PULLBACK_SCALEOUT_FRAC = 1 / 3.0
-FULL_EXIT_PROFIT_PCT = 0.30
-
-# Momentum module: wider profit target / looser scaleout
-MOMENTUM_SCALEOUT_T1_ATR = 1.0
-MOMENTUM_SCALEOUT_T2_ATR = 2.0
-MOMENTUM_SCALEOUT_FRAC = 1 / 4.0
-MOMENTUM_FULL_EXIT_PROFIT_PCT = 0.50
-
-# Regime thresholds (from regime_detector.py)
-CREDIT_SPREAD_RISK_OFF = 1.45
-CREDIT_SPREAD_CRISIS = 1.60
-VIXY_CHANGE_RISK_OFF = 5.0
-VIXY_CHANGE_CRISIS = 15.0
-SPY_EMA_PERIOD = 50
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
+def _ema(values: List[float], period: int) -> Optional[float]:
+    if len(values) < period:
+        return None
+    mult = 2.0 / (period + 1)
+    e = sum(values[:period]) / period
+    for v in values[period:]:
+        e = (v - e) * mult + e
+    return e
+
+
+def _rsi(closes: List[float], period: int = 14) -> Optional[float]:
+    if len(closes) < period + 1:
+        return None
+    gains = [max(closes[i] - closes[i - 1], 0) for i in range(-period, 0)]
+    losses = [max(closes[i - 1] - closes[i], 0) for i in range(-period, 0)]
+    ag = sum(gains) / period
+    al = sum(losses) / period
+    if al == 0:
+        return 100.0
+    return 100.0 - 100.0 / (1.0 + ag / al)
+
 
 def _atr_pct(closes: List[float], highs: List[float], lows: List[float], idx: int, period: int = 14) -> float:
-    """ATR% at index `idx` using the standard true-range formula."""
     if idx < period:
-        return 0.05  # conservative fallback
+        return 0.05
     trs = []
     for j in range(idx - period + 1, idx + 1):
         high = highs[j]
@@ -133,7 +175,6 @@ def load_features() -> Dict[Tuple[str, str], Dict]:
 
 
 def fetch_or_load_regime_etfs() -> Dict[str, pd.Series]:
-    """Fetch VIXY, LQD, HYG, TLT, SHY from Yahoo Finance and cache them."""
     if REGIME_CACHE.exists():
         with open(REGIME_CACHE) as f:
             data = json.load(f)
@@ -160,12 +201,17 @@ def fetch_or_load_regime_etfs() -> Dict[str, pd.Series]:
 
 
 # ---------------------------------------------------------------------------
-# Regime replication (identical to proper_backtest_deployed.py)
+# Regime replication (identical to deployed harness)
 # ---------------------------------------------------------------------------
+
+CREDIT_SPREAD_RISK_OFF = 1.45
+CREDIT_SPREAD_CRISIS = 1.60
+VIXY_CHANGE_RISK_OFF = 5.0
+VIXY_CHANGE_CRISIS = 15.0
+SPY_EMA_PERIOD = 50
 
 
 def build_regime_series(bars: Dict[str, Dict[str, List]], etfs: Dict[str, pd.Series]) -> pd.DataFrame:
-    """Build a DataFrame indexed by bar date containing replicated regime indicators."""
     qqq_dates = [pd.to_datetime(d, utc=True) for d in bars["QQQ"]["timestamps"]]
     spy_closes = pd.Series(bars["SPY"]["closes"], index=qqq_dates)
     qqq_closes = pd.Series(bars["QQQ"]["closes"], index=qqq_dates)
@@ -183,16 +229,14 @@ def build_regime_series(bars: Dict[str, Dict[str, List]], etfs: Dict[str, pd.Ser
 
     spy_ema50 = spy_closes.ewm(span=SPY_EMA_PERIOD, adjust=False).mean()
     spy_above_ema = spy_closes >= spy_ema50
-    vixy_change = vixy.pct_change() * 100.0
 
+    vixy_change = vixy.pct_change() * 100.0
     credit_ratio = lqd / hyg
     credit_baseline = credit_ratio.shift(20)
     credit_widening = credit_ratio > credit_baseline
-
     yield_ratio = shy / tlt
     yield_baseline = yield_ratio.shift(20)
     yield_steepening = yield_ratio > yield_baseline
-
     qqq_5d = qqq_closes.pct_change(5)
 
     regime = []
@@ -244,9 +288,142 @@ def build_regime_series(bars: Dict[str, Dict[str, List]], etfs: Dict[str, pd.Ser
 
 
 # ---------------------------------------------------------------------------
-# Backtest state
+# Pullback signal scoring (mirrors v3_signal_engine)
 # ---------------------------------------------------------------------------
 
+TREND_PULLBACK_WEIGHTS = {
+    "dist_ema200": 1.0,
+    "dist_ema50": 1.0,
+    "dist_ema20": 0.5,
+    "ret_5d": -3.0,
+    "rsi14": -0.1,
+    "vs_qqq_5d": -1.0,
+    "vol_ratio": 0.3,
+}
+
+
+def score_pullback(r: Dict, cfg: Dict) -> Tuple[float, bool]:
+    dist_ema200 = r["dist_ema200"]
+    dist_ema50 = r["dist_ema50"]
+    dist_ema20 = r["dist_ema20"]
+    ret_5d = r["ret_5d"]
+    rsi14 = r["rsi14"]
+    vs_qqq_5d = r["vs_qqq_5d"]
+    vol_ratio = r["vol_ratio"]
+
+    hard_blocked = False
+    if rsi14 > cfg["pb_rsi_max"]:
+        hard_blocked = True
+    if dist_ema200 < cfg["pb_dist_ema200_min"]:
+        hard_blocked = True
+
+    score = 0.0
+    score += max(0.0, TREND_PULLBACK_WEIGHTS["dist_ema200"] * dist_ema200)
+    score += max(0.0, TREND_PULLBACK_WEIGHTS["dist_ema50"] * dist_ema50)
+    score += max(0.0, TREND_PULLBACK_WEIGHTS["dist_ema20"] * dist_ema20)
+    score += max(0.0, -TREND_PULLBACK_WEIGHTS["ret_5d"] * ret_5d)
+    if rsi14 < 45:
+        score += -TREND_PULLBACK_WEIGHTS["rsi14"] * (45 - rsi14)
+    score += max(0.0, -TREND_PULLBACK_WEIGHTS["vs_qqq_5d"] * vs_qqq_5d)
+    score += min(TREND_PULLBACK_WEIGHTS["vol_ratio"] * max(0.0, vol_ratio - 1.0), 1.0)
+    return score, hard_blocked
+
+
+# ---------------------------------------------------------------------------
+# Momentum signal scoring
+# ---------------------------------------------------------------------------
+
+def score_momentum(sym: str, feat: Dict, bars: Dict[str, Dict], i: int, cfg: Dict) -> Tuple[float, Optional[str]]:
+    """
+    Return (score, tier) for a momentum candidate.  score <= 0 means not selected.
+    tier can be STRONG_NOW / NOW / WATCH or None.
+    """
+    sym_bars = bars[sym]
+    if i >= len(sym_bars["timestamps"]):
+        return 0.0, None
+    close = sym_bars["closes"][i]
+    if close <= 0:
+        return 0.0, None
+
+    # 20-day return filter
+    ret20 = feat.get("ret_20d", 0.0)
+    if ret20 < cfg["mom_min_ret20d"]:
+        return 0.0, None
+
+    rsi14 = feat["rsi14"]
+    if rsi14 < cfg["mom_rsi_low"] or rsi14 > cfg["mom_rsi_high"]:
+        return 0.0, None
+
+    past_closes = sym_bars["closes"][:i + 1]
+    ema20 = _ema(past_closes, 20)
+    ema50 = _ema(past_closes, 50)
+    ema200 = _ema(past_closes, 200)
+
+    trend_ok = False
+    if cfg["mom_trend_filter"] == "ema20_ema50":
+        trend_ok = (ema20 is not None and ema50 is not None and ema20 >= ema50)
+    elif cfg["mom_trend_filter"] == "ema20_ema200":
+        trend_ok = (ema20 is not None and ema200 is not None and ema20 >= ema200)
+    elif cfg["mom_trend_filter"] == "price_52w_high":
+        if len(past_closes) >= 252:
+            high52 = max(past_closes[-252:])
+        else:
+            high52 = max(past_closes)
+        trend_ok = close >= high52 * 0.90
+
+    if not trend_ok:
+        return 0.0, None
+
+    # Entry timing: require pullback to a reference level
+    timing_ok = False
+    entry_ref = close
+    timing = cfg["mom_entry_timing"]
+    if timing == "breakout":
+        timing_ok = True
+    elif timing == "pullback_5ema":
+        if ema20 is not None:
+            entry_ref = ema20
+            timing_ok = close <= ema20 * 1.02  # within 2% above 5-day EMA proxy (20-day EMA used)
+    elif timing == "pullback_10d_low":
+        if len(past_closes) >= 10:
+            low10 = min(sym_bars["lows"][i - 9:i + 1])
+            entry_ref = low10
+            timing_ok = close <= low10 * 1.02
+    elif timing == "pullback_20d_low":
+        if len(past_closes) >= 20:
+            low20 = min(sym_bars["lows"][i - 19:i + 1])
+            entry_ref = low20
+            timing_ok = close <= low20 * 1.02
+
+    if not timing_ok:
+        return 0.0, None
+
+    # Score combines 20d return, distance from 52w high, relative strength
+    score = ret20
+    if cfg["mom_trend_filter"] == "price_52w_high":
+        if len(past_closes) >= 252:
+            high52 = max(past_closes[-252:])
+        else:
+            high52 = max(past_closes)
+        if high52 > 0:
+            score += (close / high52 - 1.0) * 2.0
+    score += feat.get("vs_qqq_5d", 0.0)
+    score += max(0.0, feat.get("vol_ratio", 1.0) - 1.0) * 0.1
+
+    tier = "NOW"
+    if ret20 >= 0.15 and rsi14 >= 60:
+        tier = "STRONG_NOW"
+    elif ret20 >= 0.10:
+        tier = "NOW"
+    else:
+        tier = "WATCH"
+
+    return max(score, 0.01), tier
+
+
+# ---------------------------------------------------------------------------
+# Backtest state
+# ---------------------------------------------------------------------------
 
 @dataclass
 class Position:
@@ -258,7 +435,7 @@ class Position:
     atr_pct_at_entry: float
     tier: str
     sector: str
-    module: str
+    module: str  # "momentum" or "pullback"
     remaining_fraction: float = 1.0
     highest_close: float = 0.0
     scaleouts_hit: List[str] = field(default_factory=list)
@@ -274,20 +451,31 @@ SECTOR_PEERS = {
     "Retail/Lifestyle": ["LULU", "NKE", "COST", "WMT", "HD", "ELF"],
     "Cloud/Data": ["SNOW", "MDB", "GTLB", "CFLT", "ESTC", "TEAM", "NOW"],
 }
+symbol_to_sector = {}
+for sector, syms in SECTOR_PEERS.items():
+    for s in syms:
+        symbol_to_sector[s] = sector
 
 
-def _symbol_to_sector() -> Dict[str, str]:
-    out = {}
-    for sector, syms in SECTOR_PEERS.items():
-        for s in syms:
-            out[s] = sector
-    return out
+def _trading_days_between(dates: List[str], start: str, end: str) -> int:
+    try:
+        return max(0, dates.index(end) - dates.index(start))
+    except ValueError:
+        return 0
 
 
-SYMBOL_TO_SECTOR = _symbol_to_sector()
+def _cap_for_tier(tier: str, cfg: Dict, module: str) -> float:
+    if module == "momentum":
+        if tier == "STRONG_NOW":
+            return cfg["mom_strong_cap_pct"]
+        return cfg["mom_base_pct"]
+    else:
+        if tier == "STRONG_NOW":
+            return cfg["pb_strong_cap_pct"]
+        return cfg["pb_base_pct"]
 
 
-def backtest() -> Dict:
+def run_backtest(cfg: Dict, variant: str = "v01") -> Dict:
     bars = load_bars()
     features = load_features()
     etfs = fetch_or_load_regime_etfs()
@@ -307,22 +495,22 @@ def backtest() -> Dict:
     halted = False
     drawdown_halt_date: Optional[str] = None
 
-    # Module tracking
-    module_active_days = {"pullback": 0, "momentum": 0}
-    module_entry_counts = {"pullback": 0, "momentum": 0}
-
     for i, d in enumerate(dates):
         dt = pd.to_datetime(d, utc=True)
         qqq_price = qqq_closes[i]
 
-        # Mark-to-market before decisions
-        mv = cash
-        for p in positions:
-            sym_dates = bars[p.symbol]["timestamps"]
-            if i < len(sym_dates) and sym_dates[i] == d:
-                mv += p.shares * p.remaining_fraction * bars[p.symbol]["closes"][i]
-            else:
-                mv += p.shares * p.remaining_fraction * p.entry_price
+        # Mark-to-market
+        def mark_portfolio(positions_list: List[Position], cash_value: float, day_idx: int, day_date: str) -> float:
+            mv = cash_value
+            for p in positions_list:
+                sym_dates = bars[p.symbol]["timestamps"]
+                if day_idx < len(sym_dates) and sym_dates[day_idx] == day_date:
+                    mv += p.shares * p.remaining_fraction * bars[p.symbol]["closes"][day_idx]
+                else:
+                    mv += p.shares * p.remaining_fraction * p.entry_price
+            return mv
+
+        mv = mark_portfolio(positions, cash, i, d)
 
         if mv > equity_peak:
             equity_peak = mv
@@ -333,7 +521,7 @@ def backtest() -> Dict:
         qqq_5d = regime_row["qqq_5d_return"]
         halted_today = False
 
-        if dd >= 0.10:
+        if dd >= cfg["drawdown_halt_pct"]:
             if not halted:
                 halted = True
                 drawdown_halt_date = d
@@ -341,10 +529,7 @@ def backtest() -> Dict:
         else:
             halted = False
 
-        active_module = "momentum" if regime == "RISK_ON" else "pullback"
-        module_active_days[active_module] += 1
-
-        # ----- Exit logic at daily close ----
+        # ----- Exit logic -----
         exits_today: List[Tuple[int, str, float, float]] = []
         for pi, p in enumerate(positions):
             sym_data = bars[p.symbol]
@@ -354,38 +539,34 @@ def backtest() -> Dict:
             p.highest_close = max(p.highest_close, close)
             atr_pct = p.atr_pct_at_entry
             entry_price = p.entry_price
-
             profit_pct = (close - entry_price) / entry_price
-            if p.module == "momentum":
-                t1 = MOMENTUM_SCALEOUT_T1_ATR
-                t2 = MOMENTUM_SCALEOUT_T2_ATR
-                frac = MOMENTUM_SCALEOUT_FRAC
-                full_exit = MOMENTUM_FULL_EXIT_PROFIT_PCT
-            else:
-                t1 = PULLBACK_SCALEOUT_T1_ATR
-                t2 = PULLBACK_SCALEOUT_T2_ATR
-                frac = PULLBACK_SCALEOUT_FRAC
-                full_exit = FULL_EXIT_PROFIT_PCT
 
-            if "T1" not in p.scaleouts_hit and profit_pct >= t1 * atr_pct:
-                exits_today.append((pi, "scaleout_t1", frac, close))
-            if "T2" not in p.scaleouts_hit and profit_pct >= t2 * atr_pct:
-                exits_today.append((pi, "scaleout_t2", frac, close))
+            profit_take = cfg["mom_profit_take"] if p.module == "momentum" else "scaleout_1_3"
+            if profit_take == "scaleout_1_3":
+                t1_frac = cfg["scaleout_frac"]
+                t2_frac = cfg["scaleout_frac"]
+                if "T1" not in p.scaleouts_hit and profit_pct >= cfg["scaleout_t1_atr"] * atr_pct:
+                    exits_today.append((pi, "scaleout_t1", t1_frac, close))
+                if "T2" not in p.scaleouts_hit and profit_pct >= cfg["scaleout_t2_atr"] * atr_pct:
+                    exits_today.append((pi, "scaleout_t2", t2_frac, close))
+            elif profit_take == "scaleout_1_4":
+                if "T1" not in p.scaleouts_hit and profit_pct >= 1.0 * atr_pct:
+                    exits_today.append((pi, "scaleout_t1", 0.25, close))
+            # trailing_only: no scaleouts
 
-            if profit_pct >= full_exit:
+            if profit_pct >= cfg["full_exit_profit_pct"]:
                 exits_today.append((pi, "full_exit", p.remaining_fraction, close))
                 continue
 
-            hard_stop_pct = -max(min(HARD_STOP_ATR_MULT * atr_pct, HARD_STOP_MAX_PCT), HARD_STOP_MIN_PCT)
+            hard_stop_pct = -max(min(cfg["hard_stop_atr_mult"] * atr_pct, cfg["hard_stop_max_pct"]), cfg["hard_stop_min_pct"])
             if (close - entry_price) / entry_price <= hard_stop_pct:
                 exits_today.append((pi, "hard_stop", p.remaining_fraction, close))
                 continue
 
-            trail_stop_pct = -max(min(TRAILING_STOP_ATR_MULT * atr_pct, TRAILING_STOP_MAX_PCT), TRAILING_STOP_MIN_PCT)
+            trail_stop_pct = -max(min(cfg["trailing_stop_atr_mult"] * atr_pct, cfg["trailing_stop_max_pct"]), cfg["trailing_stop_min_pct"])
             if (close - p.highest_close) / p.highest_close <= trail_stop_pct and close < p.highest_close:
                 exits_today.append((pi, "trailing_stop", p.remaining_fraction, close))
 
-        # Apply exits
         for pi, reason, frac, exit_price in sorted(exits_today, key=lambda x: -x[0]):
             p = positions[pi]
             if frac > p.remaining_fraction:
@@ -417,78 +598,133 @@ def backtest() -> Dict:
 
         positions = [p for p in positions if p.remaining_fraction > 1e-9]
 
-        # ----- Entry logic ----
-        can_enter = (
-            (not halted)
-            and (not halted_today)
-            and qqq_5d is not None
-            and qqq_5d > V3_MELTDOWN_QQQ_5D_MAX
-        )
+        # ----- Entry logic -----
+        if halted or halted_today:
+            pass
+        else:
+            cash_floor = mv * cfg["cash_floor_pct"]
+            entry_buffer = mv * cfg["entry_buffer_pct"]
+            cash_for_entries = max(0.0, cash - cash_floor - entry_buffer)
 
-        if can_enter:
-            day_scores = []
-            for sym in universe:
-                feat = features.get((sym, d))
-                closes = bars[sym]["closes"]
-                volumes = bars[sym]["volumes"]
-                if feat is None or i >= len(closes):
-                    continue
-                score, blocked, module, diag = score_symbol(regime, closes, volumes, qqq_5d, feature_row=feat)
-                if blocked or math.isnan(score):
-                    continue
-                if not entry_eligible(module, score, diag):
-                    continue
-                day_scores.append((score, sym, feat, module, diag))
+            sector_exposure: Dict[str, float] = defaultdict(float)
+            for p in positions:
+                sec = symbol_to_sector.get(p.symbol, "Other")
+                sym_ts = bars[p.symbol]["timestamps"]
+                price = bars[p.symbol]["closes"][i] if i < len(sym_ts) and sym_ts[i] == d else p.entry_price
+                sector_exposure[sec] += p.shares * p.remaining_fraction * price / mv
 
-            day_scores.sort(key=lambda x: -x[0])
-            if day_scores:
-                n = len(day_scores)
-                ranked = []
-                for rank, (score, sym, feat, module, diag) in enumerate(day_scores, 1):
-                    if module == "momentum":
-                        tier = "MOMENTUM"
-                    elif rank <= max(1, n // 3):
-                        tier = "STRONG_NOW"
-                    elif rank <= max(1, 2 * n // 3):
-                        tier = "NOW"
-                    else:
-                        tier = "WATCH"
-                    ranked.append((score, sym, feat, module, tier))
+            existing_symbols = {p.symbol for p in positions}
 
-                cash_floor = mv * V3_CASH_FLOOR_PCT
-                entry_buffer = mv * V3_ENTRY_CASH_BUFFER_PCT
-                cash_for_entries = max(0.0, cash - cash_floor - entry_buffer)
+            # Momentum entries
+            if regime in cfg["mom_regimes"] and qqq_5d is not None and qqq_5d > -0.08:
+                mom_slots = cfg["mom_max_positions"] - len([p for p in positions if p.module == "momentum"])
+                mom_candidates = []
+                for sym in universe:
+                    if sym in existing_symbols:
+                        continue
+                    feat = features.get((sym, d))
+                    if feat is None:
+                        continue
+                    score, tier = score_momentum(sym, feat, bars, i, cfg)
+                    if score <= 0:
+                        continue
+                    mom_candidates.append((score, sym, feat, tier))
 
-                open_slots = V3_MAX_POSITIONS - len(positions)
-                if open_slots > 0 and cash_for_entries > 0:
-                    existing_symbols = {p.symbol for p in positions}
-                    sector_exposure: Dict[str, float] = defaultdict(float)
-                    for p in positions:
-                        sec = SYMBOL_TO_SECTOR.get(p.symbol, "Other")
-                        sym_ts = bars[p.symbol]["timestamps"]
-                        price = bars[p.symbol]["closes"][i] if i < len(sym_ts) and sym_ts[i] == d else p.entry_price
-                        sector_exposure[sec] += p.shares * p.remaining_fraction * price / mv
+                if cfg.get("mom_use_rank", True):
+                    mom_candidates.sort(key=lambda x: -x[0])
+
+                selected = 0
+                for score, sym, feat, tier in mom_candidates:
+                    if selected >= mom_slots or cash_for_entries <= 0:
+                        break
+                    sec = symbol_to_sector.get(sym, "Other")
+                    if sector_exposure[sec] >= cfg["sector_cap_pct"]:
+                        continue
+
+                    cap = _cap_for_tier(tier, cfg, "momentum")
+                    target_value = min(mv * cfg["mom_base_pct"], mv * cap, cash_for_entries)
+                    if target_value < 100:
+                        continue
+
+                    entry_price = feat["price"]
+                    if entry_price <= 0:
+                        continue
+                    shares = target_value / entry_price
+                    entry_cost = shares * entry_price * (1 + COST_PER_SIDE)
+                    if entry_cost > cash_for_entries:
+                        shares = cash_for_entries / (entry_price * (1 + COST_PER_SIDE))
+                        entry_cost = shares * entry_price * (1 + COST_PER_SIDE)
+                    if entry_cost > cash_for_entries or shares <= 0:
+                        continue
+
+                    sym_bars = bars[sym]
+                    atr_pct = _atr_pct(sym_bars["closes"], sym_bars["highs"], sym_bars["lows"], i)
+
+                    positions.append(Position(
+                        symbol=sym,
+                        shares=float(shares),
+                        entry_price=float(entry_price),
+                        entry_cost=float(entry_cost),
+                        entry_date=d,
+                        atr_pct_at_entry=float(atr_pct),
+                        tier=tier,
+                        sector=sec,
+                        module="momentum",
+                        highest_close=float(entry_price),
+                    ))
+                    cash -= entry_cost
+                    cash_for_entries -= entry_cost
+                    sector_exposure[sec] += shares * entry_price / mv
+                    selected += 1
+
+            # Pullback entries
+            if regime in cfg["pb_regimes"] and qqq_5d is not None and qqq_5d > -0.08:
+                pb_slots = cfg["pb_max_positions"] - len([p for p in positions if p.module == "pullback"])
+                pb_candidates = []
+                for sym in universe:
+                    if sym in existing_symbols:
+                        continue
+                    feat = features.get((sym, d))
+                    if feat is None:
+                        continue
+                    score, blocked = score_pullback(feat, cfg)
+                    if blocked or math.isnan(score) or score < cfg["pb_threshold"]:
+                        continue
+                    pb_candidates.append((score, sym, feat))
+
+                pb_candidates.sort(key=lambda x: -x[0])
+                if not pb_candidates:
+                    pass
+                else:
+                    n = len(pb_candidates)
+                    ranked = []
+                    for rank, (score, sym, feat) in enumerate(pb_candidates, 1):
+                        if rank <= max(1, n // 3):
+                            tier = "STRONG_NOW"
+                        elif rank <= max(1, 2 * n // 3):
+                            tier = "NOW"
+                        else:
+                            tier = "WATCH"
+                        ranked.append((score, sym, feat, tier))
 
                     selected = 0
-                    for score, sym, feat, module, tier in ranked:
-                        if selected >= open_slots:
+                    for score, sym, feat, tier in ranked:
+                        if selected >= pb_slots or cash_for_entries <= 0:
                             break
                         if sym in existing_symbols:
                             continue
-
-                        sec = SYMBOL_TO_SECTOR.get(sym, "Other")
-                        if sector_exposure[sec] >= V3_SECTOR_CAP_PCT:
+                        sec = symbol_to_sector.get(sym, "Other")
+                        if sector_exposure[sec] >= cfg["sector_cap_pct"]:
                             continue
 
-                        cap = TIER_CAP[tier]
-                        target_value = min(mv * V3_POSITION_PCT, mv * cap, cash_for_entries)
+                        cap = _cap_for_tier(tier, cfg, "pullback")
+                        target_value = min(mv * cfg["pb_base_pct"], mv * cap, cash_for_entries)
                         if target_value < 100:
                             continue
 
                         entry_price = feat["price"]
                         if entry_price <= 0:
                             continue
-
                         shares = target_value / entry_price
                         entry_cost = shares * entry_price * (1 + COST_PER_SIDE)
                         if entry_cost > cash_for_entries:
@@ -509,30 +745,22 @@ def backtest() -> Dict:
                             atr_pct_at_entry=float(atr_pct),
                             tier=tier,
                             sector=sec,
-                            module=module,
+                            module="pullback",
                             highest_close=float(entry_price),
                         ))
                         cash -= entry_cost
                         cash_for_entries -= entry_cost
                         sector_exposure[sec] += shares * entry_price / mv
                         selected += 1
-                        module_entry_counts[module] += 1
 
         # End-of-day mark-to-market
-        mv = cash
-        for p in positions:
-            sym_data = bars[p.symbol]
-            if i < len(sym_data["timestamps"]) and sym_data["timestamps"][i] == d:
-                mv += p.shares * p.remaining_fraction * sym_data["closes"][i]
-            else:
-                mv += p.shares * p.remaining_fraction * p.entry_price
+        mv = mark_portfolio(positions, cash, i, d)
 
         equity_curve.append({
             "date": d,
             "equity": float(mv),
             "cash": float(cash),
             "regime": regime,
-            "active_module": active_module,
             "n_positions": len(positions),
             "drawdown": float(dd),
             "qqq_close": float(qqq_price),
@@ -542,14 +770,13 @@ def backtest() -> Dict:
             "equity": float(mv),
             "cash": float(cash),
             "regime": regime,
-            "active_module": active_module,
             "qqq_close": float(qqq_price),
             "n_positions": len(positions),
             "drawdown": float(dd),
             "halted": halted or halted_today,
         })
 
-    # Force-liquidate any remaining positions at final close
+    # Final liquidation
     final_i = len(dates) - 1
     final_date = dates[-1]
     final_qqq = qqq_closes[-1]
@@ -581,7 +808,7 @@ def backtest() -> Dict:
 
     final_equity = cash
 
-    # QQQ buy-and-hold benchmark
+    # QQQ benchmark
     qqq_start = qqq_closes[0]
     qqq_final = qqq_closes[-1]
     qqq_return = qqq_final / qqq_start - 1.0
@@ -610,34 +837,26 @@ def backtest() -> Dict:
     profit_factor = gross_profit / gross_loss if gross_loss > 0 else float("inf")
     avg_hold = float(np.mean([t["hold_days"] for t in closed_trades])) if closed_trades else 0.0
 
-    # Avg invested %
-    invested_pcts = []
-    for e in equity_curve:
-        invested_pcts.append(max(0.0, 1.0 - e["cash"] / e["equity"]) if e["equity"] > 0 else 0.0)
-    avg_invested_pct = float(np.mean(invested_pcts)) if invested_pcts else 0.0
-
-    # QQQ Sharpe
     qqq_rets = np.diff(qqq_closes) / qqq_closes[:-1]
     qqq_ann_ret = (1 + qqq_return) ** (ann_factor / len(qqq_closes)) - 1.0
     qqq_vol = float(np.std(qqq_rets) * math.sqrt(ann_factor))
     qqq_sharpe = qqq_ann_ret / qqq_vol if qqq_vol > 0 else 0.0
 
-    # Module trade stats
-    module_stats = {}
-    for mod in ("pullback", "momentum"):
-        mod_trades = [t for t in closed_trades if t["module"] == mod]
-        mod_winners = [t for t in mod_trades if t["pnl"] > 0]
-        mod_losers = [t for t in mod_trades if t["pnl"] <= 0]
-        mod_gross_profit = sum(t["pnl"] for t in mod_winners)
-        mod_gross_loss = abs(sum(t["pnl"] for t in mod_losers))
-        module_stats[mod] = {
-            "trades": len(mod_trades),
-            "win_rate": len(mod_winners) / len(mod_trades) if mod_trades else 0.0,
-            "profit_factor": mod_gross_profit / mod_gross_loss if mod_gross_loss > 0 else float("inf"),
-            "avg_return": float(np.mean([t["pnl_pct"] for t in mod_trades])) if mod_trades else 0.0,
-        }
+    # Average invested %
+    invested = []
+    for row in equity_curve:
+        e = row["equity"]
+        c = row["cash"]
+        if e > 0:
+            invested.append((e - c) / e)
+    avg_invested = float(np.mean(invested)) if invested else 0.0
+
+    mom_trades = [t for t in closed_trades if t.get("module") == "momentum"]
+    pb_trades = [t for t in closed_trades if t.get("module") == "pullback"]
 
     result = {
+        "variant": variant,
+        "config": cfg,
         "total_return": float(total_ret),
         "annualized_return": float(ann_ret),
         "volatility": vol,
@@ -648,8 +867,9 @@ def backtest() -> Dict:
         "avg_winner": avg_win,
         "avg_loser": avg_loss,
         "number_of_trades": len(closed_trades),
+        "momentum_trades": len(mom_trades),
+        "pullback_trades": len(pb_trades),
         "avg_holding_days": avg_hold,
-        "avg_invested_pct": avg_invested_pct,
         "qqq_total_return": float(qqq_return),
         "qqq_sharpe_ratio": qqq_sharpe,
         "final_equity": float(final_equity),
@@ -657,60 +877,39 @@ def backtest() -> Dict:
         "start_date": dates[0],
         "end_date": dates[-1],
         "start_value": START_VALUE,
+        "avg_invested_pct": avg_invested,
         "regime_counts": regime_df["regime"].value_counts().to_dict(),
-        "module_active_days": module_active_days,
-        "module_entry_counts": module_entry_counts,
-        "module_stats": module_stats,
         "drawdown_halt_date": drawdown_halt_date,
         "methodology": {
-            "signal_engine": "hybrid_engine: pullback (CAUTION/RISK_OFF) + momentum (RISK_ON)",
+            "signal_engine": "hybrid: momentum breakout + v3 trend_pullback_score",
             "execution": "daily close, t signal -> t+1 execution, 0.1% cost per side",
-            "regime": "replicated from regime_detector.py using SPY/QQQ/VIXY/LQD/HYG/TLT/SHY daily bars",
-            "momentum_entry": "pullback to 5-day EMA or within 0.5% of 10-day low in RISK_ON only",
-            "momentum_exits": "1/4 at +1.0x ATR, 1/4 at +2.0x ATR, trailing stop, 50% profit cap",
-            "pullback_exits": "1/3 at +0.5x ATR, 1/3 at +1.0x ATR, trailing stop, 30% profit cap",
-            "missing_inputs": [
-                "Intraday VWAP confirmation",
-                "Options-flow / IV confirmation",
-                "Earnings blackout gating",
-                "Live news / sentiment overlays",
-                "Intraday stop triggers; stops evaluated at daily close",
-            ],
+            "regime": "replicated from regime_detector.py",
         },
     }
 
     date_tag = datetime.now().strftime("%Y%m%d")
-    report_path = REPORT_DIR / f"v3_hybrid_backtest_{date_tag}.json"
+    report_path = REPORT_DIR / f"v3_hybrid_{variant}_backtest_{date_tag}.json"
     with open(report_path, "w") as f:
         json.dump(result, f, indent=2)
 
-    equity_csv_path = REPORT_DIR / f"v3_hybrid_equity_{date_tag}.csv"
+    equity_csv_path = REPORT_DIR / f"v3_hybrid_{variant}_equity_{date_tag}.csv"
     pd.DataFrame(equity_curve).to_csv(equity_csv_path, index=False)
+
+    chart_path = REPORT_DIR / f"v3_hybrid_{variant}_equity_{date_tag}.png"
+    make_chart(equity_curve, qqq_final_value, str(chart_path), variant)
 
     return {
         "result": result,
         "equity_curve": equity_curve,
         "trades": trades,
-        "daily_log": daily_log,
         "report_path": str(report_path),
         "equity_csv_path": str(equity_csv_path),
+        "chart_path": str(chart_path),
         "qqq_final_value": qqq_final_value,
     }
 
 
-def _trading_days_between(dates: List[str], start: str, end: str) -> int:
-    try:
-        return max(0, dates.index(end) - dates.index(start))
-    except ValueError:
-        return 0
-
-
-# ---------------------------------------------------------------------------
-# Chart
-# ---------------------------------------------------------------------------
-
-
-def make_chart(equity_curve: List[Dict], qqq_final_value: float, output_path: str):
+def make_chart(equity_curve: List[Dict], qqq_final_value: float, output_path: str, variant: str):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -724,11 +923,11 @@ def make_chart(equity_curve: List[Dict], qqq_final_value: float, output_path: st
     df["qqq"] = df["qqq_close"] / qqq_start
 
     fig, ax1 = plt.subplots(figsize=(12, 6))
-    ax1.plot(df["date"], df["strategy"], label="Hybrid Strategy", linewidth=2)
+    ax1.plot(df["date"], df["strategy"], label="Strategy", linewidth=2)
     ax1.plot(df["date"], df["qqq"], label="QQQ buy-and-hold", linewidth=2, linestyle="--")
     ax1.set_xlabel("Date")
     ax1.set_ylabel("Normalized Equity")
-    ax1.set_title("STONK.AI v3 Hybrid (Pullbk+Momentum) vs QQQ Buy-and-Hold")
+    ax1.set_title(f"STONK.AI v3 HYBRID {variant} vs QQQ Buy-and-Hold")
     ax1.legend(loc="upper left")
     ax1.grid(True, alpha=0.3)
 
@@ -737,43 +936,67 @@ def make_chart(equity_curve: List[Dict], qqq_final_value: float, output_path: st
     start_idx = 0
     for i in range(1, len(df)):
         if df["regime"].iloc[i] != current_regime:
-            ax1.axvspan(df["date"].iloc[start_idx], df["date"].iloc[i],
-                        color=regime_colors.get(current_regime, "white"), alpha=0.2)
+            ax1.axvspan(df["date"].iloc[start_idx], df["date"].iloc[i], color=regime_colors.get(current_regime, "white"), alpha=0.2)
             current_regime = df["regime"].iloc[i]
             start_idx = i
-    ax1.axvspan(df["date"].iloc[start_idx], df["date"].iloc[-1],
-                color=regime_colors.get(current_regime, "white"), alpha=0.2)
+    ax1.axvspan(df["date"].iloc[start_idx], df["date"].iloc[-1], color=regime_colors.get(current_regime, "white"), alpha=0.2)
 
     fig.tight_layout()
     fig.savefig(output_path, dpi=150)
     plt.close(fig)
-    print(f"Chart saved to {output_path}")
 
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+def log_to_csv(result: Dict, notes: str = ""):
+    csv_path = REPORT_DIR / "hybrid_iteration_log.csv"
+    fieldnames = ["variant", "return", "sharpe", "max_dd", "trades", "vs_qqq", "notes"]
+    row = {
+        "variant": result["variant"],
+        "return": f"{result['total_return']:.4%}",
+        "sharpe": f"{result['sharpe_ratio']:.3f}",
+        "max_dd": f"{-result['max_drawdown']:.2%}",
+        "trades": result["number_of_trades"],
+        "vs_qqq": f"{result['total_return'] - result['qqq_total_return']:.2%}",
+        "notes": notes,
+    }
+    write_header = not csv_path.exists()
+    with open(csv_path, "a", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        if write_header:
+            w.writeheader()
+        w.writerow(row)
 
 
-def main():
-    print("Running v3 regime-aware HYBRID backtest...")
-    out = backtest()
+def meets_threshold(result: Dict) -> Tuple[bool, str]:
+    ret = result["total_return"]
+    sharpe = result["sharpe_ratio"]
+    dd = result["max_drawdown"]
+    vs_qqq = ret - result["qqq_total_return"]
+
+    if ret >= 0.40 and dd <= 0.12:
+        return True, "threshold_1"
+    if sharpe >= 1.10 and ret >= 0.30 and dd <= 0.12:
+        return True, "threshold_2"
+    if vs_qqq >= -0.15 and sharpe >= 0.90 and dd <= 0.12:
+        return True, "threshold_3"
+    return False, ""
+
+
+def run_variant(cfg: Dict, variant: str, notes: str = "") -> Dict:
+    print(f"\n=== Running variant {variant} ===")
+    out = run_backtest(cfg, variant=variant)
     result = out["result"]
-    print("\n=== Results ===")
-    print(json.dumps(result, indent=2))
+    log_to_csv(result, notes=notes)
 
-    date_tag = datetime.now().strftime("%Y%m%d")
-    chart_path = REPORT_DIR / f"v3_hybrid_equity_{date_tag}.png"
-    make_chart(out["equity_curve"], out["qqq_final_value"], str(chart_path))
+    print(json.dumps({k: result[k] for k in [
+        "variant", "total_return", "sharpe_ratio", "max_drawdown",
+        "win_rate", "profit_factor", "number_of_trades", "avg_invested_pct",
+        "momentum_trades", "pullback_trades"
+    ]}, indent=2))
 
-    latest_json = REPORT_DIR / "v3_hybrid_backtest_latest.json"
-    with open(latest_json, "w") as f:
-        json.dump(result, f, indent=2)
-
-    print(f"\nReport: {out['report_path']}")
-    print(f"Equity CSV: {out['equity_csv_path']}")
-    print(f"Chart: {chart_path}")
+    return out
 
 
 if __name__ == "__main__":
-    main()
+    out = run_variant(DEFAULT_CONFIG, "v01", notes="baseline hybrid: mom ema20/ema50 pullback_5ema 3%/12% scaleout_1_3 RISK_ON rsi55-80 ret20>=5% max15 + pb RISK_ON")
+    print(f"Report: {out['report_path']}")
+    print(f"Chart: {out['chart_path']}")
