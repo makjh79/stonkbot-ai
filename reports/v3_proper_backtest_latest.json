@@ -1,0 +1,38 @@
+{
+  "total_return": 0.08476977253508555,
+  "annualized_return": 0.04127211542323761,
+  "volatility": 0.05754533674745789,
+  "sharpe_ratio": 0.7172104249622075,
+  "max_drawdown": 0.07638448667523419,
+  "win_rate": 0.7513020833333334,
+  "profit_factor": 1.2047860879369827,
+  "avg_winner": 0.07348944722839301,
+  "avg_loser": -0.07658486118955121,
+  "number_of_trades": 768,
+  "avg_holding_days": 9.950520833333334,
+  "qqq_total_return": 0.5555652610661019,
+  "qqq_sharpe_ratio": 1.1212353749951522,
+  "final_equity": 108476.97725350855,
+  "final_qqq_equity": 155245.56861092307,
+  "start_date": "2024-08-14T04:00:00Z",
+  "end_date": "2026-08-21T04:00:00Z",
+  "start_value": 100000.0,
+  "regime_counts": {
+    "RISK_ON": 368,
+    "RISK_OFF": 89,
+    "CRISIS": 50
+  },
+  "drawdown_halt_date": null,
+  "methodology": {
+    "signal_engine": "v3_signal_engine.compute_trend_pullback_score (replicated)",
+    "execution": "daily close, t signal -> t+1 execution, 0.1% cost per side",
+    "regime": "replicated from regime_detector.py using SPY/QQQ/VIXY/LQD/HYG/TLT/SHY daily bars; VIXY/LQD/HYG/TLT/SHY fetched from Yahoo Finance",
+    "missing_inputs": [
+      "Intraday VWAP confirmation (live v3 requires vwap_confirmed)",
+      "Options-flow / IV confirmation",
+      "Earnings blackout gating",
+      "Live news / sentiment overlays",
+      "Intraday stop triggers; stops are evaluated at daily close"
+    ]
+  }
+}
