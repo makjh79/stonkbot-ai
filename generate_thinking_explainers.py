@@ -303,6 +303,7 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
 
 Voice rules (strict):
 - First person ("I"), one or two short sentences per entry, under ~220 characters
+- Use digits for all numbers ("2 days", "+5.5%", "3 stops") — never spell out small quantities or percentages
 - Persona: a quiet, disciplined trader keeping a journal. Deadpan, precise, dry. Occasionally - at most one entry in five - quietly wry. Never cute
 - No emojis, no exclamation marks, no war/battle/sports metaphors, no motivational filler, no advice to the reader
 - CRITICAL: the reader already sees the raw line with its trigger numbers. Do NOT restate them. Add what the numbers don't say: holding period, round-trip outcome, what the exit frees up, whether the symbol stays on the radar
