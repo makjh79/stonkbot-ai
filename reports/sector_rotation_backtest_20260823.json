@@ -1,0 +1,137 @@
+{
+  "generated_at": "2026-08-23T06:35:33.447929+00:00",
+  "parameters": {
+    "top_n": 3,
+    "max_sector_pct": 0.33,
+    "min_3m_momentum": 0.0,
+    "macro_allocator_equity_min": 0.3,
+    "cost_per_side": 0.001,
+    "vol_slippage_mult": 0.05,
+    "candidate_etfs": [
+      "XLY",
+      "XLP",
+      "XLK",
+      "XLF",
+      "XLI",
+      "XLB",
+      "XLE",
+      "XLU",
+      "XLRE",
+      "XBI",
+      "SOXX",
+      "IYT",
+      "SMH"
+    ]
+  },
+  "stop_conditions": {
+    "improve_over_macro_in_at_least_one_window": false,
+    "no_window_underperforms_macro_by_more_than_10pp": false,
+    "max_drawdown_below_25pct_in_all_windows": true
+  },
+  "verdict": "STOP / PIVOT",
+  "recommendation": "Sector rotation momentum failed to add alpha versus the macro-only allocator in this configuration. Do not allocate capital. Recommended next steps: (1) test a longer history including pre-2022 cycles, (2) add trend/mean-reversion conditioning so the engine is not short momentum in a tech-led rally, (3) evaluate equal-weight sector basket vs momentum-tilted basket as a baseline, or (4) abandon sector rotation and focus on the macro allocator plus a different alpha source.",
+  "windows": [
+    {
+      "window": "2022 bear",
+      "strategy_return": -0.04807333899090904,
+      "macro_only_return": -0.016817562302470557,
+      "qqq_return": -0.3321985336819241,
+      "spy_return": -0.18646400484276593,
+      "max_drawdown": -0.04807333899090904,
+      "avg_sector_count": 0.5,
+      "rebalances": 1,
+      "top_sector_picks": [
+        "XLE",
+        "XLI",
+        "XLF"
+      ],
+      "available_etfs": [
+        "IYT",
+        "QQQ",
+        "SMH",
+        "SOXX",
+        "SPY",
+        "XBI",
+        "XLB",
+        "XLE",
+        "XLF",
+        "XLI",
+        "XLK",
+        "XLP",
+        "XLRE",
+        "XLU",
+        "XLY"
+      ],
+      "first_date": "2022-01-03T00:00:00+00:00",
+      "last_date": "2022-12-30T00:00:00+00:00"
+    },
+    {
+      "window": "2023\u2013Aug 2024",
+      "strategy_return": 0.1302703529009237,
+      "macro_only_return": 0.43753707273536024,
+      "qqq_return": 0.8185037219149081,
+      "spy_return": 0.5122026238478197,
+      "max_drawdown": -0.12512355988111096,
+      "avg_sector_count": 1.95,
+      "rebalances": 3,
+      "top_sector_picks": [
+        "XLU",
+        "XLRE",
+        "XLF"
+      ],
+      "available_etfs": [
+        "IYT",
+        "QQQ",
+        "SMH",
+        "SOXX",
+        "SPY",
+        "XBI",
+        "XLB",
+        "XLE",
+        "XLF",
+        "XLI",
+        "XLK",
+        "XLP",
+        "XLRE",
+        "XLU",
+        "XLY"
+      ],
+      "first_date": "2023-01-03T00:00:00+00:00",
+      "last_date": "2024-08-30T00:00:00+00:00"
+    },
+    {
+      "window": "Aug 2024\u2013Aug 2026",
+      "strategy_return": 0.4112857972642632,
+      "macro_only_return": 0.5369338063239577,
+      "qqq_return": 0.5683810173987096,
+      "spy_return": 0.4435225128904472,
+      "max_drawdown": -0.13406308370392883,
+      "avg_sector_count": 2.04,
+      "rebalances": 5,
+      "top_sector_picks": [
+        "XBI",
+        "XLK",
+        "XLE"
+      ],
+      "available_etfs": [
+        "IYT",
+        "QQQ",
+        "SMH",
+        "SOXX",
+        "SPY",
+        "XBI",
+        "XLB",
+        "XLE",
+        "XLF",
+        "XLI",
+        "XLK",
+        "XLP",
+        "XLRE",
+        "XLU",
+        "XLY"
+      ],
+      "first_date": "2024-08-01T00:00:00+00:00",
+      "last_date": "2026-08-21T00:00:00+00:00"
+    }
+  ]
+}
