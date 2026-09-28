@@ -4210,7 +4210,7 @@
 
           <div id="sleeve-status" style="font-size:0.68rem;color:#22c55e;margin:0.5rem 0 0.75rem;">● ACTIVE</div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span id="sleeve-scoreboard-label" style="text-transform:none;">· since Bot launch</span></div>
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span id="sleeve-scoreboard-label" style="text-transform:none;">· since launch</span></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
               <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Bot</div>
@@ -4235,7 +4235,7 @@
             <svg id="sleeve-chart" width="100%" height="80" style="display:block;"></svg>
           </div>
 
-          <!-- Bot Performance: Bot state + equity JS -->
+          <!-- Bot Performance: sleeve state + equity JS -->
 <script>
 let _sleeveLoaded = false;
 async function loadSleevePerformance() {
@@ -4256,9 +4256,9 @@ async function loadSleevePerformance() {
             const s = await stateRes.json();
             const equity = s.equity || 0;
             const start = 100000;
-            const BotRet = ((equity - start) / start) * 100;
-            setT('sleeve-ret', fmtRet(BotRet));
-            setColor('sleeve-ret', BotRet);
+            const botRet = ((equity - start) / start) * 100;
+            setT('sleeve-ret', fmtRet(botRet));
+            setColor('sleeve-ret', botRet);
             const inc = s.inception || '—';
             const last = s.last_date || '—';
             setT('sleeve-scoreboard-label', '· since ' + inc + ' · last close ' + last);
@@ -4340,7 +4340,7 @@ async function loadSleevePerformance() {
                 setT('sleeve-meta', rows.length + ' daily marks · inception $100K · current $' + (vals[vals.length - 1].toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})));
             }
         }
-    } catch (e) { console.error('Bot performance load failed:', e); }
+    } catch (e) { console.error('Sleeve performance load failed:', e); }
 }
 </script>
 <!-- About section toggle JS -->
@@ -5519,12 +5519,12 @@ async function loadPnlAttribution() {
         // Update dashboard with fresh data
         // Helper to format relative freshness time
 
-        // Bot-aware dashboard loader (Phase 1).
+        // Sleeve-aware dashboard loader (Phase 1).
         // Reads from dm_paper/sleeve_state.json and market_indices.json,
-        // then paints the hero card and race card with Bot truth while
+        // then paints the hero card and race card with sleeve truth while
         // keeping the UI labels as "Bot" / "StonkBOT.AI".
-        let _BotDashboardLoaded = false;
-        async function loadBotDashboard() {
+        let _SleeveDashboardLoaded = false;
+        async function loadSleeveDashboard() {
             try {
                 const [stateRes, miRes] = await Promise.all([
                     fetch('dm_paper/sleeve_state.json?t=' + Date.now()),
@@ -5537,7 +5537,7 @@ async function loadPnlAttribution() {
                 const botRet = ((equity - start) / start) * 100;
                 const isPos = botRet >= 0;
                 const pnl = equity - start;
-                _BotDashboardLoaded = true;
+                _SleeveDashboardLoaded = true;
 
                 function rmSkeleton(el) {
                     if (!el) return;
@@ -5665,7 +5665,7 @@ async function loadPnlAttribution() {
                 return true;
             } catch (e) {
                 console.error('loadSleeveDashboard failed:', e);
-                _BotDashboardLoaded = false;
+                _SleeveDashboardLoaded = false;
                 return false;
             }
         }
@@ -5776,8 +5776,8 @@ async function loadPnlAttribution() {
             }
 
 function updateDashboard(data, marketStatus) {
-            if (window._BotDashboardLoaded) {
-                // Phase 1: Bot state owns the hero/race card; old intraday data only drives Holdings/activity.
+            if (window._SleeveDashboardLoaded) {
+                // Phase 1: sleeve state owns the hero/race card; old intraday data only drives Holdings/activity.
                 updateMarketBanner(data, marketStatus);
                 return;
             }
@@ -6640,15 +6640,15 @@ function updateDashboard(data, marketStatus) {
         }
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', setInitialMarketStatus);
-            document.addEventListener('DOMContentLoaded', function() { loadBotDashboard().then(() => loadPortfolioData()); });
+            document.addEventListener('DOMContentLoaded', function() { loadSleeveDashboard().then(() => loadPortfolioData()); });
         } else {
             setInitialMarketStatus();
-            loadBotDashboard().then(() => loadPortfolioData());
+            loadSleeveDashboard().then(() => loadPortfolioData());
         }
 
         // Refresh every 120 seconds (matches 2-min portfolio snapshot cadence)
         setInterval(() => {
-            loadBotDashboard().then(() => loadPortfolioData());
+            loadSleeveDashboard().then(() => loadPortfolioData());
             loadPerformanceData();
             updateAnomalyBanner();
         }, 120000);
@@ -8358,7 +8358,7 @@ function updateDashboard(data, marketStatus) {
         let pendingRaceValuesUpdate = false;
 
         async function updateRaceValues() {
-            if (window._BotDashboardLoaded) return; // Phase 1: race card painted by loadBotDashboard.
+            if (window._SleeveDashboardLoaded) return; // Phase 1: race card painted by loadSleeveDashboard.
             // Prevent concurrent updates
             if (isUpdatingRaceValues) {
                 pendingRaceValuesUpdate = true;
@@ -11205,7 +11205,7 @@ function updateDashboard(data, marketStatus) {
             'XLE': { prices: [56, 56.5, 57, 57.2, 57.4, 57.5, 57.55, 57.58, 57.56, 57.56], ma20: 57, ma50: 56, support: 52, resistance: 62 }
         };
 
-        // Bot watchlist adapter: fetch dm_paper/sleeve_watchlist.json and map it
+        // Sleeve watchlist adapter: fetch dm_paper/sleeve_watchlist.json and map it
         // into the legacy aiWatchlistPrices shape so the existing cards/popups render.
         async function fetchWatchlistPrices() {
             try {
