@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Rebalance Alpaca paper account to match the Bot target basket.
 
-Reads dm_paper/sleeve_state.json for the Bot basket, compares against current
-Alpaca paper positions, and rebalances. Default mode is DRY-RUN.
+Reads dm_paper/sleeve_rebalance_signal.json for the Bot target symbols,
+compares against current Alpaca paper positions, and rebalances into equal
+notional weights. Default mode is DRY-RUN.
 Pass --execute to submit real orders. Never runs as root.
 """
 import argparse
@@ -18,7 +19,7 @@ if os.geteuid() == 0:
 
 BASE = Path("/opt/stonk-ai")
 WEB = Path("/var/www/hedge-fund-website")
-BOT_BASKET_FILE = BASE / "dm_paper" / "sleeve_state.json"
+SIGNAL_FILE = BASE / "dm_paper" / "sleeve_rebalance_signal.json"
 ALPACA_CFG_PATHS = [
     BASE / "alpaca_config.json",
     WEB / "alpaca_config.json",
@@ -133,17 +134,14 @@ def compute_rebalance_orders(
                 })
 
     # Buy target basket in equal notional weights
-    target_symbols = [s for s in target_basket if s != "CASH"]
-    if not target_symbols:
+    target_names = [s for s in target_basket if s != "CASH"]
+    if not target_names:
         return orders
 
     deployable = max(0, total_equity - reserve_cash)
-    notional_each = deployable / len(target_symbols)
+    notional_each = deployable / len(target_names)
 
-    for sym in sorted(target_symbols):
-        if sym in current_holdings:
-            # already held, skip or trim later; for now skip to avoid double-trade
-            continue
+    for sym in sorted(target_names):
         if notional_each > 50:
             orders.append({
                 "side": "buy",
@@ -169,8 +167,15 @@ def main():
     total, cash, current_holdings, current_quantities = get_account_summary(client)
     market_open = client.is_market_open()
 
-    state = json.loads(BOT_BASKET_FILE.read_text())
-    target_basket = state.get("holdings", {})
+    # Use the generated monthly signal file as the authoritative target basket,
+    # not sleeve_state.json (which is overwritten from Alpaca and only shows
+    # current holdings).
+    signal = json.loads(SIGNAL_FILE.read_text())
+    target_symbols = sorted(signal.get("target", []))
+    if not target_symbols:
+        print("\nABORT: no target symbols in sleeve_rebalance_signal.json.")
+        return
+    target_basket = {s: 1.0 / len(target_symbols) for s in target_symbols}
 
     print(f"Account: {acct.get('account_number')} ({'paper' if 'paper' in client.base_url else 'LIVE'})")
     print(f"Market open: {market_open}")
@@ -180,8 +185,8 @@ def main():
     for sym, mv in sorted(current_holdings.items(), key=lambda x: -x[1]):
         print(f"  {sym:6} ${mv:>10,.2f}")
     print(f"\nBot target basket ({len(target_basket)}):")
-    for sym, mv in sorted(target_basket.items(), key=lambda x: -x[1]):
-        print(f"  {sym:6} ${mv:>10,.2f}")
+    for sym, w in sorted(target_basket.items(), key=lambda x: -x[1]):
+        print(f"  {sym:6} {w*100:>6.1f}%")
 
     orders = compute_rebalance_orders(total, current_holdings, current_quantities, target_basket, reserve_cash=args.reserve)
 
