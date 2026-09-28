@@ -301,9 +301,13 @@ def check_file_freshness() -> None:
         # correct market-hours window and a 30-min threshold.
     }
     # Monthly Bot strategy has no intraday signal engine; signals.json
-    # staleness is not visitor-visible breakage.
+    # staleness is not visitor-visible breakage.  Popup/watchlist narrative
+    # files are content, not trading data, and are regenerated daily — relax
+    # their freshness thresholds so they don't falsely degrade the banner.
     if os.path.exists(os.path.join(BASE_DIR, "BOT_STRATEGY_ACTIVE")):
         files.pop("signals.json", None)
+        files["popup_content.json"] = 86400
+        files["watchlist_narratives.json"] = 86400
     now = time.time()
     is_market = _is_us_market_hours()
     for fname, max_age in files.items():
