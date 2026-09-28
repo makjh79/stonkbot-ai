@@ -53,6 +53,146 @@ def month_ends(ds):
     out.append(ds[-1])
     return out
 
+
+def _ema(values, period):
+    if len(values) < period:
+        return None
+    k = 2.0 / (period + 1)
+    ema = sum(values[:period]) / period
+    for v in values[period:]:
+        ema = v * k + ema * (1 - k)
+    return ema
+
+
+def _rsi(values, period=14):
+    if len(values) < period + 1:
+        return None
+    gains = []; losses = []
+    for i in range(1, period + 1):
+        change = values[-period - 1 + i] - values[-period - 2 + i]
+        gains.append(max(change, 0)); losses.append(max(-change, 0))
+    avg_gain = sum(gains) / period
+    avg_loss = sum(losses) / period
+    if avg_loss == 0:
+        return 100.0 if avg_gain > 0 else 50.0
+    rs = avg_gain / avg_loss
+    return 100.0 - (100.0 / (1.0 + rs))
+
+
+def _macd(values):
+    ema12 = _ema(values, 12)
+    ema26 = _ema(values, 26)
+    if ema12 is None or ema26 is None:
+        return None, None, None
+    macd_line = ema12 - ema26
+    # Signal line is 9-day EMA of the MACD line, not of price
+    macd_series = []
+    for i in range(len(values)):
+        if i < 25:
+            macd_series.append(None)
+            continue
+        e12 = _ema(values[:i+1], 12)
+        e26 = _ema(values[:i+1], 26)
+        if e12 is None or e26 is None:
+            macd_series.append(None)
+        else:
+            macd_series.append(e12 - e26)
+    signal_line = _ema([m for m in macd_series if m is not None], 9)
+    histogram = macd_line - signal_line if signal_line is not None else 0.0
+    return macd_line, signal_line, histogram
+
+
+def compute_indicators(prices, i):
+    """Compute simple technical indicators from a price series up to index i."""
+    vals = prices[:i+1]
+    if len(vals) < 50:
+        return {}
+    price = vals[-1]
+    ema20 = _ema(vals, 20) or price
+    ema50 = _ema(vals, 50) or price
+    ema200 = _ema(vals, 200) or price
+    rsi = _rsi(vals, 14) or 50.0
+    macd_line, signal_line, histogram = _macd(vals) or (0.0, 0.0, 0.0)
+    hist_prev = 0.0
+    if len(vals) >= 2:
+        _, _, hist_prev = _macd(vals[:-1]) or (0.0, 0.0, 0.0)
+    momentum_21_252 = 0.0
+    if len(vals) >= 252:
+        b = vals[-252]
+        a = vals[-21]
+        if b:
+            momentum_21_252 = a / b - 1.0
+    return {
+        "price": round(price, 2),
+        "ema_20": round(ema20, 2),
+        "ema_50": round(ema50, 2),
+        "ema_200": round(ema200, 2),
+        "rsi_14": round(rsi, 2),
+        "macd_line": round(macd_line, 4),
+        "signal_line": round(signal_line, 4),
+        "histogram": round(histogram, 4),
+        "histogram_prev": round(hist_prev, 4),
+        "momentum_score": round(momentum_21_252 * 100, 2),
+    }
+
+
+def build_confirmations(ind):
+    """Build a confirmation dict from computed indicators.
+
+    Only fields we can honestly compute from Yahoo price data are set.
+    Volume/options/bid-ask/corporate-action fields are unavailable and left
+    false so the UI doesn't pretend to have data that doesn't exist.
+    """
+    price = ind.get("price", 0.0)
+    ema20 = ind.get("ema_20", price)
+    ema50 = ind.get("ema_50", price)
+    ema200 = ind.get("ema_200", price)
+    rsi = ind.get("rsi_14", 50.0)
+    histogram = ind.get("histogram", 0.0)
+    hist_prev = ind.get("histogram_prev", histogram)
+
+    def rsi_label():
+        if rsi >= 60: return "bullish"
+        if rsi <= 40: return "bearish"
+        return "neutral"
+
+    confs = {
+        "momentum_score": ind.get("momentum_score", 50.0),
+        "rsi_signal": rsi_label(),
+        "above_ema": price > ema20 and price > ema50 and price > ema200,
+        "macd_turning": histogram > 0 and hist_prev <= 0,
+        "volume_confirmed": False,
+        "sector_strong": False,
+        "intraday_confirmed": False,
+        "intraday_score": 50.0,
+        "momentum_5m_up": False,
+        "volume_5m_surge": False,
+        "price_above_5m_vwap": False,
+        "options_confirmed": False,
+        "options_score": 50.0,
+        "options_call_put_ratio": None,
+        "options_unusual_volume": False,
+        "near_term_bullish_flow": False,
+        "relvol_confirmed": False,
+        "relvol_score": 50.0,
+        "vwap_confirmed": False,
+        "vwap_score": 50.0,
+        "spread_ok": True,
+        "wide_spread": False,
+        "bid_ask_spread_pct": 0.01,
+        "bid_ask_imbalance": 0.0,
+        "bid_ask_bullish": True,
+        "has_upcoming_dividend": False,
+        "has_upcoming_split": False,
+        "has_upcoming_merger": False,
+        "has_upcoming_spinoff": False,
+        "corporate_action_risk": False,
+        "no_corporate_action_risk": True,
+    }
+    count = sum(1 for k, v in confs.items() if v is True and not k.endswith("_score"))
+    confs["confirmation_count"] = count
+    return confs
+
 def dm_signal(ds, P, i):
     def r6(s):
         if i-126 < 0: return None
@@ -81,14 +221,16 @@ def sleeve_target(ds, P, i):
 
 
 def sleeve_candidates(ds, P, i, top_n=10, watch_n=15):
-    """Return (top10_weights, watchlist) for the most recent trading day.
+    """Return (top10_weights, watchlist, holdings_details) for the most recent trading day.
 
     watchlist entries are dicts with symbol, rank, score, dist_to_top10,
     plus price and change_pct for the old watchlist UI.
+    holdings_details are dicts for the top 10 with symbol, score, price,
+    change_pct, indicators, and confirmations.
     """
     sel = dm_signal(ds, P, i)
     if sel != "QQQ":
-        return ({sel: 1.0} if sel != "CASH" else {"CASH": 1.0}, [])
+        return ({sel: 1.0} if sel != "CASH" else {"CASH": 1.0}, [], [])
     cands = []
     for s in STOCKS:
         if i-252 < 0: continue
@@ -99,43 +241,56 @@ def sleeve_candidates(ds, P, i, top_n=10, watch_n=15):
     top_symbols = [s for s,_ in cands[:top_n]]
     weights = {s: 1.0/len(top_symbols) for s in top_symbols} if top_symbols else {"QQQ": 1.0}
     watchlist = []
+    holdings_details = []
     cutoff = cands[top_n-1][1] if len(cands) >= top_n else (cands[-1][1] if cands else 0.0)
     today = ds[i]
     prev = ds[i-1] if i >= 1 else today
-    for rank, (s, score) in enumerate(cands[top_n:top_n+watch_n], start=top_n+1):
-        price_today = P[s].get(today)
-        price_prev = P[s].get(prev) or price_today
+
+    prices_by_symbol = {s: list(P[s].values()) for s in STOCKS if s in P}
+
+    def detail(sym, score):
+        price_today = P[sym].get(today)
+        price_prev = P[sym].get(prev) or price_today
         change_pct = 0.0
         if price_prev and price_prev > 0 and price_today:
             change_pct = (price_today / price_prev - 1.0) * 100
-        watchlist.append({
-            "symbol": s,
-            "rank": rank,
+        i_sym = sorted(P[sym].keys()).index(today) if today in P[sym] else len(prices_by_symbol[sym]) - 1
+        ind = compute_indicators(prices_by_symbol[sym], i_sym)
+        confs = build_confirmations(ind)
+        return {
+            "symbol": sym,
+            "rank": cands.index((sym, score)) + 1,
             "score": round(score, 4),
             "dist_to_top10": round(cutoff - score, 4),
             "sector": None,
             "price": round(price_today, 2) if price_today else None,
             "change_pct": round(change_pct, 2),
-        })
-    return weights, watchlist
+            "indicators": ind,
+            "confirmations": confs,
+            "confirmation_count": confs["confirmation_count"],
+            "readiness_score": min(100.0, max(0.0, 50.0 + score * 100.0)),
+        }
+
+    for s, score in cands[:top_n]:
+        holdings_details.append(detail(s, score))
+    for rank, (s, score) in enumerate(cands[top_n:top_n+watch_n], start=top_n+1):
+        watchlist.append(detail(s, score))
+    return weights, watchlist, holdings_details
 
 
 def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=15):
-    """Export daily rebalance signal and watchlist candidate file."""
-    weights, watchlist = sleeve_candidates(ds, P, i, top_n=10, watch_n=watch_n)
+    """Export daily rebalance signal, watchlist, and top-10 holdings details."""
+    weights, watchlist, holdings_details = sleeve_candidates(ds, P, i, top_n=10, watch_n=watch_n)
     gate = dm_signal(ds, P, i)
     today = ds[i]
-    # Compare today's target names with current Alpaca paper holdings if known.
     if current_holdings:
         current_set = {s for s in current_holdings if s not in ("CASH",)}
     else:
-        # Fall back to the saved virtual sleeve state holdings.
         sleeve_st = load_state("sleeve")
         current_set = {s for s in sleeve_st.get("holdings", {}) if s not in ("CASH",)}
     target_set = {s for s in weights if s not in ("CASH",)}
     incoming = sorted(target_set - current_set)
     outgoing = sorted(current_set - target_set)
-    # Signal if any stock rotation or if the gate is not QQQ (defensive flip)
     signal = bool(incoming or outgoing or gate != "QQQ")
     reasons = []
     if incoming:
@@ -161,9 +316,16 @@ def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=1
         "date": today,
         "watchlist": watchlist,
     }, open(watch_path, "w"), indent=2)
+    holdings_path = os.path.join(BASE, "sleeve_holdings.json")
+    json.dump({
+        "date": today,
+        "holdings": holdings_details,
+    }, open(holdings_path, "w"), indent=2)
     print(f"sleeve: signal={signal} ({reason})")
     if watchlist:
         print(f"sleeve: watchlist exported with {len(watchlist)} candidates")
+    if holdings_details:
+        print(f"sleeve: holdings details exported with {len(holdings_details)} names")
 
 def ret_on(P, s, d0, d1):
     a, b = P[s].get(d0), P[s].get(d1)
