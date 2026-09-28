@@ -4,9 +4,19 @@
 Runs after each US close. Marks both virtual portfolios to market, computes
 month-end signals, executes at next-day close (strict). State in
 /opt/stonk-ai/dm_paper/. Baseline $100,000 each, inception 2026-08-24.
+
+Data source: Alpaca market-data API (replaces Yahoo Finance as the single
+source of truth for price history).
 """
-import json, os, time, urllib.parse, urllib.request
+import json
+import os
+import time
+import urllib.parse
 from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+import requests
 
 BASE = "/opt/stonk-ai/dm_paper"
 STOCKS = ["AAPL","MSFT","AMZN","GOOGL","META","NVDA","AVGO","NFLX","ADBE","CSCO",
@@ -17,19 +27,75 @@ ETFS = ["QQQ","GLD","TLT","SHY"]
 ALL = STOCKS + ETFS
 LOOKBACK_DAYS = 320  # fetch window (covers 252-trading-day momentum)
 
-def yahoo(sym):
-    enc = urllib.parse.quote(sym, safe="")
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{enc}?range={LOOKBACK_DAYS}d&interval=1d&includeAdjustedClose=true"
-    req = urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=45) as r:
-        j = json.load(r)
-    res = j["chart"]["result"][0]
-    ts = res["timestamp"]; adj = res["indicators"]["adjclose"][0]["adjclose"]
+
+def load_alpaca_config() -> dict[str, Any]:
+    """Load Alpaca API credentials from the standard config file."""
+    for p in [Path("/opt/stonk-ai/alpaca_config.json"), Path("/var/www/hedge-fund-website/alpaca_config.json")]:
+        if p.exists():
+            try:
+                return json.loads(p.read_text())
+            except Exception:
+                pass
+    return {
+        "api_key": os.getenv("ALPACA_API_KEY"),
+        "api_secret": os.getenv("ALPACA_SECRET_KEY"),
+        "base_url": os.getenv("ALPACA_BASE_URL", "https://paper-api.alpaca.markets"),
+        "data_url": os.getenv("ALPACA_DATA_URL", "https://data.alpaca.markets"),
+    }
+
+
+def fetch_alpaca_bars(symbol: str, cfg: dict) -> dict[str, float]:
+    """Fetch ~LOOKBACK_DAYS of daily bars from Alpaca market data."""
+    data_url = cfg.get("data_url", "https://data.alpaca.markets").rstrip("/")
+    api_key = cfg.get("api_key") or cfg.get("APCA_API_KEY_ID")
+    api_secret = cfg.get("api_secret") or cfg.get("APCA_API_SECRET_KEY")
+    if not api_key or not api_secret:
+        raise ValueError("Alpaca API key/secret missing")
+
+    # Fetch enough calendar days to cover LOOKBACK_DAYS trading days plus
+    # weekends/holidays. Use timedelta so month/year boundaries are handled.
+    end = datetime.now(timezone.utc)
+    start = end - __import__("datetime").timedelta(days=LOOKBACK_DAYS * 2 + 30)
+
+    start_iso = start.strftime("%Y-%m-%dT%H:%M:%SZ")
+    end_iso = end.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    url = (
+        f"{data_url}/v2/stocks/{urllib.parse.quote(symbol, safe='')}/bars"
+        f"?timeframe=1Day&start={urllib.parse.quote(start_iso, safe='')}"
+        f"&end={urllib.parse.quote(end_iso, safe='')}&limit=10000"
+    )
+    session = requests.Session()
+    session.headers.update({
+        "APCA-API-KEY-ID": api_key,
+        "APCA-API-SECRET-KEY": api_secret,
+        "Accept": "application/json",
+    })
+
+    for attempt in range(3):
+        r = session.get(url, timeout=60)
+        if r.status_code == 200:
+            break
+        if r.status_code in (429, 500, 502, 503, 504):
+            time.sleep(2 ** attempt)
+            continue
+        raise RuntimeError(f"Alpaca bars for {symbol}: {r.status_code} {r.text[:200]}")
+    else:
+        raise RuntimeError(f"Alpaca bars for {symbol} failed after retries: {r.status_code}")
+
+    data = r.json()
+    bars = data.get("bars", []) or data.get(data.get("symbol", symbol), {}).get("bars", [])
     out = {}
-    for t,p in zip(ts,adj):
-        if p is None: continue
-        out[datetime.fromtimestamp(t,tz=timezone.utc).strftime("%Y-%m-%d")] = float(p)
+    for b in bars:
+        ts = b.get("t", "")
+        if not ts:
+            continue
+        day = ts[:10]
+        out[day] = float(b.get("c", 0))
+    if not out:
+        raise RuntimeError(f"No bars returned for {symbol}")
     return out
+
 
 def load_state(name):
     p = os.path.join(BASE, f"{name}_state.json")
@@ -38,12 +104,15 @@ def load_state(name):
     return {"equity": 100000.0, "holdings": {"CASH": 100000.0},
             "last_date": None, "last_signal_month": None, "inception": "2026-08-24"}
 
+
 def save_state(name, st):
     json.dump(st, open(os.path.join(BASE, f"{name}_state.json"), "w"), indent=1)
+
 
 def append_hist(name, day, equity, summary):
     with open(os.path.join(BASE, f"{name}_equity.csv"), "a") as f:
         f.write(f"{day},{equity:.2f},{summary}\n")
+
 
 def month_ends(ds):
     out = []
@@ -67,10 +136,12 @@ def _ema(values, period):
 def _rsi(values, period=14):
     if len(values) < period + 1:
         return None
-    gains = []; losses = []
+    gains = []
+    losses = []
     for i in range(1, period + 1):
         change = values[-period - 1 + i] - values[-period - 2 + i]
-        gains.append(max(change, 0)); losses.append(max(-change, 0))
+        gains.append(max(change, 0))
+        losses.append(max(-change, 0))
     avg_gain = sum(gains) / period
     avg_loss = sum(losses) / period
     if avg_loss == 0:
@@ -85,7 +156,6 @@ def _macd(values):
     if ema12 is None or ema26 is None:
         return None, None, None
     macd_line = ema12 - ema26
-    # Signal line is 9-day EMA of the MACD line, not of price
     macd_series = []
     for i in range(len(values)):
         if i < 25:
@@ -139,8 +209,8 @@ def compute_indicators(prices, i):
 def build_confirmations(ind):
     """Build a confirmation dict from computed indicators.
 
-    Only fields we can honestly compute from Yahoo price data are set.
-    Volume/options/bid-ask/corporate-action fields are unavailable and left
+    Only fields we can honestly compute from price data are set. Volume,
+    options, bid-ask, and corporate-action fields are unavailable and left
     false so the UI doesn't pretend to have data that doesn't exist.
     """
     price = ind.get("price", 0.0)
@@ -152,8 +222,10 @@ def build_confirmations(ind):
     hist_prev = ind.get("histogram_prev", histogram)
 
     def rsi_label():
-        if rsi >= 60: return "bullish"
-        if rsi <= 40: return "bearish"
+        if rsi >= 60:
+            return "bullish"
+        if rsi <= 40:
+            return "bearish"
         return "neutral"
 
     confs = {
@@ -193,17 +265,22 @@ def build_confirmations(ind):
     confs["confirmation_count"] = count
     return confs
 
+
 def dm_signal(ds, P, i):
     def r6(s):
-        if i-126 < 0: return None
+        if i-126 < 0:
+            return None
         a, b = P[s].get(ds[i]), P[s].get(ds[i-126])
-        if a is None or b is None: return None
+        if a is None or b is None:
+            return None
         return a/b - 1.0
     r = {e: r6(e) for e in ETFS}
-    if any(v is None for v in r.values()): return "CASH"
+    if any(v is None for v in r.values()):
+        return "CASH"
     if max(r["QQQ"], r["GLD"]) > r["SHY"]:
         return "QQQ" if r["QQQ"] >= r["GLD"] else "GLD"
     return "TLT" if r["TLT"] > r["SHY"] else "SHY"
+
 
 def sleeve_target(ds, P, i):
     sel = dm_signal(ds, P, i)
@@ -211,9 +288,11 @@ def sleeve_target(ds, P, i):
         return {sel: 1.0} if sel != "CASH" else {"CASH": 1.0}
     cands = []
     for s in STOCKS:
-        if i-252 < 0: continue
+        if i-252 < 0:
+            continue
         a, b = P[s].get(ds[i-21]), P[s].get(ds[i-252])
-        if a is None or b is None or b == 0: continue
+        if a is None or b is None or b == 0:
+            continue
         cands.append((s, a/b - 1.0))
     cands.sort(key=lambda x: -x[1])
     top = [s for s,_ in cands[:10]]
@@ -221,21 +300,17 @@ def sleeve_target(ds, P, i):
 
 
 def sleeve_candidates(ds, P, i, top_n=10, watch_n=15):
-    """Return (top10_weights, watchlist, holdings_details) for the most recent trading day.
-
-    watchlist entries are dicts with symbol, rank, score, dist_to_top10,
-    plus price and change_pct for the old watchlist UI.
-    holdings_details are dicts for the top 10 with symbol, score, price,
-    change_pct, indicators, and confirmations.
-    """
+    """Return (top10_weights, watchlist, holdings_details) for the most recent trading day."""
     sel = dm_signal(ds, P, i)
     if sel != "QQQ":
         return ({sel: 1.0} if sel != "CASH" else {"CASH": 1.0}, [], [])
     cands = []
     for s in STOCKS:
-        if i-252 < 0: continue
+        if i-252 < 0:
+            continue
         a, b = P[s].get(ds[i-21]), P[s].get(ds[i-252])
-        if a is None or b is None or b == 0: continue
+        if a is None or b is None or b == 0:
+            continue
         cands.append((s, a/b - 1.0))
     cands.sort(key=lambda x: -x[1])
     top_symbols = [s for s,_ in cands[:top_n]]
@@ -254,7 +329,8 @@ def sleeve_candidates(ds, P, i, top_n=10, watch_n=15):
         change_pct = 0.0
         if price_prev and price_prev > 0 and price_today:
             change_pct = (price_today / price_prev - 1.0) * 100
-        i_sym = sorted(P[sym].keys()).index(today) if today in P[sym] else len(prices_by_symbol[sym]) - 1
+        dsym = sorted(P[sym].keys())
+        i_sym = dsym.index(today) if today in dsym else len(prices_by_symbol[sym]) - 1
         ind = compute_indicators(prices_by_symbol[sym], i_sym)
         confs = build_confirmations(ind)
         return {
@@ -327,28 +403,27 @@ def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=1
     if holdings_details:
         print(f"sleeve: holdings details exported with {len(holdings_details)} names")
 
+
 def ret_on(P, s, d0, d1):
     a, b = P[s].get(d0), P[s].get(d1)
-    if a is None or b is None or a == 0: return 0.0
+    if a is None or b is None or a == 0:
+        return 0.0
     return b/a - 1.0
+
 
 def run_portfolio(name, target_fn, ds, P, me_days):
     st = load_state(name)
-    # determine unprocessed trading days
     if st["last_date"] is None:
         proc = [d for d in ds if d >= st["inception"]]
     else:
         proc = [d for d in ds if d > st["last_date"]]
     for d in proc:
-        # mark-to-market from previous processed day
         prev = st["last_date"]
         if prev is not None:
             for a in list(st["holdings"]):
                 if a != "CASH":
                     st["holdings"][a] *= 1.0 + ret_on(P, a, prev, d)
             st["equity"] = sum(st["holdings"].values())
-        # month-end signal: if d is the trading day right after a month-end, execute
-        # find most recent month-end <= d
         mes = [m for m in me_days if m < d]
         if mes:
             m = mes[-1]
@@ -361,7 +436,8 @@ def run_portfolio(name, target_fn, ds, P, me_days):
                 to = sum(abs(cur.get(k,0.0)-tw.get(k,0.0)) for k in keys)
                 st["equity"] *= 1.0 - 0.001*to
                 st["holdings"] = {k: st["equity"]*w for k, w in tw.items() if w > 1e-9}
-                if not st["holdings"]: st["holdings"] = {"CASH": st["equity"]}
+                if not st["holdings"]:
+                    st["holdings"] = {"CASH": st["equity"]}
                 st["last_signal_month"] = m[:7]
                 print(f"{name}: signal @ {m} -> {sorted(tw.items(), key=lambda x:-x[1])[:3]}...")
         st["last_date"] = d
@@ -370,26 +446,40 @@ def run_portfolio(name, target_fn, ds, P, me_days):
     save_state(name, st)
     print(f"{name}: equity ${st['equity']:,.2f} as of {st['last_date']} holdings {list(st['holdings'])[:4]}")
 
-def main():
-    os.makedirs(BASE, exist_ok=True)
-    P = {}
-    for s in ALL:
-        for a in range(3):
-            try: P[s] = yahoo(s); break
-            except Exception: time.sleep(2)
-        time.sleep(0.25)
-    ds = sorted(set().union(*[set(P[s]) for s in ETFS]))
-    ds = [d for d in ds if d >= "2025-08-01"]
-    me_days = month_ends(ds)
-    run_portfolio("dm", dm_signal_target, ds, P, me_days)
-    run_portfolio("sleeve", sleeve_target, ds, P, me_days)
-    # Daily signal + watchlist for live sleeve execution and site display
-    i = len(ds) - 1
-    write_sleeve_signal_and_watchlist(ds, P, i)
 
 def dm_signal_target(ds, P, i):
     sel = dm_signal(ds, P, i)
     return {sel: 1.0} if sel != "CASH" else {"CASH": 1.0}
+
+
+def main():
+    os.makedirs(BASE, exist_ok=True)
+    cfg = load_alpaca_config()
+    P = {}
+    for s in ALL:
+        for a in range(3):
+            try:
+                P[s] = fetch_alpaca_bars(s, cfg)
+                break
+            except Exception as e:
+                print(f"WARN: fetch {s} attempt {a+1} failed: {e}")
+                time.sleep(2)
+        else:
+            print(f"ERROR: could not fetch {s}; skipping")
+            continue
+        time.sleep(0.05)  # be polite to Alpaca data API
+    if not P:
+        raise RuntimeError("No price data fetched; aborting")
+    ds = sorted(set().union(*[set(P[s]) for s in P]))
+    ds = [d for d in ds if d >= "2025-08-01"]
+    if not ds:
+        raise RuntimeError("No trading days in fetched window")
+    me_days = month_ends(ds)
+    run_portfolio("dm", dm_signal_target, ds, P, me_days)
+    run_portfolio("sleeve", sleeve_target, ds, P, me_days)
+    i = len(ds) - 1
+    write_sleeve_signal_and_watchlist(ds, P, i)
+
 
 if __name__ == "__main__":
     main()
