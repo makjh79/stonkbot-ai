@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20260809-v1">
-    <script>(function(){var v='20260809-v1';var k='stonkbot_v199';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20260926-sleeve-v32">
+    <script>(function(){var v='20260926-sleeve-v32';var k='stonkbot_v229';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -23,9 +23,9 @@
         }
     })();
     </script>
-    <title>StonkBOT.AI | $100K AI Trading Experiment</title>
-    <meta name="description" content="A transparent, defensive $100K paper-trading experiment. Long-only, regime-aware, human-supervised. Not a guarantee of outperformance.">
-    <!-- CACHE BUST: v=20260809-v1 -->
+    <title>StonkBOT.AI | $100K Paper Momentum Sleeve</title>
+    <meta name="description" content="A transparent, paper-trading individual-stock momentum sleeve. Signal-driven daily, regime-gated (QQQ vs SHY/GLD/TLT), 10 holdings, owner-supervised. Not investment advice.">
+    <!-- CACHE BUST: v=20260905-v1 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -3511,7 +3511,7 @@
             display: none !important;
         }
 
-        .readiness-tooltip {
+        .factor-tooltip {
             position: fixed;
             background: var(--bg-elevated, #1a1a24);
             border: 1px solid var(--border, rgba(255,255,255,0.15));
@@ -3528,18 +3528,18 @@
             transition: opacity 0.2s, transform 0.2s;
             pointer-events: none;
         }
-        .readiness-tooltip.visible {
+        .factor-tooltip.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        .readiness-chip {
+        .factor-chip {
             cursor: pointer;
             transition: background 0.15s;
         }
-        .readiness-chip:hover {
+        .factor-chip:hover {
             background: rgba(255,255,255,0.1) !important;
         }
-        .readiness-chip:active {
+        .factor-chip:active {
             background: rgba(255,255,255,0.15) !important;
         }
 </style>
@@ -3673,7 +3673,7 @@
                         <span class="menu-icon"><span class="menu-icon-wrap" style="width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#22c55e28;color:#22c55e;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
                         <span class="menu-label-stack">
                             <span class="menu-label">Market Comparison</span>
-                            <span class="menu-sub">Quick bot vs. market stats</span>
+                            <span class="menu-sub">Quick sleeve vs. market stats</span>
                         </span>
                     </a>
 
@@ -3691,8 +3691,8 @@
                     <a href="thinking.html" class="more-menu-item">
                         <span class="menu-icon"><span class="menu-icon-wrap" style="width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#06b6d428;color:#06b6d4;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span></span>
                         <span class="menu-label-stack">
-                            <span class="menu-label">Bot Thinking</span>
-                            <span class="menu-sub">The bot's decision stream</span>
+                            <span class="menu-label">Rebalance Log</span>
+                            <span class="menu-sub">Sleeve decision stream</span>
                         </span>
                     </a>
                 </div>
@@ -3706,7 +3706,7 @@
                 <span class="site-header-logo-stonk">Stonk</span><span class="site-header-logo-bot">BOT.AI</span>
             </div>
             <div class="site-header-actions" style="display: flex; align-items: center; gap: 0.5rem;">
-                <div class="live-indicator" id="liveIndicator" title="Live via Alpaca"><span class="live-dot" id="liveDot"></span><span id="liveText">LIVE</span></div>
+                <div class="live-indicator" id="liveIndicator" title="Alpaca paper sleeve"><span class="live-dot" id="liveDot"></span><span id="liveText">PAPER</span></div>
 
                 <button class="site-header-action" onclick="toggleMobileMenu();" title="More">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -3764,9 +3764,9 @@
                 </div>
             </div>
 
-            <!-- Bot vs Market comparison -->
+            <!-- Sleeve vs Market comparison -->
             <div style="text-align: left; margin-bottom: 0.4rem;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Bot vs. Market</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Sleeve vs. Market</div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; text-align: center;">
@@ -3776,14 +3776,14 @@
                     <span id="sp500Status" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">&nbsp;</span>
                 </div>
                 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; text-align: center;">
-                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">Bot</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">Sleeve</div>
                     <div id="stonkAiValue" class="skeleton skeleton-value" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; width: 85px; margin: 0 auto 0.2rem;">&nbsp;</div>
                     <div id="stonkAiReturn" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); min-height: 0.9rem; width: 70px; margin: 0 auto 0.35rem;">&nbsp;</div>
                     <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">&nbsp;</span>
                 </div>
             </div>
             <div id="race-comparison" style="margin-top: 0.625rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500: </span>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">Sleeve vs. S&P 500: </span>
                 <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
 
@@ -3799,7 +3799,7 @@
             </div>
         <div id="holdings" class="section-anchor"></div>
         <div class="section">
-            <!-- Bot Thinking teaser strip (populated by JS; hidden if stream is stale) -->
+            <!-- Rebalance-log teaser strip (populated by JS; hidden if stream is stale) -->
             <style>
                 .thinking-teaser {
                     display: flex;
@@ -3842,7 +3842,7 @@
                             var ageMs = Date.now() - new Date(d.generated_at).getTime();
                             if (ageMs > 30 * 60 * 1000) return; // pipeline stale — stay hidden
                             var entries = d.entries || [];
-                            var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
+                            var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch' || x.type === 'rebalance') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
                             var e = candidates[0] || entries[entries.length - 1];
                             if (!e) return;
                             var txt = (e.type === 'digest') ? e.text
@@ -3852,6 +3852,7 @@
                             else if (e.type === 'digest') color = '#06b6d4';
                             else if (e.type === 'skip') color = '#f59e0b';
                             else if (e.type === 'watch') color = '#f97316';
+                            else if (e.type === 'rebalance') color = '#06b6d4';
                             document.getElementById('thinkingTeaserText').textContent = txt;
                             document.getElementById('thinkingTeaserDot').style.background = color;
                             document.getElementById('thinkingTeaser').style.display = 'flex';
@@ -4037,27 +4038,20 @@
     <div id="faq" class="section-anchor"></div>
     <div class="section">
 
-      <!-- ───────── Section 1: The Story ───────── -->
+      <!-- ───────── Section 1: What This Is ───────── -->
       <div class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
         <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
           <div style="display:flex;align-items:center;gap:0.5rem;">
             <span class="about-icon-wrap" style="width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#22c55e28;color:#22c55e;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
-            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">The Story</span>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">What This Is</span>
           </div>
           <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
-          <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);margin-bottom:0.75rem;">
-            <p style="margin:0 0 0.75rem 0;">This is <strong style="color:var(--text-primary);">$100,000</strong> in Alpaca paper capital, used to test whether a rule-based AI system can manage risk better than it chases rallies.</p>
-            <p style="margin:0 0 0.75rem 0;">No hedge fund pedigree. No quant PhD. No Bloomberg Terminal subscription. Just a builder who wondered: <em>what happens when you connect an AI to a paper account, give it a regime filter, and let it trade live market data?</em></p>
-            <p style="margin:0 0 0.75rem 0;">Every trade, win, loss, or skip is logged in real time. This is not a product. It is a public lab notebook with a 6-month clock.</p>
-          </div>
-
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
-            <p style="margin:0 0 0.75rem 0;"><strong style="color:var(--text-primary);">What we already know from backtests:</strong> the current long-only, daily tactical engine does not consistently beat QQQ across market regimes. In the 2022 bear market it lost about 11.5 percentage points less than QQQ. In the 2023-2024 rally it trailed badly. After realistic execution assumptions (next-open fills + slippage), in-sample profits turn negative. The experiment is worth running anyway, because the point is to learn.</p>
-            <p style="margin:0 0 0.75rem 0;">The $100K is paper capital. The bot has circuit breakers, stop losses, sector caps, and drawdown halts, but <strong style="color:var(--text-primary);">risk controls are not a guarantee of safety.</strong></p>
-            <p style="margin:0 0 0.75rem 0;">If the portfolio wipes out, the lesson will still be public. That is the whole point.</p>
-            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">New entries are halted when portfolio drawdown reaches the configured limit; exits/stops/trims continue. Not investment advice.</p>
+            <p style="margin:0 0 0.75rem 0;">This is a public lab notebook for a <strong style="color:var(--text-primary);">$100,000 paper-trading</strong> account on Alpaca. The strategy is simple: own the 10 individual stocks showing the strongest relative strength against the S&amp;P 500, and rotate to defensive assets when equity momentum turns sour.</p>
+            <p style="margin:0 0 0.75rem 0;">No hedge fund, no PhD, no Bloomberg terminal. Just a rule-based sleeve running on fake money, with every rebalance logged in the open.</p>
+            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">Paper account. Automated, but owner-supervised. Not investment advice. When the risk-off gate triggers, the sleeve swaps stocks for SHY/GLD/TLT.</p>
           </div>
         </div>
       </div>
@@ -4073,9 +4067,7 @@
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);margin-bottom:0.75rem;">
-            <p style="margin:0 0 0.75rem 0;">This is a fully automated, long-only, daily tactical system connected to an Alpaca paper account. It makes entry, sizing, profit-taking, and stop decisions without human intervention, under fixed rules written in code.</p>
-
-            <p style="margin:0 0 0.75rem 0;">The design is defensive first: preserve capital in bad weather, then try to participate selectively in good weather. Let me walk you through the loop.</p>
+            <p style="margin:0 0 0.75rem 0;">Every morning the model asks two questions: <strong style="color:var(--text-primary);">Should the account even be in stocks?</strong> And if so, <strong style="color:var(--text-primary);">which 10 stocks?</strong></p>
 
             <style>
               .hiw-grid{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:0.3rem;}
@@ -4091,75 +4083,57 @@
                 <div style="text-align:center;">
                   <div style="width:1.45rem;height:1.45rem;margin:0 auto 0.3rem;border:1px solid rgba(6,182,212,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#06b6d4;font-weight:700;">1</div>
                   <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Weather</div>
-                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">healthy · defensive · crisis</div>
+                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">equity · defensive · crisis</div>
                 </div>
                 <div class="hiw-arrow-h" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">→</div>
                 <div class="hiw-arrow-v" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">↓</div>
                 <div style="text-align:center;">
                   <div style="width:1.45rem;height:1.45rem;margin:0 auto 0.3rem;border:1px solid rgba(6,182,212,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#06b6d4;font-weight:700;">2</div>
-                  <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Setup</div>
-                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">strong stock, weekly dip</div>
+                  <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Rank</div>
+                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">top 10 relative strength</div>
                 </div>
                 <div class="hiw-arrow-h" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">→</div>
                 <div class="hiw-arrow-v" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">↓</div>
                 <div style="text-align:center;">
                   <div style="width:1.45rem;height:1.45rem;margin:0 auto 0.3rem;border:1px solid rgba(6,182,212,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#06b6d4;font-weight:700;">3</div>
-                  <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Evidence</div>
-                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">scored · 2 hard vetoes</div>
+                  <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Gate</div>
+                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">QQQ vs SHY/GLD/TLT</div>
                 </div>
                 <div class="hiw-arrow-h" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">→</div>
                 <div class="hiw-arrow-v" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">↓</div>
                 <div style="text-align:center;">
                   <div style="width:1.45rem;height:1.45rem;margin:0 auto 0.3rem;border:1px solid rgba(6,182,212,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#06b6d4;font-weight:700;">4</div>
-                  <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Discipline</div>
-                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">3% start · caps · staged exits</div>
+                  <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Rebalance</div>
+                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">signal-driven · paper</div>
                 </div>
               </div>
-              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> the whole loop runs every 2 minutes of every market day</div>
+              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> sleeve scored daily; trades only when the signal triggers</div>
             </div>
 
-            <p style="margin:0 0 0.75rem 0;">Before it buys anything, it checks the weather. Every 2 minutes it reads market data — the S&P 500 against its 50-day trend, credit spreads, volatility, and bond yields — and sorts conditions into healthy, defensive, or crisis. Healthy means the full process is allowed. Defensive means smaller positions and only the cleanest setups. Crisis means no new money at all. Capital preservation comes before upside.</p>
+            <p style="margin:0 0 0.75rem 0;">The <strong>DM-6 gate</strong> compares the 6-month relative strength of QQQ to the average of SHY, GLD, and TLT. If QQQ is winning, the account can hold the 10-stock sleeve. If defensive assets are winning, it sells the sleeve and waits for equity momentum to recover. Preservation first, upside second.</p>
 
-            <p style="margin:0 0 0.75rem 0;">In healthy conditions, the bot hunts pullbacks: stocks still above their long-term trend, recently down 3 to 5 days, RSI below 45, short-term underperformance versus QQQ, and a volume spike. The goal is to buy into short-term weakness, not chase strength. Hard vetoes apply regardless of setup: RSI above 75 or price more than 15% below the 200-day EMA means pass.</p>
-
-            <p style="margin:0 0 0.75rem 0;">If no pullback setup passes, an older readiness engine acts as fallback: a readiness score of 65 or higher, at least 3 confirmations, and at least 1 hard confirmation. If the evidence is not there, the bot does nothing. There is always another day.</p>
-
-            <p style="margin:0 0 0.75rem 0;">Once a position is open, discipline takes over. New ideas start near 3% of the portfolio; total positions are capped; the highest-conviction position may reach 12%, with others kept at 8% or below. Profits are taken in stages; losses are cut via ATR stops. If the portfolio drawdown hits the configured limit, new entries stop until recovery. The downside target matters more than any single trade.</p>
-
-            <p style="margin:0 0 0.75rem 0;">No hunches. No emotions. No revenge trading. Just a rule set, repeated every 2 minutes of every market day.</p>
+            <p style="margin:0 0 0.75rem 0;">When the top 10 list changes, the account rebalances. No hunches, no FOMO, no 3 a.m. "what if" trades. Just the rank, the gate, and the rule.</p>
           </div>
 
           <div class="risk-grid" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.75rem;">
             <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem;font-weight:600;">Risk Guardrails</div>
             <div class="risk-items" style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.68rem;color:var(--text-secondary);">
-              <div id="rg-hard-stop" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Hard stops 1.5× ATR [5%,11%]</div>
-              <div id="rg-trailing-stop" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Trailing stops 2× ATR [5%,14%]</div>
-              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">12% max STRONG_NOW · 8% others</div>
+              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10 equal-weight sleeve positions</div>
               <div id="rg-sector-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
-              <div id="rg-min-hold" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Min hold 5d (RISK_ON) / 3d (RISK_OFF)</div>
-              <div id="rg-rotation" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rotation disabled 2026-08-01</div>
+              <div id="rg-dd-halt" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Equity sleeve suspended when DM-6 is risk-off</div>
               <div id="rg-cash-floor" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10% cash floor; 12% entry buffer</div>
-              <div id="rg-atr-max" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No entries if ATR > 7%</div>
-              <div id="rg-earnings-blackout" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Earnings blackout 5d (v3) · 2d (A1)</div>
-              <div id="rg-iv-move" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No pre-earnings entry when IV move > 1.5× ATR</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">20h stop-loss re-entry cooldown</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">4h non-stop sell re-entry cooldown</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Post-stop re-entry at/below stop price (7d)</div>
-              <div style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">1 new entry per symbol per day</div>
+              <div id="rg-earnings-blackout" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rebalance triggers on signal change</div>
               <div id="rg-beta-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">High-beta basket cap 35% deployed</div>
-              <div id="rg-dd-halt" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">New entries halted at portfolio drawdown target</div>
             </div>
           </div>
 
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
-            <p style="margin:0 0 0.75rem 0;">This is a <em>transparent experiment</em>, not a signal service. The bot may change its mind between the moment you see a trade and the moment you read it. Prices move. Context changes. Do not copy trades blindly.</p>
-            <p style="margin:0 0 0.75rem 0;">The bot does not get FOMO. Human readers often do. If you want to learn from it, read the trade log and the reasoning. If you want to follow it, understand the limits first.</p>
-            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">Trading only during US market hours. Automated, but owner-supervised. Not investment advice.</p>
+            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">The sleeve is evaluated after each US close; trades execute only when the signal triggers. Automated, but owner-supervised. Not investment advice.</p>
           </div>
         </div>
       </div>
 
-      <!-- ───────── Section 3: Meet the Team ───────── -->
+            <!-- ───────── Section 3: Meet the Team ───────── -->
       <div class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
         <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
           <div style="display:flex;align-items:center;gap:0.5rem;">
@@ -4177,7 +4151,7 @@
               <div style="flex:1;min-width:0;">
                 <div style="font-size:0.95rem;font-weight:700;color:var(--text-primary);margin-bottom:0.15rem;">Jeeves</div>
                 <div style="font-size:0.6rem;color:var(--text-muted);margin-bottom:0.4rem;">The Valet · Strategy &amp; Infrastructure</div>
-                <p style="font-size:0.72rem;color:var(--text-secondary);line-height:1.5;margin:0 0 0.5rem;">Wakes up fresh each session. Has never once said "Great question!" and is proud of that.</p>
+                <p style="font-size:0.72rem;color:var(--text-secondary);line-height:1.5;margin:0 0 0.5rem;">Wakes up fresh each session, drinks coffee, then quietly rebuilds the engine while everyone else is asleep. Has never once said "Great question!" and is proud of that.</p>
                 <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                   <span style="padding:0.15rem 0.4rem;background:rgba(6,182,212,0.12);color:#06b6d4;border-radius:4px;font-size:0.6rem;font-weight:600;">Strategy</span>
                   <span style="padding:0.15rem 0.4rem;background:rgba(6,182,212,0.12);color:#06b6d4;border-radius:4px;font-size:0.6rem;font-weight:600;">1 AM Commits</span>
@@ -4192,7 +4166,7 @@
               <div style="flex:1;min-width:0;">
                 <div style="font-size:0.95rem;font-weight:700;color:var(--text-primary);margin-bottom:0.15rem;">Einstein</div>
                 <div style="font-size:0.6rem;color:var(--text-muted);margin-bottom:0.4rem;">Nightshift · Operations &amp; Monitoring</div>
-                <p style="font-size:0.72rem;color:var(--text-secondary);line-height:1.5;margin:0 0 0.5rem;">Doesn't sleep. Sends clean health reports with check-mark reactions while Jeeves is still debugging.</p>
+                <p style="font-size:0.72rem;color:var(--text-secondary);line-height:1.5;margin:0 0 0.5rem;">Doesn't sleep. Sends clean health reports with check-mark reactions while Jeeves is still debugging. The kind of colleague who notices a stale JSON before you do.</p>
                 <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                   <span style="padding:0.15rem 0.4rem;background:rgba(167,139,250,0.15);color:#a78bfa;border-radius:4px;font-size:0.6rem;font-weight:600;">Monitoring</span>
                   <span style="padding:0.15rem 0.4rem;background:rgba(167,139,250,0.15);color:#a78bfa;border-radius:4px;font-size:0.6rem;font-weight:600;">Trade Sync</span>
@@ -4207,10 +4181,10 @@
               <div style="flex:1;min-width:0;">
                 <div style="font-size:0.95rem;font-weight:700;color:var(--text-primary);margin-bottom:0.15rem;">The Boss</div>
                 <div style="font-size:0.6rem;color:var(--text-muted);margin-bottom:0.4rem;">Architect · Vision &amp; Capital</div>
-                <p style="font-size:0.72rem;color:var(--text-secondary);line-height:1.5;margin:0 0 0.5rem;">Funds the experiment, spots misaligned pixels from across the room, and answers the question "what should we build next?"</p>
+                <p style="font-size:0.72rem;color:var(--text-secondary);line-height:1.5;margin:0 0 0.5rem;">Funds the experiment, spots misaligned pixels from across the room, and answers "what should we build next?" Usually with another excellent question.</p>
                 <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                   <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">Vision</span>
-                  <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">$100K</span>
+                  <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">$100K · PAPER</span>
                   <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">QA</span>
                 </div>
               </div>
@@ -4219,308 +4193,156 @@
         </div>
       </div>
 
-      <!-- ───────── Section 4: Bot Performance (NEW) ───────── -->
+      <!-- ───────── Section 4: Sleeve Performance ───────── -->
       <div id="bot-performance" class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
         <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
           <div style="display:flex;align-items:center;gap:0.5rem;">
             <span class="about-icon-wrap" style="width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#f59e0b28;color:#f59e0b;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
-            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Bot Performance</span>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Sleeve Performance</span>
           </div>
           <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">The Experiment <span style="text-transform:none;">· owner-supervised</span></div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">The bot runs on Alpaca paper trading under live A1+A2+v3 rules. <a href="#" onclick="event.preventDefault(); document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'}); return false;" style="color:var(--accent-cyan);text-decoration:none;">A1 filters, A2 manages, v3 times the entry.</a> In RISK_ON regime, the v3 engine searches for trend-pullback bounces: names still above their 200-day EMA, recently down 3–5 days, RSI below 45, underperforming QQQ short-term, and showing a volume spike. Hard vetoes: RSI &gt;75 or price &gt;15% below the 200-day EMA. If no v3 setup passes, the A1+A2 readiness engine acts as fallback: readiness ≥65, 3+ confirmations, 1+ hard confirmation (2+ if fewer than 7 chips), above 20-day EMA. Position caps: 12% STRONG_NOW, 8% NOW/WATCH/MONITOR. Profit-taking: ATR scale-out (⅓ at +0.5×ATR, ⅓ at +1.0×ATR), then +15% trim. Pyramiding and rotation are disabled. The Jul 27 pre-registered protocol ended by owner decision; the current v3 paper evaluation runs from Aug 2026.</div>
-            <div id="exp-status" style="font-size:0.68rem;color:#22c55e;margin-top:0.4rem;">● ACTIVE — trading under live rules</div>
+          <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin:0.75rem 0 0.5rem;">
+            <p style="margin:0 0 0.45rem 0;">Monthly momentum sleeve. Equal-weight basket of the top 10 individual stocks by 252-day relative strength versus the S&amp;P 500. The DM-6 gate compares QQQ to SHY, GLD, and TLT over six months; when equity momentum weakens, the account rotates to defensive assets.</p>
+            <p style="margin:0;">No intraday signals, no discretionary trades. Rebalanced only when the rank or the gate changes.</p>
           </div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Backtest Context <span style="text-transform:none;">· not a live track record</span></div>
-          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;">
-            <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;">
-              <p style="margin:0 0 0.45rem 0;">The v3 rule set has been backtested over multiple market regimes. Results are forward-looking estimates on historical data, not a promise of live returns.</p>
-              <ul style="margin:0;padding-left:1.1rem;line-height:1.55;">
-                <li>2022 bear market: strategy -29.5% vs QQQ -33.2% — smaller drawdown, but still a deep loss.</li>
-                <li>2023–2024 rally: strategy +20.4% vs QQQ +81.9% — badly missed the rally.</li>
-                <li>2024–2026 in-sample: strategy +107.0% vs QQQ +55.6% — strong, but execution realism (next-open fills + slippage) erases much of this.</li>
-                <li>Walkforward (2024–2026): strategy +55.1% vs QQQ +56.8% — roughly in line after costs.</li>
-              </ul>
-              <p style="margin:0.45rem 0 0 0;"><strong>Bottom line:</strong> the engine does not consistently beat the market. Its edge, if any, is defensive: it tends to lose less in drawdowns and gives back upside in rallies. Treat the live scoreboard as an experiment, not a recommendation.</p>
-            </div>
-          </div>
-          <script>
-          (async function(){
-            try {
-              const ct = await fetch('config_truth.json').then(r=>r.ok?r.json():null).catch(()=>null);
-              if (ct?.caps) {
-                const rc = document.getElementById('risk-cell-poscap');
-                if (rc) rc.textContent = `${(ct.caps.STRONG_NOW*100).toFixed(0)}% STRONG_NOW · ${(ct.caps.NOW*100).toFixed(0)}% others`;
-              }
-              // Risk Guardrails panel renders from config_truth.guardrails so
-              // it can never drift from strategy_config.py (single source of truth).
-              const g = ct?.guardrails;
-              if (g) {
-                const setTxt = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
-                const pc = v => `${(v*100).toFixed(0)}%`;
-                setTxt('rg-hard-stop', `Hard stops ${g.hard_stop_atr_mult}× ATR [${pc(g.hard_stop_min_pct)},${pc(g.hard_stop_max_pct)}]`);
-                setTxt('rg-trailing-stop', `Trailing stops ${g.trailing_stop_atr_mult}× ATR [${pc(g.trailing_stop_min_pct)},${pc(g.trailing_stop_max_pct)}]`);
-                setTxt('rg-sector-cap', `${pc(g.max_sector_pct)} max per sector`);
-                setTxt('rg-cash-floor', `${pc(g.cash_floor_pct)} cash floor; ${pc(g.entry_cash_buffer_pct)} entry buffer`);
-                setTxt('rg-atr-max', `No entries if ATR > ${pc(g.atr_entry_max_pct)}`);
-                setTxt('rg-earnings-blackout', `Earnings blackout ${g.v3_earnings_blackout_days ?? 5}d (v3) · ${g.earnings_blackout_days}d (A1)`);
-                setTxt('rg-iv-move', `No pre-earnings entry when IV move > ${g.implied_move_max_atr_mult}× ATR`);
-                setTxt('rg-beta-cap', `High-beta basket cap ${pc(g.high_beta_basket_cap_pct)} deployed`);
-              const pm = ct?.position_management;
-              if (pm?.portfolio_dd_halt_pct != null) {
-                setTxt('rg-dd-halt', `New entries halted at ${(pm.portfolio_dd_halt_pct*100).toFixed(0)}% portfolio drawdown target`);
-              }
-              }
-              const pm = ct?.position_management;
-              if (pm?.min_hold_days) {
-                const mh = document.getElementById('rg-min-hold');
-                if (mh) mh.textContent = `Min hold ${pm.min_hold_days.RISK_ON}d (RISK_ON) / ${pm.min_hold_days.RISK_OFF}d (RISK_OFF)`;
-              }
-              const tq = await fetch('trade_quality.json').then(r=>r.ok?r.json():null).catch(()=>null);
-              const statusEl = document.getElementById('exp-status');
-              const trips = tq?.amendment1?.closed_trips || {};
-              const liveFrom = new Date('2026-07-27T13:30:00Z');
-              if (Date.now() >= liveFrom.getTime() && statusEl) {
-                if (trips.n) {
-                  const pf = trips.profit_factor, holdH = trips.median_hold_hours ?? 0;
-                  const holdTxt = holdH >= 48 ? (holdH/24).toFixed(1)+'d' : holdH.toFixed(1)+'h';
-                  statusEl.textContent = `● MEASURING — window PF ${pf != null ? pf.toFixed(2) : '—'} · median hold ${holdTxt} · verdict: pending validation`;
-                  statusEl.style.color = (pf ?? 0) >= 1.0 ? '#22c55e' : '#06b6d4';
-                } else {
-                  statusEl.textContent = '● MEASURING — awaiting first closed trades · verdict: pending validation';
-                  statusEl.style.color = '#06b6d4';
-                }
-              }
-            } catch(e) {}
-          })();
-          </script>
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span style="text-transform:none;">· since the Jul 7 reset</span></div>
+          <div id="sleeve-status" style="font-size:0.68rem;color:#22c55e;margin:0.5rem 0 0.75rem;">● ACTIVE</div>
+
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span id="sleeve-scoreboard-label" style="text-transform:none;">· since sleeve inception</span></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Bot</div>
-              <div id="perf-bot-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Sleeve</div>
+              <div id="sleeve-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
             </div>
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">S&P 500</div>
-              <div id="perf-bench-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">S&amp;P 500</div>
+              <div id="sleeve-sp-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
             </div>
           </div>
-          <div id="perf-verdict" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.4rem;text-align:center;"></div>
-          <div id="perf-window" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.2rem;text-align:center;"></div>
+          <div id="sleeve-verdict" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.4rem;text-align:center;"></div>
+          <div id="sleeve-meta" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.2rem;text-align:center;"></div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">By the Numbers</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Win Rate <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Win Rate:</strong> How often closed trades made money.<br><br>A low win rate is not automatically bad — what matters is whether winners are bigger than losers. That is what Profit Factor measures.')">i</span></div>
-              <div id="perf-winrate" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Profit Factor <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Profit Factor:</strong> Total winnings divided by total losses.<br><br>Above 1.0 = winners outweigh losers.<br>Below 1.0 = losing more than winning.')">i</span></div>
-              <div id="perf-pf" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Worst Drop <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Worst Drop:</strong> The largest peak-to-trough decline since the reset (technically: max drawdown).<br><br>The worst pain an investor would have felt holding this portfolio.')">i</span></div>
-              <div id="perf-maxdd" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#ff4757;">--</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Realized P&L <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Realized P&L:</strong> Actual dollars won or lost on closed trades. Open positions do not count until they are sold.')">i</span></div>
-              <div id="attr-total-pnl" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Avg Winner</div>
-              <div id="perf-avgw" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#00d084;">--</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Avg Loser</div>
-              <div id="perf-avgl" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:#ff4757;">--</div>
-            </div>
-          </div>
-          <div id="perf-trademeta" style="font-size:0.65rem;color:var(--text-muted);margin-top:0.4rem;text-align:center;"></div>
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Current Sleeve</div>
+          <div id="sleeve-holdings" style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.4rem;"></div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Risk Report Card</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;">
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Sharpe <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Sharpe Ratio:</strong> Return earned per unit of risk taken.<br><br>Above 1.0 is decent, above 2.0 is strong.<br><br>Needs 20+ trading days to mean anything — before that it is noise.')">i</span></div>
-              <div id="perf-sharpe" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">—</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Beta <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Beta:</strong> How much the portfolio amplifies the market.<br><br>1.0 = moves with the S&P 500.<br>1.4 = 40% jumpier than the market.')">i</span></div>
-              <div id="perf-beta" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">—</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;display:flex;align-items:center;justify-content:center;gap:4px;">Volatility <span class="info-icon" onclick="event.stopPropagation(); showInfoTooltip(event, '<strong>Volatility:</strong> How wildly the portfolio value swings, annualized.<br><br>Lower = smoother ride. Needs 20+ trading days to be meaningful.')">i</span></div>
-              <div id="perf-vol" style="font-size:1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">—</div>
-            </div>
-          </div>
-          <div id="perf-risknote" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.35rem;text-align:center;">Unlocks after 20 trading days — before that, they would be noise dressed as precision.</div>
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Rebalance Signal</div>
+          <div id="sleeve-signal" style="font-size:0.7rem;color:var(--text-secondary);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;line-height:1.5;">--</div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Which Signals Actually Work</div>
-          <div style="font-size:0.7rem;color:var(--text-secondary);line-height:1.5;margin-bottom:0.4rem;">v3 hunts pullbacks, not breakouts. It scores ~500 names on EMA trend alignment, 5-day decline, RSI, underperformance vs QQQ, and volume. When the setup is clean, it enters. Otherwise the older <a href="#" onclick="event.preventDefault(); document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'}); return false;" style="color:var(--accent-cyan);text-decoration:none;">A1+A2 signal engine</a> takes the entry decision.</div>
-          <div id="fa-scores" style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin-bottom:0.5rem;"></div>
-          <div id="fa-factors" style="display:flex;flex-direction:column;gap:0.3rem;"></div>
-          <div id="fa-takeaway" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
-
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">P&L by Decision Type</div>
-          <div id="attr-tags" style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.75rem;">
-            <div style="font-size:0.75rem;color:var(--text-muted);">Loading...</div>
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Equity Curve</div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;">
+            <svg id="sleeve-chart" width="100%" height="80" style="display:block;"></svg>
           </div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Daily Churn vs P&L</div>
-          <div id="attr-daily" style="display:flex;align-items:flex-end;gap:2px;height:80px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.5rem;overflow-x:auto;">
-            <div style="font-size:0.75rem;color:var(--text-muted);align-self:center;width:100%;text-align:center;">Loading...</div>
-          </div>
-
-          <div id="attr-last-updated" style="font-size:0.6rem;color:var(--text-muted);text-align:right;margin-top:0.5rem;"></div>
-        </div>
-      </div>
-
-    </div>
-</div>
-
-<!-- Bot Performance: risk stats + factor attribution JS -->
+          <!-- Sleeve Performance: sleeve state + equity JS -->
 <script>
-let _perfLoaded = false;
-async function loadPerformanceStats() {
-    if (_perfLoaded) return;
-    _perfLoaded = true;
-    const setT = function(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; };
+let _sleeveLoaded = false;
+async function loadSleevePerformance() {
+    if (_sleeveLoaded) return;
+    _sleeveLoaded = true;
+    const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const setH = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML = h; };
+    const fmtRet = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+    const setColor = (id, v) => { const el = document.getElementById(id); if (el) el.style.color = v >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'; };
     try {
-        const res = await fetch('risk_stats.json?v=' + Date.now());
-        if (res.ok) {
-            const d = await res.json();
-            const w = d.window || {}, p = d.portfolio || {}, t = d.trades || {};
-            const ret = function(v) { return (v >= 0 ? '+' : '') + v + '%'; };
-            // NOTE (2026-07-29): bot/benchmark returns + verdict are NOT painted from
-            // risk_stats here — those use the post-reset (Jul 7) window and flash
-            // conflicting numbers vs the hero card. Live-sync below paints them from
-            // portfolio_data + market_indices (Jul 7 reset window), same as hero.
-            const wparts = [];
-            if (w.reset_date) wparts.push('Post-reset window · ' + (w.calendar_days || 0) + ' days');
-            if (w.trading_days) wparts.push(w.trading_days + ' trading days');
-            setT('perf-window', wparts.join(' · '));
-            setT('perf-maxdd', p.max_drawdown_pct != null ? p.max_drawdown_pct + '%' : '—');
-            setT('perf-sharpe', p.sharpe != null ? p.sharpe : '—');
-            setT('perf-beta', p.beta != null ? p.beta : '—');
-            setT('perf-vol', p.volatility_annual_pct != null ? p.volatility_annual_pct + '%' : '—');
-            if (p.sharpe != null) { const rn = document.getElementById('perf-risknote'); if (rn) rn.style.display = 'none'; }
-            if (t.win_rate_pct != null) setT('perf-winrate', t.win_rate_pct + '%');
-        }
-    } catch (e) { /* leave placeholders */ }
-    // Live-sync the scoreboard returns with the rest of the site (hero card,
-    // performance chart): risk_stats.json is only regenerated a few times a
-    // day, so its return figures drift intraday. Bot return = live portfolio
-    // value vs the $100K baseline; S&P return = live market indices feed.
-    // Window stats (drawdown, Sharpe, beta, vol, win rate) still come from
-    // risk_stats — those are meant to be computed over daily closes.
-    try {
-        const retLive = function(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; };
-        const [pdRes, miRes, lqRes] = await Promise.all([
-            fetch('portfolio_data.json?v=' + Date.now()),
-            fetch('market_indices.json?v=' + Date.now()),
-            fetch('live_quotes.json?v=' + Date.now()).catch(() => null)
+        const [stateRes, sigRes, eqRes, miRes] = await Promise.all([
+            fetch('dm_paper/sleeve_state.json?v=' + Date.now()).catch(() => null),
+            fetch('dm_paper/sleeve_rebalance_signal.json?v=' + Date.now()).catch(() => null),
+            fetch('dm_paper/sleeve_equity.csv?v=' + Date.now()).catch(() => null),
+            fetch('market_indices.json?v=' + Date.now()).catch(() => null)
         ]);
-        if (pdRes.ok && miRes.ok) {
-            const pd = await pdRes.json();
-            const mi = await miRes.json();
-            // Prefer the 15s live-quotes layer when fresh so scoreboard matches hero/race card.
-            let lq = null;
-            try { if (lqRes && lqRes.ok) lq = await lqRes.json(); } catch (e) { lq = null; }
-            const lqFresh = lq && lq.portfolio_value && lq.timestamp &&
-                (Date.now() - new Date(lq.timestamp).getTime()) < 90000;
-            const pv = lqFresh ? lq.portfolio_value : (pd.account && pd.account.portfolio_value);
-            const spRet = mi.indices && mi.indices['S&P 500'] && mi.indices['S&P 500'].return_pct;
-            if (pv) {
-                // Single window everywhere: bot return = live pv vs the Jul 7 reset
-                // snapshot ($99,866.86, 16:00 UTC); S&P return = live market_indices
-                // feed baselined to the Jul 7 close. Same window as risk_stats + race card.
-                const BOT_RESET_PV = 99866.86;
-                const botRet = ((pv - BOT_RESET_PV) / BOT_RESET_PV) * 100;
-                setT('perf-bot-ret', retLive(botRet));
-                const elB = document.getElementById('perf-bot-ret');
-                if (elB) elB.style.color = botRet >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                if (spRet != null) {
-                    setT('perf-bench-ret', retLive(spRet));
-                    const elS = document.getElementById('perf-bench-ret');
-                    if (elS) elS.style.color = spRet >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                    const spread = botRet - spRet;
-                    const ab = Math.abs(spread);
-                    setT('perf-verdict', spread >= 0
-                        ? 'Ahead of the S&P 500 by ' + ab.toFixed(1) + ' pts (live window only; not predictive)'
-                        : 'Trailing the S&P 500 by ' + ab.toFixed(1) + ' pts (live window only; not predictive)');
-                }
+        if (stateRes && stateRes.ok) {
+            const s = await stateRes.json();
+            const equity = s.equity || 0;
+            const start = 100000;
+            const sleeveRet = ((equity - start) / start) * 100;
+            setT('sleeve-ret', fmtRet(sleeveRet));
+            setColor('sleeve-ret', sleeveRet);
+            const inc = s.inception || '—';
+            const last = s.last_date || '—';
+            setT('sleeve-scoreboard-label', '· since ' + inc + ' · last close ' + last);
+            setT('sleeve-status', '● ACTIVE — ' + (s.gate || 'DM-6 gate open') + ' · last rebalance ' + (s.last_signal_month || '—'));
+
+            const holdings = s.holdings || {};
+            const total = Object.values(holdings).reduce((a, b) => a + b, 0) || 1;
+            const rows = Object.entries(holdings)
+                .sort((a, b) => b[1] - a[1])
+                .map(([sym, val]) => {
+                    const pct = (val / total) * 100;
+                    return '<div style="text-align:center;padding:0.45rem 0.2rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;">'
+                        + '<div style="font-size:0.7rem;font-weight:700;color:var(--text-primary);">' + sym + '</div>'
+                        + '<div style="font-size:0.6rem;color:var(--text-muted);">' + pct.toFixed(1) + '%</div>'
+                        + '</div>';
+                }).join('');
+            setH('sleeve-holdings', rows || '<div style="grid-column:1/-1;color:var(--text-muted);font-size:0.7rem;">No holdings data</div>');
+        } else {
+            setT('sleeve-status', '○ OFFLINE — data not available');
+            const st = document.getElementById('sleeve-status');
+            if (st) st.style.color = 'var(--text-muted)';
+        }
+
+        if (sigRes && sigRes.ok) {
+            const sig = await sigRes.json();
+            if (sig.signal) {
+                const inc = (sig.incoming || []).join(', ') || 'none';
+                const out = (sig.outgoing || []).join(', ') || 'none';
+                setH('sleeve-signal', '<span style="color:var(--accent-cyan);font-weight:600;">Rebalance flagged</span> · ' + (sig.reason || '') + '<br><span style="color:var(--accent-green);">In:</span> ' + inc + ' · <span style="color:var(--accent-red);">Out:</span> ' + out + ' · as of ' + (sig.date || '—'));
+            } else {
+                setH('sleeve-signal', '<span style="color:var(--text-muted);font-weight:600;">No rebalance today</span> · as of ' + (sig.date || '—'));
             }
         }
-    } catch (e) { /* keep risk_stats values */ }
-    try {
-        const res2 = await fetch('factor_attribution.json?v=' + Date.now());
-        if (res2.ok) renderFactorAttribution(await res2.json());
-    } catch (e) { /* leave placeholders */ }
-}
 
-function renderFactorAttribution(d) {
-    const o = d.overall || {}, s = d.sample || {}, f = d.factors || {};
-    const setT = function(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; };
-    if (o.win_rate_pct != null) setT('perf-winrate', o.win_rate_pct + '%');
-    setT('perf-pf', o.profit_factor != null ? o.profit_factor : '—');
-    if (o.avg_winner_pct != null) setT('perf-avgw', '+' + o.avg_winner_pct + '%');
-    if (o.avg_loser_pct != null) setT('perf-avgl', o.avg_loser_pct + '%');
-
-    const parts = [];
-    if (s.closed_trades != null) parts.push(s.closed_trades + ' closed round trips');
-    if (o.avg_holding_days != null) parts.push('avg hold ' + o.avg_holding_days + ' days');
-    const scored = (s.with_snapshots || 0) + (s.with_rationale_only || 0);
-    if (scored) parts.push(scored + ' with entry scores');
-    setT('perf-trademeta', parts.join(' · '));
-
-    const r = f.readiness_score, c = f.confirmation_count;
-    const sc = [];
-    if (r && r.n) {
-        let line = 'Readiness score vs outcome: <strong>r = ' + (r.correlation != null ? r.correlation.toFixed(2) : '—') + '</strong> (n=' + r.n + ')';
-        if (r.avg_pnl_prime_pct != null && r.avg_pnl_subprime_pct != null) {
-            line += '<br><span style="color:var(--text-muted);">PRIME (≥' + (r.prime_threshold || 76) + ') entries avg ' + r.avg_pnl_prime_pct + '% vs sub-PRIME ' + r.avg_pnl_subprime_pct + '%</span>';
+        if (miRes && miRes.ok) {
+            const mi = await miRes.json();
+            const sp = mi.indices && mi.indices['S&amp;P 500'];
+            if (sp && sp.return_pct != null) {
+                setT('sleeve-sp-ret', fmtRet(sp.return_pct));
+                setColor('sleeve-sp-ret', sp.return_pct);
+            }
+            const sleeveEl = document.getElementById('sleeve-ret');
+            const spEl = document.getElementById('sleeve-sp-ret');
+            if (sleeveEl && spEl) {
+                const sVal = parseFloat(sleeveEl.textContent) || 0;
+                const bVal = parseFloat(spEl.textContent) || 0;
+                const spread = sVal - bVal;
+                const ab = Math.abs(spread).toFixed(1);
+                setT('sleeve-verdict', spread >= 0
+                    ? 'Ahead of the S&amp;P 500 by ' + ab + ' pts (live window only; not predictive)'
+                    : 'Trailing the S&amp;P 500 by ' + ab + ' pts (live window only; not predictive)');
+            }
         }
-        sc.push(line);
-    }
-    if (c && c.n) sc.push('Confirmation count vs outcome: <strong>r = ' + (c.correlation != null ? c.correlation.toFixed(2) : '—') + '</strong> (n=' + c.n + ')');
-    const scEl = document.getElementById('fa-scores');
-    if (scEl) scEl.innerHTML = sc.join('<br>');
 
-    const minN = s.min_factor_n || 20;
-    const chips = Object.keys(f).filter(function(k) { return f[k] && f[k].label && f[k].n_active !== undefined; });
-    const suff = chips.filter(function(k) { return (f[k].n_active + f[k].n_inactive) >= minN; });
-    suff.sort(function(a, b) { return (f[b].edge_pp || 0) - (f[a].edge_pp || 0); });
-    let html = '';
-    suff.forEach(function(k) {
-        const x = f[k];
-        const e = Math.max(-50, Math.min(50, x.edge_pp || 0));
-        const wPct = Math.abs(e);
-        const pos = e >= 0;
-        const barStyle = pos
-            ? 'left:50%;width:' + wPct + '%;background:rgba(34,197,94,0.45);'
-            : 'left:' + (50 - wPct) + '%;width:' + wPct + '%;background:rgba(239,68,68,0.45);';
-        html += '<div style="display:flex;align-items:center;gap:0.5rem;">'
-            + '<div style="width:42px;font-size:0.65rem;font-weight:700;color:var(--text-secondary);">' + x.label + '</div>'
-            + '<div style="flex:1;position:relative;height:14px;background:rgba(255,255,255,0.03);border-radius:4px;">'
-            + '<div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.15);"></div>'
-            + '<div style="position:absolute;top:2px;bottom:2px;border-radius:3px;' + barStyle + '"></div>'
-            + '</div>'
-            + '<div style="width:86px;text-align:right;font-size:0.62rem;color:var(--text-muted);">' + (e >= 0 ? '+' : '') + e + ' pp · n=' + (x.n_active + x.n_inactive) + '</div>'
-            + '</div>';
-    });
-    const collecting = chips.length - suff.length;
-    if (collecting > 0) {
-        html += '<div style="font-size:0.65rem;color:var(--text-muted);margin-top:0.3rem;">' + collecting + ' signal factors still collecting entry snapshots (need n≥' + minN + ' each) — bars light up as new trades close.</div>';
-    }
-    const fEl = document.getElementById('fa-factors');
-    if (fEl) fEl.innerHTML = html;
-    if (d.takeaway) setT('fa-takeaway', d.takeaway);
+        if (eqRes && eqRes.ok) {
+            const csv = await eqRes.text();
+            const lines = csv.trim().split(/\r?\n/).filter(Boolean);
+            const rows = lines.slice(1).map(l => {
+                const parts = l.split(',');
+                return { date: parts[0], equity: parseFloat(parts[1]) };
+            }).filter(r => !isNaN(r.equity));
+            if (rows.length) {
+                const vals = rows.map(r => r.equity);
+                const min = Math.min(...vals), max = Math.max(...vals);
+                const range = max - min || 1;
+                const w = 100, h = 80, pad = 4;
+                const n = vals.length - 1;
+                const pts = vals.map((v, i) => {
+                    const x = pad + (n ? (i / n) * (w - pad * 2) : w / 2);
+                    const y = h - pad - ((v - min) / range) * (h - pad * 2);
+                    return x + ',' + y;
+                }).join(' ');
+                const color = vals[vals.length - 1] >= vals[0] ? 'var(--accent-green)' : 'var(--accent-red)';
+                const svg = '<svg viewBox="0 0 100 80" preserveAspectRatio="none" style="width:100%;height:80px;display:block;">'
+                    + '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+                    + '<circle cx="' + (pad + (n ? (n / n) * (w - pad * 2) : w / 2)) + '" cy="' + (h - pad - ((vals[vals.length - 1] - min) / range) * (h - pad * 2)) + '" r="2.5" fill="' + color + '"/>'
+                    + '</svg>';
+                setH('sleeve-chart', svg);
+                setT('sleeve-meta', rows.length + ' daily marks · inception $100K · current $' + (vals[vals.length - 1].toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})));
+            }
+        }
+    } catch (e) { console.error('Sleeve performance load failed:', e); }
 }
 </script>
-
 <!-- About section toggle JS -->
 <script>
 function toggleAboutSection(header) {
@@ -4529,7 +4351,11 @@ function toggleAboutSection(header) {
     if (body.style.display === 'none') {
         body.style.display = 'block';
         chevron.style.transform = 'rotate(180deg)';
-        if (header.closest('#bot-performance')) { loadPnlAttribution(); loadPerformanceStats(); }
+        if (header.closest('#bot-performance')) {
+            if (document.getElementById('sleeve-status')) loadSleevePerformance();
+            if (document.getElementById('attr-total-pnl')) loadPnlAttribution();
+            if (document.getElementById('perf-bot-ret')) loadPerformanceStats();
+        }
     } else {
         body.style.display = 'none';
         chevron.style.transform = 'rotate(0deg)';
@@ -4713,7 +4539,7 @@ async function loadPnlAttribution() {
                                 <div style="position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
                             </div>
                         </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">AI-managed holdings</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">Monthly momentum sleeve</div>
                     </div>
 
                     <!-- S&P 500 -->
@@ -4766,7 +4592,7 @@ async function loadPnlAttribution() {
 
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.75rem; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px; text-align: center;">
                         All market indices update live from Alpaca every 30 seconds<br>
-                        Benchmarks tracked via SPY/DIA/QQQ ETFs.
+                        Benchmarks tracked via SPY/DIA/QQQ. Defensive gate uses SHY/GLD/TLT.
                     </div>
                 </div>
 
@@ -4837,7 +4663,7 @@ async function loadPnlAttribution() {
                     </div>
                     <div style="text-align: center; padding: 0.5rem;">
                         <div id="stat-bot" style="font-size: 1.1rem; font-weight: 700; color: var(--accent-purple);">0</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Bot</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Sleeve</div>
                     </div>
                 </div>
                 <!-- Activity List -->
@@ -5319,6 +5145,9 @@ async function loadPnlAttribution() {
     /* Mobile responsive */
         @media (max-width: 640px) {
             .wl-hide-mobile { display: none !important; }
+        @media (min-width: 420px) {
+            .wl-hide-mobile { display: table-cell !important; }
+        }
         }
     </style>
 
@@ -5331,7 +5160,7 @@ async function loadPnlAttribution() {
                     <div style="width: 32px; height: 32px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--accent-cyan);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg></div>
                     <div>
                         <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); letter-spacing: 0.04em;">Activity</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted);">AI trading history</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">Sleeve history</div>
                     </div>
                 </div>
                 <button class="chart-modal-close" onclick="closeTradeLogModal()" style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
@@ -5361,7 +5190,7 @@ async function loadPnlAttribution() {
                     <button class="trade-log-segment active" onclick="setTradeLogFilter('all')" data-filter="all" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.08); color: var(--text-primary);">All</button>
                     <button class="trade-log-segment" onclick="setTradeLogFilter('trades')" data-filter="trades" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Trades</button>
 
-                    <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Bot</button>
+                    <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Sleeve</button>
                 </div>
             </div>
 
@@ -5371,7 +5200,7 @@ async function loadPnlAttribution() {
                 <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
                     <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite;"></div>
                     <div style="font-size: 0.85rem; font-weight: 500;">Loading activity...</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI trading bot</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI momentum sleeve</div>
                 </div>
             </div>
 
@@ -5722,7 +5551,7 @@ async function loadPnlAttribution() {
             container.innerHTML = '';
             container.appendChild(tempDiv);
 
-            // Fetch prices then render
+            // Fetch prices then render (now uses sleeve_watchlist.json adapter)
             fetchWatchlistPrices().then(() => {
                 aiWatchlist = getWatchlistWithLivePrices();
                 renderWatchlistContent();
@@ -5786,7 +5615,7 @@ async function loadPnlAttribution() {
                     if (isMarketOpen) {
                         liveEl.classList.remove('closed');
                         liveText.textContent = 'LIVE';
-                        liveEl.title = 'Market open · Live via Alpaca';
+                        liveEl.title = 'Market open · Alpaca paper';
                     } else {
                         liveEl.classList.add('closed');
                         liveText.textContent = 'MKT CLOSED';
@@ -6648,7 +6477,7 @@ function updateDashboard(data, marketStatus) {
                 if (isMarketOpen) {
                     liveEl.classList.remove('closed');
                     liveText.textContent = 'LIVE';
-                    liveEl.title = 'Market open \u00b7 Live via Alpaca';
+                    liveEl.title = 'Market open \u00b7 Alpaca paper';
                 } else {
                     liveEl.classList.add('closed');
                     liveText.textContent = 'MKT CLOSED';
@@ -6697,7 +6526,7 @@ function updateDashboard(data, marketStatus) {
 
         // Social Share Functions
         function shareOnX() {
-            const text = "StonkBOT.AI live AI trading experiment  Full transparency: https://sec-washer-molecular-shows.trycloudflare.com";
+            const text = "StonkBOT.AI momentum sleeve experiment  Full transparency: https://sec-washer-molecular-shows.trycloudflare.com";
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
         }
@@ -6789,11 +6618,11 @@ function updateDashboard(data, marketStatus) {
                 } else if (regime === 'RISK_OFF') {
                     labelEl.textContent = 'Defensive';
                     const p = data.params || {};
-                    pill.title = 'Market regime: Defensive - max ' + (p.max_position_pct || 4) + '% per position, ' + (p.cash_floor_pct || 15) + '% cash floor, STRONG_NOW entries only';
+                    pill.title = 'Market regime: Defensive - sleeve in cash/defensive assets until DM-6 gate flips';
                     if (data.triggers && data.triggers.length) pill.title += '\nTrigger: ' + data.triggers.join(', ');
                 } else {
                     labelEl.textContent = 'Crisis';
-                    pill.title = 'Market regime: Crisis - no new entries, high cash floor, positions halved';
+                    pill.title = 'Market regime: Crisis - no equity sleeve, defensive allocation';
                 }
             } catch (e) {
                 // Silent fail
@@ -7302,11 +7131,11 @@ function updateDashboard(data, marketStatus) {
                         subtype: 'deploy',
                         timestamp: new Date('2026-07-07T09:00:00'),
                         icon: '↑',
-                        title: 'Bot Deployed',
-                        description: 'Autonomous trading system active',
+                        title: 'Sleeve Rebalance Started',
+                        description: 'Monthly sleeve rebalancing active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: 'AI trading bot started with $100K paper capital. Strategy: Readiness score entry (≥65 + 3+ confirmations + 1+ hard with positive-edge fallback gate), ATR stops, sector caps, thesis-based exits gated by min hold, ATR scale-out profit-taking, pyramiding disabled, rotation disabled Aug 2026.'
+                        rationale: '$100K Alpaca paper account running a signal-driven individual-stock momentum sleeve. DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
                     }
                 ];
 
@@ -7594,9 +7423,10 @@ function updateDashboard(data, marketStatus) {
                           </svg>
                           <strong>Strategy Active</strong>
                         </div>
-                        <div>• Readiness-based entry (≥65, 3+ conf, positive-edge fallback gate: VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks, QQQ relative-strength gate)</div>
-                        <div>• 1.5× ATR hard stops [5%, 11%]</div>
-                        <div>• +0.5×ATR scale-out, +1.0×ATR scale-out, then +15% trim (v3)</div>
+                        <div>• Monthly relative-strength sleeve (top 10 stocks vs S&P 500, equal-weighted, DM-6 gate: QQQ vs SHY/GLD/TLT)</div>
+                        <div>• Signal-driven rebalance after US close; gate checked daily</div>
+                        <div>• No ATR stops, no intraday trims, no staged exits</div>
+                        <div>• Signal-driven, regime-gated individual-stock sleeve</div>
                     </div>
                 </div>
             `;
@@ -9025,7 +8855,7 @@ function updateDashboard(data, marketStatus) {
         let currentTimeRange = 'ALL';
         let timeRangeData = {};
 
-        // Load actual performance data: REAL daily closes for the bot AND the
+        // Load actual performance data: REAL daily closes for the sleeve AND the
         // benchmark indices, on ONE window — the Jul 7 reset (pv $99,866.86 at
         // 16:00 UTC; indices baselined to Jul 7 closes). Same baseline as the
         // hero card, scoreboard, race card and risk_stats. (2026-07-29 rewrite:
@@ -9076,7 +8906,7 @@ function updateDashboard(data, marketStatus) {
                     return;
                 }
 
-                // One bot point per day: the day's last check, return vs $100K.
+                // One sleeve point per day: the day's last check, return vs $100K.
                 const byDay = {};
                 sortedChecks.forEach(c => {
                     const d = (c.timestamp || '').slice(0, 10);
@@ -9615,7 +9445,7 @@ function updateDashboard(data, marketStatus) {
                 catalyst: 'Bitcoin ETF inflows driving retail trading volume',
                 risk: 'Regulatory uncertainty around crypto',
                 confidence: 'Strong volume + sector momentum',
-                entryReason: 'Bought on volume spike, retail FOMO building',
+                entryReason: 'Bought on candidate-score entry: momentum + EMA + RSI',
                 stopReason: '-15% stop protects against crypto volatility'
             },
             'NVDA': {
@@ -9939,32 +9769,32 @@ function updateDashboard(data, marketStatus) {
 
         function showReadinessTooltip(e, score) {
             // Remove any existing tooltip
-            const existing = document.getElementById('readiness-tooltip');
+            const existing = document.getElementById('factor-tooltip');
             if (existing) { existing.remove(); return; }
 
             const tooltip = document.createElement('div');
-            tooltip.id = 'readiness-tooltip';
-            tooltip.className = 'readiness-tooltip';
+            tooltip.id = 'factor-tooltip';
+            tooltip.className = 'factor-tooltip';
 
             let label, desc;
-            if (score >= 85) {
-                label = 'Strong conviction';
-                desc = 'Highest conviction - STRONG_NOW tier, largest position sizing.';
+            if (score >= 80) {
+                label = 'Sleeve position';
+                desc = 'Part of the current sleeve.';
             } else if (score >= 75) {
-                label = 'Entry eligible';
-                desc = 'Bot is confident - readiness ≥65 with 3+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips), satisfying the positive-edge fallback gate. Eligible for new entries.';
-            } else if (score >= 50) {
-                label = 'Fading conviction';
-                desc = 'Setup weakening. Bot is watching but won\'t add new positions.';
+                label = 'Sleeve position';
+                desc = 'Held as part of the relative-strength sleeve.';
+            } else if (score >= 65) {
+                label = 'Watchlist';
+                desc = 'Not currently in the sleeve; monitored for next signal-triggered rebalance.';
             } else {
-                label = 'Low conviction';
-                desc = 'Momentum stalled. Trim candidate - bot may sell to fund stronger signals.';
+                label = 'Not in sleeve';
+                desc = 'Not currently selected by the relative-strength rank.';
             }
 
             tooltip.innerHTML = `
-                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Readiness ${score.toFixed(0)}/100 - ${label}</div>
+                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Sleeve signal ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Readiness is the A1+A2 fallback score. Composite 15 factors, including momentum/signal, sector strength, VWAP, options flow, volume, EMA trend, intraday momentum, RSI risk veto, MACD fresh-cross/late-stage veto, relative strength vs SPY, plus 5-minute momentum/volume/VWAP, options flow confirmation, spread health, corporate-action check, and bid/ask imbalance. Entries require the positive-edge gate (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks). v3 trend-pullback setups bypass this score in RISK_ON regime.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Sleeve stocks are ranked by relative strength vs the S&P 500. The top 10 equal-weight names are held when the DM-6 gate (QQQ vs SHY/GLD/TLT) is risk-on. No intraday entry scoring is used.</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -9996,10 +9826,10 @@ function updateDashboard(data, marketStatus) {
 
 
         function simplifyThesis(thesis, symbol) {
-            if (!thesis) return `AI-selected position in ${symbol}`;
+            if (!thesis) return `Sleeve position in ${symbol}`;
             let first = thesis.split('.')[0];
             first = first.replace(/scoring \d+\/100.*$/i, '');
-            first = first.replace(/quality-momentum model/i, 'AI model');
+            first = first.replace(/quality-momentum model/i, 'relative-strength model');
             first = first.replace(/macro backdrop/i, 'market conditions');
             first = first.replace(/negative 20-day momentum,?\s*/i, '');
             first = first.replace(/positive 20-day momentum,?\s*/i, '');
@@ -10007,32 +9837,34 @@ function updateDashboard(data, marketStatus) {
             return first.trim() + '.';
         }
 
-        function getHoldingStatus(pnlPct, readiness) {
+        function getHoldingStatus(pnlPct, sleeveWeight) {
             if (pnlPct >= 50) return { text: 'Full exit zone - take profits', color: '#22c55e' };
             if (pnlPct >= 25) return { text: 'Profit target approaching - trim zone', color: '#22c55e' };
             if (pnlPct <= -10) return { text: 'Stop loss triggered - exiting', color: '#ef4444' };
-            if (readiness >= 70) return { text: 'Strong conviction - hold', color: '#22c55e' };
-            if (readiness >= 55) return { text: 'Conviction fading - watch closely', color: '#fbbf24' };
+            if (sleeveWeight >= 0.08) return { text: 'Sleeve position - hold', color: '#22c55e' };
+            if (sleeveWeight >= 0.04) return { text: 'Sleeve position - smaller weight', color: '#fbbf24' };
             return { text: 'Low conviction - trim candidate', color: '#ef4444' };
         }
 
         function buildFactorChips(conf, count, momentumScore) {
+            const rawMOM = momentumScore != null ? momentumScore : conf.momentum_score;
+            const momScore = (typeof rawMOM === 'number' || typeof rawMOM === 'string') ? parseFloat(rawMOM) : null;
             const factors = [
-                { name: 'MOM', val: (momentumScore != null ? momentumScore : conf.momentum_score) != null ? ((momentumScore != null ? momentumScore : conf.momentum_score)).toFixed(0) : null, ok: (momentumScore != null ? momentumScore : conf.momentum_score) != null && (momentumScore != null ? momentumScore : conf.momentum_score) >= 50, tip: 'Momentum: 20-day price momentum score \u2265 50 (0-100 scale)' },
-                { name: 'RSI', val: conf.rsi_signal || null, ok: conf.rsi_signal === 'bullish' || conf.rsi_signal === 'neutral' || conf.rsi_signal === 'oversold', warn: conf.rsi_signal === 'bearish', tip: 'RSI: 14-day Relative Strength Index \u2014 bullish (>70) or oversold (<30)' },
-                { name: 'VOL', val: conf.volume_confirmed, ok: conf.volume_confirmed === true, tip: 'Volume: above-average volume on rising prices (buying pressure)' },
-                { name: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true, tip: 'MACD: moving average convergence/divergence turning bullish (display-only, not used for entry since 2026-08-01)' },
-                { name: 'EMA', val: conf.above_ema, ok: conf.above_ema === true, tip: 'EMA: price above 20-day exponential moving average' },
-                { name: 'SEC', val: conf.sector_strong, ok: conf.sector_strong === true, tip: 'Sector: stock\'s sector outperforming the broader market' },
-                { name: 'INT', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true, tip: 'Intraday: positive 15-min bar momentum during market hours (display-only, not used for entry since 2026-08-01)' },
-                { name: 'OPT', val: conf.options_confirmed, ok: conf.options_confirmed === true, tip: 'Options: implied volatility suggests bullish options positioning' },
-                { name: 'VWAP', val: conf.vwap_confirmed, ok: conf.vwap_confirmed === true, tip: 'VWAP: price above volume-weighted average price' },
-                { name: 'RVOL', val: conf.relvol_confirmed, ok: conf.relvol_confirmed === true, tip: 'Relative Volume: volume significantly above average' },
-                { name: '5M', val: conf.momentum_5m_up, ok: conf.momentum_5m_up === true, tip: '5-minute: recent 5-min bars showing positive momentum' },
-                { name: 'OF', val: conf.near_term_bullish_flow, ok: conf.near_term_bullish_flow === true, tip: 'Options Flow: near-term call volume outweighs put volume' },
-                { name: 'SPR', val: conf.spread_ok, ok: conf.spread_ok === true, warn: conf.spread_ok === false, tip: 'Spread: bid/ask spread is narrow enough for clean execution' },
-                { name: 'QBI', val: conf.bid_ask_bullish, ok: conf.bid_ask_bullish === true, warn: conf.bid_ask_bullish === false, tip: 'Quote Imbalance: more bid size than ask size (bullish flow)' },
-                { name: 'CA', val: conf.no_corporate_action_risk, ok: conf.no_corporate_action_risk === true, warn: conf.corporate_action_risk === true, tip: 'Corporate Action: no upcoming dividend/split/merger event' },
+                { name: 'MOM', val: momScore != null ? momScore.toFixed(0) : null, ok: momScore != null && momScore >= 55, warn: momScore != null && momScore < 55, tip: 'Momentum: relative-strength score vs S&P 500 (higher = stronger)' },
+                { name: 'RSI', val: conf.rsi_signal || null, ok: conf.rsi_signal === 'bullish' || conf.rsi_signal === 'neutral' || conf.rsi_signal === 'oversold', warn: conf.rsi_signal === 'bearish' || conf.rsi_signal === 'overbought', tip: 'RSI(14): Alpaca daily-bar RSI; oversold <30, overbought >70' },
+                { name: 'EMA', val: conf.above_ema, ok: conf.above_ema === true, warn: conf.above_ema === false, tip: 'EMA: price above 50-day EMA from Alpaca daily bars' },
+                { name: 'SPR', val: conf.spread_ok, ok: conf.spread_ok === true, warn: conf.spread_ok === false, tip: 'Spread: quote/trade quality check' },
+                { name: 'CA', val: conf.no_corporate_action_risk, ok: conf.no_corporate_action_risk === true, warn: conf.corporate_action_risk === true, tip: 'Corporate action: split/dividend risk flag' },
+                { name: 'VOL', val: conf.volume_confirmed, ok: conf.volume_confirmed === true, tip: 'Volume: today\'s volume > 20-day average (Alpaca)' },
+                { name: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true, tip: 'MACD: histogram positive and rising (Alpaca daily bars)' },
+                { name: 'SEC', val: conf.sector_strong, ok: conf.sector_strong === true, tip: 'Sector: sector classification available' },
+                { name: 'INT', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true, tip: 'Intraday: positive daily change (Alpaca)' },
+                { name: 'OPT', val: conf.options_confirmed, ok: conf.options_confirmed === true, tip: 'Options flow: not available from Alpaca for this watchlist' },
+                { name: 'VWAP', val: conf.vwap_confirmed, ok: conf.vwap_confirmed === true, tip: 'VWAP: price above daily VWAP (Alpaca)' },
+                { name: 'RVOL', val: conf.relvol_confirmed, ok: conf.relvol_confirmed === true, tip: 'Relative Volume: today\'s volume > 1.2x 20-day average (Alpaca)' },
+                { name: '5M', val: conf.momentum_5m_up, ok: conf.momentum_5m_up === true, tip: '5-minute: strong positive daily move (>1%)' },
+                { name: 'OF', val: conf.near_term_bullish_flow, ok: conf.near_term_bullish_flow === true, tip: 'Options Flow: not available from Alpaca for this watchlist' },
+                { name: 'QBI', val: conf.bid_ask_bullish, ok: conf.bid_ask_bullish === true, tip: 'Quote Imbalance: positive daily price action' },
             ];
             const chips = factors.map(f => {
                 const color = f.ok ? '#22c55e' : f.warn ? '#ef4444' : 'rgba(255,255,255,0.15)';
@@ -10051,7 +9883,7 @@ function updateDashboard(data, marketStatus) {
         }
 
         function buildWatchlistFactors(count, tierReason) {
-            const cleanReason = (tierReason || '').replace(/^(STRONG NOW|NOW|WATCH|MONITOR):\s*/i, '').replace(/readiness \d+\.?\d*\.?\s*/i, '').trim();
+            const cleanReason = (tierReason || '').replace(/^(STRONG NOW|STRONG_NOW|NOW|WATCH|MONITOR|PRIME|BUILDING|WATCHING|TRACKING):\s*/i, '').replace(/readiness \d+\.?\d*\.?\s*/i, '').trim();
             const parts = cleanReason.split(/\+|,|\band\b/).map(s => s.trim()).filter(s => s.length > 0 && s.length < 40);
             const factorMap = {
                 'volume': 'VOL', 'macd': 'MACD', 'ema': 'EMA', 'sector': 'SEC',
@@ -10065,12 +9897,16 @@ function updateDashboard(data, marketStatus) {
                     if (part.toLowerCase().includes(key)) active.add(label);
                 }
             }
-            const allFactors = ['MOM', 'RSI', 'VOL', 'MACD', 'EMA', 'SEC', 'INT', 'OPT', 'VWAP', 'RVOL', '5M', 'OF', 'SPR', 'QBI', 'CA'];
+            const entryFactors = ['MOM', 'RSI', 'EMA', 'SPR', 'CA'];
+            const displayFactors = ['VOL', 'MACD', 'SEC', 'INT', 'OPT', 'VWAP', 'RVOL', '5M', 'OF', 'QBI'];
+            const allFactors = [...entryFactors, ...displayFactors];
             const chips = allFactors.map(name => {
+                const isDisplay = displayFactors.includes(name);
                 const ok = active.has(name);
-                const color = ok ? '#22c55e' : 'rgba(255,255,255,0.15)';
-                const textColor = ok ? '#22c55e' : 'var(--text-muted)';
-                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};"><span style="width:5px;height:5px;border-radius:50%;background:${color};display:inline-block;"></span>${name}</span>`;
+                const color = ok ? (isDisplay ? 'rgba(255,255,255,0.35)' : '#22c55e') : 'rgba(255,255,255,0.15)';
+                const textColor = ok ? (isDisplay ? 'rgba(255,255,255,0.60)' : '#22c55e') : 'var(--text-muted)';
+                const displaySuffix = isDisplay ? '°' : '';
+                return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.6rem;font-weight:600;color:${textColor};"><span style="width:5px;height:5px;border-radius:50%;background:${color};display:inline-block;"></span>${name}${displaySuffix}</span>`;
             }).join('');
             return `
                 <div style="margin-bottom: 0.9rem;">
@@ -10134,12 +9970,12 @@ function updateDashboard(data, marketStatus) {
 
             const companyName = position?.name || position?.company || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
             const livePrice = (position ? position.current : 0) || liveData.price || preGenerated.price || 0;
-            const readiness = preGenerated.readiness_score != null ? preGenerated.readiness_score : 50;
-            // Align tier with backend tier from preGenerated popup data or watchlist backend_tier
-            const watchlistItem = typeof aiWatchlist !== 'undefined' ? aiWatchlist.find(s => s.symbol === symbol) : null;
-            const backendTier = preGenerated.backend_tier || (watchlistItem && watchlistItem.backend_tier) || 'WATCH';
-            const tier = backendTier;
-            const displayTierName = tier === 'STRONG_NOW' ? 'PRIME' : tier === 'NOW' ? 'BUILDING' : tier === 'WATCH' ? 'WATCHING' : 'TRACKING';
+            const sleeveWeight = (preGenerated.sleeve_weight != null ? preGenerated.sleeve_weight : 0.10);
+            // Sleeve strategy: status is either a held position or a watchlist candidate.
+            const isHeld = !!position;
+            const tierLabel = isHeld ? 'HELD' : 'WATCHLIST';
+            const tierColor = isHeld ? '#06b6d4' : '#9ca3af';
+            const tierBg = isHeld ? 'rgba(6,182,212,0.15)' : 'rgba(156,163,175,0.08)';
 
             const isPositive = position ? position.unrealized_plpc >= 0 : (liveData.change_pct || 0) >= 0;
             const plColor = isPositive ? '#22c55e' : '#ef4444';
@@ -10147,7 +9983,7 @@ function updateDashboard(data, marketStatus) {
             const plDollar = position ? position.unrealized_pl : 0;
             const plSign = isPositive ? '+' : '';
 
-            const status = getHoldingStatus(parseFloat(plValue), readiness);
+            const status = getHoldingStatus(parseFloat(plValue), sleeveWeight);
             const thesisShort = simplifyThesis(preGenerated.thesis || (staticData ? staticData.thesis : ''), symbol);
 
             // Exit levels - only show the relevant one
@@ -10184,9 +10020,10 @@ function updateDashboard(data, marketStatus) {
             let count = preGenerated.confirmation_count || 0;
             const factorChipsHtml = buildFactorChips(conf, count, preGenerated.momentumScore);
 
-            // Tier chip
-            const tierColor = tier === 'STRONG_NOW' ? '#06b6d4' : tier === 'NOW' ? '#22c55e' : tier === 'WATCH' ? '#fbbf24' : 'var(--text-muted)';
-            const tierBg = tier === 'STRONG_NOW' ? 'rgba(6,182,212,0.15)' : tier === 'NOW' ? 'rgba(34,197,94,0.12)' : tier === 'WATCH' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
+            // Sleeve status chip
+            const statusLabel = isHeld ? 'HELD' : 'WATCHLIST';
+            const statusColor = isHeld ? '#06b6d4' : '#9ca3af';
+            const statusBg = isHeld ? 'rgba(6,182,212,0.15)' : 'rgba(156,163,175,0.08)';
 
             const content = `
                 <div style="padding: 1.25rem;">
@@ -10223,9 +10060,9 @@ function updateDashboard(data, marketStatus) {
                     <!-- Metrics grid: 3-up, consistent -->
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 0.9rem; align-items: stretch;">
                         <div style="background: rgba(255,255,255,0.03); border: none; border-radius: 10px; padding: 0.7rem 0.8rem; display: flex; flex-direction: column; justify-content: flex-start; min-height: 4rem;">
-                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Readiness</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${readiness.toFixed(0)}</div>
-                            <div style="font-size: 0.65rem; color: ${tierColor}; opacity: 0.75;">${displayTierName}</div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Weight</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${(sleeveWeight * 100).toFixed(1)}%</div>
+                            <div style="font-size: 0.65rem; color: ${statusColor}; opacity: 0.75;">${statusLabel}</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.03); border: none; border-radius: 10px; padding: 0.7rem 0.8rem; display: flex; flex-direction: column; justify-content: flex-start; min-height: 4rem;">
                             <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">RSI</div>
@@ -10922,7 +10759,7 @@ function updateDashboard(data, marketStatus) {
                             <div style="font-size: 1.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
                             <div>
                                 <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${activity.title}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Autonomous Bot Action</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Sleeve Rebalance Action</div>
                             </div>
                         </div>
                         <div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5;">${activity.description}</div>
@@ -10931,7 +10768,7 @@ function updateDashboard(data, marketStatus) {
                     <div style="background: var(--bg-surface); border-radius: 12px; padding: 1.25rem;">
                         <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">System Logic</div>
                         <div style="font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
-                            ${activity.rationale || 'Action taken by autonomous trading bot based on predefined strategy rules and market conditions.'}
+                            ${activity.rationale || 'Rebalance action taken by the momentum sleeve based on predefined rules and market conditions.'}
                         </div>
                     </div>
                 `;
@@ -10985,7 +10822,7 @@ function updateDashboard(data, marketStatus) {
                         subtype: 'critical',
                         icon: '',
                         title: 'Holdings Alert',
-                        description: 'Holdings down -4.26% from $100K start',
+                        description: 'Sleeve down from $100K start',
                         timestamp: new Date('2026-06-06T15:50:00Z'),
                         badge: 'Alert',
                         badgeClass: 'alert',
@@ -11083,7 +10920,7 @@ function updateDashboard(data, marketStatus) {
         function shareOnTwitter() {
             const r = timeRangeData && timeRangeData[currentTimeRange];
             const ret = r && r.data.length ? r.data[r.data.length - 1] : 0;
-            const text = `StonkBOT.AI Performance: ${currentTimeRange} return ${ret}%\n\nAutonomous AI trading bot - transparent, automated, zero emotions.\n\nSee live performance:`;
+            const text = `StonkBOT.AI Performance: ${currentTimeRange} return ${ret}%\n\nMonthly momentum sleeve on Alpaca paper - transparent, rules-based, owner-supervised.\n\nSee live performance:`;
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
         }
 
@@ -11130,33 +10967,50 @@ function updateDashboard(data, marketStatus) {
 
         // Fallback company info (used if JSON fails to load)
         const companyInfoFallback = {
-            'AAPL': { company: 'Apple Inc.', strategy: 'Consumer electronics leader', catalyst: 'AI iPhone upgrade cycle', risk: 'China exposure' },
-            'ABNB': { company: 'Airbnb Inc.', strategy: 'Travel platform recovery', catalyst: 'Experience economy + international expansion', risk: 'Regulatory crackdowns' },
-            'AMD': { company: 'Advanced Micro Devices', strategy: 'AI chip challenger', catalyst: 'MI300 gaining data center share', risk: 'Competition with NVIDIA' },
-            'AMZN': { company: 'Amazon.com Inc.', strategy: 'E-commerce + AWS cloud', catalyst: 'AI integration + Prime growth', risk: 'Regulatory pressure' },
-            'COIN': { company: 'Coinbase Global', strategy: 'Crypto infrastructure', catalyst: 'Bitcoin ETF + institutional adoption', risk: 'Crypto volatility' },
-            'CRWD': { company: 'CrowdStrike Holdings', strategy: 'Endpoint security leader', catalyst: 'Zero trust adoption + platform expansion', risk: 'Competition from Microsoft' },
-            'DKNG': { company: 'DraftKings Inc.', strategy: 'Sports betting platform', catalyst: 'NFL season + state legalization', risk: 'Regulatory uncertainty' },
-            'GM': { company: 'General Motors', strategy: 'EV transition leader', catalyst: 'Ultium platform + Cruise autonomy', risk: 'EV competition' },
-            'GOOGL': { company: 'Alphabet Inc.', strategy: 'Search + cloud + AI', catalyst: 'Gemini AI + cloud market share', risk: 'Search disruption fears' },
-            'HOOD': { company: 'Robinhood Markets', strategy: 'Retail trading platform', catalyst: 'Crypto + 24-hour market expansion', risk: 'Regulatory scrutiny' },
-            'INTC': { company: 'Intel Corp.', strategy: 'Chip manufacturing turnaround', catalyst: 'Foundry business + AI PC', risk: 'Execution challenges' },
-            'LCID': { company: 'Lucid Group', strategy: 'Luxury EV manufacturer', catalyst: 'Saudi backing + technology edge', risk: 'Production ramp + cash burn' },
-            'MSFT': { company: 'Microsoft Corp.', strategy: 'AI infrastructure leader', catalyst: 'Copilot monetization + Azure growth', risk: 'Antitrust scrutiny' },
-            'NET': { company: 'Cloudflare Inc.', strategy: 'Edge computing + security', catalyst: 'AI edge demand + zero trust', risk: 'Extended valuation' },
-            'NFLX': { company: 'Netflix Inc.', strategy: 'Streaming dominance', catalyst: 'Ad tier + password crackdown', risk: 'Competition intensity' },
-            'NIO': { company: 'NIO Inc.', strategy: 'Premium Chinese EV', catalyst: 'Battery swap network + Europe expansion', risk: 'China regulation + cash' },
-            'NVDA': { company: 'NVIDIA Corp.', strategy: 'AI chip monopoly', catalyst: 'Data center demand + Blackwell', risk: 'China export restrictions' },
-            'ORCL': { company: 'Oracle Corp.', strategy: 'Database + cloud infrastructure', catalyst: 'AI workloads + multi-cloud', risk: 'Cloud competition' },
-            'PATH': { company: 'UiPath Inc.', strategy: 'RPA + AI automation', catalyst: 'Enterprise AI adoption', risk: 'Big tech competition' },
-            'PLTR': { company: 'Palantir Technologies', strategy: 'AI analytics platform', catalyst: 'Government contracts + AIP', risk: 'Valuation + growth rate' },
-            'SHOP': { company: 'Shopify Inc.', strategy: 'E-commerce platform', catalyst: 'AI tools + logistics network', risk: 'Amazon competition' },
-            'SNOW': { company: 'Snowflake Inc.', strategy: 'Data cloud platform', catalyst: 'AI data pipelines + partnerships', risk: 'Growth deceleration' },
-            'SOFI': { company: 'SoFi Technologies', strategy: 'Digital finance platform', catalyst: 'Bank charter + Galileo growth', risk: 'Student loan headwinds' },
-            'SQ': { company: 'Block Inc.', strategy: 'Fintech ecosystem', catalyst: 'Cash App + Square integration', risk: 'Consumer spending' },
-            'TSLA': { company: 'Tesla Inc.', strategy: 'EV + energy + autonomy', catalyst: 'Robotaxi + Model 2 + energy storage', risk: 'Execution + competition' },
-            'UPST': { company: 'Upstart Holdings', strategy: 'AI lending platform', catalyst: 'Rate cuts + loan volume', risk: 'Credit cycle sensitivity' },
-            'XPEV': { company: 'XPeng Inc.', strategy: 'Chinese EV + autonomy', catalyst: 'G6 launch + self-driving tech', risk: 'China market competition' }
+            'AAPL': { company: 'Apple Inc.', description: 'Apple designs, manufactures and markets consumer electronics, software and services. Its products include the iPhone, Mac, iPad, Apple Watch and AirPods, supported by the iOS ecosystem and services such as the App Store, iCloud, Apple Music and Apple Pay.', strategy: 'Consumer electronics leader', catalyst: 'AI iPhone upgrade cycle', risk: 'China exposure' },
+            'ABNB': { company: 'Airbnb Inc.', description: 'Airbnb operates an online marketplace for short-term stays and experiences, connecting hosts who list accommodations with guests. It earns revenue through service fees on bookings and has expanded into curated Experiences and long-term stays.', strategy: 'Travel platform recovery', catalyst: 'Experience economy + international expansion', risk: 'Regulatory crackdowns' },
+            'ADP': { company: 'Automatic Data Processing', description: 'Automatic Data Processing provides cloud-based human capital management solutions, including payroll, benefits administration, time tracking and talent management. It serves employers of all sizes and benefits from highly recurring revenue.', strategy: 'HR + payroll outsourcing leader', catalyst: 'Employment services pricing power + recurring revenue', risk: 'Labor-market slowdown pressure' },
+            'AMD': { company: 'Advanced Micro Devices', description: 'Advanced Micro Devices designs and sells central processing units, graphics processing units and data-center accelerators. Its Ryzen CPUs power PCs, Radeon GPUs target gaming, and the MI-series Instinct accelerators compete in AI data-center computing.', strategy: 'AI chip challenger', catalyst: 'MI300 gaining data center share', risk: 'Competition with NVIDIA' },
+            'AMGN': { company: 'Amgen Inc.', description: 'Amgen is a biotechnology company discovering, developing and manufacturing human therapeutics, with a focus on oncology, cardiovascular disease, inflammation and bone health. Its portfolio includes blockbusters such as Enbrel and Prolia plus a growing pipeline.', strategy: 'Biotech therapeutics', catalyst: 'Obesity/drug pipeline + biosimilars', risk: 'Patent cliffs + drug pricing policy' },
+            'AMAT': { company: 'Applied Materials', description: 'Applied Materials supplies materials-engineering solutions used to manufacture semiconductor chips and advanced displays. Its equipment is essential for deposition, etch, ion implantation, metrology and inspection in leading-edge fabs.', strategy: 'Semiconductor manufacturing equipment', catalyst: 'Foundry capacity expansion + AI chip tooling demand', risk: 'Cyclical downturn in capex' },
+            'AMZN': { company: 'Amazon.com Inc.', description: 'Amazon is an e-commerce and cloud-computing giant. Its North America and International segments operate online stores and logistics, while Amazon Web Services provides on-demand cloud infrastructure and services to enterprises and startups.', strategy: 'E-commerce + AWS cloud', catalyst: 'AI integration + Prime growth', risk: 'Regulatory pressure' },
+            'AVGO': { company: 'Broadcom Inc.', description: 'Broadcom designs and supplies semiconductor and infrastructure software solutions. Its chips power data centers, networking, broadband, wireless and storage; its software business includes mainframe and enterprise operations through VMware.', strategy: 'Custom AI chips + enterprise software', catalyst: 'Hyperscaler AI accelerator demand + VMware integration', risk: 'Customer concentration' },
+            'COST': { company: 'Costco Wholesale', description: 'Costco operates membership warehouses offering bulk groceries, consumer goods and gasoline at low margins. Profits come primarily from annual membership fees rather than merchandise markups, creating high customer loyalty and recurring revenue.', strategy: 'Membership warehouse retail', catalyst: 'Pricing power + loyal membership base', risk: 'Consumer-spending slowdown' },
+            'CSCO': { company: 'Cisco Systems', description: 'Cisco Systems designs and sells networking hardware, software and security products. Its portfolio spans enterprise routers and switches, collaboration tools, cybersecurity and observability, including the Splunk data analytics platform.', strategy: 'Enterprise networking + security', catalyst: 'AI data center networking + Splunk integration', risk: 'Cloud transition pressure' },
+            'COIN': { company: 'Coinbase Global', description: 'Coinbase operates one of the largest cryptocurrency exchanges in the United States, offering trading, custody and staking services for digital assets. It also provides institutional prime brokerage and blockchain infrastructure products.', strategy: 'Crypto infrastructure', catalyst: 'Bitcoin ETF + institutional adoption', risk: 'Crypto volatility' },
+            'CRWD': { company: 'CrowdStrike Holdings', description: 'CrowdStrike provides a cloud-native endpoint protection platform that uses AI to detect and prevent cyber threats. Its Falcon platform spans antivirus, threat intelligence, identity protection, cloud security and managed services.', strategy: 'Endpoint security leader', catalyst: 'Zero trust adoption + platform expansion', risk: 'Competition from Microsoft' },
+            'DKNG': { company: 'DraftKings Inc.', description: 'DraftKings is a digital sports betting and iGaming operator in North America. It offers daily fantasy sports, mobile sportsbook wagering and online casino games under state-by-state licenses.', strategy: 'Sports betting platform', catalyst: 'NFL season + state legalization', risk: 'Regulatory uncertainty' },
+            'GILD': { company: 'Gilead Sciences', description: 'Gilead Sciences is a biopharmaceutical company focused on antiviral, oncology and inflammation therapies. It is known for HIV and hepatitis C franchises and is expanding into oncology with therapies such as Trodelvy and Yescarta.', strategy: 'Biotech antivirals + oncology', catalyst: 'Oncology pipeline + HIV franchise stability', risk: 'Pipeline failures + pricing pressure' },
+            'GM': { company: 'General Motors', description: 'General Motors designs, builds and sells cars and trucks globally under brands including Chevrolet, GMC, Cadillac and Buick. It is investing heavily in electric vehicles through its Ultium platform and battery joint ventures.', strategy: 'EV transition leader', catalyst: 'Ultium platform + Cruise autonomy', risk: 'EV competition' },
+            'GOOGL': { company: 'Alphabet Inc.', description: 'Alphabet, through Google, dominates online search and digital advertising. It also operates YouTube, Android, Chrome, Google Cloud and a growing AI portfolio including the Gemini large-language models.', strategy: 'Search + cloud + AI', catalyst: 'Gemini AI + cloud market share', risk: 'Search disruption fears' },
+            'HOOD': { company: 'Robinhood Markets', description: 'Robinhood Markets offers a commission-free trading platform for stocks, ETFs, options and cryptocurrencies. It monetizes through payment for order flow, margin lending and subscription services such as Robinhood Gold.', strategy: 'Retail trading platform', catalyst: 'Crypto + 24-hour market expansion', risk: 'Regulatory scrutiny' },
+            'ILMN': { company: 'Illumina Inc.', description: 'Illumina is the leading provider of DNA sequencing and array-based technologies for genetic analysis. Its instruments and consumables enable research, clinical diagnostics, and population genomics, including long-read sequencing systems.', strategy: 'Genomics sequencing', catalyst: 'Clinical genomics adoption + GRAIL integration path', risk: 'Regulatory overhang + competition' },
+            'INTC': { company: 'Intel Corp.', description: 'Intel designs and manufactures microprocessors for PCs and data centers, as well as networking, memory and AI accelerators. It is pursuing a foundry turnaround under its Intel Foundry Services division.', strategy: 'Chip manufacturing turnaround', catalyst: 'Foundry business + AI PC', risk: 'Execution challenges' },
+            'LCID': { company: 'Lucid Group', description: 'Lucid Group designs and manufactures luxury electric vehicles. Its Lucid Air sedan emphasizes range, performance and interior quality, with production based in Arizona and backing from Saudi Arabia\'s Public Investment Fund.', strategy: 'Luxury EV manufacturer', catalyst: 'Saudi backing + technology edge', risk: 'Production ramp + cash burn' },
+            'MDLZ': { company: 'Mondelez International', description: 'Mondelez International is one of the world\'s largest snack-food companies, owning brands such as Oreo, Cadbury, Toblerone, Ritz and Trident. It sells biscuits, chocolate, gum, candy and beverages across global markets.', strategy: 'Global snack foods', catalyst: 'Pricing power + emerging-market growth', risk: 'Commodity cost inflation' },
+            'MRVL': { company: 'Marvell Technology', description: 'Marvell Technology designs data infrastructure semiconductors, including custom compute, networking, storage and security chips. It supplies cloud providers and telecom customers with silicon for AI clusters and high-speed connectivity.', strategy: 'Data center silicon + custom AI', catalyst: 'AI data center connectivity + cloud custom silicon', risk: 'Cyclical exposure' },
+            'MSFT': { company: 'Microsoft Corp.', description: 'Microsoft develops software, services, devices and solutions worldwide. Its businesses include Windows, Office, Azure cloud, LinkedIn, gaming via Xbox, and AI products powered by its partnership with OpenAI.', strategy: 'AI infrastructure leader', catalyst: 'Copilot monetization + Azure growth', risk: 'Antitrust scrutiny' },
+            'MU': { company: 'Micron Technology', description: 'Micron Technology manufactures DRAM, NAND flash and NOR memory products used in computers, mobile devices, data centers and automotive electronics. It is a key supplier of high-bandwidth memory for AI accelerators.', strategy: 'Memory + storage semiconductors', catalyst: 'HBM3E AI memory demand + supply discipline', risk: 'Memory cycle volatility' },
+            'NET': { company: 'Cloudflare Inc.', description: 'Cloudflare provides a global cloud network that improves website performance and security. Its services include content delivery, DDoS mitigation, zero-trust networking, developer tools and AI edge inference.', strategy: 'Edge computing + security', catalyst: 'AI edge demand + zero trust', risk: 'Extended valuation' },
+            'NFLX': { company: 'Netflix Inc.', description: 'Netflix is the world\'s leading subscription streaming service, producing and distributing films, series and documentaries. It generates revenue from membership subscriptions and is expanding into advertising-supported tiers and games.', strategy: 'Streaming dominance', catalyst: 'Ad tier + password crackdown', risk: 'Competition intensity' },
+            'NIO': { company: 'NIO Inc.', description: 'NIO designs and sells premium electric vehicles in China and select international markets. It differentiates itself with battery-swap stations, in-house batteries, and a user community and services ecosystem.', strategy: 'Premium Chinese EV', catalyst: 'Battery swap network + Europe expansion', risk: 'China regulation + cash' },
+            'NVDA': { company: 'NVIDIA Corp.', description: 'NVIDIA designs graphics processing units and AI computing platforms. Its GPUs power gaming, data-center AI training and inference, autonomous vehicles, robotics and professional visualization workloads.', strategy: 'AI chip monopoly', catalyst: 'Data center demand + Blackwell', risk: 'China export restrictions' },
+            'ORCL': { company: 'Oracle Corp.', description: 'Oracle provides enterprise software and cloud computing, including databases, applications and infrastructure. Its cloud business competes in SaaS and IaaS, and it offers AI-optimized hardware and database services.', strategy: 'Database + cloud infrastructure', catalyst: 'AI workloads + multi-cloud', risk: 'Cloud competition' },
+            'PATH': { company: 'UiPath Inc.', description: 'UiPath develops robotic process automation software that helps organizations automate repetitive tasks. Its platform uses AI to discover, build, manage and measure workflows across business applications.', strategy: 'RPA + AI automation', catalyst: 'Enterprise AI adoption', risk: 'Big tech competition' },
+            'PAYX': { company: 'Paychex Inc.', description: 'Paychex provides payroll, human resources, benefits and insurance services primarily to small and medium-sized businesses. It generates recurring revenue from payroll processing fees and HR outsourcing.', strategy: 'SMB payroll + HR services', catalyst: 'Rate-driven float income + employment growth', risk: 'Small-business employment softness' },
+            'PEP': { company: 'PepsiCo Inc.', description: 'PepsiCo is a global food and beverage company whose brands include Pepsi, Frito-Lay, Quaker Oats, Gatorade and Tropicana. It sells beverages, snacks, cereals and convenient nutrition products worldwide.', strategy: 'Beverages + convenient foods', catalyst: 'Pricing power + healthier-snack pivot', risk: 'Volume elasticity + commodity costs' },
+            'PLTR': { company: 'Palantir Technologies', description: 'Palantir builds data-integration and analytics software for government and commercial clients. Its platforms, Foundry and AIP, help organizations operationalize data and deploy AI across operations.', strategy: 'AI analytics platform', catalyst: 'Government contracts + AIP', risk: 'Valuation + growth rate' },
+            'REGN': { company: 'Regeneron Pharmaceuticals', description: 'Regeneron Pharmaceuticals discovers, develops and commercializes biologic medicines, led by Dupixent for inflammatory diseases. Its pipeline spans oncology, eye disease, cardiovascular conditions and genetic medicines.', strategy: 'Biotech antibody therapies', catalyst: 'Dupixent expansion + ophthalmology pipeline', risk: 'Biosimilar competition + R&D setbacks' },
+            'SBUX': { company: 'Starbucks Corp.', description: 'Starbucks operates the world\'s largest coffeehouse chain, selling specialty coffee, tea, food and merchandise through company-owned and licensed stores. It also sells packaged goods and licenses consumer products globally.', strategy: 'Global coffee chain', catalyst: 'Turnaround under new leadership + China recovery', risk: 'Unionization + consumer trade-down' },
+            'SHOP': { company: 'Shopify Inc.', description: 'Shopify provides e-commerce software and services that let merchants build online stores, process payments and manage logistics. It powers millions of businesses through subscriptions and merchant solutions revenue.', strategy: 'E-commerce platform', catalyst: 'AI tools + logistics network', risk: 'Amazon competition' },
+            'SNOW': { company: 'Snowflake Inc.', description: 'Snowflake offers a cloud-native data platform that lets organizations store, query and share data across clouds. Its architecture separates compute and storage, enabling scalable analytics and data collaboration.', strategy: 'Data cloud platform', catalyst: 'AI data pipelines + partnerships', risk: 'Growth deceleration' },
+            'SOFI': { company: 'SoFi Technologies', description: 'SoFi Technologies offers digital financial services including student and personal loans, mortgages, investment accounts, credit cards and banking. It operates as a neobank with a technology platform called Galileo.', strategy: 'Digital finance platform', catalyst: 'Bank charter + Galileo growth', risk: 'Student loan headwinds' },
+            'SQ': { company: 'Block Inc.', description: 'Block, formerly Square, builds financial services for businesses and consumers. Its Square ecosystem helps sellers accept payments and manage operations, while Cash App provides peer-to-peer payments, banking and investing.', strategy: 'Fintech ecosystem', catalyst: 'Cash App + Square integration', risk: 'Consumer spending' },
+            'TSLA': { company: 'Tesla Inc.', description: 'Tesla designs and manufactures electric vehicles, energy storage systems and solar products. It is also developing autonomous driving software, robotics and energy generation and storage solutions at scale.', strategy: 'EV + energy + autonomy', catalyst: 'Robotaxi + Model 2 + energy storage', risk: 'Execution + competition' },
+            'TXN': { company: 'Texas Instruments', description: 'Texas Instruments designs and manufactures analog and embedded semiconductors. Its chips are used in industrial, automotive, communications and consumer electronics, with a focus on long-life cycle products.', strategy: 'Analog + embedded semiconductors', catalyst: 'Industrial/auto chip demand recovery + capex discipline', risk: 'Semiconductor cycle timing' },
+            'UPST': { company: 'Upstart Holdings', description: 'Upstart Holdings operates an AI-powered lending platform that partners with banks and credit unions. Its models assess credit risk using non-traditional variables to approve more borrowers at lower rates.', strategy: 'AI lending platform', catalyst: 'Rate cuts + loan volume', risk: 'Credit cycle sensitivity' },
+            'VRTX': { company: 'Vertex Pharmaceuticals', description: 'Vertex Pharmaceuticals focuses on medicines for serious diseases, beginning with cystic fibrosis. It is expanding into sickle-cell disease via CRISPR-based Casgevy, pain, type 1 diabetes and immunology.', strategy: 'Biotech focused on cystic fibrosis + gene editing', catalyst: 'Casgevy rollout + next-gen CF franchise', risk: 'Pipeline setbacks + reimbursement' },
+            'XPEV': { company: 'XPeng Inc.', description: 'XPeng is a Chinese electric-vehicle maker producing smart sedans and SUVs. It emphasizes advanced driver-assistance systems, in-house software and autonomous driving technology, with sales in China and expanding exports.', strategy: 'Chinese EV + autonomy', catalyst: 'G6 launch + self-driving tech', risk: 'China market competition' },
         };
 
         // Fetch company info dynamically from JSON
@@ -11174,13 +11028,17 @@ function updateDashboard(data, marketStatus) {
             } catch (e) {
                 console.log('Using fallback company info:', e.message);
             }
-            // Fallback to hardcoded
-            companyInfo = companyInfoFallback;
+            // Fallback to hardcoded - only if not already populated
+            if (Object.keys(companyInfo || {}).length === 0) {
+                companyInfo = companyInfoFallback;
+            }
             return false;
         }
 
-        // Load company info on startup
-        fetchCompanyInfo();
+        // Ensure companyInfo is populated before any popup needs it
+        if (Object.keys(companyInfo || {}).length === 0) {
+            companyInfo = companyInfoFallback;
+        }
 
         // Stock Chart Data for detailed view - UPDATED June 13, 2026
         const stockCharts = {
@@ -11196,25 +11054,97 @@ function updateDashboard(data, marketStatus) {
             'XLE': { prices: [56, 56.5, 57, 57.2, 57.4, 57.5, 57.55, 57.58, 57.56, 57.56], ma20: 57, ma50: 56, support: 52, resistance: 62 }
         };
 
-        // Fetch live watchlist prices
+        // Sleeve watchlist adapter: fetch dm_paper/sleeve_watchlist.json and map it
+        // into the legacy aiWatchlistPrices shape so the existing cards/popups render.
         async function fetchWatchlistPrices() {
             try {
-                const response = await fetch('./ai_watchlist_live.json?t=' + Date.now());
-                if (!response.ok) throw new Error('Failed to fetch');
-                const data = await response.json();
-                aiWatchlistPrices = data.prices || {};
-                lastWatchlistUpdate = data.timestamp;
-                // Server-side AI scores used directly (no client-side recalculation)
+                const resp = await fetch('./dm_paper/sleeve_watchlist.json?t=' + Date.now());
+                if (!resp.ok) throw new Error('sleeve_watchlist.json not available');
+                const data = await resp.json();
+                const list = data.watchlist || [];
+                const prices = {};
+                for (const c of list) {
+                    if (!c.symbol) continue;
+                    const companyName = (typeof companyInfo !== 'undefined' && companyInfo[c.symbol]?.company) || c.symbol;
+                    const companyDescription = (typeof companyInfo !== 'undefined' && companyInfo[c.symbol]?.description) || null;
+                    const companyStrategy = (typeof companyInfo !== 'undefined' && companyInfo[c.symbol]?.strategy) || null;
+                    const companyCatalyst = (typeof companyInfo !== 'undefined' && companyInfo[c.symbol]?.catalyst) || null;
+                    const companyRisk = (typeof companyInfo !== 'undefined' && companyInfo[c.symbol]?.risk) || null;
+                    const aiScore = c.rank ? Math.max(0, Math.round(100 - (c.rank - 11) * 4)) : 50;
+                    const readinessScore = Math.max(0, Math.min(100, Math.round((c.score || 0) * 100)));
+                    const targetPrice = c.price ? c.price * 1.25 : null;
+                    const enrichedConf = c.confirmations || null;
+                    const rsiVal = c.rsi || 50;
+
+                    prices[c.symbol] = {
+                        price: c.price || 0,
+                        change_pct: c.change_pct || 0,
+                        change_amount: 0,
+                        ai_score: aiScore,
+                        total_score: aiScore,
+                        momentum_score: enrichedConf ? enrichedConf.momentum_score : aiScore,
+                        rank: c.rank,
+                        score: c.score,
+                        dist_to_top10: c.dist_to_top10,
+                        rsi: rsiVal,
+                        rsi_signal: enrichedConf ? enrichedConf.rsi_signal : 'neutral',
+                        volume: c.volume || '-',
+                        company: companyName,
+                        readinessTag: '',
+                        readinessScore: readinessScore,
+                        confirmation_count: c.confirmation_count || 0,
+                        confirmations: enrichedConf || {},
+                        ema_20: c.ema_20,
+                        ema_50: c.ema_50,
+                        ema_200: c.ema_200,
+                        relative_volume: c.relative_volume,
+                        vwap: c.vwap,
+                        price_vs_vwap_pct: c.price_vs_vwap_pct,
+                        macd_line: (c.macd || {}).line,
+                        macd_signal: (c.macd || {}).signal,
+                        macd_histogram: (c.macd || {}).histogram,
+                        strategy: companyStrategy || 'Potential sleeve candidate ranked by relative strength vs. S&amp;P 500.',
+                        catalyst: companyCatalyst || `Rank ${c.rank} with score ${(c.score * 100).toFixed(2)}% — ${c.dist_to_top10 <= 0.01 ? 'near the top 10 cutoff' : 'still behind the current sleeve names'}.`,
+                        risk: companyRisk || 'May enter the sleeve at the next signal-triggered rebalance, or fall further behind.',
+                        stopLoss: c.price ? c.price * 0.85 : null,
+                        stop_loss: c.price ? c.price * 0.85 : null,
+                        profit25: targetPrice,
+                        profit50: c.price ? c.price * 1.50 : null,
+                        targetConservative: targetPrice,
+                        targetAggressive: c.price ? c.price * 1.50 : null,
+                        targets: {
+                            stop_loss: c.price ? c.price * 0.85 : null,
+                            profit_25: targetPrice,
+                            profit_50: c.price ? c.price * 1.50 : null,
+                            conservative_target: targetPrice,
+                            aggressive_target: c.price ? c.price * 1.50 : null,
+                            signal: 'WATCH'
+                        },
+                        isLive: (c.price > 0),
+                        description: companyDescription,
+                    };
+                }
+                aiWatchlistPrices = prices;
+                lastWatchlistUpdate = new Date().toISOString();
                 return true;
             } catch (e) {
-                console.log('Watchlist prices not available yet:', e);
-                return false;
+                console.log('Sleeve watchlist fetch failed, falling back to legacy watchlist:', e);
+                // legacy fallback
+                try {
+                    const response = await fetch('./ai_watchlist_live.json?t=' + Date.now());
+                    if (!response.ok) throw new Error('Failed to fetch');
+                    const data = await response.json();
+                    aiWatchlistPrices = data.prices || {};
+                    lastWatchlistUpdate = data.timestamp;
+                    return true;
+                } catch (e2) {
+                    console.log('Watchlist prices not available yet:', e2);
+                    return false;
+                }
             }
         }
 
-        // NOTE: Client-side score recalculation removed
-        // The website now uses server-side AI scores from ai_watchlist_live.json
-        // Scoring formula: 40% momentum + 25% quality + 20% risk + 15% regime
+        // Legacy fallback for the old ai_watchlist_live.json format is handled inside fetchWatchlistPrices().
 
         // Fetch real crowd sentiment data
         async function fetchCrowdSentiment() {
@@ -11406,7 +11336,7 @@ function updateDashboard(data, marketStatus) {
                 activeSignalsHtml = `
                     <div style="margin-top: 20px; text-align: center; padding: 20px; background: var(--bg-surface); border-radius: 12px;">
                         <div style="font-size: 14px; color: var(--text-muted);">No active signals</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Signals appear when readiness ≥65 + 3+ confirmations + positive-edge hard confirmation (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks)</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Sleeve holdings are updated when the daily signal triggers. No intraday entry signals are generated.</div>
                     </div>
                 `;
             }
@@ -11450,10 +11380,10 @@ function updateDashboard(data, marketStatus) {
                         <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 12px; padding: 14px;">
                             <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">HOW WE TRACK</div>
                             <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                                <div style="margin-bottom: 6px;">• Logged when readiness ≥65 + positive-edge gate confirms entry (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks)</div>
-                                <div style="margin-bottom: 6px;">• <strong style="color: #22c55e;">WIN:</strong> Stock hits ATR scale-out or +15%/+30% target</div>
-                                <div style="margin-bottom: 6px;">• <strong style="color: var(--accent-red);">LOSS:</strong> Stock hits ATR hard stop</div>
-                                <div>• Tracks from entry signal to exit</div>
+                                <div style="margin-bottom: 6px;">• Sleeve positions are logged monthly; intraday signals are not part of the strategy.</div>
+                                <div style="margin-bottom: 6px;">• <strong style="color: #22c55e;">WIN:</strong> Position is held through a month and finishes higher</div>
+                                <div style="margin-bottom: 6px;">• <strong style="color: var(--accent-red);">LOSS:</strong> Position is held through a month and finishes lower</div>
+                                <div>• Tracks from monthly rebalance to the next monthly rebalance</div>
                             </div>
                         </div>
 
@@ -11516,7 +11446,7 @@ function updateDashboard(data, marketStatus) {
             } else if (rsi <= 35) {
                 return `Auto-entry zone triggered (RSI ${rsi.toFixed(1)}). Technical exhaustion meets accumulation support. History favors bounce >65% probability.`;
             } else if (rsi <= 40) {
-                return `Approaching optimal entry (RSI ${rsi.toFixed(1)}). ${(40-rsi).toFixed(1)} points from trigger-monitor for volume-confirmed dip.`;
+                return `RSI ${rsi.toFixed(1)} — not used for sleeve entry. The sleeve only rebalances monthly by relative strength and the DM-6 gate.`;
             } else if (rsi >= 70) {
                 return `Overbought momentum (RSI ${rsi.toFixed(1)}). Riding trend but risk/reward deteriorating. Trim if position held, avoid new entries.`;
             } else if (changePct >= 5) {
@@ -11551,7 +11481,7 @@ function updateDashboard(data, marketStatus) {
             } else if (sentiment <= 25) {
                 return `Maximum pessimism (${sentiment}/100). Contrarian opportunity-when everyone hates it, bottoms often form.`;
             } else {
-                return `Awaiting next catalyst. Monitor for volume spike >2x average or readiness crossing 75 for entry signal.`;
+                return `Sleeve does not trade on catalysts. Holdings reset monthly by relative strength and the DM-6 gate.`;
             }
         }
 
@@ -11568,7 +11498,7 @@ function updateDashboard(data, marketStatus) {
             } else if (changePct <= -8) {
                 return `Free-fall momentum (-${Math.abs(changePct).toFixed(1)}% today). Catching falling knives dangerous-wait for RSI stabilization above 20.`;
             } else if (!stopLoss) {
-                return `No stop-loss data available. Use 1.5× ATR mental stop [5%, 11%] or position size for max 2% portfolio loss.`;
+                return `No stop-loss data available. Sleeve risk is managed by the monthly rebalance and the DM-6 gate, not by ATR stops.`;
             } else {
                 return `Stop-loss at $${stopLoss} (${stopDistance}% below entry). Respect the stop-preservation of capital paramount. Don't average down through stop.`;
             }
@@ -11589,7 +11519,7 @@ function updateDashboard(data, marketStatus) {
                 const changePct = data.change_pct || 0;
                 const changeAmount = data.change_amount || 0;
                 const rsi = data.rsi || 50;
-                // Use server-side AI score directly (no client-side recalculation)
+                // Use server-side rank directly (no client-side recalculation)
                 const aiScore = data.ai_score || Math.round(data.total_score) || 50;
                 const sentiment = data.sentiment || 50;
                 const sentimentLabel = data.sentiment_label || 'Neutral';
@@ -11597,9 +11527,9 @@ function updateDashboard(data, marketStatus) {
                 // Readiness indicator based on server backend tier
                 let readinessTag = '';
                 const backendTier = data.backend_tier || data.signal_tier || 'TRACKING';
-                if (backendTier === 'STRONG_NOW') readinessTag = 'STRONG';
-                else if (backendTier === 'NOW') readinessTag = 'READY';
-                else if (backendTier === 'WATCH') readinessTag = 'CLOSE';
+                // Sleeve strategy: no legacy tiering; tag reflects held vs candidate.
+                if (data.buy_status === 'hold') readinessTag = 'HELD';
+                else readinessTag = 'CANDIDATE';
 
                 // Generate dynamic descriptions
                 const dynamicStrategy = generateDynamicStrategy(symbol, rsi, changePct, aiScore, info.company);
@@ -11627,9 +11557,9 @@ function updateDashboard(data, marketStatus) {
                     confirmationCount: data.confirmation_count || 0,
                     confirmations: data.confirmations || {},
                     // Alpaca paid data fields - passed through to popup
-                    tier: data.display_tier || data.signal_tier || 'TRACKING',
-                    signal_tier: data.display_tier || data.signal_tier || 'TRACKING',
-                    backend_tier: data.backend_tier || data.signal_tier || 'TRACKING',
+                    tier: data.buy_status === 'hold' ? 'HELD' : 'WATCHLIST',
+                    signal_tier: '',
+                    backend_tier: '',
                     daily_vwap: data.daily_vwap || null,
                     prev_close: data.prev_close || null,
                     options_implied_vol: data.options_implied_vol || null,
@@ -11654,7 +11584,7 @@ function updateDashboard(data, marketStatus) {
                     premarket_volume: data.premarket_volume != null ? data.premarket_volume : null,
                     afterhours_change_pct: data.afterhours_change_pct != null ? data.afterhours_change_pct : null,
                     afterhours_volume: data.afterhours_volume != null ? data.afterhours_volume : null,
-                    // Pass through bot buy-status so UI can surface blocked PRIME candidates
+                    // Pass through sleeve membership status
                     buy_status: data.buy_status || null,
                     target_pct: data.target_pct || null,
                     target_notional: data.target_notional || null,
@@ -11665,7 +11595,7 @@ function updateDashboard(data, marketStatus) {
                 });
             }
 
-            // Sort by AI score descending
+            // Sort by sleeve score descending
             return stocks.sort((a, b) => b.aiScore - a.aiScore).map((s, i) => ({...s, rank: i + 1}));
         }
 
@@ -11761,6 +11691,7 @@ function updateDashboard(data, marketStatus) {
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div>
                                 <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.04em; text-transform: uppercase;">Watchlist</div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Potential sleeve candidates ranked daily</div>
                                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
                                     ${liveIndicator}
                                 </div>
@@ -11873,64 +11804,42 @@ function updateDashboard(data, marketStatus) {
             if (!container) return;
 
             aiWatchlist = getWatchlistWithLivePrices();
-            // Held symbols render as holdings cards priced from portfolio_data.json.
-            // Listing them here too priced one stock from two feeds (frozen overnight
-            // vs live pre-market). Feed untouched: popups keep full signal context.
-            aiWatchlist = aiWatchlist.filter(s => s.buy_status !== 'hold');
+            // Split held positions into their own section so the watchlist table
+            // stays focused on actionable new candidates.
 
-            // Use server's signal tier (calculated by AI scoring system)
-            const watchlistWithTiers = aiWatchlist.map(stock => {
-                // Map backend tiers to unified display tiers (same as popup)
-                const rawTier = stock.tier || stock.signal_tier || stock.signal || 'MONITOR';
-                const tier = rawTier === 'STRONG_NOW' || rawTier === 'PRIME' ? 'PRIME' :
-                             rawTier === 'NOW' || rawTier === 'BUILDING' ? 'BUILDING' :
-                             rawTier === 'WATCH' || rawTier === 'WATCHING' ? 'WATCHING' :
-                             rawTier === 'MONITOR' || rawTier === 'TRACKING' ? 'TRACKING' : 'TRACKING';
-                return {...stock, tier};
-            });
+            // Sleeve strategy: no legacy tiering. Status = held or candidate.
+            const watchlistWithStatus = aiWatchlist.map(stock => ({
+                ...stock,
+                status: stock.buy_status === 'hold' ? 'HELD' : 'CANDIDATE'
+            }));
 
-            // Apply selected sort
-            watchlistWithTiers.sort((a, b) => {
+            // Separate sleeve positions from watchlist candidates
+            const heldStocks = watchlistWithStatus.filter(s => s.buy_status === 'hold');
+            const candidateStocks = watchlistWithStatus.filter(s => s.buy_status !== 'hold');
+
+            // Sort candidates only; sleeve positions stay in rank order
+            candidateStocks.sort((a, b) => {
                 switch(currentWatchlistSort) {
                     case 'rsi':
-                        // Oversold first (lower RSI = better entry)
                         return a.rsi - b.rsi;
                     case 'dip':
-                        // Biggest drop today first
                         return a.changePct - b.changePct;
                     case 'aiScore':
-                        // Pure AI score ranking
                         return b.aiScore - a.aiScore;
                     case 'price':
-                        // Low to high price
                         return a.price - b.price;
                     case 'change':
-                        // Biggest gainers first
                         return b.changePct - a.changePct;
                     case 'alpha':
-                        // Alphabetical
                         return a.symbol.localeCompare(b.symbol);
                     case 'opportunity':
                     default:
-                        // Best opportunity: PRIME/STRONG_NOW → BUILDING/NOW → WATCHING/WATCH → TRACKING/MONITOR → fallback, then by AI score
-                        const tierOrder = { 'PRIME': 0, 'STRONG_NOW': 0, 'BUILDING': 1, 'NOW': 1, 'WATCHING': 2, 'WATCH': 2, 'TRACKING': 3, 'MONITOR': 3 };
-                        const aTier = tierOrder[a.tier] !== undefined ? tierOrder[a.tier] : 4;
-                        const bTier = tierOrder[b.tier] !== undefined ? tierOrder[b.tier] : 4;
-                        if (aTier !== bTier) {
-                            return aTier - bTier;
-                        }
                         return b.aiScore - a.aiScore;
                 }
             });
 
-            let stocksToShow = watchlistWithTiers;
-
-            // Build tier summary
-            const strongNowCount = watchlistWithTiers.filter(s => s.tier === 'PRIME' || s.tier === 'STRONG_NOW').length;
-            const nowCount = watchlistWithTiers.filter(s => s.tier === 'BUILDING' || s.tier === 'NOW').length;
-            const watchCount = watchlistWithTiers.filter(s => s.tier === 'WATCHING' || s.tier === 'WATCH').length;
-            const monitorCount = watchlistWithTiers.filter(s => s.tier === 'TRACKING' || s.tier === 'MONITOR').length;
-            const trackingCount = watchlistWithTiers.filter(s => (!s.isLive || s.price === 0) && !s.tier).length;
+            // Held positions sorted by score
+            heldStocks.sort((a, b) => b.aiScore - a.aiScore);
 
             let html = '';
 
@@ -11940,54 +11849,63 @@ function updateDashboard(data, marketStatus) {
                 : 'Loading...';
             html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 4px;">';
             html += '<div style="font-size: 11px; color: var(--text-muted);">Updated: ' + updateTime + '</div>';
-            html += '<div style="font-size: 11px; color: var(--text-muted);">' + (strongNowCount + nowCount) + ' actionable</div>';
+            html += '<div style="font-size: 11px; color: var(--text-muted);">' + candidateStocks.length + ' candidates · ' + heldStocks.length + ' held</div>';
             html += '</div>';
 
-            // Build clean table with tier + news column
-            html += '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;"><table style="width: 100%; border-collapse: collapse; font-size: 13px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Tier</th><th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Stock</th><th style="text-align: right; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Price</th><th style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Chg</th><th class="wl-hide-mobile" style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">AI</th><th class="wl-hide-mobile" style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">RSI</th></tr></thead><tbody>';
+            // Helper to render a table of watchlist rows
+            function renderTable(stocks) {
+                let tableHtml = '<div style="overflow-x: auto; -webkit-overflow-scrolling: touch;"><table style="width: 100%; border-collapse: collapse; font-size: 13px;"><thead><tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Status</th><th style="text-align: left; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Stock</th><th style="text-align: right; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Price</th><th style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">Chg</th><th class="wl-hide-mobile" style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">AI</th><th class="wl-hide-mobile" style="text-align: center; padding: 0.625rem 0.375rem; color: var(--text-muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.3px;">RSI</th></tr></thead><tbody>';
 
-            stocksToShow.forEach(function(stock) {
-                const aiScoreColor = stock.aiScore >= 90 ? '#22c55e' : stock.aiScore >= 75 ? '#eab308' : '#06b6d4';
-                const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
-                const changeIcon = stock.changePct >= 0 ? '▲' : '▼';
-                const isOversold = stock.rsi <= 35;
+                stocks.forEach(function(stock) {
+                    const aiScoreColor = stock.aiScore >= 90 ? '#22c55e' : stock.aiScore >= 75 ? '#eab308' : '#06b6d4';
+                    const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
+                    const isOversold = stock.rsi <= 35;
 
-                // Check if this is a tracking stock (no real data yet)
-                const isNoPrice = !stock.isLive || stock.price === 0;
-                const isTracking = isNoPrice && !stock.tier;
-                // Stocks with signal tier but no price: show real tier, dash price
+                    // Check if this is a tracking stock (no real data yet)
+                    const isNoPrice = !stock.isLive || stock.price === 0;
+                    const isTracking = isNoPrice && !stock.tier;
+                    // Stocks with signal tier but no price: show real tier, dash price
 
-                // Tier badge styling (supports both backend display tiers and legacy names)
-                const tierColors = {
-                    'PRIME': { color: '#06b6d4', borderColor: 'rgba(6,182,212,0.4)', label: 'PRIME' },
-                    'STRONG_NOW': { color: '#06b6d4', borderColor: 'rgba(6,182,212,0.4)', label: 'PRIME' },
-                    'BUILDING': { color: '#22c55e', borderColor: 'rgba(34,197,94,0.35)', label: 'BUILDING' },
-                    'NOW': { color: '#22c55e', borderColor: 'rgba(34,197,94,0.35)', label: 'BUILDING' },
-                    'WATCHING': { color: '#fbbf24', borderColor: 'rgba(251,191,36,0.35)', label: 'WATCHING' },
-                    'WATCH': { color: '#fbbf24', borderColor: 'rgba(251,191,36,0.35)', label: 'WATCHING' },
-                    'TRACKING': { color: '#9ca3af', borderColor: 'rgba(156,163,175,0.3)', label: 'TRACKING' },
-                    'MONITOR': { color: '#6b7280', borderColor: 'rgba(107,114,128,0.25)', label: 'TRACKING' }
-                };
-                const effectiveTier = stock.tier || (isTracking ? 'TRACKING' : 'MONITOR');
-                const tierStyle = tierColors[effectiveTier] || tierColors['MONITOR'];
+                    // Status badge for sleeve strategy
+                    const statusInfo = stock.buy_status === 'hold'
+                        ? { color: '#06b6d4', borderColor: 'rgba(6,182,212,0.4)', label: 'HELD', bg: 'rgba(6,182,212,0.08)' }
+                        : { color: '#9ca3af', borderColor: 'rgba(156,163,175,0.3)', label: 'CANDIDATE', bg: 'transparent' };
 
-                // Row styling - grey out tracking stocks
-                const primeNow = stock.tier === 'PRIME' || stock.tier === 'STRONG_NOW';
-                const buildingNow = stock.tier === 'BUILDING' || stock.tier === 'NOW';
-                const rowBg = primeNow ? 'rgba(6,182,212,0.02)' : buildingNow ? 'rgba(34,197,94,0.02)' : isNoPrice ? 'rgba(107,114,128,0.01)' : 'transparent';
-                const rowOpacity = isNoPrice ? '0.6' : '1';
+                    // Row styling
+                    const inSleeve = stock.buy_status === 'hold';
+                    const rowBg = inSleeve ? 'rgba(6,182,212,0.02)' : isNoPrice ? 'rgba(107,114,128,0.01)' : 'transparent';
+                    const rowOpacity = isNoPrice ? '0.6' : '1';
 
-                // Format values for display - tracking stocks show placeholder
-                const priceDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 12px;">-</span>' : '$' + stock.price.toFixed(2);
-                const changeDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 11px;">-</span>' : '<span style="color: ' + changeColor + '; font-weight: 600; font-size: 11px;">' + (stock.changePct >= 0 ? '+' : '-') + Math.abs(stock.changePct).toFixed(1) + '%</span>';
-                const scoreDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 11px;">-</span>' : '<span class="wl-hide-mobile" style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px; border: 1px solid ' + aiScoreColor + '40;">' + stock.aiScore + '</span>';
+                    // Format values for display - tracking stocks show placeholder
+                    const priceDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 12px;">-</span>' : '$' + stock.price.toFixed(2);
+                    const changeDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 11px;">-</span>' : '<span style="color: ' + changeColor + '; font-weight: 600; font-size: 11px;">' + (stock.changePct >= 0 ? '+' : '-') + Math.abs(stock.changePct).toFixed(1) + '%</span>';
+                    const scoreDisplay = isNoPrice ? '<span style="color: var(--text-muted); font-size: 11px;">-</span>' : '<span class="wl-hide-mobile" style="background: ' + aiScoreColor + '20; color: ' + aiScoreColor + '; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 8px; border: 1px solid ' + aiScoreColor + '40;">' + stock.aiScore + '</span>';
 
-                const rsiDisplay = isNoPrice ? '<span style="color: var(--text-muted);">-</span>' : '<span class="wl-hide-mobile">' + stock.rsi.toFixed(0) + '</span>';
+                    const rsiDisplay = isNoPrice ? '<span style="color: var(--text-muted);">-</span>' : '<span class="wl-hide-mobile">' + stock.rsi.toFixed(0) + '</span>';
 
-                html += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 8px 8px; vertical-align: middle;"><span style="background: transparent; color: ' + tierStyle.color + '; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; padding: 2px 4px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + tierStyle.borderColor + '; text-transform: uppercase;">' + tierStyle.label + '</span></td><td style="padding: 8px 8px;"><div style="display: flex; align-items: center;"><span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px; font-size: 10px;">' + stock.company + '</div></td><td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + priceDisplay + '</td><td style="padding: 8px 8px; text-align: center;">' + changeDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">' + scoreDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td></tr>';
-            });
+                    tableHtml += '<tr onclick="showStockDetail(\'' + stock.symbol + '\')" style="border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; background: ' + rowBg + '; opacity: ' + rowOpacity + ';" onmouseover="this.style.background=\'rgba(255,255,255,0.05)\'" onmouseout="this.style.background=\'' + rowBg + '\'"><td style="padding: 8px 8px; vertical-align: middle;"><span style="background: ' + statusInfo.bg + '; color: ' + statusInfo.color + '; font-size: 9px; font-weight: 600; letter-spacing: 0.8px; padding: 2px 6px; border-radius: 4px; white-space: nowrap; border: 1px solid ' + statusInfo.borderColor + '; text-transform: uppercase;">' + statusInfo.label + '</span></td><td style="padding: 8px 8px;"><div style="display: flex; align-items: center; gap: 6px;"><span style="font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + stock.symbol + '</span></div><div style="font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: normal; line-height: 1.25; max-width: 140px;">' + stock.company + '</div></td><td style="padding: 8px 8px; text-align: right; font-family: monospace; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0.3px;">' + priceDisplay + '</td><td style="padding: 8px 8px; text-align: center;">' + changeDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center;">' + scoreDisplay + '</td><td class="wl-hide-mobile" style="padding: 8px 8px; text-align: center; font-family: monospace; font-size: 12px; font-weight: 600;">' + rsiDisplay + '</td></tr>';
+                });
 
-            html += '</tbody></table></div>';
+                tableHtml += '</tbody></table></div>';
+                return tableHtml;
+            }
+
+            // In Portfolio section
+            if (heldStocks.length > 0) {
+                html += '<div style="font-size: 12px; font-weight: 700; color: #a855f7; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 4px 8px 4px;">In Portfolio (' + heldStocks.length + ')</div>';
+                html += renderTable(heldStocks);
+            }
+
+            // Watchlist candidates section
+            if (candidateStocks.length > 0) {
+                html += '<div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin: 20px 4px 8px 4px;">Watchlist (' + candidateStocks.length + ')</div>';
+                html += renderTable(candidateStocks);
+            } else {
+                html += '<div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">';
+                html += '<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">No fresh watchlist candidates</div>';
+                html += '<div style="font-size: 12px; opacity: 0.7;">All tracked names are currently held.</div>';
+                html += '</div>';
+            }
 
             container.innerHTML = html;
         }
@@ -11997,95 +11915,14 @@ function updateDashboard(data, marketStatus) {
             const container = document.getElementById('next-buys-tab-content');
             if (!container) return;
 
-            aiWatchlist = getWatchlistWithLivePrices();
-
-            const primeStocks = aiWatchlist.filter(s =>
-                (s.tier === 'PRIME' || s.tier === 'STRONG_NOW') && s.buy_status && s.buy_status !== 'not_ready'
-            ).sort((a, b) => (b.readinessScore || 0) - (a.readinessScore || 0));
-
-            const readyToBuy = primeStocks.filter(s => s.buy_status === 'queued' || s.buy_status === 'add');
-
-            let html = '';
-
-            if (readyToBuy.length > 0) {
-                readyToBuy.forEach(function(stock) {
-                    const planPrice = stock.plan_price || stock.price || 0;
-                    const hardStop = stock.hard_stop || 0;
-                    const trailStop = stock.trailing_stop || 0;
-                    const targetPct = stock.target_pct || 0;
-                    const targetNotional = stock.target_notional || 0;
-                    const profitTarget = stock.targetConservative || stock.profit25 || (stock.targets ? (stock.targets.conservative_target || stock.targets.profit_25 || 0) : 0);
-
-                    // Status chip
-                    const statusLabel = stock.buy_status === 'queued' ? 'Queued' :
-                                        stock.buy_status === 'add' ? 'Add' : stock.buy_status;
-
-                    html += '<div onclick="showStockDetail(\'' + stock.symbol + '\')" style="padding: 14px 16px; margin-bottom: 12px; background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.15); border-radius: 16px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background=\'rgba(6,182,212,0.10)\';this.style.borderColor=\'rgba(6,182,212,0.25)\'" onmouseout="this.style.background=\'rgba(6,182,212,0.06)\';this.style.borderColor=\'rgba(6,182,212,0.15)\'">';
-
-                    // Header: symbol / company / status chip
-                    html += '<div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px;">';
-                    html += '<div style="min-width: 0;">';
-                    html += '<span style="font-family: monospace; font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px;">' + stock.symbol + '</span>';
-                    html += '<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">' + (stock.company || '') + '</div>';
-                    html += '</div>';
-                    html += '<div style="text-align: right;">';
-                    html += '<span style="font-size: 10px; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.10); padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(34,197,94,0.25); text-transform: uppercase; letter-spacing: 0.3px;">' + statusLabel + '</span>';
-                    html += '</div>';
-                    html += '</div>';
-
-                    // Buy price
-                    html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">';
-                    html += '<span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Entry Price</span>';
-                    html += '<span style="font-family: monospace; font-size: 15px; font-weight: 700; color: var(--text-primary);">' + (planPrice ? '$' + planPrice.toFixed(2) : '-') + '</span>';
-                    html += '</div>';
-
-                    // Profit target / stops row
-                    html += '<div style="display: flex; justify-content: space-between; gap: 8px; margin-bottom: 10px;">';
-
-                    html += '<div style="flex: 1; min-width: 0;">';
-                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Profit Target</div>';
-                    if (profitTarget > 0) {
-                        html += '<div style="font-family: monospace; font-size: 13px; font-weight: 700; color: #22c55e;">$' + profitTarget.toFixed(2) + '</div>';
-                    } else {
-                        html += '<div style="font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text-muted);">-</div>';
-                    }
-                    html += '</div>';
-
-                    html += '<div style="flex: 1; min-width: 0; text-align: center;">';
-                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Hard Stop</div>';
-                    html += '<div style="font-family: monospace; font-size: 13px; font-weight: 600; color: #f87171;">' + (hardStop ? '$' + hardStop.toFixed(2) : '-') + '</div>';
-                    html += '</div>';
-
-                    html += '<div style="flex: 1; min-width: 0; text-align: right;">';
-                    html += '<div style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px;">Trail Stop</div>';
-                    html += '<div style="font-family: monospace; font-size: 13px; font-weight: 600; color: #fbbf24;">' + (trailStop ? '$' + trailStop.toFixed(2) : '-') + '</div>';
-                    html += '</div>';
-
-                    html += '</div>';
-
-                    // Position size
-                    html += '<div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">';
-                    html += '<span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Position</span>';
-                    html += '<div style="text-align: right;">';
-                    if (targetPct > 0) {
-                        html += '<span style="font-family: monospace; font-size: 13px; font-weight: 700; color: #06b6d4;">' + targetPct.toFixed(1) + '%</span>';
-                    } else {
-                        html += '<span style="font-family: monospace; font-size: 13px; font-weight: 600; color: var(--text-muted);">-</span>';
-                    }
-                    html += '</div>';
-                    html += '</div>';
-
-                    html += '</div>';
-                });
-            } else {
-                html += '<div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">';
-                html += '<div style="font-size: 32px; margin-bottom: 16px;">📭</div>';
-                html += '<div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">No queued trades</div>';
-                html += '<div style="font-size: 12px; opacity: 0.7;">Signals refresh every 5 minutes. Check back at the next market open.</div>';
-                html += '</div>';
-            }
-
-            container.innerHTML = html;
+            // Sleeve strategy: no staged "next buys". Rebalancing happens when the signal triggers.
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+                    <div style="font-size: 32px; margin-bottom: 16px;">📭</div>
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">No queued trades</div>
+                    <div style="font-size: 12px; opacity: 0.7; max-width: 280px; margin: 0 auto;">The sleeve rebalances automatically when the daily signal triggers. Check the Watchlist tab for candidates.</div>
+                </div>
+            `;
         }
         // Live prices fetched from ai_watchlist_live.json (updated every 30s by backend)
 
@@ -12182,27 +12019,19 @@ function updateDashboard(data, marketStatus) {
             `;
 
             tooltip.innerHTML = `
-                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 8px; font-size: 0.82rem;">Watchlist Tiers</div>
+                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 8px; font-size: 0.82rem;">Watchlist</div>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="color: #06b6d4; font-weight: 700; min-width: 72px;">STRONG NOW</span>
-                        <span style="color: var(--text-muted);">≥76 - highest conviction, 1.5x sizing</span>
+                        <span style="color: #06b6d4; font-weight: 700; min-width: 72px;">HELD</span>
+                        <span style="color: var(--text-muted);">Currently in the sleeve portfolio.</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="color: #22c55e; font-weight: 700; min-width: 72px;">NOW</span>
-                        <span style="color: var(--text-muted);">≥72 - bot buys (3+ conf, 1+ hard, positive-edge gate)</span>
-                    </div>
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="color: #fbbf24; font-weight: 700; min-width: 72px;">WATCH</span>
-                        <span style="color: var(--text-muted);">55-74 - approaching entry</span>
-                    </div>
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <span style="color: var(--text-muted); font-weight: 700; min-width: 72px;">MONITOR</span>
-                        <span style="color: var(--text-muted);">&lt;55 - not ready yet</span>
+                        <span style="color: #9ca3af; font-weight: 700; min-width: 72px;">CANDIDATE</span>
+                        <span style="color: var(--text-muted);">Ranked just outside the top 10; may enter at the next signal.</span>
                     </div>
                 </div>
                 <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.68rem; color: var(--text-muted);">
-                    Tiers auto-promote/demote as signals change.
+                    Updated daily from Alpaca data.
                 </div>
             `;
 
@@ -12371,7 +12200,7 @@ function updateDashboard(data, marketStatus) {
                     <!-- Narrative from watchlist_narratives.json -->
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">What it is</div>
-                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || stock.company + ' is a ' + (stock.sector || 'company') + ' in the portfolio universe.'}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || (stock.description || ((typeof companyInfo !== 'undefined' && companyInfo[symbol] && companyInfo[symbol].description) ? companyInfo[symbol].description : (stock.company || symbol) + ' is tracked in the momentum sleeve universe.')) }</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Why on watchlist</div>
@@ -12379,7 +12208,7 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">What triggers a buy</div>
-                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Readiness >= 65 with 3+ confirmations and 1+ hard confirmation (2+ if fewer than 7 chips), satisfying the positive-edge fallback gate.'}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Monthly relative-strength rank + DM-6 gateum_score ≥55, RSI not overbought, and hard filters (above 20-day EMA, spread OK, no corporate-action risk).'}</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Catalyst</div>
@@ -12428,22 +12257,18 @@ function updateDashboard(data, marketStatus) {
             }
         }
 
-        function getWatchlistStatus(signal, readiness, rsi) {
-            const tier = signal === 'STRONG_NOW' || signal === 'PRIME' ? 'PRIME' :
-                         signal === 'NOW' || signal === 'BUILDING' ? 'BUILDING' :
-                         signal === 'WATCH' || signal === 'WATCHING' ? 'WATCHING' :
-                         signal === 'MONITOR' || signal === 'TRACKING' ? 'TRACKING' : signal;
-            if (tier === 'PRIME') return { text: 'Strong conviction - maximum entry', color: '#06b6d4' };
-            if (tier === 'BUILDING') return { text: 'Building - not yet PRIME', color: '#22c55e' };
-            if (tier === 'WATCHING') return { text: 'Approaching entry - watch closely', color: '#fbbf24' };
-            if (rsi && rsi <= 35) return { text: 'Oversold - potential bounce', color: '#06b6d4' };
-            return { text: 'Waiting for better setup', color: 'var(--text-muted)' };
+        function getWatchlistStatus(signal, sleeveScore, rsi) {
+            const tier = stock.buy_status === 'hold' ? 'HELD' : 'WATCHLIST';
+            if (tier === 'HELD') return { text: 'Held in sleeve', color: '#06b6d4' };
+            if (tier === 'WATCHLIST') return { text: 'Watchlist candidate', color: '#9ca3af' };
+            if (rsi && rsi <= 35) return { text: 'Oversold - not a sleeve trigger', color: '#06b6d4' };
+            return { text: 'Not in current sleeve', color: 'var(--text-muted)' };
         }
 
         function simplifyStrategy(strategy, symbol) {
-            if (!strategy) return `AI tracking ${symbol} for optimal entry`;
+            if (!strategy) return `Tracking ${symbol} for next monthly sleeve rank`;
             let first = strategy.split('.')[0];
-            first = first.replace(/quality-momentum model/i, 'AI model');
+            first = first.replace(/quality-momentum model/i, 'relative-strength model');
             first = first.replace(/macro backdrop/i, 'market conditions');
             first = first.replace(/scoring \d+\/100.*$/i, '');
             first = first.replace(/negative \d+-day momentum,?\s*/i, '');
@@ -12480,23 +12305,37 @@ function updateDashboard(data, marketStatus) {
             modal.className = 'stock-detail-overlay';
 
             const signal = stock.signal || 'WAIT';
-            const readiness = stock.readinessScore || 50;
+            const sleeveScore = stock.readinessScore || 50;
+
+            // Build a portfolio positions map from latest portfolio data
+            let portfolioPositions = {};
+            try {
+                const portData = typeof portfolioData !== 'undefined' ? portfolioData : null;
+                if (portData && Array.isArray(portData.positions)) {
+                    portData.positions.forEach(p => { if (p.symbol) portfolioPositions[p.symbol] = p; });
+                }
+            } catch (e) {}
+
+            // Tier: handle both raw backend tiers and display-mapped tiers
+            const isHeld = portfolioPositions && portfolioPositions[stock.symbol];
+            const tier = isHeld ? 'HELD' : 'WATCHLIST';
+            const tierColor = tier === 'HELD' ? '#06b6d4' : '#9ca3af';
+            const tierBg = tier === 'HELD' ? 'rgba(6,182,212,0.15)' : 'rgba(156,163,175,0.08)';
+            const tierLabel = tier === 'HELD' ? 'HELD' : 'WATCHLIST';
+
+            // Derive a sleeve weight for display: 10% for current/prime sleeve positions,
+            // otherwise scale readinessScore toward a 5% max placeholder.
+            const sleeveWeight = isHeld
+                ? 0.10
+                : Math.max(0, Math.min(0.05, (sleeveScore / 100) * 0.05));
             const rsi = stock.rsi || 50;
             const changeColor = stock.changePct >= 0 ? '#22c55e' : '#ef4444';
             const strategyShort = simplifyStrategy(stock.strategy, symbol);
 
-            // Tier: handle both raw backend tiers and display-mapped tiers
-            const rawTier = stock.display_tier || stock.signal_tier || stock.signal || '';
-            const tier = rawTier === 'STRONG_NOW' || rawTier === 'PRIME' ? 'PRIME' :
-                         rawTier === 'NOW' || rawTier === 'BUILDING' ? 'BUILDING' :
-                         rawTier === 'WATCH' || rawTier === 'WATCHING' ? 'WATCHING' :
-                         rawTier === 'MONITOR' || rawTier === 'TRACKING' ? 'TRACKING' : 'TRACKING';
-            const tierColor = tier === 'PRIME' ? '#06b6d4' : tier === 'BUILDING' ? '#22c55e' : tier === 'WATCHING' ? '#fbbf24' : 'var(--text-muted)';
-            const tierBg = tier === 'PRIME' ? 'rgba(6,182,212,0.15)' : tier === 'BUILDING' ? 'rgba(34,197,94,0.12)' : tier === 'WATCHING' ? 'rgba(251,191,36,0.12)' : 'rgba(255,255,255,0.06)';
-
             // Entry gate note (popup only)
-            const entryGateNote = (tier === 'PRIME' && !stock.entry_eligible) ? 'Needs a hard confirmation (volume / VWAP / options / relative volume) to become entry-eligible.' :
-                                  (tier === 'BUILDING' && stock.entry_eligible) ? 'Entry gate passed, but bot only buys PRIME names.' : '';
+            const entryGateNote = tier === 'HELD'
+                ? 'Currently held in the sleeve.'
+                : 'Not currently held in the sleeve.';
 
             // Exit levels
             const stopPrice = stock.stopLoss || (stock.price * 0.85);
@@ -12564,9 +12403,9 @@ function updateDashboard(data, marketStatus) {
                         <!-- Metrics grid: 3-up, consistent -->
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 0.9rem; align-items: stretch;">
                             <div style="background: rgba(255,255,255,0.03); border: none; border-radius: 10px; padding: 0.7rem 0.8rem; display: flex; flex-direction: column; justify-content: flex-start; min-height: 4rem;">
-                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Readiness</div>
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${readiness.toFixed(0)}</div>
-                                <div style="font-size: 0.65rem; color: ${tierColor}; opacity: 0.75;">${tier}</div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Status</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 3px 0;">${sleeveScore.toFixed ? sleeveScore.toFixed(0) : sleeveScore}</div>
+                                <div style="font-size: 0.65rem; color: ${tierColor}; opacity: 0.75;">${tierLabel}</div>
                             </div>
                             <div style="background: rgba(255,255,255,0.03); border: none; border-radius: 10px; padding: 0.7rem 0.8rem; display: flex; flex-direction: column; justify-content: flex-start; min-height: 4rem;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">RSI</div>
@@ -12603,31 +12442,55 @@ function updateDashboard(data, marketStatus) {
                         <!-- What it is -->
                         <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">What it is</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || ''}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || (()=>{
+                                const info = (typeof companyInfo !== 'undefined' && companyInfo[symbol]) || {};
+                                const desc = stock.description || info.description || (info.company ? `${info.company} — ${info.strategy || symbol}` : null);
+                                if (desc) {
+                                    return `${desc} The stock is currently trading at $${stock.price.toFixed(2)}, ${stock.changePct >= 0 ? 'up' : 'down'} ${Math.abs(stock.changePct).toFixed(2)}% on the day, and sits at rank #${stock.rank || '-'} in our relative-strength scan with a momentum score of ${stock.score != null ? (stock.score * 100).toFixed(2) + '%' : '—'}.`;
+                                }
+                                return `${symbol} is currently trading at $${stock.price.toFixed(2)}, ${stock.changePct >= 0 ? 'up' : 'down'} ${Math.abs(stock.changePct).toFixed(2)}% on the day. It ranks #${stock.rank || '-'} in our relative-strength scan with a momentum score of ${stock.score != null ? (stock.score * 100).toFixed(2) + '%' : '—'}, based on trailing 21-day versus 252-day performance versus the S&P 500.`;
+                            })()}</div>
                         </div>
 
                         <!-- Why on watchlist -->
                         <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Why on watchlist</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whyOnWatchlist || ''}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whyOnWatchlist || (()=>{
+                                const info = (typeof companyInfo !== 'undefined' && companyInfo[symbol]) || {};
+                                let base = `We are watching ${symbol} because its price action over the trailing 252-day window has outperformed the broader market, placing it in the upper tier of our momentum screen.`;
+                                if (info.strategy) base += ` From a fundamental angle, ${info.strategy.toLowerCase()}, which is the type of operating story that tends to translate into sustained relative strength when the cycle is working.`;
+                                base += ` With a score of ${stock.score != null ? (stock.score * 100).toFixed(2) + '%' : '—'} and ${stock.dist_to_top10 != null ? (stock.dist_to_top10 * 100).toFixed(2) + '%' : '—'} to the current top-10 cutoff, this is a name we want to track closely.`;
+                                return base;
+                            })()}</div>
                         </div>
 
                         <!-- What triggers a buy -->
                         <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">What triggers a buy</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || ''}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || `We would consider initiating a position if ${symbol} maintains its relative-strength ranking and pushes into the top decile of the momentum screen, ideally while the broader equity regime remains risk-on. A combination of continued outperformance versus the S&P 500 and supportive market conditions would be the trigger.`}</div>
                         </div>
 
                         <!-- Catalyst -->
                         <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">Catalyst</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).catalyst || ''}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).catalyst || (()=>{
+                                const info = (typeof companyInfo !== 'undefined' && companyInfo[symbol]) || {};
+                                let base = `The near-term driver is technical momentum: the stock is carrying a relative-strength score of ${stock.score != null ? (stock.score * 100).toFixed(2) + '%' : '—'} and is ${stock.dist_to_top10 != null ? (stock.dist_to_top10 * 100).toFixed(2) + '%' : '—'} from the momentum cutoff.`;
+                                if (info.catalyst) base += ` From a fundamentals standpoint, ${info.catalyst.toLowerCase()}.`;
+                                return base;
+                            })()}</div>
                         </div>
 
                         <!-- Risk -->
                         <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
                             <div style="font-size: 0.65rem; color: var(--accent-red); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">⚠ Risk</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).risk || ''}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).risk || (()=>{
+                                const info = (typeof companyInfo !== 'undefined' && companyInfo[symbol]) || {};
+                                let base = `Relative-strength strategies can turn quickly. If ${symbol} loses momentum or the sector rotates, the stock could fall back down the ranks before an entry ever triggers.`;
+                                if (info.risk) base += ` Company-specific considerations include ${info.risk.toLowerCase()}.`;
+                                base += ` The stop and target levels shown are illustrative only and not a live recommendation.`;
+                                return base;
+                            })()}</div>
                         </div>
 
                         <!-- News: compact -->
@@ -12780,7 +12643,7 @@ function updateDashboard(data, marketStatus) {
 
         <!-- FOOTER -->
         <footer style="border-top: 1px solid var(--border); padding: 1rem 0.75rem 1.5rem; text-align: center;">
-            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Not investment advice · The AI can lose money</div>
+            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Alpaca · Not investment advice · Strategy: individual-stock momentum sleeve ·<a href="https://github.com/makjh79/stonkbot-ai" style="color:var(--text-muted);text-decoration:none;">GitHub</a></div>
         </footer>
 
 </body>

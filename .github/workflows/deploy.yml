@@ -73,7 +73,15 @@ jobs:
            chown stonkai:stonkai /var/www/hedge-fund-website/thinking.html && \
            chmod 0644 /var/www/hedge-fund-website/thinking.html && \
            \
-           mkdir -p /var/www/hedge-fund-website/sentiment /var/www/hedge-fund-website/history && \
+           mkdir -p /var/www/hedge-fund-website/sentiment /var/www/hedge-fund-website/history /var/www/hedge-fund-website/dm_paper && \
+           cp /opt/stonk-ai/dm_paper/sleeve_state.json /var/www/hedge-fund-website/dm_paper/sleeve_state.json && \
+           cp /opt/stonk-ai/dm_paper/sleeve_equity.csv /var/www/hedge-fund-website/dm_paper/sleeve_equity.csv && \
+           cp /opt/stonk-ai/dm_paper/sleeve_rebalance_signal.json /var/www/hedge-fund-website/dm_paper/sleeve_rebalance_signal.json && \
+           cp /opt/stonk-ai/dm_paper/sleeve_watchlist.json /var/www/hedge-fund-website/dm_paper/sleeve_watchlist.json && \
+           cp /opt/stonk-ai/dm_paper/dm_state.json /var/www/hedge-fund-website/dm_paper/dm_state.json && \
+           cp /opt/stonk-ai/dm_paper/dm_equity.csv /var/www/hedge-fund-website/dm_paper/dm_equity.csv && \
+           chown -R stonkai:stonkai /var/www/hedge-fund-website/dm_paper && \
+           chmod -R 0644 /var/www/hedge-fund-website/dm_paper && \
            rm -f /etc/nginx/sites-enabled/*.bak.* && \
            \
            echo '--- post-deploy verification ---' && \
