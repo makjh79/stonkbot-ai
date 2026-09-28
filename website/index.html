@@ -3706,7 +3706,7 @@
                 <span class="site-header-logo-stonk">Stonk</span><span class="site-header-logo-bot">BOT.AI</span>
             </div>
             <div class="site-header-actions" style="display: flex; align-items: center; gap: 0.5rem;">
-                <div class="live-indicator" id="liveIndicator" title="Alpaca paper sleeve"><span class="live-dot" id="liveDot"></span><span id="liveText">PAPER</span></div>
+                <div class="live-indicator" id="liveIndicator" title="Alpaca paper bot"><span class="live-dot" id="liveDot"></span><span id="liveText">PAPER</span></div>
 
                 <button class="site-header-action" onclick="toggleMobileMenu();" title="More">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -3766,7 +3766,7 @@
 
             <!-- Sleeve vs Market comparison -->
             <div style="text-align: left; margin-bottom: 0.4rem;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Sleeve vs. Market</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Bot vs. Market</div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; text-align: center;">
@@ -3783,7 +3783,7 @@
                 </div>
             </div>
             <div id="race-comparison" style="margin-top: 0.625rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Sleeve vs. S&P 500: </span>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500: </span>
                 <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
 
@@ -5519,6 +5519,157 @@ async function loadPnlAttribution() {
         // Update dashboard with fresh data
         // Helper to format relative freshness time
 
+        // Sleeve-aware dashboard loader (Phase 1).
+        // Reads from dm_paper/sleeve_state.json and market_indices.json,
+        // then paints the hero card and race card with sleeve truth while
+        // keeping the UI labels as "Bot" / "StonkBOT.AI".
+        let _sleeveDashboardLoaded = false;
+        async function loadSleeveDashboard() {
+            try {
+                const [stateRes, miRes] = await Promise.all([
+                    fetch('dm_paper/sleeve_state.json?t=' + Date.now()),
+                    fetch('market_indices.json?t=' + Date.now()).catch(() => null)
+                ]);
+                if (!stateRes.ok) return false;
+                const s = await stateRes.json();
+                const equity = s.equity || 0;
+                const start = 100000;
+                const botRet = ((equity - start) / start) * 100;
+                const isPos = botRet >= 0;
+                const pnl = equity - start;
+                _sleeveDashboardLoaded = true;
+
+                function rmSkeleton(el) {
+                    if (!el) return;
+                    el.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
+                }
+
+                const pvEl = document.getElementById('portfolio-value');
+                if (pvEl) {
+                    pvEl.textContent = '$' + Math.round(equity).toLocaleString('en-US');
+                    pvEl.style.width = 'auto';
+                    pvEl.style.marginLeft = 'auto';
+                    pvEl.style.marginRight = 'auto';
+                    rmSkeleton(pvEl);
+                }
+
+                const retBadge = document.getElementById('portfolio-return-badge');
+                const retEl = document.getElementById('portfolio-return');
+                const pnlEl = document.getElementById('portfolio-pnl');
+                if (retEl) {
+                    retEl.textContent = (isPos ? '▲ +' : '▼ ') + botRet.toFixed(2) + '%';
+                    retEl.style.color = isPos ? 'var(--accent-green)' : 'var(--accent-red)';
+                    rmSkeleton(retEl);
+                }
+                if (pnlEl) {
+                    pnlEl.textContent = (pnl >= 0 ? '+$' : '-$') + Math.abs(Math.round(pnl)).toLocaleString('en-US');
+                    pnlEl.style.color = isPos ? 'var(--accent-green)' : 'var(--accent-red)';
+                    rmSkeleton(pnlEl);
+                }
+                if (retBadge) {
+                    retBadge.style.color = isPos ? 'var(--accent-green)' : 'var(--accent-red)';
+                    retBadge.style.background = isPos ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
+                    retBadge.style.borderColor = isPos ? 'rgba(0, 230, 118, 0.3)' : 'rgba(255, 82, 82, 0.3)';
+                }
+
+                const dayCounter = document.getElementById('day-counter');
+                if (dayCounter && s.inception) {
+                    const startDate = new Date(s.inception + 'T00:00:00');
+                    const today = new Date();
+                    const dayNumber = Math.max(1, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1);
+                    dayCounter.textContent = dayNumber;
+                    rmSkeleton(dayCounter);
+                }
+
+                const positionCount = document.getElementById('position-count');
+                if (positionCount) {
+                    positionCount.textContent = Object.keys(s.holdings || {}).length;
+                    rmSkeleton(positionCount);
+                }
+
+                const cashAvailable = document.getElementById('cash-available');
+                if (cashAvailable) {
+                    const invested = Object.values(s.holdings || {}).reduce((a, b) => a + b, 0);
+                    const cash = equity - invested;
+                    cashAvailable.textContent = '$' + Math.floor(cash).toLocaleString('en-US');
+                    cashAvailable.style.color = cash < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+                    rmSkeleton(cashAvailable);
+                }
+
+                let sp = null, spRet = null, spValue = null;
+                if (miRes && miRes.ok) {
+                    const mi = await miRes.json();
+                    sp = mi.indices && mi.indices['S&amp;P 500'];
+                    if (sp) {
+                        spRet = sp.return_pct;
+                        spValue = sp.value;
+                    }
+                }
+
+                const spValueEl = document.getElementById('sp500Value');
+                const spReturnEl = document.getElementById('sp500Return');
+                const spStatus = document.getElementById('sp500Status');
+                if (spValueEl && spValue != null) {
+                    spValueEl.textContent = '$' + Math.round(spValue).toLocaleString('en-US');
+                    spValueEl.style.width = 'auto';
+                    rmSkeleton(spValueEl);
+                }
+                if (spReturnEl && spRet != null) {
+                    spReturnEl.textContent = (spRet >= 0 ? '+' : '') + spRet.toFixed(2) + '%';
+                    spReturnEl.style.color = spRet >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    rmSkeleton(spReturnEl);
+                }
+                if (spStatus) {
+                    spStatus.textContent = (spRet != null && spRet >= botRet) ? 'LEADING' : 'BEHIND';
+                    spStatus.style.background = (spRet != null && spRet >= botRet)
+                        ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)';
+                    spStatus.style.color = (spRet != null && spRet >= botRet)
+                        ? 'var(--accent-green)' : 'var(--accent-red)';
+                    rmSkeleton(spStatus);
+                }
+
+                const stonkValueEl = document.getElementById('stonkAiValue');
+                const stonkReturnEl = document.getElementById('stonkAiReturn');
+                const stonkStatus = document.getElementById('stonkAiStatus');
+                if (stonkValueEl) {
+                    stonkValueEl.textContent = '$' + Math.round(equity).toLocaleString('en-US');
+                    stonkValueEl.style.width = 'auto';
+                    rmSkeleton(stonkValueEl);
+                }
+                if (stonkReturnEl) {
+                    stonkReturnEl.textContent = (isPos ? '+' : '') + botRet.toFixed(2) + '%';
+                    stonkReturnEl.style.color = isPos ? 'var(--accent-green)' : 'var(--accent-red)';
+                    rmSkeleton(stonkReturnEl);
+                }
+                if (stonkStatus) {
+                    stonkStatus.textContent = (spRet == null || botRet >= spRet) ? 'LEADING' : 'BEHIND';
+                    stonkStatus.style.background = (spRet == null || botRet >= spRet)
+                        ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)';
+                    stonkStatus.style.color = (spRet == null || botRet >= spRet)
+                        ? 'var(--accent-green)' : 'var(--accent-red)';
+                    rmSkeleton(stonkStatus);
+                }
+
+                const raceSpread = document.getElementById('race-spread');
+                if (raceSpread && spRet != null) {
+                    const spread = botRet - spRet;
+                    raceSpread.textContent = spread >= 0
+                        ? '▲ +' + spread.toFixed(2) + '% ahead'
+                        : '▼ ' + spread.toFixed(2) + '% behind';
+                    raceSpread.style.color = spread >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                }
+
+                const liveText = document.getElementById('liveText');
+                if (liveText) liveText.textContent = 'PAPER';
+
+                return true;
+            } catch (e) {
+                console.error('loadSleeveDashboard failed:', e);
+                _sleeveDashboardLoaded = false;
+                return false;
+            }
+        }
+
         function switchTab(tabName, pushState = true) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
@@ -5625,6 +5776,11 @@ async function loadPnlAttribution() {
             }
 
 function updateDashboard(data, marketStatus) {
+            if (window._sleeveDashboardLoaded) {
+                // Phase 1: sleeve state owns the hero/race card; old intraday data only drives Holdings/activity.
+                updateMarketBanner(data, marketStatus);
+                return;
+            }
             // Store for fallback use in modals
             window.currentPortfolioData = data;
             updateMarketBanner(data, marketStatus);
@@ -6490,15 +6646,15 @@ function updateDashboard(data, marketStatus) {
         } else {
             setInitialMarketStatus();
         }
-        document.addEventListener('DOMContentLoaded', loadPortfolioData);
+        document.addEventListener('DOMContentLoaded', function() { loadSleeveDashboard().then(() => loadPortfolioData()); });
         } else {
             // DOM already loaded, run immediately
-            loadPortfolioData();
+            loadSleeveDashboard().then(() => loadPortfolioData());
         }
 
         // Refresh every 120 seconds (matches 2-min portfolio snapshot cadence)
         setInterval(() => {
-            loadPortfolioData();
+            loadSleeveDashboard().then(() => loadPortfolioData());
             loadPerformanceData();
             updateAnomalyBanner();
         }, 120000);
@@ -8208,6 +8364,7 @@ function updateDashboard(data, marketStatus) {
         let pendingRaceValuesUpdate = false;
 
         async function updateRaceValues() {
+            if (window._sleeveDashboardLoaded) return; // Phase 1: race card painted by loadSleeveDashboard.
             // Prevent concurrent updates
             if (isUpdatingRaceValues) {
                 pendingRaceValuesUpdate = true;
