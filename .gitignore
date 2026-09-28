@@ -46,3 +46,20 @@ Thumbs.db
 data_fetcher.log
 ENTRIES_HALTED
 .secrets/
+
+# Auto-added cleanup rules
+# Generated runtime data that should never be tracked
+*.csv
+!website/**/*.csv
+*.db
+*.db3
+.circuit_override
+.llm_narrative_last_run
+.llm_narrative_status
+monitor.log
+backups/*.json
+backups/**/*.json
+reports/*.csv
+reports/*.png
+v3_rebuild/sidecar_output/
+data/
