@@ -23,8 +23,8 @@
         }
     })();
     </script>
-    <title>StonkBOT.AI | $100K Paper Momentum Strategy</title>
-    <meta name="description" content="A transparent, paper-trading individual-stock momentum strategy. Signal-driven daily, regime-gated (QQQ vs SHY/GLD/TLT), 10 holdings, owner-supervised. Not investment advice.">
+    <title>StonkBOT.AI | $100K Paper Momentum Bot</title>
+    <meta name="description" content="A transparent, paper-trading individual-stock momentum Bot. Monthly rebalanced, regime-gated (QQQ vs SHY/GLD/TLT), 10 equal-weight holdings, owner-supervised. Not investment advice.">
     <!-- CACHE BUST: v=20260905-v1 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -4204,7 +4204,7 @@
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin:0.75rem 0 0.5rem;">
-            <p style="margin:0 0 0.45rem 0;">Monthly momentum strategy. Equal-weight basket of the top 10 individual stocks by 252-day relative strength versus the S&amp;P 500. The DM-6 gate compares QQQ to SHY, GLD, and TLT over six months; when equity momentum weakens, the account rotates to defensive assets.</p>
+            <p style="margin:0 0 0.45rem 0;">Monthly momentum Bot. Equal-weight basket of the top 10 individual stocks by 252-day relative strength versus the S&amp;P 500. The DM-6 gate compares QQQ to SHY, GLD, and TLT over six months; when equity momentum weakens, the account rotates to defensive assets.</p>
             <p style="margin:0;">No intraday signals, no discretionary trades. Rebalanced only when the rank or the gate changes.</p>
           </div>
 
@@ -4539,7 +4539,7 @@ async function loadPnlAttribution() {
                                 <div style="position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
                             </div>
                         </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">Monthly momentum strategy</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">Monthly momentum Bot</div>
                     </div>
 
                     <!-- S&P 500 -->
@@ -5200,7 +5200,7 @@ async function loadPnlAttribution() {
                 <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
                     <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite;"></div>
                     <div style="font-size: 0.85rem; font-weight: 500;">Loading activity...</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI momentum strategy</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI momentum Bot</div>
                 </div>
             </div>
 
@@ -6676,7 +6676,7 @@ function updateDashboard(data, marketStatus) {
 
         // Social Share Functions
         function shareOnX() {
-            const text = "StonkBOT.AI momentum strategy experiment  Full transparency: https://sec-washer-molecular-shows.trycloudflare.com";
+            const text = "StonkBOT.AI momentum Bot experiment  Full transparency: https://sec-washer-molecular-shows.trycloudflare.com";
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
         }
@@ -7285,7 +7285,7 @@ function updateDashboard(data, marketStatus) {
                         description: 'Monthly rebalancing active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: '$100K Alpaca paper account running a signal-driven individual-stock momentum strategy. DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
+                        rationale: '$100K Alpaca paper account running a monthly-rebalanced individual-stock momentum Bot. DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
                     }
                 ];
 
@@ -7574,9 +7574,9 @@ function updateDashboard(data, marketStatus) {
                           <strong>Strategy Active</strong>
                         </div>
                         <div>• Monthly relative-strength strategy (top 10 stocks vs S&P 500, equal-weighted, DM-6 gate: QQQ vs SHY/GLD/TLT)</div>
-                        <div>• Signal-driven rebalance after US close; gate checked daily</div>
+                        <div>• Monthly rebalance after US close; gate checked daily</div>
                         <div>• No ATR stops, no intraday trims, no staged exits</div>
-                        <div>• Signal-driven, regime-gated individual-stock strategy</div>
+                        <div>• Monthly-rebalanced, regime-gated individual-stock Bot</div>
                     </div>
                 </div>
             `;
@@ -10920,7 +10920,7 @@ function updateDashboard(data, marketStatus) {
                     <div style="background: var(--bg-surface); border-radius: 12px; padding: 1.25rem;">
                         <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">System Logic</div>
                         <div style="font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
-                            ${activity.rationale || 'Rebalance action taken by the momentum strategy based on predefined rules and market conditions.'}
+                            ${activity.rationale || 'Rebalance action taken by the Bot based on predefined rules and market conditions.'}
                         </div>
                     </div>
                 `;
@@ -11072,7 +11072,7 @@ function updateDashboard(data, marketStatus) {
         function shareOnTwitter() {
             const r = timeRangeData && timeRangeData[currentTimeRange];
             const ret = r && r.data.length ? r.data[r.data.length - 1] : 0;
-            const text = `StonkBOT.AI Performance: ${currentTimeRange} return ${ret}%\n\nMonthly momentum strategy on Alpaca paper - transparent, rules-based, owner-supervised.\n\nSee live performance:`;
+            const text = `StonkBOT.AI Performance: ${currentTimeRange} return ${ret}%\n\nMonthly momentum Bot on Alpaca paper - transparent, rules-based, owner-supervised.\n\nSee live performance:`;
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
         }
 
@@ -12352,7 +12352,7 @@ function updateDashboard(data, marketStatus) {
                     <!-- Narrative from watchlist_narratives.json -->
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">What it is</div>
-                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || (stock.description || ((typeof companyInfo !== 'undefined' && companyInfo[symbol] && companyInfo[symbol].description) ? companyInfo[symbol].description : (stock.company || symbol) + ' is tracked in the momentum strategy universe.')) }</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || (stock.description || ((typeof companyInfo !== 'undefined' && companyInfo[symbol] && companyInfo[symbol].description) ? companyInfo[symbol].description : (stock.company || symbol) + ' is tracked in the Bot watchlist universe.')) }</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Why on watchlist</div>
@@ -12795,7 +12795,7 @@ function updateDashboard(data, marketStatus) {
 
         <!-- FOOTER -->
         <footer style="border-top: 1px solid var(--border); padding: 1rem 0.75rem 1.5rem; text-align: center;">
-            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Alpaca · Not investment advice · Strategy: individual-stock momentum ·<a href="https://github.com/makjh79/stonkbot-ai" style="color:var(--text-muted);text-decoration:none;">GitHub</a></div>
+            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Alpaca · Not investment advice · Bot: individual-stock momentum ·<a href="https://github.com/makjh79/stonkbot-ai" style="color:var(--text-muted);text-decoration:none;">GitHub</a></div>
         </footer>
 
 </body>
