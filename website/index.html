@@ -23,8 +23,8 @@
         }
     })();
     </script>
-    <title>StonkBOT.AI | $100K Paper Momentum Bot</title>
-    <meta name="description" content="A transparent, paper-trading individual-stock momentum bot. Signal-driven daily, regime-gated (QQQ vs SHY/GLD/TLT), 10 holdings, owner-supervised. Not investment advice.">
+    <title>StonkBOT.AI | $100K Paper Momentum Strategy</title>
+    <meta name="description" content="A transparent, paper-trading individual-stock momentum strategy. Signal-driven daily, regime-gated (QQQ vs SHY/GLD/TLT), 10 holdings, owner-supervised. Not investment advice.">
     <!-- CACHE BUST: v=20260905-v1 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -3673,7 +3673,7 @@
                         <span class="menu-icon"><span class="menu-icon-wrap" style="width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#22c55e28;color:#22c55e;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span></span>
                         <span class="menu-label-stack">
                             <span class="menu-label">Market Comparison</span>
-                            <span class="menu-sub">Quick Bot vs. market stats</span>
+                            <span class="menu-sub">Quick strategy vs. market stats</span>
                         </span>
                     </a>
 
@@ -3692,7 +3692,7 @@
                         <span class="menu-icon"><span class="menu-icon-wrap" style="width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#06b6d428;color:#06b6d4;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span></span>
                         <span class="menu-label-stack">
                             <span class="menu-label">Rebalance Log</span>
-                            <span class="menu-sub">Bot decision stream</span>
+                            <span class="menu-sub">Strategy decision stream</span>
                         </span>
                     </a>
                 </div>
@@ -3764,9 +3764,9 @@
                 </div>
             </div>
 
-            <!-- Bot vs Market comparison -->
+            <!-- Strategy vs Market comparison -->
             <div style="text-align: left; margin-bottom: 0.4rem;">
-                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Bot vs. Market</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Strategy vs. Market</div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; text-align: center;">
@@ -3776,14 +3776,14 @@
                     <span id="sp500Status" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">&nbsp;</span>
                 </div>
                 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0.625rem 0.75rem; text-align: center;">
-                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">Bot</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 500;">Strategy</div>
                     <div id="stonkAiValue" class="skeleton skeleton-value" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; width: 85px; margin: 0 auto 0.2rem;">&nbsp;</div>
                     <div id="stonkAiReturn" class="skeleton skeleton-text" style="font-size: 0.75rem; color: var(--text-muted); min-height: 0.9rem; width: 70px; margin: 0 auto 0.35rem;">&nbsp;</div>
                     <span id="stonkAiStatus" class="skeleton skeleton-badge" style="display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; min-width: 45px;">&nbsp;</span>
                 </div>
             </div>
             <div id="race-comparison" style="margin-top: 0.625rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500: </span>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">Strategy vs. S&P 500: </span>
                 <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
 
@@ -4107,7 +4107,7 @@
                   <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">signal-driven · paper</div>
                 </div>
               </div>
-              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> Bot scores the market daily; rebalances only when the rank or gate changes</div>
+              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> Scores the market daily; rebalances only when the rank or gate changes</div>
             </div>
 
             <p style="margin:0 0 0.75rem 0;">The <strong>DM-6 gate</strong> compares the 6-month relative strength of QQQ to the average of SHY, GLD, and TLT. If QQQ is winning, the account can hold the 10-stock basket. If defensive assets are winning, it sells the basket and waits for equity momentum to recover. Preservation first, upside second.</p>
@@ -4193,12 +4193,12 @@
         </div>
       </div>
 
-      <!-- ───────── Section 4: Bot Performance ───────── -->
+      <!-- ───────── Section 4: Strategy Performance ───────── -->
       <div id="bot-performance" class="about-section" style="margin-bottom:0.5rem;background:rgba(22,24,34,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;">
         <div class="about-section-header" onclick="toggleAboutSection(this)" style="padding:0.875rem 1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,0.02);">
           <div style="display:flex;align-items:center;gap:0.5rem;">
             <span class="about-icon-wrap" style="width:1.8rem;height:1.8rem;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#f59e0b28;color:#f59e0b;font-size:0;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
-            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Bot Performance</span>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Strategy Performance</span>
           </div>
           <span class="about-chevron" style="font-size:0.7rem;color:var(--text-muted);transition:transform 0.2s;">▼</span>
         </div>
@@ -4213,7 +4213,7 @@
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span id="sleeve-scoreboard-label" style="text-transform:none;">· since launch</span></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
-              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Bot</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Strategy</div>
               <div id="sleeve-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
             </div>
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
@@ -4235,7 +4235,7 @@
             <svg id="sleeve-chart" width="100%" height="80" style="display:block;"></svg>
           </div>
 
-          <!-- Bot Performance: sleeve state + equity JS -->
+          <!-- Strategy Performance: sleeve state + equity JS -->
 <script>
 let _sleeveLoaded = false;
 async function loadSleevePerformance() {
@@ -4637,7 +4637,7 @@ async function loadPnlAttribution() {
                     <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #06b6d4, #a855f7); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"></div>
                     <div>
                         <span class="chart-modal-title">Trade Log</span>
-                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Complete history of trades, alerts & bot actions</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Complete history of trades, alerts & strategy actions</div>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -4663,7 +4663,7 @@ async function loadPnlAttribution() {
                     </div>
                     <div style="text-align: center; padding: 0.5rem;">
                         <div id="stat-bot" style="font-size: 1.1rem; font-weight: 700; color: var(--accent-purple);">0</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Bot</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Strategy</div>
                     </div>
                 </div>
                 <!-- Activity List -->
@@ -5160,7 +5160,7 @@ async function loadPnlAttribution() {
                     <div style="width: 32px; height: 32px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--accent-cyan);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg></div>
                     <div>
                         <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); letter-spacing: 0.04em;">Activity</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted);">Bot history</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">Strategy history</div>
                     </div>
                 </div>
                 <button class="chart-modal-close" onclick="closeTradeLogModal()" style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
@@ -5190,7 +5190,7 @@ async function loadPnlAttribution() {
                     <button class="trade-log-segment active" onclick="setTradeLogFilter('all')" data-filter="all" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.08); color: var(--text-primary);">All</button>
                     <button class="trade-log-segment" onclick="setTradeLogFilter('trades')" data-filter="trades" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Trades</button>
 
-                    <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Bot</button>
+                    <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Strategy</button>
                 </div>
             </div>
 
@@ -5200,7 +5200,7 @@ async function loadPnlAttribution() {
                 <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
                     <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite;"></div>
                     <div style="font-size: 0.85rem; font-weight: 500;">Loading activity...</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI momentum Bot</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI momentum strategy</div>
                 </div>
             </div>
 
@@ -6364,7 +6364,7 @@ function updateDashboard(data, marketStatus) {
             if (botIndicatorMain && botTextMain) {
                 if (isMarketOpen) {
                     botIndicatorMain.style.background = 'var(--accent-green)';
-                    botTextMain.textContent = 'Bot Trading';
+                    botTextMain.textContent = 'Strategy Active';
                     botTextMain.style.color = 'var(--accent-green)';
                 } else {
                     botIndicatorMain.style.background = 'var(--accent-gold)';
@@ -6768,11 +6768,11 @@ function updateDashboard(data, marketStatus) {
                 } else if (regime === 'RISK_OFF') {
                     labelEl.textContent = 'Defensive';
                     const p = data.params || {};
-                    pill.title = 'Market regime: Defensive - Bot in cash/defensive assets until DM-6 gate flips';
+                    pill.title = 'Market regime: Defensive - strategy in cash/defensive assets until DM-6 gate flips';
                     if (data.triggers && data.triggers.length) pill.title += '\nTrigger: ' + data.triggers.join(', ');
                 } else {
                     labelEl.textContent = 'Crisis';
-                    pill.title = 'Market regime: Crisis - no equity Bot, defensive allocation';
+                    pill.title = 'Market regime: Crisis - no equity strategy, defensive allocation';
                 }
             } catch (e) {
                 // Silent fail
@@ -7274,18 +7274,18 @@ function updateDashboard(data, marketStatus) {
                     console.log('Could not load portfolio history:', e);
                 }
 
-                // Add bot actions based on trades
-                const botActions = [
+                // Add strategy actions based on trades
+                const strategyActions = [
                     {
                         type: 'bot',
                         subtype: 'deploy',
                         timestamp: new Date('2026-07-07T09:00:00'),
                         icon: '↑',
-                        title: 'Bot Rebalance Started',
-                        description: 'Monthly Bot rebalancing active',
+                        title: 'Rebalance Started',
+                        description: 'Monthly rebalancing active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: '$100K Alpaca paper account running a signal-driven individual-stock momentum Bot. DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
+                        rationale: '$100K Alpaca paper account running a signal-driven individual-stock momentum strategy. DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
                     }
                 ];
 
@@ -7573,10 +7573,10 @@ function updateDashboard(data, marketStatus) {
                           </svg>
                           <strong>Strategy Active</strong>
                         </div>
-                        <div>• Monthly relative-strength Bot (top 10 stocks vs S&P 500, equal-weighted, DM-6 gate: QQQ vs SHY/GLD/TLT)</div>
+                        <div>• Monthly relative-strength strategy (top 10 stocks vs S&P 500, equal-weighted, DM-6 gate: QQQ vs SHY/GLD/TLT)</div>
                         <div>• Signal-driven rebalance after US close; gate checked daily</div>
                         <div>• No ATR stops, no intraday trims, no staged exits</div>
-                        <div>• Signal-driven, regime-gated individual-stock Bot</div>
+                        <div>• Signal-driven, regime-gated individual-stock strategy</div>
                     </div>
                 </div>
             `;
@@ -8119,6 +8119,7 @@ function updateDashboard(data, marketStatus) {
         // Update sparkline visualization
         function updateSparkline(currentValue, returnPct) {
             const path = document.getElementById('sparklinePath');
+            if (!path) return; // sparkline SVG removed; guard prevents null-reference
             const area = document.getElementById('sparklineArea');
             const currentPoint = document.getElementById('currentPoint');
             const currentPointGlow = document.getElementById('currentPointGlow');
@@ -9773,7 +9774,7 @@ function updateDashboard(data, marketStatus) {
                         isDegraded = status !== 'HEALTHY' && status !== 'OK' && !healthy;
                     }
                     if (isDegraded) {
-                        messages.push('Bot degraded');
+                        messages.push('Strategy degraded');
                         degraded = true;
                     }
                 }
@@ -9929,23 +9930,23 @@ function updateDashboard(data, marketStatus) {
 
             let label, desc;
             if (score >= 80) {
-                label = 'Bot position';
-                desc = 'Part of the current Bot.';
+                label = 'Strategy position';
+                desc = 'Part of the current strategy.';
             } else if (score >= 75) {
-                label = 'Bot position';
-                desc = 'Held as part of the relative-strength Bot.';
+                label = 'Strategy position';
+                desc = 'Held as part of the relative-strength strategy.';
             } else if (score >= 65) {
                 label = 'Watchlist';
-                desc = 'Not currently in the Bot; monitored for next signal-triggered rebalance.';
+                desc = 'Not currently in the strategy; monitored for next signal-triggered rebalance.';
             } else {
-                label = 'Not in Bot';
+                label = 'Not in strategy';
                 desc = 'Not currently selected by the relative-strength rank.';
             }
 
             tooltip.innerHTML = `
-                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Bot signal ${score.toFixed(0)}/100 - ${label}</div>
+                <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Strategy signal ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Bot stocks are ranked by relative strength vs the S&P 500. The top 10 equal-weight names are held when the DM-6 gate (QQQ vs SHY/GLD/TLT) is risk-on. No intraday entry scoring is used.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Strategy stocks are ranked by relative strength vs the S&P 500. The top 10 equal-weight names are held when the DM-6 gate (QQQ vs SHY/GLD/TLT) is risk-on. No intraday entry scoring is used.</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -9977,7 +9978,7 @@ function updateDashboard(data, marketStatus) {
 
 
         function simplifyThesis(thesis, symbol) {
-            if (!thesis) return `Bot position in ${symbol}`;
+            if (!thesis) return `Strategy position in ${symbol}`;
             let first = thesis.split('.')[0];
             first = first.replace(/scoring \d+\/100.*$/i, '');
             first = first.replace(/quality-momentum model/i, 'relative-strength model');
@@ -9992,8 +9993,8 @@ function updateDashboard(data, marketStatus) {
             if (pnlPct >= 50) return { text: 'Full exit zone - take profits', color: '#22c55e' };
             if (pnlPct >= 25) return { text: 'Profit target approaching - trim zone', color: '#22c55e' };
             if (pnlPct <= -10) return { text: 'Stop loss triggered - exiting', color: '#ef4444' };
-            if (BotWeight >= 0.08) return { text: 'Bot position - hold', color: '#22c55e' };
-            if (BotWeight >= 0.04) return { text: 'Bot position - smaller weight', color: '#fbbf24' };
+            if (BotWeight >= 0.08) return { text: 'Strategy position - hold', color: '#22c55e' };
+            if (BotWeight >= 0.04) return { text: 'Strategy position - smaller weight', color: '#fbbf24' };
             return { text: 'Low conviction - trim candidate', color: '#ef4444' };
         }
 
@@ -10122,7 +10123,7 @@ function updateDashboard(data, marketStatus) {
             const companyName = position?.name || position?.company || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
             const livePrice = (position ? position.current : 0) || liveData.price || preGenerated.price || 0;
             const BotWeight = (preGenerated.Bot_weight != null ? preGenerated.Bot_weight : 0.10);
-            // Bot strategy: status is either a held position or a watchlist candidate.
+            // Strategy: status is either a held position or a watchlist candidate.
             const isHeld = !!position;
             const tierLabel = isHeld ? 'HELD' : 'WATCHLIST';
             const tierColor = isHeld ? '#06b6d4' : '#9ca3af';
@@ -10890,7 +10891,7 @@ function updateDashboard(data, marketStatus) {
                     </div>
 
                     <div style="background: var(--bg-surface); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;">
-                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">Bot Response</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">Strategy Response</div>
                         <div style="font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
                             ${activity.botResponse || 'System monitoring alert. No automatic action triggered. Human oversight notified if threshold exceeded.'}
                         </div>
@@ -10910,7 +10911,7 @@ function updateDashboard(data, marketStatus) {
                             <div style="font-size: 1.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
                             <div>
                                 <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${activity.title}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Bot Rebalance Action</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Strategy Rebalance Action</div>
                             </div>
                         </div>
                         <div style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.5;">${activity.description}</div>
@@ -10919,7 +10920,7 @@ function updateDashboard(data, marketStatus) {
                     <div style="background: var(--bg-surface); border-radius: 12px; padding: 1.25rem;">
                         <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem;">System Logic</div>
                         <div style="font-size: 0.9rem; line-height: 1.6; color: var(--text-primary);">
-                            ${activity.rationale || 'Rebalance action taken by the momentum Bot based on predefined rules and market conditions.'}
+                            ${activity.rationale || 'Rebalance action taken by the momentum strategy based on predefined rules and market conditions.'}
                         </div>
                     </div>
                 `;
@@ -10973,7 +10974,7 @@ function updateDashboard(data, marketStatus) {
                         subtype: 'critical',
                         icon: '',
                         title: 'Holdings Alert',
-                        description: 'Bot down from $100K start',
+                        description: 'Strategy down from $100K start',
                         timestamp: new Date('2026-06-06T15:50:00Z'),
                         badge: 'Alert',
                         badgeClass: 'alert',
@@ -11254,9 +11255,9 @@ function updateDashboard(data, marketStatus) {
                         macd_line: (c.macd || {}).line,
                         macd_signal: (c.macd || {}).signal,
                         macd_histogram: (c.macd || {}).histogram,
-                        strategy: companyStrategy || 'Potential Bot candidate ranked by relative strength vs. S&amp;P 500.',
-                        catalyst: companyCatalyst || `Rank ${c.rank} with score ${(c.score * 100).toFixed(2)}% — ${c.dist_to_top10 <= 0.01 ? 'near the top 10 cutoff' : 'still behind the current Bot names'}.`,
-                        risk: companyRisk || 'May enter the Bot at the next signal-triggered rebalance, or fall further behind.',
+                        strategy: companyStrategy || 'Potential strategy candidate ranked by relative strength vs. S&amp;P 500.',
+                        catalyst: companyCatalyst || `Rank ${c.rank} with score ${(c.score * 100).toFixed(2)}% — ${c.dist_to_top10 <= 0.01 ? 'near the top 10 cutoff' : 'still behind the current strategy names'}.`,
+                        risk: companyRisk || 'May enter the strategy at the next signal-triggered rebalance, or fall further behind.',
                         stopLoss: c.price ? c.price * 0.85 : null,
                         stop_loss: c.price ? c.price * 0.85 : null,
                         profit25: targetPrice,
@@ -11279,7 +11280,7 @@ function updateDashboard(data, marketStatus) {
                 lastWatchlistUpdate = new Date().toISOString();
                 return true;
             } catch (e) {
-                console.log('Bot watchlist fetch failed, falling back to legacy watchlist:', e);
+                console.log('Strategy watchlist fetch failed, falling back to legacy watchlist:', e);
                 // legacy fallback
                 try {
                     const response = await fetch('./ai_watchlist_live.json?t=' + Date.now());
@@ -11487,7 +11488,7 @@ function updateDashboard(data, marketStatus) {
                 activeSignalsHtml = `
                     <div style="margin-top: 20px; text-align: center; padding: 20px; background: var(--bg-surface); border-radius: 12px;">
                         <div style="font-size: 14px; color: var(--text-muted);">No active signals</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Bot holdings are updated when the daily signal triggers. No intraday entry signals are generated.</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Strategy holdings are updated when the daily signal triggers. No intraday entry signals are generated.</div>
                     </div>
                 `;
             }
@@ -11531,7 +11532,7 @@ function updateDashboard(data, marketStatus) {
                         <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 12px; padding: 14px;">
                             <div style="font-size: 12px; font-weight: 700; color: #22c55e; margin-bottom: 8px;">HOW WE TRACK</div>
                             <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.7;">
-                                <div style="margin-bottom: 6px;">• Bot positions are logged monthly; intraday signals are not part of the strategy.</div>
+                                <div style="margin-bottom: 6px;">• Strategy positions are logged monthly; intraday signals are not part of the strategy.</div>
                                 <div style="margin-bottom: 6px;">• <strong style="color: #22c55e;">WIN:</strong> Position is held through a month and finishes higher</div>
                                 <div style="margin-bottom: 6px;">• <strong style="color: var(--accent-red);">LOSS:</strong> Position is held through a month and finishes lower</div>
                                 <div>• Tracks from monthly rebalance to the next monthly rebalance</div>
@@ -11597,7 +11598,7 @@ function updateDashboard(data, marketStatus) {
             } else if (rsi <= 35) {
                 return `Auto-entry zone triggered (RSI ${rsi.toFixed(1)}). Technical exhaustion meets accumulation support. History favors bounce >65% probability.`;
             } else if (rsi <= 40) {
-                return `RSI ${rsi.toFixed(1)} — not used for Bot entry. The Bot only rebalances monthly by relative strength and the DM-6 gate.`;
+                return `RSI ${rsi.toFixed(1)} — not used for strategy entry. The strategy only rebalances monthly by relative strength and the DM-6 gate.`;
             } else if (rsi >= 70) {
                 return `Overbought momentum (RSI ${rsi.toFixed(1)}). Riding trend but risk/reward deteriorating. Trim if position held, avoid new entries.`;
             } else if (changePct >= 5) {
@@ -11632,7 +11633,7 @@ function updateDashboard(data, marketStatus) {
             } else if (sentiment <= 25) {
                 return `Maximum pessimism (${sentiment}/100). Contrarian opportunity-when everyone hates it, bottoms often form.`;
             } else {
-                return `Bot does not trade on catalysts. Holdings reset monthly by relative strength and the DM-6 gate.`;
+                return `Strategy does not trade on catalysts. Holdings reset monthly by relative strength and the DM-6 gate.`;
             }
         }
 
@@ -11649,7 +11650,7 @@ function updateDashboard(data, marketStatus) {
             } else if (changePct <= -8) {
                 return `Free-fall momentum (-${Math.abs(changePct).toFixed(1)}% today). Catching falling knives dangerous-wait for RSI stabilization above 20.`;
             } else if (!stopLoss) {
-                return `No stop-loss data available. Bot risk is managed by the monthly rebalance and the DM-6 gate, not by ATR stops.`;
+                return `No stop-loss data available. Risk is managed by the monthly rebalance and the DM-6 gate, not by ATR stops.`;
             } else {
                 return `Stop-loss at $${stopLoss} (${stopDistance}% below entry). Respect the stop-preservation of capital paramount. Don't average down through stop.`;
             }
@@ -11678,7 +11679,7 @@ function updateDashboard(data, marketStatus) {
                 // Readiness indicator based on server backend tier
                 let readinessTag = '';
                 const backendTier = data.backend_tier || data.signal_tier || 'TRACKING';
-                // Bot strategy: no legacy tiering; tag reflects held vs candidate.
+                // Strategy: no legacy tiering; tag reflects held vs candidate.
                 if (data.buy_status === 'hold') readinessTag = 'HELD';
                 else readinessTag = 'CANDIDATE';
 
@@ -11735,7 +11736,7 @@ function updateDashboard(data, marketStatus) {
                     premarket_volume: data.premarket_volume != null ? data.premarket_volume : null,
                     afterhours_change_pct: data.afterhours_change_pct != null ? data.afterhours_change_pct : null,
                     afterhours_volume: data.afterhours_volume != null ? data.afterhours_volume : null,
-                    // Pass through Bot membership status
+                    // Pass through Strategy membership status
                     buy_status: data.buy_status || null,
                     target_pct: data.target_pct || null,
                     target_notional: data.target_notional || null,
@@ -11746,7 +11747,7 @@ function updateDashboard(data, marketStatus) {
                 });
             }
 
-            // Sort by Bot score descending
+            // Sort by strategy score descending
             return stocks.sort((a, b) => b.aiScore - a.aiScore).map((s, i) => ({...s, rank: i + 1}));
         }
 
@@ -11842,7 +11843,7 @@ function updateDashboard(data, marketStatus) {
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div>
                                 <div style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.04em; text-transform: uppercase;">Watchlist</div>
-                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Potential Bot candidates ranked daily</div>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Potential strategy candidates ranked daily</div>
                                 <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
                                     ${liveIndicator}
                                 </div>
@@ -11958,17 +11959,17 @@ function updateDashboard(data, marketStatus) {
             // Split held positions into their own section so the watchlist table
             // stays focused on actionable new candidates.
 
-            // Bot strategy: no legacy tiering. Status = held or candidate.
+            // Strategy: no legacy tiering. Status = held or candidate.
             const watchlistWithStatus = aiWatchlist.map(stock => ({
                 ...stock,
                 status: stock.buy_status === 'hold' ? 'HELD' : 'CANDIDATE'
             }));
 
-            // Separate Bot positions from watchlist candidates
+            // Separate Strategy positions from watchlist candidates
             const heldStocks = watchlistWithStatus.filter(s => s.buy_status === 'hold');
             const candidateStocks = watchlistWithStatus.filter(s => s.buy_status !== 'hold');
 
-            // Sort candidates only; Bot positions stay in rank order
+            // Sort candidates only; Strategy positions stay in rank order
             candidateStocks.sort((a, b) => {
                 switch(currentWatchlistSort) {
                     case 'rsi':
@@ -12017,7 +12018,7 @@ function updateDashboard(data, marketStatus) {
                     const isTracking = isNoPrice && !stock.tier;
                     // Stocks with signal tier but no price: show real tier, dash price
 
-                    // Status badge for Bot strategy
+                    // Status badge for strategy
                     const statusInfo = stock.buy_status === 'hold'
                         ? { color: '#06b6d4', borderColor: 'rgba(6,182,212,0.4)', label: 'HELD', bg: 'rgba(6,182,212,0.08)' }
                         : { color: '#9ca3af', borderColor: 'rgba(156,163,175,0.3)', label: 'CANDIDATE', bg: 'transparent' };
@@ -12066,12 +12067,12 @@ function updateDashboard(data, marketStatus) {
             const container = document.getElementById('next-buys-tab-content');
             if (!container) return;
 
-            // Bot strategy: no staged "next buys". Rebalancing happens when the signal triggers.
+            // Strategy: no staged "next buys". Rebalancing happens when the signal triggers.
             container.innerHTML = `
                 <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
                     <div style="font-size: 32px; margin-bottom: 16px;">📭</div>
                     <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">No queued trades</div>
-                    <div style="font-size: 12px; opacity: 0.7; max-width: 280px; margin: 0 auto;">The Bot rebalances automatically when the daily signal triggers. Check the Watchlist tab for candidates.</div>
+                    <div style="font-size: 12px; opacity: 0.7; max-width: 280px; margin: 0 auto;">The strategy rebalances automatically when the daily signal triggers. Check the Watchlist tab for candidates.</div>
                 </div>
             `;
         }
@@ -12174,7 +12175,7 @@ function updateDashboard(data, marketStatus) {
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #06b6d4; font-weight: 700; min-width: 72px;">HELD</span>
-                        <span style="color: var(--text-muted);">Currently in the Bot portfolio.</span>
+                        <span style="color: var(--text-muted);">Currently in the strategy portfolio.</span>
                     </div>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <span style="color: #9ca3af; font-weight: 700; min-width: 72px;">CANDIDATE</span>
@@ -12410,14 +12411,14 @@ function updateDashboard(data, marketStatus) {
 
         function getWatchlistStatus(signal, BotScore, rsi) {
             const tier = stock.buy_status === 'hold' ? 'HELD' : 'WATCHLIST';
-            if (tier === 'HELD') return { text: 'Held in Bot', color: '#06b6d4' };
+            if (tier === 'HELD') return { text: 'Held in strategy', color: '#06b6d4' };
             if (tier === 'WATCHLIST') return { text: 'Watchlist candidate', color: '#9ca3af' };
-            if (rsi && rsi <= 35) return { text: 'Oversold - not a Bot trigger', color: '#06b6d4' };
-            return { text: 'Not in current Bot', color: 'var(--text-muted)' };
+            if (rsi && rsi <= 35) return { text: 'Oversold - not a strategy trigger', color: '#06b6d4' };
+            return { text: 'Not in current strategy', color: 'var(--text-muted)' };
         }
 
         function simplifyStrategy(strategy, symbol) {
-            if (!strategy) return `Tracking ${symbol} for next monthly Bot rank`;
+            if (!strategy) return `Tracking ${symbol} for next monthly strategy rank`;
             let first = strategy.split('.')[0];
             first = first.replace(/quality-momentum model/i, 'relative-strength model');
             first = first.replace(/macro backdrop/i, 'market conditions');
@@ -12474,7 +12475,7 @@ function updateDashboard(data, marketStatus) {
             const tierBg = tier === 'HELD' ? 'rgba(6,182,212,0.15)' : 'rgba(156,163,175,0.08)';
             const tierLabel = tier === 'HELD' ? 'HELD' : 'WATCHLIST';
 
-            // Derive a Bot weight for display: 10% for current/prime Bot positions,
+            // Derive a strategy weight for display: 10% for current/prime strategy positions,
             // otherwise scale readinessScore toward a 5% max placeholder.
             const BotWeight = isHeld
                 ? 0.10
@@ -12485,8 +12486,8 @@ function updateDashboard(data, marketStatus) {
 
             // Entry gate note (popup only)
             const entryGateNote = tier === 'HELD'
-                ? 'Currently held in the Bot.'
-                : 'Not currently held in the Bot.';
+                ? 'Currently held in the strategy.'
+                : 'Not currently held in the strategy.';
 
             // Exit levels
             const stopPrice = stock.stopLoss || (stock.price * 0.85);
