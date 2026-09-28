@@ -115,7 +115,8 @@ import dynamic_watchlist_manager
 from circuit_breaker import CircuitBreaker
 from intraday_confirm import should_execute_buy as check_intraday_buy
 from alert_logger import log_alert
-from v3_rebuild.v3_signal_engine import compute_trend_pullback_score
+# DISABLED under monthly Bot strategy
+# from v3_rebuild.v3_signal_engine import compute_trend_pullback_score
 from regime_detector import get_regime
 from mean_reversion_signal import compute_mean_reversion
 
