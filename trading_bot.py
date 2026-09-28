@@ -21,12 +21,13 @@ v2.5 changes:
 import json
 import logging
 import math
+import numpy as np
 import os
 import sys
 import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set, Tuple
 
 # Safety guards: never run as root; enforce single instance
 if os.geteuid() == 0:
@@ -91,13 +92,18 @@ from strategy_config import (
     SIGNAL_FAIL_OPEN_EXTRA_HARD_CONF,
     OFF_HOURS_BEHAVIOR,
     V3_ENABLED,
+    V3_MAX_POSITIONS,
+    DYN_MAX_POSITIONS_BASE,
+    DYN_MAX_POSITIONS_MIN_POSITION_SIZE,
+    DYN_MAX_POSITIONS_STRONG_NOW_BONUS,
+    DYN_MAX_POSITIONS_FLOOR,
 )
 from signal_rules import has_required_positive_edge
 
 import requests
 
 from signal_engine import SignalEngine, COMPANY_NAMES, DIP_MAX_DAILY_POSITIONS
-from risk_engine import RiskEngine, RiskConfig, load_high_beta_symbols, is_stop_reason, tier_max_position_pct
+from risk_engine import RiskEngine, RiskConfig, load_high_beta_symbols, is_stop_reason, tier_max_position_pct, effective_max_positions
 from alpaca_data import get_data_hub
 from stonk_utils import atomic_write_json
 import dynamic_watchlist_manager
@@ -1108,7 +1114,7 @@ class STONKAIBot:
                 logger.info(f"V3: {symbol} within earnings blackout; skipping")
                 continue
 
-            _blocked = self._entry_blocked_by_guardrails(
+            _blocked = self._entry_blocked_for_v3(
                 symbol,
                 price=price,
                 iv_30d=((sig.get("options_implied_vol") or {}).get("iv_30d") or 0),
@@ -1289,6 +1295,36 @@ class STONKAIBot:
                 f.write(json.dumps(rec) + "\n")
         except Exception as e:
             logger.debug(f"gate block log failed: {e}")
+
+    def _entry_blocked_for_v3(self, symbol: str, price: float = 0.0, iv_30d: float = 0.0, atr_pct: float = 0.0) -> Optional[str]:
+        """V3-specific guardrails: bypass momentum entry_eligible / persistence gates.
+
+        Keeps anti-churn rules that matter for any entry path (earnings, cooldowns,
+        daily max entries, halt sentinel, concentration) while trusting the V3 pullback
+        score and technical check for the actual setup.
+        """
+        if os.path.exists("/opt/stonk-ai/ENTRIES_HALTED"):
+            return "entries halted: signal redesign in progress (sentinel /opt/stonk-ai/ENTRIES_HALTED)"
+        if self.risk_engine.in_stop_cooldown(symbol):
+            return "stop-out cooldown active (no same-day re-entry after stop-loss)"
+        if price and self.risk_engine.reentry_price_blocked(symbol, price):
+            return f"re-entry price discipline: ${price:.2f} above stop-out price (EXPERIMENT.md Amendment 1)"
+        _ed = self._days_to_earnings(symbol)
+        if self.risk_engine.config.earnings_gate_enabled and _ed is not None and _ed <= self.risk_engine.config.earnings_gate_days:
+            self._log_gate_block(symbol, "earnings", f"reports in {_ed}d", price)
+            return f"earnings gate: reports in {_ed}d (EXPERIMENT.md Amendment 2A)"
+        if (self.risk_engine.config.implied_move_gate_enabled and _ed is not None
+                and self.risk_engine.config.earnings_gate_days < _ed <= self.risk_engine.config.implied_move_window_days
+                and iv_30d and atr_pct and atr_pct > 0):
+            _iv_daily = iv_30d / (252 ** 0.5)
+            if _iv_daily > self.risk_engine.config.implied_move_atr_ratio * atr_pct:
+                self._log_gate_block(symbol, "implied_move", f"iv_daily {_iv_daily:.2%} vs atr {atr_pct:.2%}, earnings in {_ed}d", price)
+                return f"implied-move gate: IV daily {_iv_daily:.1f}% > {self.risk_engine.config.implied_move_atr_ratio}x ATR {atr_pct:.1f}% (EXPERIMENT.md Amendment 2B)"
+        if self.risk_engine.in_sell_reentry_cooldown(symbol):
+            return "sell re-entry cooldown active (no buy within 4h of a non-stop sell)"
+        if self.risk_engine.entries_today_count(symbol) >= self.risk_engine.config.max_entries_per_symbol_per_day:
+            return f"already entered today (max {self.risk_engine.config.max_entries_per_symbol_per_day} new entry/day)"
+        return None
 
     def _entry_blocked_by_guardrails(self, symbol: str, is_avg_in: bool = False, price: float = 0.0, iv_30d: float = 0.0, atr_pct: float = 0.0) -> Optional[str]:
         """Anti-churn guardrails shared by all entry paths (2026-07-18).
@@ -1650,12 +1686,59 @@ class STONKAIBot:
         Tier-scaled caps (2026-07-18): conviction gets room, weak tiers don't
         get to be the biggest position in the book (fixes PAYO at 10% while
         tier WATCH and not entry-eligible).
-          STRONG_NOW: 12% | NOW: 8% | WATCH: 5% | MONITOR: 3%
+          STRONG_NOW: 12% | NOW: 8% | WATCH: 8% | MONITOR: 8%
 
         Delegates to risk_engine.tier_max_position_pct (single source of
         truth, shared with the concentration trimmer since 2026-07-22).
         """
         return tier_max_position_pct(tier, base_max_pct)
+
+    def _count_positions_by_tier(self, current_symbols: Set[str]) -> Dict[str, int]:
+        """Count held positions by signal tier for dynamic cap sizing."""
+        tier_counts: Dict[str, int] = {}
+        signal_map = {s.get("symbol"): s for s in self._signals}
+        for sym in current_symbols:
+            sig = signal_map.get(sym, {})
+            tier = sig.get("tier", "MONITOR")
+            tier_counts[tier] = tier_counts.get(tier, 0) + 1
+        return tier_counts
+
+    def _latest_portfolio_pf(self, path: str = "/var/www/hedge-fund-website/trade_quality.json") -> float:
+        """Load the most recent portfolio profit factor.
+
+        Falls back to 1.0 (neutral, no discount) if the file is missing,
+        stale, or malformed.
+        """
+        try:
+            data = json.loads(Path(path).read_text())
+            all_stats = data.get("all", {})
+            pf = all_stats.get("profit_factor")
+            if pf is not None and isinstance(pf, (int, float)) and pf > 0:
+                return float(pf)
+        except Exception as e:
+            logger.debug(f"Could not load portfolio PF from {path}: {e}")
+        return 1.0
+
+    def _qqq_distance_from_50dma(self) -> float:
+        """Return QQQ's percent distance from its 50-day SMA.
+
+        Returns 0.0 if data is unavailable (neutral, no tape discount).
+        """
+        try:
+            _hub = get_data_hub()
+            bars = _hub.get_daily_bars(["QQQ"], days=70)
+            qqq = bars.get("QQQ", {})
+            closes = qqq.get("closes", [])
+            if len(closes) < 50:
+                return 0.0
+            current = closes[-1]
+            sma50 = sum(closes[-50:]) / 50
+            if sma50 <= 0:
+                return 0.0
+            return (current - sma50) / sma50
+        except Exception as e:
+            logger.debug(f"Could not compute QQQ distance from 50DMA: {e}")
+            return 0.0
 
     def _check_tier_cap_trims(self, portfolio_data: Dict) -> List[Dict]:
         """Trim positions that exceed their tier-scaled cap (2026-07-18).
@@ -2116,13 +2199,40 @@ class STONKAIBot:
         # 3. Build candidate buys from signals — now readiness-driven
         current_symbols = {p["symbol"] for p in portfolio_data.get("positions", [])}
 
-# ALPHA: Hard portfolio position ceiling -- trim weakest when over limit, block new entries at limit
-        MAX_POSITIONS = 15
-        if len(current_symbols) >= MAX_POSITIONS:
-            if len(current_symbols) > MAX_POSITIONS:
-                self._trim_weakest_positions(portfolio_data, target=MAX_POSITIONS)
-            logger.info(f"🚫 MAX_POSITIONS ceiling ({MAX_POSITIONS}) reached: {len(current_symbols)} held. No new entries until positions exit.")
-            return
+# ALPHA: Dynamic portfolio position ceiling -- block net-new entries when at or above cap.
+# Existing positions are NOT force-trimmed here; natural exits, stops, and
+# cash-raise logic handle reductions. The cap only prevents the bot from
+# expanding the line count beyond what cash and performance support.
+        tier_counts = self._count_positions_by_tier(current_symbols)
+        portfolio_pf = self._latest_portfolio_pf()
+        qqq_vs_50dma = self._qqq_distance_from_50dma()
+        max_positions = effective_max_positions(
+            cash=portfolio_data.get("cash", 0.0),
+            tier_counts=tier_counts,
+            portfolio_pf=portfolio_pf,
+            qqq_vs_50dma=qqq_vs_50dma,
+            min_position_size=DYN_MAX_POSITIONS_MIN_POSITION_SIZE,
+            base_max_positions=min(V3_MAX_POSITIONS, DYN_MAX_POSITIONS_BASE),
+            strong_now_bonus=DYN_MAX_POSITIONS_STRONG_NOW_BONUS,
+            absolute_floor=DYN_MAX_POSITIONS_FLOOR,
+        )
+        if len(current_symbols) >= max_positions:
+            logger.info(
+                f"DYNAMIC_POSITION_CAP active: held={len(current_symbols)} cap={max_positions} "
+                f"cash={portfolio_data.get('cash', 0.0):.2f} pf={portfolio_pf:.2f} qqq50dma={qqq_vs_50dma:.2%}. "
+                "Blocking net-new ticker entries; replacements only after full exits."
+            )
+            allowed_new_symbols = set()
+        else:
+            allowed_new_symbols = None  # no restriction
+
+        top_signals = sorted(self._signals, key=lambda s: s.get("readiness_score", 0), reverse=True)[: self.risk_engine.config.top_signal_count]
+
+        # If cap is binding, drop any candidate that is not already held.
+        if allowed_new_symbols is not None:
+            _pre = len(top_signals)
+            top_signals = [s for s in top_signals if s.get("symbol") in current_symbols]
+            logger.info(f"Cap-restricted candidate list: {len(top_signals)}/{_pre} are existing positions only")
 
         top_signals = sorted(self._signals, key=lambda s: s.get("readiness_score", 0), reverse=True)[: self.risk_engine.config.top_signal_count]
 
@@ -2316,10 +2426,17 @@ class STONKAIBot:
                 entry_candidates.append(trade)
 
         elif V3_ENABLED and self._regime == "RISK_ON":
-            # V3: trend-pullback strategy takes over entry decisions in RISK_ON
+            # V3: trend-pullback strategy runs first in RISK_ON
             logger.info("Searching for v3 trend-pullback entries (RISK_ON mode)...")
             self._run_v3_entries(top_signals, current_symbols, portfolio_data, high_beta_symbols)
-            return
+            # ALPHA: fall through to main momentum gate for PRIME/STRONG_NOW names V3 skipped.
+            # V3 should not block high-readiness breakout entries; it owns pullbacks only.
+            logger.info("Falling through to main momentum gate for remaining RISK_ON slots...")
+            # Re-fetch portfolio after any V3 buys so caps/cash are current
+            portfolio_data = self.data_store.fetch()
+            if portfolio_data:
+                current_symbols = {p["symbol"] for p in portfolio_data.get("positions", [])}
+                # 2026-08-27: allow main momentum gate to compete for remaining slots (fall through below)
         else:
             # RISK_ON: momentum strategy (default)
             logger.info("Searching for momentum entries (RISK_ON mode)...")

@@ -27,12 +27,24 @@ SNAPSHOTS = BASE / "entry_factor_snapshots.json"
 RATIONALE = BASE / "trade_rationale.json"
 
 CHIP_LABELS = {
-    "momentum_score": "MOM", "rsi_signal": "RSI", "volume_confirmed": "VOL",
-    "macd_turning": "MACD", "above_ema": "EMA", "sector_strong": "SEC",
-    "intraday_confirmed": "INT", "options_confirmed": "OPT",
-    "relvol_confirmed": "RVOL", "vwap_confirmed": "VWAP",
-    "momentum_5m_up": "5M", "near_term_bullish_flow": "OF",
-    "spread_ok": "SPR", "bid_ask_bullish": "QBI", "no_corporate_action_risk": "CA",
+    # Entry-pillar chips (active in candidate-score gate)
+    "momentum_score": "MOM", "rsi_signal": "RSI", "above_ema": "EMA",
+    "spread_ok": "SPR", "no_corporate_action_risk": "CA",
+    # Deprecated / display-only chips removed from entry gate 2026-09-05
+    # Kept for historical attribution only; frontend should mark as deprecated.
+    "volume_confirmed": "VOL*", "macd_turning": "MACD*", "sector_strong": "SEC*",
+    "intraday_confirmed": "INT*", "options_confirmed": "OPT*",
+    "relvol_confirmed": "RVOL*", "vwap_confirmed": "VWAP*",
+    "momentum_5m_up": "5M*", "near_term_bullish_flow": "OF*",
+    "bid_ask_bullish": "QBI*",
+}
+
+# Deprecated chips are no longer used for the entry gate but are still tracked
+# so the "What the data says" section can show why they were removed.
+DEPRECATED_CHIPS = {
+    "volume_confirmed", "macd_turning", "sector_strong", "intraday_confirmed",
+    "options_confirmed", "relvol_confirmed", "vwap_confirmed", "momentum_5m_up",
+    "near_term_bullish_flow", "bid_ask_bullish",
 }
 READINESS_RE = re.compile(r"readiness\s+([\d.]+),\s*(\d+)\s*/\s*\d+\s*conf")
 MIN_FACTOR_N = 20  # frontend hides factors below this total sample
@@ -69,6 +81,57 @@ def round_trips(trades):
     return closed
 
 
+def build_rationale_index(entries):
+    """Index BUY rationale entries by (timestamp, symbol) -> reason."""
+    idx = {}
+    for e in entries:
+        if (e.get("action") or "").upper() != "BUY":
+            continue
+        ts = e.get("timestamp", "")
+        sym = e.get("symbol")
+        if not ts or not sym:
+            continue
+        key = (ts, sym)
+        existing = idx.get(key)
+        if existing is None:
+            idx[key] = e.get("reason", "")
+        else:
+            if "v3" in (e.get("reason") or "").lower() or "trend-pullback" in (e.get("reason") or "").lower():
+                idx[key] = e.get("reason", "")
+    return idx
+
+
+def nearest_rationale(buy_ts, symbol, rationale_index):
+    """Return the closest rationale reason within 10 minutes of buy_ts."""
+    best = None
+    try:
+        bt = datetime.fromisoformat(buy_ts.replace("Z", "+00:00")).replace(tzinfo=None)
+    except Exception:
+        return None
+    for (ts, sym), reason in rationale_index.items():
+        if sym != symbol:
+            continue
+        try:
+            rt = datetime.fromisoformat(ts.replace("Z", "+00:00")).replace(tzinfo=None)
+        except Exception:
+            continue
+        dt = abs((rt - bt).total_seconds())
+        if dt <= 600 and (best is None or dt < best[0]):
+            best = (dt, reason)
+    return best[1] if best else None
+
+
+def classify_cohort(reason, entry_eligible):
+    if not reason:
+        return "main" if entry_eligible else "unknown"
+    rl = reason.lower()
+    if "v3" in rl or "trend-pullback" in rl:
+        return "v3"
+    if "entry_eligible" in rl or "main-engine" in rl or "main engine" in rl:
+        return "main"
+    return "main" if entry_eligible else "unknown"
+
+
 def parse_rationale(entries):
     """BUY rationale entries -> list of (ts, symbol, readiness, conf_count)."""
     out = []
@@ -101,6 +164,30 @@ def match_rationale(buy_ts, symbol, parsed):
     return best[1:] if best else None
 
 
+def cohort_for_trade(ct, snaps, rationale_index):
+    key = f"{ct['buy_ts']}|{ct['symbol']}"
+    snap = snaps.get(key)
+    if snap and "cohort" in snap:
+        return snap["cohort"]
+    reason = nearest_rationale(ct["buy_ts"], ct["symbol"], rationale_index)
+    return classify_cohort(reason, False)
+
+
+def summarize_pnls(pnls):
+    if not pnls:
+        return {"trades": 0, "win_rate_pct": None, "avg_pnl_pct": None, "profit_factor": None}
+    wins = [p for p in pnls if p > 0]
+    losses = [p for p in pnls if p <= 0]
+    gross_win = sum(wins)
+    gross_loss = abs(sum(losses))
+    return {
+        "trades": len(pnls),
+        "win_rate_pct": round(len(wins) / len(pnls) * 100, 1),
+        "avg_pnl_pct": round(mean(pnls) * 100, 2),
+        "profit_factor": round(gross_win / gross_loss, 2) if gross_loss > 0 else None,
+    }
+
+
 def corr(xs, ys):
     n = len(xs)
     if n < 3:
@@ -122,17 +209,23 @@ def main():
     trades = load_json(TRADES, {}).get("trades", [])
     closed = round_trips(trades)
     snaps = load_json(SNAPSHOTS, {}).get("snapshots", {})
-    rationale = parse_rationale(load_json(RATIONALE, {}).get("entries", []))
+    rationale_entries = load_json(RATIONALE, {}).get("entries", [])
+    rationale_index = build_rationale_index(rationale_entries)
+    rationale = parse_rationale(rationale_entries)
 
     # Join round trips with entry data
     chip_rows = defaultdict(lambda: {"act": [], "inact": []})  # chip -> pnl lists
+    chip_rows_by_cohort = defaultdict(lambda: defaultdict(lambda: {"act": [], "inact": []}))
     readiness_pairs = []  # (readiness, pnl)
     conf_pairs = []       # (conf_count, pnl)
     n_snap = n_rat = 0
     holding_days = []
+    cohort_pnls = defaultdict(list)
 
     for ct in closed:
         pnl = ct["pnl_pct"]
+        cohort = cohort_for_trade(ct, snaps, rationale_index)
+        cohort_pnls[cohort].append(pnl)
         key = f"{ct['buy_ts']}|{ct['symbol']}"
         snap = snaps.get(key)
         if snap and isinstance(snap.get("confirmations"), dict):
@@ -145,7 +238,9 @@ def main():
                     active = bool(test(conf[chip]))
                 except Exception:
                     continue
-                chip_rows[chip]["act" if active else "inact"].append(pnl)
+                bucket = "act" if active else "inact"
+                chip_rows[chip][bucket].append(pnl)
+                chip_rows_by_cohort[chip][cohort][bucket].append(pnl)
             if snap.get("readiness_score") is not None:
                 readiness_pairs.append((float(snap["readiness_score"]), pnl))
             if snap.get("confirmation_count") is not None:
@@ -163,16 +258,13 @@ def main():
         except Exception:
             pass
 
-    factors = {}
-    for chip, label in CHIP_LABELS.items():
-        rows = chip_rows.get(chip, {"act": [], "inact": []})
+    def chip_factor(chip, label, rows):
         a, i = rows["act"], rows["inact"]
         if not a and not i:
-            factors[chip] = {"label": label, "n_active": 0, "n_inactive": 0}
-            continue
+            return {"label": label, "n_active": 0, "n_inactive": 0}
         wr_a = mean([1.0 if p > 0 else 0.0 for p in a])
         wr_i = mean([1.0 if p > 0 else 0.0 for p in i])
-        factors[chip] = {
+        factor = {
             "label": label,
             "n_active": len(a),
             "n_inactive": len(i),
@@ -182,6 +274,30 @@ def main():
             "avg_pnl_inactive_pct": round(mean(i) * 100, 2) if i else None,
             "edge_pp": round((wr_a - wr_i) * 100, 1) if (wr_a is not None and wr_i is not None) else None,
         }
+        # Per-cohort breakdown where each cohort has enough samples.
+        cohort_breakdown = {}
+        for cohort, c_rows in chip_rows_by_cohort.get(chip, {}).items():
+            ca, ci = c_rows["act"], c_rows["inact"]
+            if (len(ca) + len(ci)) < MIN_FACTOR_N:
+                continue
+            cwr_a = mean([1.0 if p > 0 else 0.0 for p in ca])
+            cwr_i = mean([1.0 if p > 0 else 0.0 for p in ci])
+            cohort_breakdown[cohort] = {
+                "n_active": len(ca),
+                "n_inactive": len(ci),
+                "win_rate_active": round(cwr_a, 3) if cwr_a is not None else None,
+                "win_rate_inactive": round(cwr_i, 3) if cwr_i is not None else None,
+                "avg_pnl_active_pct": round(mean(ca) * 100, 2) if ca else None,
+                "avg_pnl_inactive_pct": round(mean(ci) * 100, 2) if ci else None,
+                "edge_pp": round((cwr_a - cwr_i) * 100, 1) if (cwr_a is not None and cwr_i is not None) else None,
+            }
+        if cohort_breakdown:
+            factor["by_cohort"] = cohort_breakdown
+        return factor
+
+    factors = {}
+    for chip, label in CHIP_LABELS.items():
+        factors[chip] = chip_factor(chip, label, chip_rows.get(chip, {"act": [], "inact": []}))
 
     # Readiness / confirmation-count as continuous factors
     if readiness_pairs:
@@ -237,6 +353,9 @@ def main():
             "profit_factor": round(gross_win / gross_loss, 2) if gross_loss > 0 else None,
             "avg_holding_days": round(mean(holding_days), 1) if holding_days else None,
         },
+        "cohorts": {
+            cohort: summarize_pnls(pnls) for cohort, pnls in cohort_pnls.items()
+        },
         "factors": factors,
         "takeaway": takeaway,
         "meta": {
@@ -244,6 +363,10 @@ def main():
             "note": "Per-chip data accrues from snapshot deployment; readiness/conf-count include older trades via rationale parsing.",
         },
     }
+
+    # Ensure all three expected cohort keys exist, even if empty.
+    for c in ("main", "v3", "unknown"):
+        out["cohorts"].setdefault(c, {"trades": 0, "win_rate_pct": None, "avg_pnl_pct": None, "profit_factor": None})
 
     atomic_write_json(str(WEB / "factor_attribution.json"), out)
     atomic_write_json(str(BASE / "factor_attribution.json"), out)

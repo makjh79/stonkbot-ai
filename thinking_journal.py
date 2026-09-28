@@ -51,6 +51,11 @@ HKT = ZoneInfo("Asia/Hong_Kong")  # bot log timestamps are server-local
 SKIP_RE = _re.compile(
     r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d+ - \S+ - \w+ - Skipping ([A-Z0-9.]+): (.+)$"
 )
+DYNAMIC_CAP_RE = _re.compile(
+    r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d+ - \S+ - \w+ - "
+    r"DYNAMIC_POSITION_CAP active: held=(\d+) cap=(\d+) cash=([\d.]+) pf=([\d.]+) qqq50dma=([-+\d.]+)%. "
+    r"Blocking net-new ticker entries; replacements only after full exits\.$"
+)
 SEED_LOG_BYTES = 3 * 1024 * 1024  # first run reads at most this much backlog
 
 MAX_ENTRIES = 400
@@ -440,7 +445,40 @@ def main():
         del state["open_skips"][k]
 
     skips_changed = False
+    cap_changed = False
     for line in lines:
+        # ---- dynamic position cap decision ---------------------------
+        m_cap = DYNAMIC_CAP_RE.match(line)
+        if m_cap:
+            ts_hkt = datetime.strptime(m_cap.group(1), "%Y-%m-%d %H:%M:%S").replace(tzinfo=HKT)
+            ts_utc = ts_hkt.astimezone(timezone.utc)
+            et_d = ts_utc.astimezone(ET).date().isoformat()
+            if first_skip_run and et_d != today_et:
+                continue
+            held_n, cap_n, cash_n, pf_n, qqq_n = m_cap.group(2), m_cap.group(3), m_cap.group(4), m_cap.group(5), m_cap.group(6)
+            entry_id = f"watch-cap-{today_et}"
+            win = next((e for e in entries if e.get("id") == entry_id), None)
+            if win is None:
+                win = {
+                    "id": entry_id,
+                    "ts": ts_utc.isoformat().replace("+00:00", "Z"),
+                    "et_date": et_d,
+                    "type": "watch",
+                    "reason": "dynamic position cap",
+                    "n": 0,
+                }
+                entries.insert(0, win)
+                cap_changed = True
+            win["n"] = int(win.get("n") or 0) + 1
+            win["ts"] = ts_utc.isoformat().replace("+00:00", "Z")
+            n = win["n"]
+            win["text"] = (
+                f"Position cap is binding ({held_n} held / {cap_n} cap). "
+                f"Cash ${float(cash_n):,.0f}, PF {float(pf_n):.2f}, QQQ vs 50DMA {float(qqq_n):+.1f}%. "
+                f"No new ticker entries until a position fully exits."
+            )
+            continue
+
         m = SKIP_RE.match(line)
         if not m:
             continue
@@ -485,7 +523,7 @@ def main():
         skips_changed = True
 
     state["skips_bootstrapped"] = True
-    if skips_changed:
+    if skips_changed or cap_changed:
         entries.sort(key=lambda e: e.get("ts", ""), reverse=True)
 
     # ---- 3. scan windows (market hours only) ---------------------------

@@ -79,6 +79,92 @@ def sleeve_target(ds, P, i):
     top = [s for s,_ in cands[:10]]
     return {s: 1.0/len(top) for s in top} if top else {"QQQ": 1.0}
 
+
+def sleeve_candidates(ds, P, i, top_n=10, watch_n=15):
+    """Return (top10_weights, watchlist) for the most recent trading day.
+
+    watchlist entries are dicts with symbol, rank, score, dist_to_top10,
+    plus price and change_pct for the old watchlist UI.
+    """
+    sel = dm_signal(ds, P, i)
+    if sel != "QQQ":
+        return ({sel: 1.0} if sel != "CASH" else {"CASH": 1.0}, [])
+    cands = []
+    for s in STOCKS:
+        if i-252 < 0: continue
+        a, b = P[s].get(ds[i-21]), P[s].get(ds[i-252])
+        if a is None or b is None or b == 0: continue
+        cands.append((s, a/b - 1.0))
+    cands.sort(key=lambda x: -x[1])
+    top_symbols = [s for s,_ in cands[:top_n]]
+    weights = {s: 1.0/len(top_symbols) for s in top_symbols} if top_symbols else {"QQQ": 1.0}
+    watchlist = []
+    cutoff = cands[top_n-1][1] if len(cands) >= top_n else (cands[-1][1] if cands else 0.0)
+    today = ds[i]
+    prev = ds[i-1] if i >= 1 else today
+    for rank, (s, score) in enumerate(cands[top_n:top_n+watch_n], start=top_n+1):
+        price_today = P[s].get(today)
+        price_prev = P[s].get(prev) or price_today
+        change_pct = 0.0
+        if price_prev and price_prev > 0 and price_today:
+            change_pct = (price_today / price_prev - 1.0) * 100
+        watchlist.append({
+            "symbol": s,
+            "rank": rank,
+            "score": round(score, 4),
+            "dist_to_top10": round(cutoff - score, 4),
+            "sector": None,
+            "price": round(price_today, 2) if price_today else None,
+            "change_pct": round(change_pct, 2),
+        })
+    return weights, watchlist
+
+
+def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=15):
+    """Export daily rebalance signal and watchlist candidate file."""
+    weights, watchlist = sleeve_candidates(ds, P, i, top_n=10, watch_n=watch_n)
+    gate = dm_signal(ds, P, i)
+    today = ds[i]
+    # Compare today's target names with current Alpaca paper holdings if known.
+    if current_holdings:
+        current_set = {s for s in current_holdings if s not in ("CASH",)}
+    else:
+        # Fall back to the saved virtual sleeve state holdings.
+        sleeve_st = load_state("sleeve")
+        current_set = {s for s in sleeve_st.get("holdings", {}) if s not in ("CASH",)}
+    target_set = {s for s in weights if s not in ("CASH",)}
+    incoming = sorted(target_set - current_set)
+    outgoing = sorted(current_set - target_set)
+    # Signal if any stock rotation or if the gate is not QQQ (defensive flip)
+    signal = bool(incoming or outgoing or gate != "QQQ")
+    reasons = []
+    if incoming:
+        reasons.append(f"incoming: {', '.join(incoming)}")
+    if outgoing:
+        reasons.append(f"outgoing: {', '.join(outgoing)}")
+    if gate != "QQQ":
+        reasons.append(f"DM-6 gate {gate}")
+    reason = "; ".join(reasons) if reasons else "no change"
+    sig_path = os.path.join(BASE, "sleeve_rebalance_signal.json")
+    json.dump({
+        "date": today,
+        "signal": signal,
+        "gate": gate,
+        "reason": reason,
+        "incoming": incoming,
+        "outgoing": outgoing,
+        "current": sorted(current_set),
+        "target": sorted(target_set),
+    }, open(sig_path, "w"), indent=2)
+    watch_path = os.path.join(BASE, "sleeve_watchlist.json")
+    json.dump({
+        "date": today,
+        "watchlist": watchlist,
+    }, open(watch_path, "w"), indent=2)
+    print(f"sleeve: signal={signal} ({reason})")
+    if watchlist:
+        print(f"sleeve: watchlist exported with {len(watchlist)} candidates")
+
 def ret_on(P, s, d0, d1):
     a, b = P[s].get(d0), P[s].get(d1)
     if a is None or b is None or a == 0: return 0.0
@@ -135,6 +221,9 @@ def main():
     me_days = month_ends(ds)
     run_portfolio("dm", dm_signal_target, ds, P, me_days)
     run_portfolio("sleeve", sleeve_target, ds, P, me_days)
+    # Daily signal + watchlist for live sleeve execution and site display
+    i = len(ds) - 1
+    write_sleeve_signal_and_watchlist(ds, P, i)
 
 def dm_signal_target(ds, P, i):
     sel = dm_signal(ds, P, i)

@@ -16,22 +16,33 @@ from typing import Dict, Any, Set, List
 # Keep vwap_confirmed as the required positive-edge hard confirmation (the one
 # factor with positive live edge in factor attribution). Position caps and stops
 # unchanged. Revisit in one week; if cash stays >60%, the issue is signal scoring.
-ENTRY_READINESS_MIN: float = 65.0
-ENTRY_MIN_CONFIRMATIONS: int = 3
+# 2026-09-05: thresholds raised for candidate signal redesign. Lowered from old WATCH=55 to reduce marginal setups.
+ENTRY_READINESS_MIN: float = 70.0
+ENTRY_MIN_CONFIRMATIONS: int = 2
 ENTRY_MIN_HARD_CONFIRMATIONS: int = 1
-ENTRY_HARD_CONFIRMATIONS_STRICT: int = 2  # when total chips < 7
-ENTRY_HARD_CONFIRMATIONS_STRICT_BELOW: int = 7  # threshold for strict mode
+ENTRY_HARD_CONFIRMATIONS_STRICT: int = 1
+ENTRY_HARD_CONFIRMATIONS_STRICT_BELOW: int = 7
 ENTRY_ABOVE_EMA_REQUIRED: bool = True
 ENTRY_TRADEABLE_TIER: str = "WATCH"
 
 # v3 trend-pullback engine (experimental, do not enable without owner sign-off)
 V3_ENABLED: bool = True
-V3_MAX_POSITIONS: int = 15
+V3_MAX_POSITIONS: int = 20  # hard override ceiling; dynamic cap normally stays lower
 V3_POSITION_PCT: float = 0.03
 V3_HOLD_DAYS: int = 5
 V3_SCORE_THRESHOLD: float = 0.5
 V3_MELTDOWN_QQQ_5D_MAX: float = -0.08  # skip entries if QQQ 5d return worse than -8%
 V3_EARNINGS_BLACKOUT_DAYS: int = 5
+
+# --- Dynamic position-count cap ------------------------------------------------
+# Replaces the hard MAX_POSITIONS=20 local constant in trading_bot.
+# Cap is min(base ceiling, cash // min_position_size) + tier bonus, discounted
+# when PF < 1.0 or QQQ is below 50DMA. Goal: stop expanding when cash is tight
+# or performance/market is weak; allow more lines only when conditions support it.
+DYN_MAX_POSITIONS_BASE: int = 12
+DYN_MAX_POSITIONS_MIN_POSITION_SIZE: float = 3000.0
+DYN_MAX_POSITIONS_STRONG_NOW_BONUS: int = 2
+DYN_MAX_POSITIONS_FLOOR: int = 10
 
 # =============================================================================
 # Entry Persistence Gate (permanent replacement for the 2026-08-13 experiment override)
@@ -75,18 +86,22 @@ OFF_HOURS_BEHAVIOR: str = "maintain_only"  # "maintain_only" | "full_strategy"
 # volume_confirmed and relvol_confirmed remain positive chips but are no longer
 # sufficient on their own for the positive-edge gate.
 # =============================================================================
+# 2026-09-05 signal redesign: hard keys reduced to the only factors with positive live edge.
+# Removed from hard keys: volume_confirmed (-20.7pp), vwap_confirmed (-27.8pp),
+# options_confirmed (-37.5pp), relvol_confirmed (+5.5pp but avg pnl negative).
+# Entry gate now relies on above_ema + spread_ok + no_corporate_action_risk as hard filters,
+# with readiness + momentum_score as the primary score.
 HARD_CONFIRMATION_KEYS: Set[str] = {
-    "volume_confirmed",
-    "options_confirmed",
-    "vwap_confirmed",
-    "relvol_confirmed",
+    "above_ema",
+    "spread_ok",
+    "no_corporate_action_risk",
 }
 
-# ALL of these MUST be True for entry.  v3 evidence: VWAP (+28pp) is the only
-# confirmed positive-edge hard confirmation.
-REQUIRED_POSITIVE_HARD_KEYS: Set[str] = {
-    "vwap_confirmed",
-}
+# Positive-edge gate is disabled in candidate redesign; kept empty for compatibility.
+REQUIRED_POSITIVE_HARD_KEYS: Set[str] = set()
+
+# Fallback bundles cleared; not used by candidate score.
+REQUIRED_POSITIVE_FALLBACK_BUNDLES: List[Set[str]] = []
 
 # Display-only keys: still computed and shown in UI, but NOT used for entry
 DISPLAY_ONLY_CONFIRMATION_KEYS: Set[str] = {

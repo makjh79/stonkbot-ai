@@ -1003,7 +1003,10 @@ def check_trading_bot_entry_gate() -> None:
 
 
 def check_alpaca_portfolio_sync() -> None:
-    """Alpaca positions must match popup_content.json and portfolio_data.json."""
+    """Alpaca positions must match portfolio_data.json (bot truth).
+    popup_content.json is a content/narrative file generated separately; drift there is a
+    content freshness issue, not a broker sync issue, so we no longer alert on it here.
+    """
     cfg_path = os.path.join(BASE_DIR, "alpaca_config.json")
     try:
         with open(cfg_path, "r") as f:
@@ -1017,20 +1020,16 @@ def check_alpaca_portfolio_sync() -> None:
         _log_warn(f"Could not fetch Alpaca positions: {exc}")
         return
 
-    popup = _load_json(os.path.join(WEB_DIR, "popup_content.json"))
-    popup_holdings = popup.get("holdings", {}) if popup else {}
     portfolio = _load_json(os.path.join(WEB_DIR, "portfolio_data.json"))
     portfolio_positions = {p.get("symbol"): p for p in portfolio.get("positions", [])} if portfolio else {}
 
     for sym in alpaca:
-        if sym not in popup_holdings:
-            _log_issue(f"ALPACA SYNC {sym}: position in Alpaca but missing from popup_content.json")
         if sym not in portfolio_positions:
             _log_issue(f"ALPACA SYNC {sym}: position in Alpaca but missing from portfolio_data.json")
 
-    for sym in popup_holdings:
+    for sym in portfolio_positions:
         if sym not in alpaca:
-            _log_issue(f"ALPACA SYNC {sym}: in popup_content.json but no Alpaca position")
+            _log_issue(f"ALPACA SYNC {sym}: in portfolio_data.json but no Alpaca position")
 
 
 def check_llm_narrative_freshness_and_validity() -> None:

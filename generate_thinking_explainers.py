@@ -34,14 +34,14 @@ MODEL = os.environ.get("STONKBOT_THINKING_MODEL", "ollama/kimi-k2.7-code:cloud")
 LLM_TIMEOUT = int(os.environ.get("STONKBOT_THINKING_TIMEOUT", "180"))
 MAX_PER_BATCH = 12
 EXPLAIN_SCOPE = 150  # only voice the newest entries; older ones keep raw text
-EXPLAIN_TYPES = ("trade", "digest", "skip", "watch")
+EXPLAIN_TYPES = ("trade", "digest", "skip", "watch", "cap")
 
 # Backend tier -> public site label (matches index.html mapping at line ~9995).
 # Voice layer always speaks in public names; raw bot quotes stay raw.
 PUBLIC_TIER = {
     "STRONG_NOW": "PRIME",
     "NOW": "BUILDING",
-    "WATCH": "WATCHING",
+    "WATCH": "READY",
     "MONITOR": "TRACKING",
 }
 
@@ -184,10 +184,11 @@ def position_snapshot(portfolio_doc, symbol):
     for p in (portfolio_doc or {}).get("positions") or []:
         if p.get("symbol") == symbol:
             pl = p.get("unrealized_plpc")
+            # unrealized_plpc is already in percent (e.g. 1.36 = +1.36%)
             return {
                 "held": True,
                 "qty": p.get("qty"),
-                "plpc": round(pl * 100, 1) if isinstance(pl, (int, float)) else None,
+                "plpc": round(pl, 1) if isinstance(pl, (int, float)) else None,
             }
     return {"held": False}
 
@@ -245,6 +246,13 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
             blocks.append(
                 f"id={eid}\n"
                 f"  kind: end-of-day digest\n"
+                f"  line: \"{e['text']}\""
+            )
+            continue
+        if e["type"] == "watch":
+            blocks.append(
+                f"id={eid}\n"
+                f"  kind: watch (a risk or context note — explain whether a rule is actively binding and why)\n"
                 f"  line: \"{e['text']}\""
             )
             continue
@@ -309,7 +317,7 @@ Voice rules (strict):
 - CRITICAL: the reader already sees the raw line with its trigger numbers. Do NOT restate them. Add what the numbers don't say: holding period, round-trip outcome, what the exit frees up, whether the symbol stays on the radar
 - Vary your sentence shapes. If four stops fire in one day, do not explain them the same way four times — for a routine trailing stop a single short shrug of a sentence is better than a template
 - For stops/hard cuts: matter-of-fact, no excuses, no self-pity. For quiet days: cash as a deliberate position, said plainly, at most once
-- For skips: a rule held me back from a name I was considering — explain the tension plainly (what I wanted vs what the rule says). One sentence is usually enough. Do not sound frustrated; the leash is mine and it is there on purpose
+- For watch entries: say whether a rule is currently binding and what it means for next actions. If a cap is active, say the book is at its line limit and new names are paused until a slot opens. Don't repeat every number; one or two facts is enough.
 - MEMORY: if this symbol or situation appears in the recent stream below, you may acknowledge the recurrence plainly ("stopped me again", "back in after Tuesday's exit"). Only reference what is visible below
 - ACCOUNTABILITY: a bad entry may be owned in one plain clause ("entry was late and I paid for it") - no excuses, no self-pity, then move on
 - INTERIORITY: for high-conviction entries you may say what the numbers don't ("sized it like I meant it") - restraint still applies
@@ -325,6 +333,163 @@ Entries to explain (return exactly these ids):
 
 Return JSON only, exactly this shape:
 {{"explainers": {{"<id>": "<1-2 sentences>", ...}}}}"""
+
+
+def held_before_trade(trades, ts, symbol):
+    """Return True if symbol was already held (qty > 0) just before this trade."""
+    if not trades or not ts or not symbol:
+        return False
+    qty = 0
+    for t in trades:
+        if t.get("symbol") != symbol:
+            continue
+        t_ts = str(t.get("timestamp", ""))
+        if t_ts >= str(ts):
+            break
+        action = (t.get("action") or "").upper()
+        q = t.get("qty", 0) or 0
+        if action == "BUY":
+            qty += q
+        elif action == "SELL":
+            qty = max(0, qty - q)
+    return qty > 0
+
+
+def deterministic_trade_explainer(e, sig, pos, rt, trades):
+    """Human, hedge-fund-trader voice grounded strictly in provided facts."""
+    import random
+    action = (e.get("action") or "").upper()
+    if not action and e.get("id", "").startswith("trade-"):
+        action = e["id"].split("|")[2].upper() if len(e["id"].split("|")) > 2 else ""
+    etype = e.get("type", "trade")
+    sym = e.get("symbol")
+    plpc = pos.get("plpc")
+    held = pos.get("held")
+    company = sig.get("company") or sym
+    text = e.get("text", "")
+    rationale = text.split(" — ", 1)[-1].strip() if " — " in text else ""
+
+    if etype != "trade":
+        return text
+
+    # Determine add vs new based on inventory before this trade
+    ts = e.get("ts")
+    is_add = held_before_trade(trades, ts, sym)
+
+    if action == "BUY":
+        if isinstance(plpc, (int, float)):
+            pct = f"{plpc:+.1f}%"
+        else:
+            pct = "flat"
+
+        if "trend-pullback" in rationale.lower():
+            setup = "a trend-pullback entry"
+        elif "readiness" in rationale.lower():
+            setup = "readiness clearing the gate"
+        elif "V3" in rationale.upper():
+            setup = "a V3 setup"
+        elif "mean reversion" in rationale.lower():
+            setup = "a mean-reversion bounce"
+        else:
+            setup = "a momentum signal"
+
+        if is_add:
+            templates = [
+                f"Added to {company} on {setup}. Combined lot is {pct} — scaling in, not swinging for the fences.",
+                f"Second helping of {company} at {setup}. Combined lot is {pct}; patience is the position.",
+                f"Top-up on {company} — same {setup} thesis. Combined lot sits at {pct}.",
+                f"More {company} at {setup}. The position is now {pct} — pressing a working idea.",
+            ]
+        else:
+            templates = [
+                f"Opened {company} on {setup}. First tranche is {pct} — early days, small scratch.",
+                f"Started {company} on {setup}. New lot is {pct}; keeping the initial sizing modest.",
+                f"Took a first bite of {company} at {setup}. Booked it at {pct} — more to come if it behaves.",
+                f"Initiated {company} on {setup}. New position is {pct}; letting the thesis prove itself.",
+                f"New position in {company} via {setup}. First fill is {pct}; no hero sizing.",
+            ]
+        return random.choice(templates)
+
+    # SELL
+    leg = None
+    if isinstance(rt.get("buy_price"), (int, float)):
+        try:
+            sell_price = float(str(e.get("id")).split("|")[-1])
+            leg = (sell_price / rt["buy_price"] - 1) * 100
+        except Exception:
+            pass
+    days = rt.get("days_held")
+    leg_text = ""
+    if isinstance(leg, (int, float)):
+        leg_text = f"{leg:+.1f}% leg"
+    if isinstance(days, int):
+        leg_text += f" over {days} day{'s' if days != 1 else ''}"
+
+    if "thesis exit" in rationale.lower() or "below" in rationale.lower() or "stop" in rationale.lower():
+        exit_kind = "thesis exit"
+    elif "trim" in rationale.lower():
+        exit_kind = "trim"
+    elif "hard cut" in rationale.lower():
+        exit_kind = "hard cut"
+    else:
+        exit_kind = "exit"
+
+    if held:
+        if isinstance(plpc, (int, float)):
+            return f"Trimmed {company} on {exit_kind} ({leg_text}). Remainder still held at {plpc:+.1f}% unrealized."
+        return f"Trimmed {company} on {exit_kind} ({leg_text}). Remainder still held."
+
+    if "hard cut" in exit_kind or "stop" in exit_kind:
+        return f"Stopped out of {company} on {exit_kind} ({leg_text}). Closed the full position."
+    return f"Closed {company} on {exit_kind} ({leg_text}). Position fully exited."
+
+
+def deterministic_watch_explainer(e):
+    """Fallback voice for watch/risk entries."""
+    import random
+    text = e.get("text", "")
+    low = text.lower()
+    if "position cap is binding" in low or "dynamic position cap" in low or "cap=" in text:
+        templates = [
+            "My position-count cap is binding, so new ticker lines are paused. Existing positions still run; I will only add a new name after a full exit frees a slot.",
+            "The dynamic cap is active. I am not opening new ticker lines until a position fully exits and frees up a slot.",
+            "The book is already at its line limit. No new positions for now — only scaling into what I already hold.",
+        ]
+        return random.choice(templates)
+    if "trim" in low or "concentration" in low:
+        return text
+    return text
+
+
+def validate_explainer(text, e, sig, pos, rt):
+    """Reject explainers that invent percentages not present in the facts."""
+    if not text or not isinstance(text, str):
+        return False
+    import re
+    found_pcts = re.findall(r'([+-]?\d+\.?\d*)%', text)
+    allowed = set()
+    if isinstance(pos.get("plpc"), (int, float)):
+        allowed.add(f"{pos['plpc']:.1f}")
+        allowed.add(f"{abs(pos['plpc']):.1f}")
+    action = (e.get("action") or "").upper()
+    if not action and e.get("id", "").startswith("trade-"):
+        action = e["id"].split("|")[2].upper() if len(e["id"].split("|")) > 2 else ""
+    if action == "SELL" and isinstance(rt.get("buy_price"), (int, float)):
+        try:
+            sell_price = float(str(e.get("id")).split("|")[-1])
+            leg = (sell_price / rt["buy_price"] - 1) * 100
+            allowed.add(f"{leg:.1f}")
+            allowed.add(f"{abs(leg):.1f}")
+        except Exception:
+            pass
+    if isinstance(sig.get("readiness"), (int, float)):
+        allowed.add(f"{sig['readiness']:.0f}")
+    for pct in found_pcts:
+        p = float(pct)
+        matched = any(abs(p - float(a)) < 1.0 for a in allowed)
+        if not matched and abs(p) > 3:
+            return False
+    return True
 
 
 # ---------------------------------------------------------------- main
@@ -377,8 +542,26 @@ def main():
 
     new_explainers = result.get("explainers") or {}
     wanted = {e["id"] for e in pending}
-    accepted = {k: str(v).strip() for k, v in new_explainers.items()
-                if k in wanted and isinstance(v, str) and v.strip()}
+    accepted = {}
+    for e in pending:
+        eid = e["id"]
+        raw = new_explainers.get(eid, "").strip()
+        sig = signal_snapshot(signals_doc, e.get("symbol"))
+        pos = position_snapshot(portfolio_doc, e.get("symbol"))
+        rt = round_trip(trades, e.get("ts"), e.get("symbol")) if e.get("type") == "trade" else {}
+        if e.get("type") == "trade":
+            if raw and validate_explainer(raw, e, sig, pos, rt):
+                accepted[eid] = raw
+            else:
+                accepted[eid] = deterministic_trade_explainer(e, sig, pos, rt, trades)
+                if raw:
+                    print(f"[WARN] hallucinated explainer for {eid}, using deterministic fallback", file=sys.stderr)
+        elif e.get("type") == "watch":
+            accepted[eid] = raw if raw else deterministic_watch_explainer(e)
+        elif raw:
+            accepted[eid] = raw
+        else:
+            accepted[eid] = deterministic_trade_explainer(e, sig, pos, rt, trades)
     missing = wanted - set(accepted)
     if missing:
         print(f"[WARN] no explainer returned for: {sorted(missing)}", file=sys.stderr)

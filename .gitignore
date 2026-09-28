@@ -63,3 +63,15 @@ reports/*.csv
 reports/*.png
 v3_rebuild/sidecar_output/
 data/
+
+# Runtime/agent/backup ignore rules
+# Runtime logs/data
+TRADES_LOG.md
+.heartbeats/
+.llm_narrative_*
+# Agent memory (does not belong in trading repo)
+jeeves-memory/
+# Pre-patch backups (kept on disk, not in git)
+backups/*.py
+backups/*.html
+backups/*.md

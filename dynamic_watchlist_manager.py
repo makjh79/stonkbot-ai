@@ -100,7 +100,7 @@ WATCHLIST_META_FILE = Path("/var/www/hedge-fund-website/watchlist_meta.json")
 TIER_HISTORY_FILE = Path("/opt/stonk-ai/tier_history.json")
 
 # Config
-MAX_WATCHLIST_SIZE = 20
+MAX_WATCHLIST_SIZE = 30
 # TIER_BUILDING_MIN imported from signal_rules.py
 
 
@@ -269,7 +269,7 @@ def detect_tier_changes(
         old_tier = previous_tiers.get(symbol)
 
         if old_tier and old_tier != new_tier:
-            change_type = "promote" if (old_tier == "TRACKING" and new_tier in ("WATCHING", "BUILDING", "PRIME")) or (old_tier == "WATCHING" and new_tier in ("BUILDING", "PRIME")) or (old_tier == "BUILDING" and new_tier == "PRIME") else "demote"
+            change_type = "promote" if (old_tier == "TRACKING" and new_tier in ("READY", "BUILDING", "PRIME")) or (old_tier == "READY" and new_tier in ("BUILDING", "PRIME")) or (old_tier == "BUILDING" and new_tier == "PRIME") else "demote"
             changes.append({
                 "symbol": symbol,
                 "change_type": change_type,
@@ -455,16 +455,16 @@ def build_watchlist(signals: List[Dict]) -> Dict:
     kept = [s for s in current_symbols if s in previous]
 
     # User-friendly display tier labels. Action-based:
-    # PRIME = entry_eligible, BUILDING/WATCHING = scored but not eligible, TRACKING = < 55
+    # PRIME = top conviction, BUILDING = warming up, READY = entry gate cleared, TRACKING = below threshold
     DISPLAY_TIER = {
         "PRIME": "PRIME",
         "BUILDING": "BUILDING",
-        "WATCHING": "WATCHING",
+        "READY": "READY",
         "TRACKING": "TRACKING",
     }
 
     # Build tiers from action-based tier
-    tiers = {"PRIME": [], "BUILDING": [], "WATCHING": [], "TRACKING": []}
+    tiers = {"PRIME": [], "BUILDING": [], "READY": [], "TRACKING": []}
     for s in top:
         readiness = s.get("readiness_score", 0)
         total_score = s.get("total_score", 0)
@@ -533,10 +533,10 @@ def build_watchlist(signals: List[Dict]) -> Dict:
             council_note = f"PRIME | Readiness {readiness:.1f} | {conf_count}/15 conf | ENTRY READY"
         elif tier == "BUILDING":
             council_note = f"BUILDING | Readiness {readiness:.1f} | {conf_count}/15 conf | building strength, not entry eligible"
-        elif tier == "WATCHING":
-            council_note = f"WATCHING | Readiness {readiness:.1f} | {conf_count}/15 conf | watching, not entry eligible"
+        elif tier == "READY":
+            council_note = f"READY | Readiness {readiness:.1f} | {conf_count}/15 conf | entry gate cleared"
         else:
-            council_note = f"TRACKING | Readiness {readiness:.1f} | {conf_count}/15 conf | below watching threshold"
+            council_note = f"TRACKING | Readiness {readiness:.1f} | {conf_count}/15 conf | below ready threshold"
 
         targets = {
             "target": symbol,
@@ -720,6 +720,14 @@ def build_watchlist(signals: List[Dict]) -> Dict:
         is_high_beta = symbol in high_beta_symbols
 
         if held_info:
+            # Held positions should never render as TRACKING/MONITOR in the UI,
+            # even if the current momentum score has cooled. They are real positions
+            # and must stay visible at least at BUILDING tier.
+            if tier in ("TRACKING", "MONITOR"):
+                tier = "BUILDING"
+                pdata["signal_tier"] = tier
+                pdata["signal"] = tier
+                pdata["display_tier"] = TIER_DISPLAY_MAP.get(tier, tier)
             if entry_eligible and held_info.get("weight", 0) < ADD_WEIGHT_THRESHOLD:
                 status = "add"
                 reason = f"Held, underweight ({held_info['weight']:.1f}%) and still eligible"

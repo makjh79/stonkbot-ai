@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS signals (
     -- Readiness & tier
     readiness_score INTEGER CHECK (readiness_score BETWEEN 0 AND 100),
     backend_tier    TEXT,
-    frontend_tier   TEXT CHECK (frontend_tier IN ('PRIME','BUILDING','WATCHING','TRACKING')),
+    frontend_tier   TEXT CHECK (frontend_tier IN ('PRIME','BUILDING','READY','TRACKING')),
     status          TEXT CHECK (status IN ('queued','add','hold','not_ready','tier_too_low','no_price')),
 
     -- Confirmation flags (10-factor readiness)
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS watchlist (
     company_name    TEXT,
     sector          TEXT,
     backend_tier    TEXT,
-    frontend_tier   TEXT CHECK (frontend_tier IN ('PRIME','BUILDING','WATCHING','TRACKING')),
+    frontend_tier   TEXT CHECK (frontend_tier IN ('PRIME','BUILDING','READY','TRACKING')),
     readiness_score INTEGER CHECK (readiness_score BETWEEN 0 AND 100),
     status          TEXT CHECK (status IN ('queued','add','hold','not_ready','tier_too_low','no_price')),
     price           REAL,

@@ -76,7 +76,7 @@ def merge_watchlist_narratives(watchlist_content: dict, llm_narratives: dict, bu
     DISPLAY_TIER = {
         "STRONG_NOW": "PRIME",
         "NOW": "BUILDING",
-        "WATCH": "WATCHING",
+        "WATCH": "READY",
         "MONITOR": "TRACKING",
         "TRACKING": "TRACKING",
     }

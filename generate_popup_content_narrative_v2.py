@@ -6,7 +6,15 @@ No assembly-line fragments; each field picks from a large set of full sentences.
 import sys, os, json, random
 from pathlib import Path
 
-from signal_rules import compute_confirmation_count, active_confirmation_labels, hard_confirmation_count, is_entry_eligible, has_required_positive_edge
+from signal_rules import (
+    compute_confirmation_count,
+    active_confirmation_labels,
+    entry_confirmation_labels,
+    display_only_confirmation_labels,
+    hard_confirmation_count,
+    is_entry_eligible,
+    has_required_positive_edge,
+)
 
 BOT_DIR = Path("/opt/stonk-ai")
 if str(BOT_DIR) not in sys.path:
@@ -145,7 +153,7 @@ def new_bot_thinking(symbol, position, signal_data, watchlist_data, stops):
     elif tier == "WATCH":
         sentences.append(_hash_choice(symbol, [
             "Readiness has slipped. Bot is watching, not adding.",
-            "Signal cooled into WATCH. The bot is on the sidelines for now.",
+            "Signal cooled into READY. The bot is on the sidelines for now.",
             "No longer entry-ready. Bot is waiting for confirmation to return.",
         ]))
     else:
@@ -277,29 +285,36 @@ def new_why_on_watchlist(symbol, signal_data, watchlist_data):
     readiness = signal_data.get("readiness_score", 0) or watchlist_data.get("readiness_score", 0)
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "MONITOR")
     conf = signal_data.get("confirmations", {}) or {}
-    active_labels = active_confirmation_labels(conf)
-    active_count = len(active_labels)
+    entry_labels = entry_confirmation_labels(conf)
+    display_labels = display_only_confirmation_labels(conf)
+    entry_count = len(entry_labels)
+    display_count = len(display_labels)
+    parts = []
     if tier == "STRONG_NOW":
-        return _hash_choice(symbol, [
-            f"Readiness {readiness:.0f}, {active_count} active factors ({', '.join(active_labels)}) — highest-conviction tier. Bot buys the moment cash is free.",
-            f"Locked and loaded. Readiness {readiness:.0f} with {active_count} active chips firing.",
-            f"A-tier setup: {active_count} active factors, readiness {readiness:.0f}.",
-            f"Top of the buy list. Readiness {readiness:.0f}, {active_count} factors aligned.",
-        ])
-    if tier == "NOW":
-        return _hash_choice(symbol, [
-            f"Readiness {readiness:.0f} — an entry-ready setup waiting on portfolio cash ({active_count} active chips: {', '.join(active_labels)}).",
-            f"Clean setup, {active_count} factors aligned. Just needs room in the portfolio.",
-            f"On deck: readiness {readiness:.0f}, {active_count} confirmations.",
+        parts.append(_hash_choice(symbol, [
+            f"Readiness {readiness:.0f} — highest-conviction tier. Entry pillars: {', '.join(entry_labels)}.",
+            f"Locked and loaded at readiness {readiness:.0f}. Entry gate: {entry_count} pillars green.",
+            f"A-tier setup: readiness {readiness:.0f} with {entry_count} entry pillars aligned.",
+            f"Top of the buy list. Readiness {readiness:.0f}, entry pillars {', '.join(entry_labels)}.",
+        ]))
+    elif tier == "NOW":
+        parts.append(_hash_choice(symbol, [
+            f"Readiness {readiness:.0f} — entry-ready if the hard filters hold. Entry pillars: {', '.join(entry_labels)}.",
+            f"Clean setup; {entry_count} entry pillars aligned at readiness {readiness:.0f}. Just needs portfolio cash.",
+            f"On deck: readiness {readiness:.0f}, {entry_count} entry-pillar confirmations.",
             f"Ready to buy at readiness {readiness:.0f}. Cash is the only gate.",
-        ])
-    if tier == "WATCH":
-        return _hash_choice(symbol, [
-            f"Readiness {readiness:.0f} — building a case, but only {active_count} active chips.",
+        ]))
+    elif tier == "WATCH":
+        parts.append(_hash_choice(symbol, [
+            f"Readiness {readiness:.0f} — building a case, but only {entry_count} entry pillar(s) green.",
             f"Interesting, but not urgent. Readiness {readiness:.0f} keeps it on the radar.",
-            f"WATCH tier: {active_count} confirmations at readiness {readiness:.0f}. One more signal and it gets interesting.",
-        ])
-    return f"Readiness {readiness:.0f} — early watch, not close to an entry."
+            f"WATCH tier: {entry_count} entry pillars at readiness {readiness:.0f}. Not yet cleared for entry.",
+        ]))
+    else:
+        parts.append(f"Readiness {readiness:.0f} — early watch, not close to an entry.")
+    if display_labels:
+        parts.append(f"Display-only context: {', '.join(display_labels)}.")
+    return " ".join(parts)
 
 # ── Watchlist: What triggers buy ─────────────────────────────────────
 
@@ -307,7 +322,7 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "MONITOR")
     readiness = signal_data.get("readiness_score", 0)
     conf = signal_data.get("confirmations", {}) or {}
-    active_count = len(active_confirmation_labels(conf))
+    active_count = len(entry_confirmation_labels(conf))
     hard = hard_confirmation_count(conf)
     above_ema = bool(conf.get("above_ema"))
     eligible = is_entry_eligible(readiness, active_count, above_ema, hard, confirmations=conf)
@@ -324,21 +339,20 @@ def new_what_triggers_buy(symbol, signal_data, watchlist_data):
     reasons = []
     if not above_ema:
         reasons.append("reclaim the 20-day EMA")
-    if readiness < 65:
-        reasons.append(f"push readiness above 65 (now {readiness:.0f})")
-    if active_count < 3:
-        reasons.append(f"get {3 - active_count} more active chips")
-    hard_min = 1 if active_count >= 7 else 2
-    if hard < hard_min:
-        reasons.append(f"see {hard_min} hard confirmation(s) from VWAP/options/relvol/volume (now {hard})")
-    if not has_required_positive_edge(conf) and not any(k in reasons for k in ("hard confirmation", "active chips")):
-        reasons.append("satisfy the positive-edge gate (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks)")
+    if readiness < 70:
+        reasons.append(f"push readiness above 70 (now {readiness:.0f})")
+    if active_count < 2:
+        reasons.append(f"get {2 - active_count} more entry pillar(s)")
+    if not conf.get("spread_ok"):
+        reasons.append("see a clean bid/ask spread")
+    if not conf.get("no_corporate_action_risk"):
+        reasons.append("clear the corporate-action check")
     if not reasons:
-        reasons.append("clear the positive-edge fallback gate and have portfolio cash available")
+        reasons.append("wait for portfolio cash and sizing rules")
 
     if reasons:
         return "Bot buys when " + " and ".join(reasons[:2]) + "."
-    return "Waiting for the positive-edge entry gate and an open cash slot."
+    return "Waiting for the candidate-score entry gate and an open cash slot."
 
 # ── Watchlist: Risk ────────────────────────────────────────────────
 
@@ -395,7 +409,7 @@ def new_generate_dynamic_narrative(symbol, position, watchlist_data, signal_data
         "confidence": "Solid." if pl_percent >= -3 else "Shaky." if pl_percent >= -8 else "Thin.",
         "entryReason": new_bot_thinking(symbol, position, signal_data, watchlist_data, stops),
         "stopReason": f"Hard stop {_price_fmt(stops['hard_stop'])} (-{stops.get('hard_pct',0.10)*100:.0f}% / 1.5x ATR); trailing {_price_fmt(stops['trailing_stop'])} (2x ATR). VWAP stop disabled 2026-08-09.",
-        "entry_eligible": tier in ("STRONG_NOW", "NOW"),
+        "entry_eligible": tier in ("STRONG_NOW", "NOW") and eligible,
     })
     return result
 

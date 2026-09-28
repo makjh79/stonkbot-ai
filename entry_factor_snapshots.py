@@ -22,6 +22,7 @@ BASE = Path("/opt/stonk-ai")
 TRADES = BASE / "trades_log.json"
 SIGNALS = BASE / "signals.json"
 ALL_BARS = BASE / "all_bars.json"
+RATIONALE = BASE / "trade_rationale.json"
 OUT = BASE / "entry_factor_snapshots.json"
 
 CAPTURE_WINDOW_MIN = 45  # cron is */15 + signals refresh */15 -> 45 min covers lag
@@ -34,7 +35,74 @@ def load_json(path, default=None):
     except Exception:
         return default
 
-SNAPSHOT_READINESS_MIN = 65.0  # measurement-only threshold; entry gate stays at 80.0
+
+def classify_cohort(reason: str, entry_eligible: bool) -> str:
+    """Map a BUY rationale reason to an entry cohort.
+
+    Rules:
+      - v3: reason contains "V3" or "trend-pullback" (case-insensitive).
+      - main: reason contains entry_eligible/main-engine language, or no V3
+        marker and the symbol's signal is entry_eligible.
+      - unknown: otherwise.
+    """
+    if not reason:
+        return "main" if entry_eligible else "unknown"
+    rl = reason.lower()
+    if "v3" in rl or "trend-pullback" in rl:
+        return "v3"
+    if "entry_eligible" in rl or "main-engine" in rl or "main engine" in rl:
+        return "main"
+    # If no V3 marker and the signal passed the entry gate, assume main cohort.
+    return "main" if entry_eligible else "unknown"
+
+
+def build_rationale_index(entries):
+    """Index BUY rationale entries by (timestamp, symbol) -> reason.
+
+    Multiple rationales for the same trade are collapsed by taking the first
+    V3-looking reason, otherwise the first reason.
+    """
+    idx = {}
+    for e in entries:
+        if (e.get("action") or "").upper() != "BUY":
+            continue
+        ts = e.get("timestamp", "")
+        sym = e.get("symbol")
+        reason = e.get("reason", "")
+        if not ts or not sym:
+            continue
+        key = (ts, sym)
+        existing = idx.get(key)
+        if existing is None:
+            idx[key] = reason
+        else:
+            # Prefer V3-marked rationale if present.
+            rl = reason.lower()
+            if "v3" in rl or "trend-pullback" in rl:
+                idx[key] = reason
+    return idx
+
+
+def nearest_rationale(buy_ts, symbol, rationale_index):
+    """Return the closest rationale reason within 10 minutes of buy_ts."""
+    best = None
+    try:
+        bt = datetime.fromisoformat(buy_ts.replace("Z", "+00:00")).replace(tzinfo=None)
+    except Exception:
+        return None
+    for (ts, sym), reason in rationale_index.items():
+        if sym != symbol:
+            continue
+        try:
+            rt = datetime.fromisoformat(ts.replace("Z", "+00:00")).replace(tzinfo=None)
+        except Exception:
+            continue
+        dt = abs((rt - bt).total_seconds())
+        if dt <= 600 and (best is None or dt < best[0]):
+            best = (dt, reason)
+    return best[1] if best else None
+
+SNAPSHOT_READINESS_MIN = 70.0  # measurement-only threshold; aligned with ENTRY_READINESS_MIN
 
 
 def compute_sector_volume_flow(symbol: str, sector: str, all_bars: Optional[Dict]) -> Dict:
@@ -96,6 +164,25 @@ def main():
     now = datetime.utcnow()
     cutoff = now - timedelta(minutes=CAPTURE_WINDOW_MIN)
     added = 0
+    cohorts_backfilled = 0
+
+    rationale_index = build_rationale_index(load_json(RATIONALE, {}).get("entries", []))
+
+    # ---- Additive cohort backfill for existing snapshots ----
+    # Existing snapshots may pre-date cohort tagging. Derive their cohort from
+    # the nearest BUY rationale without touching any other field.
+    for key, snap in snaps.items():
+        if snap.get("cohort"):
+            continue
+        ts = snap.get("trade_ts")
+        sym = snap.get("symbol")
+        if not ts or not sym:
+            continue
+        sig = signals.get(sym)
+        entry_eligible = bool(sig.get("entry_eligible")) if sig else False
+        reason = nearest_rationale(ts, sym, rationale_index)
+        snap["cohort"] = classify_cohort(reason, entry_eligible)
+        cohorts_backfilled += 1
 
     for t in trades:
         if (t.get("action") or "").upper() != "BUY":
@@ -118,6 +205,9 @@ def main():
         conf = sig.get("confirmations", {}) or {}
         sector = sig.get("sector", "Other")
         sector_flow = compute_sector_volume_flow(sym, sector, all_bars_store)
+        reason = nearest_rationale(ts, sym, rationale_index)
+        entry_eligible = bool(sig.get("entry_eligible"))
+        cohort = classify_cohort(reason, entry_eligible)
         snaps[key] = {
             "trade_ts": ts,
             "symbol": sym,
@@ -130,14 +220,16 @@ def main():
             "hard_confirmation_count": hard_confirmation_count(conf),
             "confirmations": {k: conf.get(k) for k in CONFIRMATION_CHIPS},
             "sector_volume_flow": sector_flow,
+            "cohort": cohort,
         }
         added += 1
 
     store["last_run"] = now.isoformat() + "Z"
     store["meta"] = {"sector_volume_flow_enabled": True}
-    if added or not OUT.exists():
+    # Write if there are new snapshots, cohort backfills, or the file does not exist.
+    if added or cohorts_backfilled or not OUT.exists():
         atomic_write_json(str(OUT), store)
-    print(f"entry_factor_snapshots: {added} new, {len(snaps)} total")
+    print(f"entry_factor_snapshots: {added} new, {cohorts_backfilled} cohorts backfilled, {len(snaps)} total")
 
 
 if __name__ == "__main__":

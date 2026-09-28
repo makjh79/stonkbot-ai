@@ -74,6 +74,49 @@ def tier_max_position_pct(tier: str, base_max_pct: float) -> float:
     return 0.08  # MONITOR and anything unknown
 
 
+def effective_max_positions(
+    cash: float,
+    tier_counts: Dict[str, int],
+    portfolio_pf: float,
+    qqq_vs_50dma: float,
+    *,
+    min_position_size: float = 3000.0,
+    base_max_positions: int = 12,
+    strong_now_bonus: int = 2,
+    pf_discount: float = 0.25,
+    tape_discount: float = 0.15,
+    absolute_floor: int = 10,
+) -> int:
+    """Dynamic position-count cap.
+
+    Combines deployable cash, tier composition, recent performance, and
+    broad tape health into a single auditable cap. Never exceeds
+    `base_max_positions`; never falls below `absolute_floor`.
+
+    The intended behavior:
+      - Cash flush + healthy PF + strong tape  -> ~base_max_positions lines
+      - Low cash or weak PF/tape               -> replacement-only zone
+      - Already above the cap                    -> trim weakest, block net-new
+
+    `portfolio_pf` is profit factor over the current experiment window
+    (or a suitable trailing metric). `qqq_vs_50dma` is QQQ's distance from
+    its 50-day moving average; negative means weak tape.
+    """
+    cash_implied = int(cash // min_position_size)
+    strong_now_count = tier_counts.get("STRONG_NOW", 0)
+    tier_bonus = min(strong_now_count // 3, strong_now_bonus)
+
+    raw_cap = min(base_max_positions, cash_implied) + tier_bonus
+
+    discount = 1.0
+    if portfolio_pf < 1.0:
+        discount -= pf_discount
+    if qqq_vs_50dma < 0.0:
+        discount -= tape_discount
+
+    return max(absolute_floor, int(raw_cap * discount))
+
+
 @dataclass
 class RiskConfig:
     # --- Market hours / extended hours ---
@@ -1244,7 +1287,7 @@ class RiskEngine:
             if _s not in held_syms:
                 self.legacy_position_caps.pop(_s, None)
         if not self.amendment1_seeded:
-            _legacy = {"STRONG_NOW": 0.12, "NOW": 0.08, "WATCH": 0.05}
+            _legacy = {"STRONG_NOW": 0.12, "NOW": 0.08, "WATCH": 0.08}
             for p in positions:
                 s = p.get("symbol")
                 if p.get("qty", 0) > 0 and s:

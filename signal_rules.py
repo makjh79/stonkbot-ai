@@ -18,7 +18,8 @@ from strategy_config import (
     ENTRY_MIN_CONFIRMATIONS,
     ENTRY_MIN_HARD_CONFIRMATIONS,
     HARD_CONFIRMATION_KEYS,
-    REQUIRED_POSITIVE_HARD_KEYS as V3_REQUIRED_POSITIVE_KEYS,
+    REQUIRED_POSITIVE_HARD_KEYS,
+    REQUIRED_POSITIVE_FALLBACK_BUNDLES,
 )
 
 
@@ -28,31 +29,34 @@ from strategy_config import (
 def has_required_positive_edge(confirmations):
     """V3 positive-edge gate with fallback paths.
 
-    Primary: VWAP confirmed (strongest live edge, +28pp).
-    Fallback 1: volume_confirmed + options_confirmed together.
-    Fallback 2: intraday_confirmed + relvol_confirmed + above_ema together.
-    This keeps the gate evidence-based while avoiding a single-point choke.
+    2026-09-05 redesign: if both REQUIRED_POSITIVE_HARD_KEYS and fallback bundles
+    are empty in strategy_config, this requirement is disabled and the function
+    returns True.  This lets the candidate score's own entry gate control entries
+    without duplicating logic here.
+
+    Legacy behavior: primary VWAP, or volume+options, or intraday+relvol+above_ema.
     """
     if not confirmations:
         return False
-    if confirmations.get("vwap_confirmed"):
+    # Candidate-mode short-circuit: no positive-edge requirement configured.
+    if not REQUIRED_POSITIVE_HARD_KEYS and not REQUIRED_POSITIVE_FALLBACK_BUNDLES:
         return True
-    if confirmations.get("volume_confirmed") and confirmations.get("options_confirmed"):
+    if any(confirmations.get(k) for k in REQUIRED_POSITIVE_HARD_KEYS):
         return True
-    if (confirmations.get("intraday_confirmed")
-            and confirmations.get("relvol_confirmed")
-            and confirmations.get("above_ema")):
-        return True
+    for bundle in REQUIRED_POSITIVE_FALLBACK_BUNDLES:
+        if all(confirmations.get(k) for k in bundle):
+            return True
     return False
 
 # -----------------------------------------------------------------------------
 # Tier thresholds (backend names)
 # -----------------------------------------------------------------------------
-TIER_STRONG_NOW_MIN = 76.0   # lowered from 77.0 2026-07-14; PRIME cohort too thin at 77
-TIER_NOW_MIN = 72.0          # raised from 70 for higher-quality entries
-TIER_WATCH_MIN = 55.0        # raised from 50
+# 2026-09-05: raised for candidate signal redesign — fewer, higher-conviction tiers.
+TIER_STRONG_NOW_MIN = 80.0
+TIER_NOW_MIN = 75.0
+TIER_WATCH_MIN = 65.0        # raised from 50
 
-# Minimum readiness for any "scored" frontend visibility (BUILDING/WATCHING)
+# Minimum readiness for any "scored" frontend visibility (BUILDING/READY)
 TIER_BUILDING_MIN = TIER_WATCH_MIN
 
 # Entry gate — imported from strategy_config (single source of truth)
@@ -91,7 +95,7 @@ CONFIRMATION_CHIPS: Dict[str, Any] = {
 TIER_DISPLAY_MAP: Dict[str, str] = {
     "STRONG_NOW": "PRIME",
     "NOW": "BUILDING",
-    "WATCH": "WATCHING",
+    "WATCH": "READY",
     "MONITOR": "TRACKING",
 }
 
@@ -125,7 +129,9 @@ def compute_confirmation_count(confirmations: Optional[Dict[str, Any]]) -> int:
 def active_confirmation_labels(confirmations: Optional[Dict[str, Any]]) -> list[str]:
     """Return short labels of active chips, matching the UI factor chips.
     v3 2026-08-01: MACD and INT are display-only (not used for entry gate).
-    They are marked with * in narrative text."""
+    They are marked with * in narrative text.
+
+    2026-09-05: for entry-gate language use entry_confirmation_labels()."""
     labels = {
         "momentum_score": "MOM",
         "rsi_signal": "RSI",
@@ -144,6 +150,61 @@ def active_confirmation_labels(confirmations: Optional[Dict[str, Any]]) -> list[
         "no_corporate_action_risk": "CA",
     }
     return [labels[k] for k in CONFIRMATION_CHIPS if k in (confirmations or {}) and CONFIRMATION_CHIPS[k](confirmations[k])]
+
+
+# 2026-09-05: labels that are actual pillars of the candidate-score entry gate.
+ENTRY_CONFIRMATION_LABELS: Dict[str, str] = {
+    "momentum_score": "MOM",
+    "rsi_signal": "RSI",
+    "above_ema": "EMA",
+    "spread_ok": "SPR",
+    "no_corporate_action_risk": "CA",
+}
+
+# 2026-09-05: labels that are display-only (tracked for transparency but removed from entry gate).
+DISPLAY_ONLY_CONFIRMATION_LABELS: Dict[str, str] = {
+    "volume_confirmed": "VOL",
+    "macd_turning": "MACD",
+    "sector_strong": "SEC",
+    "intraday_confirmed": "INT",
+    "options_confirmed": "OPT",
+    "relvol_confirmed": "RVOL",
+    "vwap_confirmed": "VWAP",
+    "momentum_5m_up": "5M",
+    "near_term_bullish_flow": "OF",
+    "bid_ask_bullish": "QBI",
+}
+
+
+def _chip_active(test, value) -> bool:
+    try:
+        return bool(test(value))
+    except Exception:
+        return False
+
+
+def entry_confirmation_labels(confirmations: Optional[Dict[str, Any]]) -> list[str]:
+    """Return labels of confirmation chips that are active entry pillars."""
+    if not confirmations:
+        return []
+    return [
+        label
+        for key, label in ENTRY_CONFIRMATION_LABELS.items()
+        if key in confirmations and key in CONFIRMATION_CHIPS
+        and _chip_active(CONFIRMATION_CHIPS[key], confirmations[key])
+    ]
+
+
+def display_only_confirmation_labels(confirmations: Optional[Dict[str, Any]]) -> list[str]:
+    """Return labels of active display-only chips (not used for entry gate)."""
+    if not confirmations:
+        return []
+    return [
+        label
+        for key, label in DISPLAY_ONLY_CONFIRMATION_LABELS.items()
+        if key in confirmations and key in CONFIRMATION_CHIPS
+        and _chip_active(CONFIRMATION_CHIPS[key], confirmations[key])
+    ]
 
 
 def hard_confirmation_count(confirmations: Optional[Dict[str, Any]], hard_keys: Optional[Iterable[str]] = None) -> int:
@@ -195,15 +256,14 @@ def is_entry_eligible(
     When a symbol has very strong confirmation breadth (>=7), we relax the hard-
     confirm requirement to 1.
     v3 2026-08-01: requires at least one positive-edge hard confirmation
-    (volume or VWAP) when confirmations dict is available.
+    bundle (VWAP, or volume+trend+options/relvol, or intraday+relvol+trend)
+    when confirmations dict is available.
     """
     min_hard = 1 if confirmation_count >= 7 else ENTRY_MIN_HARD_CONFIRMATIONS
-    # v3: ALL positive-edge hard confirmations are required.
+    # v3: use the same positive-edge helper as readiness_score.py/trading_bot.py
     _has_positive = True  # default True for backward compat when confirmations not provided
     if confirmations is not None:
-        _has_positive = all(
-            confirmations.get(k, False) for k in V3_REQUIRED_POSITIVE_KEYS
-        )
+        _has_positive = has_required_positive_edge(confirmations)
     return (
         above_ema
         and readiness >= ENTRY_READINESS_MIN

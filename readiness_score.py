@@ -42,40 +42,45 @@ from signal_rules import (
     TIER_NOW_MIN,
     TIER_STRONG_NOW_MIN,
     TIER_WATCH_MIN,
-    V3_REQUIRED_POSITIVE_KEYS,
 )
 
 # PEAD removed — Alpaca has no earnings API, factor dropped for zero external deps
 
 logger = logging.getLogger(__name__)
 
-# Weights (sum to 1.0)
-# Rebalanced to reduce momentum collinearity (70%→55%) and add non-price factors
-WEIGHT_SIGNAL = 0.25  # raised 2026-07-27 to compensate dropped RSI/MACD
-WEIGHT_RSI = 0.06      # v3 2026-08-08: reintroduced as negative veto only
-WEIGHT_VOLUME = 0.10   # raised 2026-07-27: volume/relvol had +31pp edge
-WEIGHT_MACD = 0.05     # v3 2026-08-08: reintroduced as fresh-cross only / late-stage negative
-WEIGHT_EMA = 0.10      # restored toward 12% — strongest live predictor (+0.572 corr); keep RS too
-WEIGHT_SECTOR = 0.25   # held 2026-07-27 as stabilizer after dropping RSI/MACD
-WEIGHT_INTRADAY = 0.05 # reduced 2026-07-27: intraday had -2.2pp edge
-# v3 2026-08-08: boosted options and VWAP — the only positive hard edges in attribution
-WEIGHT_OPTIONS = 0.14  # raised: options flow/near-term bullish edge
-WEIGHT_REL_VOLUME = 0.00  # kept as boolean confirmation chip only; volume score already captures same ratio
+# 2026-09-05 signal redesign: go live with candidate score based on factor attribution.
+# Only factors with positive live edge are kept in the score; toxic factors are removed.
+# Positive-edge factors: above_ema (+16.3pp), rsi_signal (+16.3pp), momentum_score (+10.0pp).
+# Toxic/removed: volume_confirmed (-20.7pp), vwap_confirmed (-27.8pp), options_confirmed (-37.5pp),
+# macd_turning (-46.9pp), near_term_bullish_flow (-46.9pp), bid_ask_bullish (-7.6pp), sector_strong (-9.4pp).
+# Three-pillar candidate score: 40% trend quality, 40% momentum strength, 20% execution/risk filters.
+# Feature flag: set False to revert instantly to pre-redesign composite.
+USE_CANDIDATE_SCORE: bool = True
 
-WEIGHT_VWAP_DEV = 0.15   # raised 2026-08-08: VWAP confirmed edge strongest (+28 pp)
+# Candidate-score constants (pillar weights add to 1.0)
+CANDIDATE_WEIGHT_TREND = 0.40
+CANDIDATE_WEIGHT_MOMENTUM = 0.40
+CANDIDATE_WEIGHT_RISK = 0.20
 
-WEIGHT_RELATIVE_STRENGTH = 0.04  # NEW — stock vs SPY 20-day alpha; complements EMA, not replaces
-
-# NEW confirmation chips (added to readiness score to align tiering with UI)
-# Halved AGAIN 2026-07-13: these are binary 0/100 and were compressing the composite
-# when intraday/options/spread data is patchy. Keep factors, reduce scale impact.
+# Legacy weights kept for instant rollback. DO NOT rely on these when USE_CANDIDATE_SCORE=True.
+WEIGHT_SIGNAL = 0.25
+WEIGHT_RSI = 0.06
+WEIGHT_VOLUME = 0.10
+WEIGHT_MACD = 0.05
+WEIGHT_EMA = 0.10
+WEIGHT_SECTOR = 0.25
+WEIGHT_INTRADAY = 0.05
+WEIGHT_OPTIONS = 0.14
+WEIGHT_REL_VOLUME = 0.00
+WEIGHT_VWAP_DEV = 0.15
+WEIGHT_RELATIVE_STRENGTH = 0.04
 WEIGHT_5M_MOMENTUM = 0.0075
 WEIGHT_5M_VOLUME_SURGE = 0.0025
 WEIGHT_5M_VWAP = 0.0025
 WEIGHT_OPTIONS_FLOW = 0.005
 WEIGHT_SPREAD_OK = 0.005
 WEIGHT_NO_CORPORATE_ACTION = 0.005
-WEIGHT_BID_ASK_IMBALANCE = 0.005  # quote bid/ask size imbalance
+WEIGHT_BID_ASK_IMBALANCE = 0.005
 
 # Tier and entry constants now live in signal_rules.py (single source of truth).
 # Any local overrides here are bugs; change them in signal_rules.py instead.
@@ -633,6 +638,94 @@ def compute_readiness(
     bid_ask_bullish = kwargs.get("bid_ask_bullish", False)
     corporate_action_risk = kwargs.get("corporate_action_risk", False)
 
+    # Confirmations dict (canonical boolean signals) — built once, used by both candidate and legacy paths.
+    confirmations = {
+        "momentum_score": round(signal_component, 1),
+        "rsi_signal": rsi_signal,
+        "volume_confirmed": volume_confirmed,
+        "macd_turning": macd_turning,
+        "above_ema": above_ema,
+        "sector_strong": sector_strong,
+        "intraday_confirmed": intraday_confirmed,
+        "intraday_score": round(intraday_component, 1),
+        "momentum_5m_up": bool(momentum_5m_up),
+        "volume_5m_surge": bool(volume_5m_surge),
+        "price_above_5m_vwap": bool(price_above_5m_vwap),
+        "options_confirmed": options_confirmed,
+        "options_score": round(options_component, 1),
+        "options_call_put_ratio": options_flow.get("put_call_ratio"),
+        "options_unusual_volume": options_flow.get("options_unusual_volume", False),
+        "near_term_bullish_flow": options_flow.get("near_term_bullish_flow", False),
+        "bid_ask_spread_pct": kwargs.get("bid_ask_spread_pct"),
+        "wide_spread": kwargs.get("wide_spread", False),
+        "spread_ok": kwargs.get("spread_ok", True),
+        "bid_ask_imbalance": kwargs.get("bid_ask_imbalance"),
+        "bid_ask_bullish": kwargs.get("bid_ask_bullish", False),
+        "has_upcoming_dividend": kwargs.get("has_upcoming_dividend", False),
+        "has_upcoming_split": kwargs.get("has_upcoming_split", False),
+        "has_upcoming_merger": kwargs.get("has_upcoming_merger", False),
+        "has_upcoming_spinoff": kwargs.get("has_upcoming_spinoff", False),
+        "corporate_action_risk": kwargs.get("corporate_action_risk", False),
+        "no_corporate_action_risk": not kwargs.get("corporate_action_risk", False),
+        "relvol_confirmed": relvol_confirmed,
+        "relvol_score": round(relvol_component, 1),
+        "vwap_confirmed": vwap_confirmed,
+        "vwap_score": round(vwap_component, 1),
+    }
+
+    if USE_CANDIDATE_SCORE:
+        # Candidate redesign score (2026-09-05): three-pillar model based on live attribution.
+        # Positive-edge factors retained: above_ema, rsi neutral, signal_component.
+        # Pillar 1: trend quality (40%)
+        trend_score = 0.0
+        if above_ema:
+            trend_score += 0.25
+        if rsi_signal == "neutral":
+            trend_score += 0.10
+        if signal_component >= 60:
+            trend_score += 0.05
+
+        # Pillar 2: momentum strength (40%) — raw signal-engine total score
+        momentum_score_norm = min(max(signal_component / 100.0, 0.0), 1.0)
+        momentum_pillar = momentum_score_norm * CANDIDATE_WEIGHT_MOMENTUM
+
+        # Pillar 3: execution / risk filters (20%)
+        risk_score = 0.0
+        if spread_ok:
+            risk_score += 0.10
+        if not corporate_action_risk:
+            risk_score += 0.10
+
+        readiness = (trend_score + momentum_pillar + risk_score) * 100.0
+        readiness = round(max(0.0, min(100.0, readiness)), 1)
+
+        confirmation_count = compute_confirmation_count(confirmations)
+
+        # Entry gate: strong trend + momentum + clean execution. No toxic hard keys.
+        entry_eligible = (
+            readiness >= ENTRY_READINESS_MIN
+            and above_ema
+            and spread_ok
+            and not corporate_action_risk
+            and signal_component >= 55
+            and rsi_signal != "overbought"
+        )
+
+        tier = compute_backend_tier(readiness)
+        tier_reason = _build_tier_reason(
+            tier, readiness, confirmations, confirmation_count,
+        )
+        return ReadinessResult(
+            symbol=symbol,
+            readiness_score=readiness,
+            tier=tier,
+            confirmations=confirmations,
+            confirmation_count=confirmation_count,
+            entry_eligible=entry_eligible,
+            tier_reason=tier_reason,
+            factor_breakdown=None,  # legacy breakdown not meaningful for candidate model
+        )
+
     # Weighted composite (11 factors + 6 new confirmation chips; sum-of-weights normalised to avoid inflation)
     total_weight = (
         WEIGHT_SIGNAL + WEIGHT_RSI + WEIGHT_VOLUME + WEIGHT_MACD + WEIGHT_EMA
@@ -684,40 +777,7 @@ def compute_readiness(
     readiness = readiness - qqq_gate_penalty
     readiness = round(max(0.0, min(100.0, readiness)), 1)
 
-    # Confirmations dict (canonical boolean signals)
-    confirmations = {
-        "momentum_score": round(signal_component, 1),
-        "rsi_signal": rsi_signal,
-        "volume_confirmed": volume_confirmed,
-        "macd_turning": macd_turning,
-        "above_ema": above_ema,
-        "sector_strong": sector_strong,
-        "intraday_confirmed": intraday_confirmed,
-        "intraday_score": round(intraday_component, 1),
-        "momentum_5m_up": bool(momentum_5m_up),  # new 5-min chips
-        "volume_5m_surge": bool(volume_5m_surge),
-        "price_above_5m_vwap": bool(price_above_5m_vwap),
-        "options_confirmed": options_confirmed,
-        "options_score": round(options_component, 1),
-        "options_call_put_ratio": options_flow.get("put_call_ratio"),
-        "options_unusual_volume": options_flow.get("options_unusual_volume", False),
-        "near_term_bullish_flow": options_flow.get("near_term_bullish_flow", False),
-        "bid_ask_spread_pct": kwargs.get("bid_ask_spread_pct"),
-        "wide_spread": kwargs.get("wide_spread", False),
-        "spread_ok": kwargs.get("spread_ok", True),
-        "bid_ask_imbalance": kwargs.get("bid_ask_imbalance"),
-        "bid_ask_bullish": kwargs.get("bid_ask_bullish", False),
-        "has_upcoming_dividend": kwargs.get("has_upcoming_dividend", False),
-        "has_upcoming_split": kwargs.get("has_upcoming_split", False),
-        "has_upcoming_merger": kwargs.get("has_upcoming_merger", False),
-        "has_upcoming_spinoff": kwargs.get("has_upcoming_spinoff", False),
-        "corporate_action_risk": kwargs.get("corporate_action_risk", False),
-        "no_corporate_action_risk": not kwargs.get("corporate_action_risk", False),
-        "relvol_confirmed": relvol_confirmed,
-        "relvol_score": round(relvol_component, 1),
-        "vwap_confirmed": vwap_confirmed,
-        "vwap_score": round(vwap_component, 1),
-    }
+    # Confirmations dict already built above for candidate path; legacy path builds from the same variables.
 
     # Confirmation count: canonical boolean count (single source of truth via signal_rules)
     confirmation_count = compute_confirmation_count(confirmations)
@@ -783,39 +843,60 @@ def _build_tier_reason(
     confirmations: Dict,
     confirmation_count: int,
 ) -> str:
-    """Human-readable reason for tier assignment."""
+    """Human-readable reason for tier assignment (candidate-score redesign)."""
     parts = []
     if tier == "STRONG_NOW":
-        parts.append(f"PRIME: readiness {readiness:.1f} — entry-ready tier")
+        parts.append(f"PRIME: readiness {readiness:.1f} — highest-conviction entry tier")
     elif tier == "NOW":
-        parts.append(f"BUILDING: readiness {readiness:.1f} — building strength, not yet entry-ready")
+        parts.append(f"BUILDING: readiness {readiness:.1f} — entry-ready if hard filters pass")
     elif tier == "WATCH":
-        parts.append(f"WATCHING: readiness {readiness:.1f}")
+        parts.append(f"WATCHING: readiness {readiness:.1f} — on watch, not yet entry-ready")
     else:
-        parts.append(f"TRACKING: readiness {readiness:.1f}")
+        parts.append(f"TRACKING: readiness {readiness:.1f} — monitoring")
 
     reasons = []
-    if confirmations.get("volume_confirmed"):
-        reasons.append("volume confirmation")
-    if confirmations.get("vwap_confirmed"):
-        reasons.append("above VWAP")  # hard confirmation since 2026-07-27 redesign
-    # MACD removed from active reason list — zero-weight display-only per redesign
+    # Candidate-score pillars only
     if confirmations.get("above_ema"):
         reasons.append("above 20d EMA")
-    if confirmations.get("sector_strong"):
-        reasons.append("sector strength")
-    if confirmations.get("intraday_confirmed"):
-        reasons.append("intraday momentum")
-    if confirmations.get("options_confirmed"):
-        reasons.append("low IV (bullish options)")
-    # RSI zero-weighted display-only since 2026-07-27 redesign;
-    # show only overbought as caution, never as a buy signal.
-    if confirmations.get("rsi_signal") == "overbought":
+    momentum_score = confirmations.get("momentum_score")
+    if momentum_score is not None and momentum_score >= 55:
+        reasons.append(f"momentum score {momentum_score:.0f}")
+    rsi = confirmations.get("rsi_signal")
+    if rsi in ("bullish", "neutral", "oversold"):
+        reasons.append(f"RSI {rsi}")
+    elif rsi == "overbought":
         reasons.append("RSI overbought (caution)")
+    if confirmations.get("spread_ok"):
+        reasons.append("spread OK")
+    if confirmations.get("no_corporate_action_risk"):
+        reasons.append("no corporate-action risk")
+
+    # Display-only context (kept for transparency, but not entry factors)
+    display_reasons = []
+    if confirmations.get("volume_confirmed"):
+        display_reasons.append("volume (display-only)")
+    if confirmations.get("vwap_confirmed"):
+        display_reasons.append("VWAP (display-only)")
+    if confirmations.get("macd_turning"):
+        display_reasons.append("MACD (display-only)")
+    if confirmations.get("sector_strong"):
+        display_reasons.append("sector (display-only)")
+    if confirmations.get("intraday_confirmed"):
+        display_reasons.append("intraday (display-only)")
+    if confirmations.get("options_confirmed"):
+        display_reasons.append("options (display-only)")
+    if confirmations.get("relvol_confirmed"):
+        display_reasons.append("relvol (display-only)")
+    if confirmations.get("near_term_bullish_flow"):
+        display_reasons.append("options flow (display-only)")
+    if confirmations.get("bid_ask_bullish"):
+        display_reasons.append("bid/ask (display-only)")
 
     if reasons:
-        parts.append(" + ".join(reasons))
-    else:
-        parts.append(f"{confirmation_count}/10 confirmations")
+        parts.append("entry pillars: " + ", ".join(reasons))
+    if display_reasons:
+        parts.append("context: " + ", ".join(display_reasons))
+    if not reasons and not display_reasons:
+        parts.append(f"{confirmation_count}/10 confirmation chips active")
 
     return ". ".join(parts) + "."

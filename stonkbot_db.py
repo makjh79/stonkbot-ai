@@ -36,7 +36,7 @@ WEB_DIR = Path(os.environ.get("STONKBOT_WEB_DIR", "/var/www/hedge-fund-website")
 BACKEND_TO_FRONTEND = {
     "STRONG_NOW": "PRIME",
     "NOW": "BUILDING",
-    "WATCH": "WATCHING",
+    "WATCH": "READY",
     "MONITOR": "TRACKING",
 }
 

@@ -155,7 +155,7 @@ class AlpacaDataHub:
         start = end - timedelta(days=days + 7)
         url = f"{self._data_url}/v2/stocks/bars"
         result = {}
-        BATCH = 15  # 15 symbols x ~67 bars = ~1005, fits in 1000 bar limit per page
+        BATCH = 50  # larger batches reduce HTTP round-trips; ~50 symbols x ~127 bars = ~6350 bars
         symbol_list = list(symbols)
         for i in range(0, len(symbol_list), BATCH):
             batch = symbol_list[i:i + BATCH]
@@ -168,7 +168,7 @@ class AlpacaDataHub:
                     "timeframe": "1Day",
                     "start": start.strftime("%Y-%m-%d"),
                     "end": end.strftime("%Y-%m-%d"),
-                    "limit": 1000,
+                    "limit": 10000,
                     "feed": "sip",
                     "adjustment": "all",
                 }
@@ -724,7 +724,7 @@ class AlpacaDataHub:
             }
             for key, future in futures.items():
                 try:
-                    result[key] = future.result(timeout=60)
+                    result[key] = future.result(timeout=180)
                 except Exception as e:
                     logger.warning(f"get_market_data/{key} failed: {e}")
                     result[key] = {}

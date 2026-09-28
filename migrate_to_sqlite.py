@@ -116,7 +116,7 @@ def migrate_signals(conn: sqlite3.Connection, data, source: str = "opt") -> int:
         frontend_tier = {
             "STRONG_NOW": "PRIME",
             "NOW": "BUILDING",
-            "WATCH": "WATCHING",
+            "WATCH": "READY",
             "MONITOR": "TRACKING",
         }.get(tier, tier)
 
@@ -235,7 +235,7 @@ def migrate_portfolio(conn: sqlite3.Connection, data) -> int:
         frontend_tier = {
             "STRONG_NOW": "PRIME",
             "NOW": "BUILDING",
-            "WATCH": "WATCHING",
+            "WATCH": "READY",
             "MONITOR": "TRACKING",
         }.get(tier, tier)
 
@@ -328,7 +328,7 @@ def migrate_watchlist(conn: sqlite3.Connection, data) -> int:
         frontend_tier = {
             "STRONG_NOW": "PRIME",
             "NOW": "BUILDING",
-            "WATCH": "WATCHING",
+            "WATCH": "READY",
             "MONITOR": "TRACKING",
         }.get(tier, tier)
 

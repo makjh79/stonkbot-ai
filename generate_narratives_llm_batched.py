@@ -259,9 +259,9 @@ def _factor_chip_summary(conf: dict) -> tuple[int, int, str]:
 def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
     """Explain why the symbol is or is not entry-eligible, using the canonical gate.
 
-    Live gate (v3 2026-08): readiness ≥65, ≥3 confirmations, ≥1 hard confirmation
-    (2 hard only when total chips <7), above 20d EMA, and the positive-edge gate:
-    VWAP confirmed primary; or volume+options together; or intraday+relvol+above-EMA together.
+    Live gate (2026-09-05 candidate redesign): readiness ≥70, ≥2 confirmations,
+    above 20d EMA, momentum_score ≥55, RSI not overbought, and hard filters
+    spread OK + no corporate-action risk.
     """
     from signal_rules import ENTRY_MIN_CONFIRMATIONS, ENTRY_READINESS_MIN
     readiness = signal.get("readiness_score", 0) or 0
@@ -277,12 +277,11 @@ def _entry_gate_reason(signal: dict, conf: dict, active_count: int) -> str:
         reasons.append(f"readiness is {readiness:.1f} (needs {ENTRY_READINESS_MIN:.0f}+)")
     if active_count < ENTRY_MIN_CONFIRMATIONS:
         reasons.append(f"only {active_count} active chips (needs {ENTRY_MIN_CONFIRMATIONS}+)")
-    # Canonical hard-confirm rule: 1 hard is enough if ≥7 chips, otherwise 2.
-    hard_min = 1 if active_count >= 7 else 2
-    if hard < hard_min:
-        reasons.append(f"only {hard} hard confirmation(s) from VWAP/options/relvol/volume (needs {hard_min}+)")
-    if not has_required_positive_edge(conf) and not eligible:
-        reasons.append("the positive-edge fallback gate is not satisfied (VWAP primary; volume+options or intraday+relvol+above-EMA as fallbacks)")
+    # Hard filters for the 2026-09-05 redesign
+    if not conf.get("spread_ok"):
+        reasons.append("bid/ask spread is not healthy")
+    if not conf.get("no_corporate_action_risk"):
+        reasons.append("corporate-action risk is present")
     if reasons:
         return "Not entry eligible: " + "; ".join(reasons) + "."
     return "Entry gate is closed due to a rule not captured above."
@@ -354,7 +353,7 @@ SECTOR: {signal.get('sector', 'Other')}
 TIER: {signal.get('display_tier') or signal.get('tier', 'MONITOR')}
 P&L%: {position.get('unrealized_plpc', 0):.2f}% | Price: ${position.get('current', 0):.2f} | Entry: ${position.get('avg_entry', 0):.2f}
 Stop: ${stops['hard_stop']:.2f} ({stops.get('hard_pct', 0.10)*100:.1f}% / 1.5x ATR) | Trailing: ${stops['trailing_stop']:.2f} ({stops.get('trailing_pct', 10.0):.1f}% / 2x ATR) | VWAP stop: disabled 2026-08-09
-Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | MACD: {'+ve' if conf.get('macd_turning') else '-ve'} | Vol: {'yes' if conf.get('volume_confirmed') else 'no'} | RVOL: {'yes' if conf.get('relvol_confirmed') else 'no'} | EMA: {'above' if conf.get('above_ema') else 'below'} | VWAP: {'above' if conf.get('vwap_confirmed') else 'below'}
+Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | EMA: {'above' if conf.get('above_ema') else 'below'} | Spread: {'OK' if conf.get('spread_ok') else 'wide'} | CA risk: {'no' if conf.get('no_corporate_action_risk') else 'yes'}
 Readiness: {signal.get('readiness_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels})
 Entry gate: {entry_gate}
 NOTE: Only mention the ACTIVE factors listed above. Do not discuss inactive factors. | Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
@@ -380,7 +379,7 @@ TIER: {watch.get('display_tier') or watch.get('signal_tier') or signal.get('disp
 Price: ${price:.2f} | Readiness: {signal.get('readiness_score', 0):.1f} | Total: {signal.get('total_score', 0):.1f} | Active Factors: {active_count}/{total_count} ({active_labels})
 Entry gate: {entry_gate}
 NOTE: Only mention the ACTIVE factors listed above. Do not discuss inactive factors.
-Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | MACD: {'+ve' if conf.get('macd_turning') else '-ve'} | Vol: {'yes' if conf.get('volume_confirmed') else 'no'} | RVOL: {'yes' if conf.get('relvol_confirmed') else 'no'} | EMA: {'above' if conf.get('above_ema') else 'below'} | VWAP: {'above' if conf.get('vwap_confirmed') else 'below'}
+Momentum 20d: {signal.get('momentum_20d', 0):.2%} | RSI: {signal.get('rsi14', 0):.1f} | EMA: {'above' if conf.get('above_ema') else 'below'} | Spread: {'OK' if conf.get('spread_ok') else 'wide'} | CA risk: {'no' if conf.get('no_corporate_action_risk') else 'yes'}
 Volatility: {signal.get('volatility_20d', 0):.2%} | IV30: {f"{iv*100:.1f}%" if iv else "n/a"}
 Headline: {headline or 'None'}
 Note: {_company_note(symbol)}
@@ -416,15 +415,15 @@ Rules:
 - Be honest about why you're watching something. If it's a long shot, say so. If you're excited about it, say that too.
 - Explain your reasoning in plain English. No jargon, no templates, no corporate speak.
 - Write like a person, not a machine. Use "I" not "the bot" or "the system".
-- If the entry gate is closed, explain what's blocking it in plain terms ("needs more volume confirmation" not "hard confirmation count below threshold").
-- RSI >70 and late-stage MACD histogram act as negative risk vetoes in v3 (2026-08-08); cite them only as reasons to AVOID or wait, never as bullish triggers. The positive-edge entry gate is: VWAP confirmed primary; OR volume+options confirmed together; OR intraday+relvol+above-EMA confirmed together. Pyramiding and rotation are currently disabled.
+- If the entry gate is closed, explain what's blocking it in plain terms ("needs to reclaim the 20-day EMA", "readiness below 70", "fewer than 2 active chips", "bid/ask spread too wide", or "corporate-action risk").
+- RSI >70 and late-stage MACD histogram act as negative risk vetoes; cite them only as reasons to AVOID or wait, never as bullish triggers. The entry gate is: readiness ≥70, ≥2 confirmations, above 20-day EMA, momentum score ≥55, RSI not overbought, spread OK, and no corporate-action risk. Pyramiding and rotation are currently disabled.
 
 For EACH watchlist symbol below, generate these fields. Output ONLY a single JSON object where each TOP-LEVEL KEY is the SYMBOL (e.g. "AAPL") and the value is an object with:
 {"whatItIs": "1 sentence", "whyOnWatchlist": "2-3 sentences", "whatTriggersBuy": "1-2 sentences", "catalyst": "1-2 sentences", "risk": "2-3 sentences"}
 
 Rules:
 - whyOnWatchlist MUST use the exact "Active Factors: X/15" count and the exact list of active labels provided.
-- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (fewer than 3 active chips, readiness below 65, price below 20-day EMA, missing the 1 hard confirmation requirement, or not satisfying the positive-edge fallback gate: VWAP primary; volume+options; or intraday+relvol+above-EMA).
+- whatTriggersBuy MUST reflect the "Entry gate" line: if not entry eligible, explicitly state which gate is blocking (readiness below 70, fewer than 2 active chips, price below 20-day EMA, bid/ask spread not healthy, or corporate-action risk present).
 - DO NOT mention inactive factors or claim more active factors than listed.
 - DO NOT say "entry eligible" if the prompt says "Entry eligible: no".
 - Keep numbers consistent with the prompt.

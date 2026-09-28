@@ -475,12 +475,14 @@ def _why_bot_bought(signal_data, position, thesis_data=None):
     conviction = "high-conviction" if entry_readiness >= 75 else "standard" if entry_readiness >= 60 else "moderate"
     sigs = []
     if confirmations.get("above_ema"):      sigs.append("price above 20-day EMA")
-    if confirmations.get("sector_strong"):  sigs.append("hot sector")
-    if confirmations.get("volume_confirmed"): sigs.append("volume confirming the move")
-    if confirmations.get("intraday_confirmed"): sigs.append("intraday momentum")  # display-only (v3)
-    if confirmations.get("options_confirmed"): sigs.append("options skew bullish")
-    if confirmations.get("relvol_confirmed"): sigs.append("volume surge confirming move")
-    if confirmations.get("vwap_confirmed"): sigs.append("price above VWAP -- buyers in control")
+    if confirmations.get("momentum_score") and confirmations.get("momentum_score") >= 55:
+        sigs.append(f"momentum score {confirmations.get('momentum_score'):.0f}")
+    if confirmations.get("rsi_signal") and confirmations.get("rsi_signal") != "overbought":
+        sigs.append(f"RSI {confirmations.get('rsi_signal')}")
+    if confirmations.get("spread_ok"):
+        sigs.append("spread OK")
+    if confirmations.get("no_corporate_action_risk"):
+        sigs.append("no corporate-action risk")
 
     if sigs:
         return f"Sniped at ${entry_price:.2f}. {conviction} read of {entry_readiness:.0f} with {conf_count} green lights: {nice_join(sigs[:3])}."
@@ -507,7 +509,7 @@ def _how_its_doing(position, signal_data, watchlist_data):
     tier_note = {
         "STRONG_NOW": "Signal locked at STRONG NOW. Thesis intact.",
         "NOW":        "Signal holding at NOW. Thesis intact.",
-        "WATCH":     "Signal slipped to WATCH. Thesis cooling.",
+        "WATCH":     "Signal cooled into READY. Bot is on the sidelines for now.",
         "MONITOR":   "Signal faded to MONITOR. Thesis on life support.",
         "TRACKING":  "Signal gone quiet — bench patrol.",
     }.get(tier, "")
@@ -805,16 +807,12 @@ def _missing_factors(signal_data):
     missing = []
     if mom_score < 50:
         missing.append("momentum")
-    if not conf.get("volume_confirmed"):
-        missing.append("volume")
     if not conf.get("above_ema"):
         missing.append("EMA")
-    if not conf.get("sector_strong"):
-        missing.append("sector")
-    if not conf.get("intraday_confirmed"):  # display-only, not required for entry (v3)
-        missing.append("intraday")  # display-only (v3)
-    if not conf.get("options_confirmed"):
-        missing.append("options")
+    if not conf.get("spread_ok"):
+        missing.append("spread")
+    if not conf.get("no_corporate_action_risk"):
+        missing.append("corporate action")
     return missing
 
 
@@ -846,7 +844,7 @@ def _why_on_watchlist(signal_data, watchlist_data):
         elif c < 2:
             return f"At the gate. Readiness at {r:.0f} clears the 80 gate but only {c} confirmation firing. Needs 6+ green lights to pull the trigger."
         else:
-            return f"Close. Readiness at {r:.0f} clears the gate with {c} confirmations but tracking as WATCH."
+            return f"Close. Readiness at {r:.0f} clears the gate with {c} confirmations but tracking as READY."
     elif tier == "MONITOR":
         return f"Tracking only. Readiness at {r:.0f} — nowhere near the entry zone. Waiting for a signal revival."
     else:

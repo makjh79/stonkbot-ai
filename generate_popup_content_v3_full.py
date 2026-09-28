@@ -75,6 +75,7 @@ def load_signals_map() -> dict:
     # For symbols not actively scored, merge enrichment data so popups still have context
     enrichment = load_json(ENRICHMENT_FILE).get("data", {})
     for symbol, e in enrichment.items():
+        e = e or {}
         if symbol not in sig_map:
             sig_map[symbol] = {
                 "symbol": symbol,
@@ -85,7 +86,7 @@ def load_signals_map() -> dict:
                 "regime_score": 0,
                 "thesis": "",
                 "drivers": [],
-                "sector": e.get("metrics", {}).get("sector", "Other"),
+                "sector": (e.get("metrics") or {}).get("sector", "Other"),
                 "earnings": e.get("earnings"),
                 "recommendation": e.get("recommendation"),
                 "news": e.get("news"),
@@ -247,7 +248,7 @@ def _how_its_doing(position, signal_data, watchlist_data):
     pl_pct = position.get("unrealized_plpc", 0)
     readiness = signal_data.get("readiness_score", 0)
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "TRACKING")
-    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "WATCHING", "MONITOR": "TRACKING"}.get(tier, tier)
+    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "READY", "MONITOR": "TRACKING"}.get(tier, tier)
 
     parts = []
     if pl_pct >= 25:
@@ -265,8 +266,8 @@ def _how_its_doing(position, signal_data, watchlist_data):
         parts.append("still rated PRIME")
     elif tier == "BUILDING":
         parts.append("still rated BUILDING")
-    elif tier == "WATCHING":
-        parts.append("dropped to WATCHING")
+    elif tier == "READY":
+        parts.append("cleared for entry at READY")
     elif tier == "TRACKING":
         parts.append("dropped to TRACKING — weak signal")
 
@@ -392,7 +393,7 @@ def _confidence_level(position, signal_data, watchlist_data):
     pl_pct = position.get("unrealized_plpc", 0)
     readiness = signal_data.get("readiness_score", 0)
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "TRACKING")
-    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "WATCHING", "MONITOR": "TRACKING"}.get(tier, tier)
+    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "READY", "MONITOR": "TRACKING"}.get(tier, tier)
     entry_readiness = signal_data.get("entry_readiness", 0)
 
     if tier == "PRIME" and pl_pct >= 0:
@@ -401,8 +402,8 @@ def _confidence_level(position, signal_data, watchlist_data):
         level = "Standard conviction — on track"
     elif tier == "BUILDING" and pl_pct < 0:
         level = "Standard conviction — underwater but signal still active"
-    elif tier == "WATCHING":
-        level = "Deteriorating — readiness dropped below entry threshold"
+    elif tier == "READY":
+        level = "Entry-ready — gate cleared, waiting for capital or better price"
     elif tier == "TRACKING":
         if readiness < 40:
             level = "Thesis broken — readiness below 40, exit imminent"
@@ -524,7 +525,7 @@ def generate_dynamic_narrative(symbol, position, watchlist_data, signal_data, ri
 def _why_on_watchlist(signal_data, watchlist_data):
     readiness = signal_data.get("readiness_score", 0) or watchlist_data.get("readiness_score", 0)
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "TRACKING")
-    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "WATCHING", "MONITOR": "TRACKING"}.get(tier, tier)
+    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "READY", "MONITOR": "TRACKING"}.get(tier, tier)
     entry_eligible = watchlist_data.get("entry_eligible") or signal_data.get("entry_eligible", False)
     conf_count = compute_confirmation_count(signal_data.get("confirmations", {})) or compute_confirmation_count(watchlist_data.get("confirmations", {}))
     strategy_type = signal_data.get("strategy_type") or watchlist_data.get("strategy_type", "momentum")
@@ -548,13 +549,13 @@ def _why_on_watchlist(signal_data, watchlist_data):
     elif tier == "BUILDING":
         gap = 78 - readiness
         if gap > 0:
-            return f"BUILDING tier (readiness {readiness:.0f}). Non-trading — needs {gap:.0f} more readiness points to reach PRIME entry tier."
+            return f"READY tier (readiness {readiness:.0f}). Entry gate cleared — bot will buy if capital is available."
         else:
             return f"BUILDING tier at the threshold. Needs PRIME confirmation and 5/10 confirmations with price above EMA to become tradeable."
     elif tier == "TRACKING":
         return f"TRACKING tier (readiness {readiness:.0f}). Not close to entry — tracking for signal improvement."
     else:
-        return f"Tracking in universe — no active signal (readiness {readiness:.0f})."
+        return f"READY tier (readiness {readiness:.0f}). Entry gate cleared — bot will buy if capital and price conditions allow."
 
 
 def _what_triggers_buy(signal_data, watchlist_data):
@@ -562,7 +563,7 @@ def _what_triggers_buy(signal_data, watchlist_data):
     conf_count = compute_confirmation_count(signal_data.get("confirmations", {})) or compute_confirmation_count(watchlist_data.get("confirmations", {}))
     confirmations = signal_data.get("confirmations", {})
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "TRACKING")
-    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "WATCHING", "MONITOR": "TRACKING"}.get(tier, tier)
+    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "READY", "MONITOR": "TRACKING"}.get(tier, tier)
 
     if tier in ("PRIME", "BUILDING") and watchlist_data.get("entry_eligible"):
         return "Entry conditions met — waiting for portfolio cash to deploy."
@@ -648,7 +649,7 @@ def generate_watchlist_narrative(symbol, signal_data, watchlist_data):
     company = signal_data.get("company") or COMPANY_NAMES.get(symbol, symbol)
     price = watchlist_data.get("price") or signal_data.get("price", 0)
     tier = watchlist_data.get("signal_tier") or signal_data.get("tier", "TRACKING")
-    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "WATCHING", "MONITOR": "TRACKING"}.get(tier, tier)
+    tier = {"STRONG_NOW": "PRIME", "NOW": "BUILDING", "WATCH": "READY", "MONITOR": "TRACKING"}.get(tier, tier)
     readiness = signal_data.get("readiness_score", 0) or watchlist_data.get("readiness_score", 0)
 
     return {
@@ -674,7 +675,7 @@ def signal_tier(total_score):
     if total_score >= 55:
         return "BUILDING"
     if total_score >= 45:
-        return "WATCHING"
+        return "READY"
     if total_score > 0:
         return "TRACKING"
     return "TRACKING"
@@ -733,6 +734,17 @@ def generate_popup_content():
             logger.info(f"Generated popup content for {symbol}: {narrative['signal']}")
         except Exception as e:
             logger.error(f"Failed to generate narrative for {symbol}: {e}")
+
+    # Sanity check: popup holdings must match portfolio position count.
+    portfolio = load_json(PORTFOLIO_FILE)
+    expected = len(portfolio.get("positions", []))
+    actual = len(popup_data.get("holdings", {}))
+    if expected > 0 and actual != expected:
+        logger.error(
+            f"Popup sanity check failed: portfolio has {expected} positions, "
+            f"but generated popup has {actual} holdings. Refusing to overwrite."
+        )
+        return None
 
     try:
         POPUP_FILE.parent.mkdir(parents=True, exist_ok=True)
