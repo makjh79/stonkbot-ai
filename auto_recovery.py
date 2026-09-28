@@ -9,10 +9,13 @@ import json
 import os
 import signal
 from datetime import datetime
+from pathlib import Path
 
 BOT_DIR = '/opt/stonk-ai'
 WEB_DIR = '/var/www/hedge-fund-website'
 LOG_FILE = '/var/log/stonk_recovery.log'
+BOT_SENTINEL = Path(BOT_DIR) / "BOT_STRATEGY_ACTIVE"
+
 
 def log(message):
     """Log with timestamp"""
@@ -200,10 +203,13 @@ def main():
     
     # Now check if critical services are running and restart if needed
     services = [
-        ('trading_bot.py', '/var/log/trading_bot.log'),
         ('fetch_data_simple.py', '/opt/stonk-ai/data_fetcher.log'),
         ('fetch_crowd_sentiment.py', '/var/log/crowd_sentiment.log'),
     ]
+    if not BOT_SENTINEL.exists():
+        services.insert(0, ('trading_bot.py', '/var/log/trading_bot.log'))
+    else:
+        log(f"🤖 {BOT_SENTINEL.name} present — skipping legacy trading_bot.py restart")
     
     restarted = 0
     for script, log_file in services:

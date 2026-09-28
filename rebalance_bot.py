@@ -17,9 +17,36 @@ if os.geteuid() == 0:
     print("ERROR: rebalance_bot.py must not run as root.", file=sys.stderr)
     sys.exit(1)
 
+_run_dir = BASE / "run"
+_run_dir.mkdir(parents=True, exist_ok=True)
+_pid_file = _run_dir / "rebalance_bot.pid"
+
+
+def _acquire_instance_lock() -> bool:
+    import atexit
+    try:
+        if _pid_file.exists():
+            pid_text = _pid_file.read_text().strip()
+            try:
+                old_pid = int(pid_text)
+                os.kill(old_pid, 0)
+                print(f"ERROR: rebalance_bot.py already running (pid {old_pid}). Refusing to start.", file=sys.stderr)
+                return False
+            except (ValueError, OSError, ProcessLookupError):
+                pass
+        with open(_pid_file, "w") as f:
+            f.write(str(os.getpid()))
+        atexit.register(lambda: _pid_file.unlink(missing_ok=True))
+        return True
+    except Exception as e:
+        print(f"ERROR: could not acquire PID lock: {e}", file=sys.stderr)
+        return False
+
+
 BASE = Path("/opt/stonk-ai")
 WEB = Path("/var/www/hedge-fund-website")
 SIGNAL_FILE = BASE / "dm_paper" / "sleeve_rebalance_signal.json"
+PID_FILE = BASE / "run" / "rebalance_bot.pid"
 ALPACA_CFG_PATHS = [
     BASE / "alpaca_config.json",
     WEB / "alpaca_config.json",
@@ -158,6 +185,9 @@ def compute_rebalance_orders(
 
 
 def main():
+    if not _acquire_instance_lock():
+        return
+
     parser = argparse.ArgumentParser(description="Rebalance Alpaca paper account to Bot basket")
     parser.add_argument("--execute", action="store_true", help="Submit real orders (default is dry-run)")
     parser.add_argument("--extended-hours", action="store_true", help="Allow order submission outside US market hours")

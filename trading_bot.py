@@ -29,10 +29,15 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
-# Safety guards: never run as root; enforce single instance
+# Safety guards: never run as root; enforce single instance; respect Bot strategy takeover
 if os.geteuid() == 0:
     print("ERROR: trading_bot.py must not run as root. Use user 'stonkai'.", file=sys.stderr)
     sys.exit(1)
+
+_BOT_SENTINEL = Path("/opt/stonk-ai/BOT_STRATEGY_ACTIVE")
+if _BOT_SENTINEL.exists():
+    print(f"INFO: {_BOT_SENTINEL.name} is present. Monthly Bot strategy is active; legacy intraday trading_bot.py will not start.", file=sys.stderr)
+    sys.exit(0)
 
 _RUN_DIR = Path("/opt/stonk-ai/run")
 _RUN_DIR.mkdir(parents=True, exist_ok=True)
