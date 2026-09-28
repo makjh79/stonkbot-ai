@@ -3,7 +3,7 @@
 
 Reads dm_paper/sleeve_rebalance_signal.json for the Bot target symbols,
 compares against current Alpaca paper positions, and rebalances into equal
-notional weights. Default mode is DRY-RUN.
+notional weights using only available cash (no margin). Default mode is DRY-RUN.
 Pass --execute to submit real orders. Never runs as root.
 """
 import argparse
@@ -114,6 +114,7 @@ def get_account_summary(client: AlpacaClient) -> Tuple[float, float, Dict[str, f
 
 def compute_rebalance_orders(
     total_equity: float,
+    available_cash: float,
     current_holdings: Dict[str, float],
     current_quantities: Dict[str, float],
     target_basket: Dict[str, float],
@@ -121,24 +122,27 @@ def compute_rebalance_orders(
 ) -> List[Dict]:
     orders = []
     # Sell any current position not in the Bot basket
+    sell_proceeds = 0.0
     for sym in sorted(current_holdings):
         if sym not in target_basket:
             qty = current_quantities.get(sym, 0)
             if qty > 0:
+                mv = current_holdings[sym]
                 orders.append({
                     "side": "sell",
                     "symbol": sym,
                     "qty": qty,
-                    "notional": current_holdings[sym],
+                    "notional": mv,
                     "reason": "not in Bot basket",
                 })
+                sell_proceeds += mv
 
-    # Buy target basket in equal notional weights
+    # Buy target basket in equal notional weights using available cash + sell proceeds
     target_names = [s for s in target_basket if s != "CASH"]
     if not target_names:
         return orders
 
-    deployable = max(0, total_equity - reserve_cash)
+    deployable = max(0, available_cash + sell_proceeds - reserve_cash)
     notional_each = deployable / len(target_names)
 
     for sym in sorted(target_names):
@@ -180,7 +184,7 @@ def main():
     print(f"Account: {acct.get('account_number')} ({'paper' if 'paper' in client.base_url else 'LIVE'})")
     print(f"Market open: {market_open}")
     print(f"Total equity: ${total:,.2f}")
-    print(f"Cash: ${cash:,.2f}")
+    print(f"Available cash: ${cash:,.2f}")
     print(f"Current positions ({len(current_holdings)}):")
     for sym, mv in sorted(current_holdings.items(), key=lambda x: -x[1]):
         print(f"  {sym:6} ${mv:>10,.2f}")
@@ -188,7 +192,7 @@ def main():
     for sym, w in sorted(target_basket.items(), key=lambda x: -x[1]):
         print(f"  {sym:6} {w*100:>6.1f}%")
 
-    orders = compute_rebalance_orders(total, current_holdings, current_quantities, target_basket, reserve_cash=args.reserve)
+    orders = compute_rebalance_orders(total, cash, current_holdings, current_quantities, target_basket, reserve_cash=args.reserve)
 
     if not orders:
         print("\nNo rebalance needed. Account already matches Bot basket within tolerance.")

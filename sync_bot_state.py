@@ -6,10 +6,11 @@ shows actual Bot performance, not theoretical Yahoo-based simulation.
 """
 import json
 import os
+import shutil
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 if os.geteuid() == 0:
     print("ERROR: sync_bot_state.py must not run as root.", file=sys.stderr)
@@ -81,6 +82,14 @@ def atomic_write(path: Path, content: str):
     tmp.rename(path)
 
 
+def copy_to_web_root(src_state: Path, src_hist: Path, dst_state: Path, dst_hist: Path):
+    """Copy files to web root using normal permissions."""
+    shutil.copy2(src_state, dst_state)
+    shutil.copy2(src_hist, dst_hist)
+    os.chmod(dst_state, 0o644)
+    os.chmod(dst_hist, 0o644)
+
+
 def main():
     cfg = load_alpaca_config()
     client = AlpacaClient(cfg)
@@ -144,14 +153,9 @@ def main():
     else:
         atomic_write(hist_path, "date,equity,summary\n" + line)
 
-    # Copy to web root for deploy
-    web_state = WEB / "sleeve_state.json"
-    web_hist = WEB / "sleeve_equity.csv"
+    # Copy to web root
     try:
-        atomic_write(web_state, json.dumps(state, indent=2) + "\n")
-        atomic_write(web_hist, hist_path.read_text())
-        os.chmod(web_state, 0o644)
-        os.chmod(web_hist, 0o644)
+        copy_to_web_root(state_path, hist_path, WEB / "sleeve_state.json", WEB / "sleeve_equity.csv")
     except Exception as e:
         print(f"Warning: could not copy to web root: {e}", file=sys.stderr)
 
