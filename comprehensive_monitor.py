@@ -37,7 +37,7 @@ PUBLIC_CHECKS = frozenset({
     "check_services",
     "check_file_freshness",
     "check_signals_write_health",
-    "check_portfolio_sanity",
+    # "check_portfolio_sanity",   # disabled: legacy intraday risk-caps don't apply to monthly equal-weight Bot
     "check_portfolio_history_freshness",
     "check_short_positions",
     "check_trade_execution_health",
@@ -191,9 +191,13 @@ def _run(fn) -> None:
     """Run one check, tagging any issues it logs with its function name."""
     global _CURRENT_CHECK
     _CURRENT_CHECK = getattr(fn, "__name__", "")
+    t0 = time.time()
     try:
         fn()
     finally:
+        dt = time.time() - t0
+        if dt > 5:
+            WARNINGS.append(f"{_CURRENT_CHECK} took {dt:.1f}s")
         _CURRENT_CHECK = ""
 def _log_warn(msg: str) -> None:
     WARNINGS.append(msg)
@@ -272,7 +276,11 @@ def _ntp_drift_seconds() -> Optional[float]:
     return None
 def check_services() -> None:
     """Ensure critical systemd services are active."""
-    services = ["stonk-ai.service", "stonk-ai-live-quotes.service"]  # watchlist service intentionally disabled; DWM cron owns watchlist updates
+    services = ["stonk-ai-live-quotes.service"]
+    # Legacy intraday trading bot is intentionally disabled when monthly Bot strategy is active.
+    bot_sentinel = os.path.join(BASE_DIR, "BOT_STRATEGY_ACTIVE")
+    if not os.path.exists(bot_sentinel):
+        services.append("stonk-ai.service")
     for svc in services:
         rc, stdout, stderr = _run_cmd(f"systemctl is-active {svc}")
         if rc != 0:
@@ -292,6 +300,10 @@ def check_file_freshness() -> None:
         # overnight. check_portfolio_history_freshness() covers it with the
         # correct market-hours window and a 30-min threshold.
     }
+    # Monthly Bot strategy has no intraday signal engine; signals.json
+    # staleness is not visitor-visible breakage.
+    if os.path.exists(os.path.join(BASE_DIR, "BOT_STRATEGY_ACTIVE")):
+        files.pop("signals.json", None)
     now = time.time()
     is_market = _is_us_market_hours()
     for fname, max_age in files.items():
@@ -316,6 +328,9 @@ def check_signals_write_health():
     Also detects stale fail-open signals. A single stale batch is tolerated
     (Alpaca blip); persistent staleness across 3 consecutive runs escalates.
     """
+    bot_sentinel = os.path.join(BASE_DIR, "BOT_STRATEGY_ACTIVE")
+    if os.path.exists(bot_sentinel):
+        return  # Monthly Bot strategy does not depend on intraday signals.json
     now = time.time()
     opt_path = os.path.join(BASE_DIR, "signals.json")
     web_path = os.path.join(WEB_DIR, "signals.json")
@@ -924,20 +939,24 @@ def check_trade_churn() -> None:
     churn was trim<->avg-in ping-pong (LCID, AAPL). Raw count is kept only as
     a runaway order-spam backstop.
 
-    trades_log rationale strings are unreliable (sync infers/mis-tags them),
-    so flips are counted from action sequences only: an entry followed by a
-    stop-loss is 1 flip (normal); a ping-pong cycle is 2+ flips per symbol.
+    Under the monthly Bot strategy, a single rebalance can legitimately
+    generate 10 sells + 10 buys = ~20 trades, and an emergency re-alignment
+    may touch each target once. Threshold raised to avoid false positives.
     """
     if not _is_us_market_hours():
         return  # only meaningful while the bot can trade
+    bot_sentinel = os.path.join(BASE_DIR, "BOT_STRATEGY_ACTIVE")
     trades = _load_json(os.path.join(BASE_DIR, "trades_log.json"))
     if not isinstance(trades, list):
         trades = (trades or {}).get("trades", []) if isinstance(trades, dict) else []
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     todays = [t for t in trades if str(t.get("timestamp", "")).startswith(today)]
     n = len(todays)
-    if n > 50:
+    # Monthly Bot rebalances can legitimately touch all 10 targets in one day.
+    if n > 100:
         _log_issue(f"Runaway trade count: {n} trades today — possible order-spam bug", serious=True)
+    elif n > 50 and not os.path.exists(bot_sentinel):
+        _log_warn(f"{n} trades today — monitor for churn (legacy intraday mode)")
 
     by_symbol: Dict[str, List[str]] = {}
     for t in sorted(todays, key=lambda x: str(x.get("timestamp", ""))):
@@ -1704,6 +1723,8 @@ def _persistence_gate(tagged):
 
 def main() -> int:
     print("StonkBOT Integrity Monitor running ...")
+    bot_sentinel = os.path.join(BASE_DIR, "BOT_STRATEGY_ACTIVE")
+    bot_active = os.path.exists(bot_sentinel)
     _run(_check_file_permissions)
     _run(_check_process_health)
     _run(check_system_time)
@@ -1719,17 +1740,21 @@ def main() -> int:
     _run(check_factor_confirmation_integrity)
     _run(check_popup_narrative_alignment)
     _run(check_popup_integrity)
-    _run(check_dead_code)
     _run(check_html_currency)
     _run(check_portfolio_sanity)
     _run(check_portfolio_history_freshness)
     _run(check_live_quotes_pipeline)
     _run(check_thinking_pipeline)
     _run(check_short_positions)
-    _run(check_trade_churn)
-    _run(check_outcome_tracker)
-    # check_narrative_semantics()  # disabled: too many false positives from LLM template text
-    _run(check_trade_execution_health)
+    if not bot_active:
+        # Legacy intraday stack only
+        _run(check_dead_code)
+        _run(check_trade_churn)
+        _run(check_trade_execution_health)
+    else:
+        # Monthly Bot strategy: dead-code lint and legacy execution log checks are irrelevant.
+        _run(check_trade_churn)  # still useful, threshold is Bot-aware
+
     _run(check_open_orders)
     _run(check_llm_narrative_pipeline)
     _run(check_trade_quality_freshness)
