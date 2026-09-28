@@ -4050,8 +4050,8 @@
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
             <p style="margin:0 0 0.75rem 0;">This is a public lab notebook for a <strong style="color:var(--text-primary);">$100,000 paper-trading</strong> account on Alpaca. The strategy is simple: own the 10 individual stocks showing the strongest relative strength against the S&amp;P 500, and rotate to defensive assets when equity momentum turns sour.</p>
-            <p style="margin:0 0 0.75rem 0;">No hedge fund, no PhD, no Bloomberg terminal. Just a rule-based Bot running on fake money, with every rebalance logged in the open.</p>
-            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">Paper account. Automated, but owner-supervised. Not investment advice. When the risk-off gate triggers, the Bot swaps stocks for SHY/GLD/TLT.</p>
+            <p style="margin:0 0 0.75rem 0;">No hedge fund, no PhD, no Bloomberg terminal. Just a rule-based system running on fake money, with every rebalance logged in the open.</p>
+            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">Paper account. Automated, but owner-supervised. Not investment advice. When the risk-off gate triggers, it swaps stocks for SHY/GLD/TLT.</p>
           </div>
         </div>
       </div>
@@ -4107,10 +4107,10 @@
                   <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">signal-driven · paper</div>
                 </div>
               </div>
-              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> Bot scored daily; trades only when the signal triggers</div>
+              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> Bot scores the market daily; rebalances only when the rank or gate changes</div>
             </div>
 
-            <p style="margin:0 0 0.75rem 0;">The <strong>DM-6 gate</strong> compares the 6-month relative strength of QQQ to the average of SHY, GLD, and TLT. If QQQ is winning, the account can hold the 10-stock Bot. If defensive assets are winning, it sells the Bot and waits for equity momentum to recover. Preservation first, upside second.</p>
+            <p style="margin:0 0 0.75rem 0;">The <strong>DM-6 gate</strong> compares the 6-month relative strength of QQQ to the average of SHY, GLD, and TLT. If QQQ is winning, the account can hold the 10-stock basket. If defensive assets are winning, it sells the basket and waits for equity momentum to recover. Preservation first, upside second.</p>
 
             <p style="margin:0 0 0.75rem 0;">When the top 10 list changes, the account rebalances. No hunches, no FOMO, no 3 a.m. "what if" trades. Just the rank, the gate, and the rule.</p>
           </div>
@@ -4118,17 +4118,17 @@
           <div class="risk-grid" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;margin-bottom:0.75rem;">
             <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem;font-weight:600;">Risk Guardrails</div>
             <div class="risk-items" style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;font-size:0.68rem;color:var(--text-secondary);">
-              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10 equal-weight Bot positions</div>
-              <div id="rg-sector-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">25% max per sector</div>
-              <div id="rg-dd-halt" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Equity Bot suspended when DM-6 is risk-off</div>
-              <div id="rg-cash-floor" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10% cash floor; 12% entry buffer</div>
-              <div id="rg-earnings-blackout" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rebalance triggers on signal change</div>
-              <div id="rg-beta-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">High-beta basket cap 35% deployed</div>
+              <div id="risk-cell-poscap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">10 equal-weight positions</div>
+              <div id="rg-sector-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">No fixed sector cap</div>
+              <div id="rg-dd-halt" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Stock exposure suspended when DM-6 is risk-off</div>
+              <div id="rg-cash-floor" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">~5% cash residual after rebalance</div>
+              <div id="rg-earnings-blackout" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Rebalanced when rank or gate changes</div>
+              <div id="rg-beta-cap" style="padding:0.3rem 0.4rem;background:rgba(255,255,255,0.03);border-radius:4px;">Momentum basket; beta floats with the top 10</div>
             </div>
           </div>
 
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
-            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">The Bot is evaluated after each US close; trades execute only when the signal triggers. Automated, but owner-supervised. Not investment advice.</p>
+            <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">The strategy is evaluated after each US close; trades execute only when the signal triggers. Automated, but owner-supervised. Not investment advice.</p>
           </div>
         </div>
       </div>
@@ -4204,52 +4204,52 @@
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.55;margin:0.75rem 0 0.5rem;">
-            <p style="margin:0 0 0.45rem 0;">Monthly momentum Bot. Equal-weight basket of the top 10 individual stocks by 252-day relative strength versus the S&amp;P 500. The DM-6 gate compares QQQ to SHY, GLD, and TLT over six months; when equity momentum weakens, the account rotates to defensive assets.</p>
+            <p style="margin:0 0 0.45rem 0;">Monthly momentum strategy. Equal-weight basket of the top 10 individual stocks by 252-day relative strength versus the S&amp;P 500. The DM-6 gate compares QQQ to SHY, GLD, and TLT over six months; when equity momentum weakens, the account rotates to defensive assets.</p>
             <p style="margin:0;">No intraday signals, no discretionary trades. Rebalanced only when the rank or the gate changes.</p>
           </div>
 
-          <div id="Bot-status" style="font-size:0.68rem;color:#22c55e;margin:0.5rem 0 0.75rem;">● ACTIVE</div>
+          <div id="sleeve-status" style="font-size:0.68rem;color:#22c55e;margin:0.5rem 0 0.75rem;">● ACTIVE</div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span id="Bot-scoreboard-label" style="text-transform:none;">· since Bot inception</span></div>
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.75rem 0 0.35rem;">Scoreboard <span id="sleeve-scoreboard-label" style="text-transform:none;">· since Bot launch</span></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
               <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">Bot</div>
-              <div id="Bot-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+              <div id="sleeve-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
             </div>
             <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;text-align:center;">
               <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.25rem;">S&amp;P 500</div>
-              <div id="Bot-sp-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
+              <div id="sleeve-sp-ret" style="font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text-primary);">--</div>
             </div>
           </div>
-          <div id="Bot-verdict" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.4rem;text-align:center;"></div>
-          <div id="Bot-meta" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.2rem;text-align:center;"></div>
+          <div id="sleeve-verdict" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.4rem;text-align:center;"></div>
+          <div id="sleeve-meta" style="font-size:0.6rem;color:var(--text-muted);margin-top:0.2rem;text-align:center;"></div>
 
-          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Current Bot</div>
-          <div id="Bot-holdings" style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.4rem;"></div>
+          <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Current Basket</div>
+          <div id="sleeve-holdings" style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.4rem;"></div>
 
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Rebalance Signal</div>
-          <div id="Bot-signal" style="font-size:0.7rem;color:var(--text-secondary);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;line-height:1.5;">--</div>
+          <div id="sleeve-signal" style="font-size:0.7rem;color:var(--text-secondary);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.6rem 0.75rem;line-height:1.5;">--</div>
 
           <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:0.9rem 0 0.35rem;">Equity Curve</div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:0.75rem;">
-            <svg id="Bot-chart" width="100%" height="80" style="display:block;"></svg>
+            <svg id="sleeve-chart" width="100%" height="80" style="display:block;"></svg>
           </div>
 
           <!-- Bot Performance: Bot state + equity JS -->
 <script>
-let _BotLoaded = false;
-async function loadBotPerformance() {
-    if (_BotLoaded) return;
-    _BotLoaded = true;
+let _sleeveLoaded = false;
+async function loadSleevePerformance() {
+    if (_sleeveLoaded) return;
+    _sleeveLoaded = true;
     const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     const setH = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML = h; };
     const fmtRet = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
     const setColor = (id, v) => { const el = document.getElementById(id); if (el) el.style.color = v >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'; };
     try {
         const [stateRes, sigRes, eqRes, miRes] = await Promise.all([
-            fetch('dm_paper/Bot_state.json?v=' + Date.now()).catch(() => null),
-            fetch('dm_paper/Bot_rebalance_signal.json?v=' + Date.now()).catch(() => null),
-            fetch('dm_paper/Bot_equity.csv?v=' + Date.now()).catch(() => null),
+            fetch('dm_paper/sleeve_state.json?v=' + Date.now()).catch(() => null),
+            fetch('dm_paper/sleeve_rebalance_signal.json?v=' + Date.now()).catch(() => null),
+            fetch('dm_paper/sleeve_equity.csv?v=' + Date.now()).catch(() => null),
             fetch('market_indices.json?v=' + Date.now()).catch(() => null)
         ]);
         if (stateRes && stateRes.ok) {
@@ -4257,12 +4257,12 @@ async function loadBotPerformance() {
             const equity = s.equity || 0;
             const start = 100000;
             const BotRet = ((equity - start) / start) * 100;
-            setT('Bot-ret', fmtRet(BotRet));
-            setColor('Bot-ret', BotRet);
+            setT('sleeve-ret', fmtRet(BotRet));
+            setColor('sleeve-ret', BotRet);
             const inc = s.inception || '—';
             const last = s.last_date || '—';
-            setT('Bot-scoreboard-label', '· since ' + inc + ' · last close ' + last);
-            setT('Bot-status', '● ACTIVE — ' + (s.gate || 'DM-6 gate open') + ' · last rebalance ' + (s.last_signal_month || '—'));
+            setT('sleeve-scoreboard-label', '· since ' + inc + ' · last close ' + last);
+            setT('sleeve-status', '● ACTIVE — ' + (s.gate || 'DM-6 gate open') + ' · last rebalance ' + (s.last_signal_month || '—'));
 
             const holdings = s.holdings || {};
             const total = Object.values(holdings).reduce((a, b) => a + b, 0) || 1;
@@ -4275,10 +4275,10 @@ async function loadBotPerformance() {
                         + '<div style="font-size:0.6rem;color:var(--text-muted);">' + pct.toFixed(1) + '%</div>'
                         + '</div>';
                 }).join('');
-            setH('Bot-holdings', rows || '<div style="grid-column:1/-1;color:var(--text-muted);font-size:0.7rem;">No holdings data</div>');
+            setH('sleeve-holdings', rows || '<div style="grid-column:1/-1;color:var(--text-muted);font-size:0.7rem;">No holdings data</div>');
         } else {
-            setT('Bot-status', '○ OFFLINE — data not available');
-            const st = document.getElementById('Bot-status');
+            setT('sleeve-status', '○ OFFLINE — data not available');
+            const st = document.getElementById('sleeve-status');
             if (st) st.style.color = 'var(--text-muted)';
         }
 
@@ -4287,9 +4287,9 @@ async function loadBotPerformance() {
             if (sig.signal) {
                 const inc = (sig.incoming || []).join(', ') || 'none';
                 const out = (sig.outgoing || []).join(', ') || 'none';
-                setH('Bot-signal', '<span style="color:var(--accent-cyan);font-weight:600;">Rebalance flagged</span> · ' + (sig.reason || '') + '<br><span style="color:var(--accent-green);">In:</span> ' + inc + ' · <span style="color:var(--accent-red);">Out:</span> ' + out + ' · as of ' + (sig.date || '—'));
+                setH('sleeve-signal', '<span style="color:var(--accent-cyan);font-weight:600;">Rebalance flagged</span> · ' + (sig.reason || '') + '<br><span style="color:var(--accent-green);">In:</span> ' + inc + ' · <span style="color:var(--accent-red);">Out:</span> ' + out + ' · as of ' + (sig.date || '—'));
             } else {
-                setH('Bot-signal', '<span style="color:var(--text-muted);font-weight:600;">No rebalance today</span> · as of ' + (sig.date || '—'));
+                setH('sleeve-signal', '<span style="color:var(--text-muted);font-weight:600;">No rebalance today</span> · as of ' + (sig.date || '—'));
             }
         }
 
@@ -4297,17 +4297,17 @@ async function loadBotPerformance() {
             const mi = await miRes.json();
             const sp = mi.indices && mi.indices['S&amp;P 500'];
             if (sp && sp.return_pct != null) {
-                setT('Bot-sp-ret', fmtRet(sp.return_pct));
-                setColor('Bot-sp-ret', sp.return_pct);
+                setT('sleeve-sp-ret', fmtRet(sp.return_pct));
+                setColor('sleeve-sp-ret', sp.return_pct);
             }
-            const BotEl = document.getElementById('Bot-ret');
-            const spEl = document.getElementById('Bot-sp-ret');
-            if (BotEl && spEl) {
-                const sVal = parseFloat(BotEl.textContent) || 0;
+            const sleeveEl = document.getElementById('sleeve-ret');
+            const spEl = document.getElementById('sleeve-sp-ret');
+            if (sleeveEl && spEl) {
+                const sVal = parseFloat(sleeveEl.textContent) || 0;
                 const bVal = parseFloat(spEl.textContent) || 0;
                 const spread = sVal - bVal;
                 const ab = Math.abs(spread).toFixed(1);
-                setT('Bot-verdict', spread >= 0
+                setT('sleeve-verdict', spread >= 0
                     ? 'Ahead of the S&amp;P 500 by ' + ab + ' pts (live window only; not predictive)'
                     : 'Trailing the S&amp;P 500 by ' + ab + ' pts (live window only; not predictive)');
             }
@@ -4336,8 +4336,8 @@ async function loadBotPerformance() {
                     + '<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
                     + '<circle cx="' + (pad + (n ? (n / n) * (w - pad * 2) : w / 2)) + '" cy="' + (h - pad - ((vals[vals.length - 1] - min) / range) * (h - pad * 2)) + '" r="2.5" fill="' + color + '"/>'
                     + '</svg>';
-                setH('Bot-chart', svg);
-                setT('Bot-meta', rows.length + ' daily marks · inception $100K · current $' + (vals[vals.length - 1].toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})));
+                setH('sleeve-chart', svg);
+                setT('sleeve-meta', rows.length + ' daily marks · inception $100K · current $' + (vals[vals.length - 1].toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})));
             }
         }
     } catch (e) { console.error('Bot performance load failed:', e); }
@@ -4352,7 +4352,7 @@ function toggleAboutSection(header) {
         body.style.display = 'block';
         chevron.style.transform = 'rotate(180deg)';
         if (header.closest('#bot-performance')) {
-            if (document.getElementById('Bot-status')) loadBotPerformance();
+            if (document.getElementById('sleeve-status')) loadSleevePerformance();
             if (document.getElementById('attr-total-pnl')) loadPnlAttribution();
             if (document.getElementById('perf-bot-ret')) loadPerformanceStats();
         }
@@ -4539,7 +4539,7 @@ async function loadPnlAttribution() {
                                 <div style="position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
                             </div>
                         </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">Monthly momentum Bot</div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">Monthly momentum strategy</div>
                     </div>
 
                     <!-- S&P 500 -->
@@ -5520,14 +5520,14 @@ async function loadPnlAttribution() {
         // Helper to format relative freshness time
 
         // Bot-aware dashboard loader (Phase 1).
-        // Reads from dm_paper/Bot_state.json and market_indices.json,
+        // Reads from dm_paper/sleeve_state.json and market_indices.json,
         // then paints the hero card and race card with Bot truth while
         // keeping the UI labels as "Bot" / "StonkBOT.AI".
         let _BotDashboardLoaded = false;
         async function loadBotDashboard() {
             try {
                 const [stateRes, miRes] = await Promise.all([
-                    fetch('dm_paper/Bot_state.json?t=' + Date.now()),
+                    fetch('dm_paper/sleeve_state.json?t=' + Date.now()),
                     fetch('market_indices.json?t=' + Date.now()).catch(() => null)
                 ]);
                 if (!stateRes.ok) return false;
@@ -5664,7 +5664,7 @@ async function loadPnlAttribution() {
 
                 return true;
             } catch (e) {
-                console.error('loadBotDashboard failed:', e);
+                console.error('loadSleeveDashboard failed:', e);
                 _BotDashboardLoaded = false;
                 return false;
             }
@@ -5702,7 +5702,7 @@ async function loadPnlAttribution() {
             container.innerHTML = '';
             container.appendChild(tempDiv);
 
-            // Fetch prices then render (now uses Bot_watchlist.json adapter)
+            // Fetch prices then render (now uses sleeve_watchlist.json adapter)
             fetchWatchlistPrices().then(() => {
                 aiWatchlist = getWatchlistWithLivePrices();
                 renderWatchlistContent();
@@ -6618,9 +6618,6 @@ function updateDashboard(data, marketStatus) {
             }
         }
 
-        // Load data on page load
-        if (document.readyState === 'loading') {
-            // Check market status immediately on page load (before data fetch)
         function setInitialMarketStatus() {
             const now = new Date();
             const et = new Date(now.toLocaleString('en-US', {timeZone: 'America/New_York'}));
@@ -6643,12 +6640,9 @@ function updateDashboard(data, marketStatus) {
         }
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', setInitialMarketStatus);
+            document.addEventListener('DOMContentLoaded', function() { loadBotDashboard().then(() => loadPortfolioData()); });
         } else {
             setInitialMarketStatus();
-        }
-        document.addEventListener('DOMContentLoaded', function() { loadBotDashboard().then(() => loadPortfolioData()); });
-        } else {
-            // DOM already loaded, run immediately
             loadBotDashboard().then(() => loadPortfolioData());
         }
 
@@ -6682,7 +6676,7 @@ function updateDashboard(data, marketStatus) {
 
         // Social Share Functions
         function shareOnX() {
-            const text = "StonkBOT.AI momentum Bot experiment  Full transparency: https://sec-washer-molecular-shows.trycloudflare.com";
+            const text = "StonkBOT.AI momentum strategy experiment  Full transparency: https://sec-washer-molecular-shows.trycloudflare.com";
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
         }
@@ -11077,7 +11071,7 @@ function updateDashboard(data, marketStatus) {
         function shareOnTwitter() {
             const r = timeRangeData && timeRangeData[currentTimeRange];
             const ret = r && r.data.length ? r.data[r.data.length - 1] : 0;
-            const text = `StonkBOT.AI Performance: ${currentTimeRange} return ${ret}%\n\nMonthly momentum Bot on Alpaca paper - transparent, rules-based, owner-supervised.\n\nSee live performance:`;
+            const text = `StonkBOT.AI Performance: ${currentTimeRange} return ${ret}%\n\nMonthly momentum strategy on Alpaca paper - transparent, rules-based, owner-supervised.\n\nSee live performance:`;
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
         }
 
@@ -11211,12 +11205,12 @@ function updateDashboard(data, marketStatus) {
             'XLE': { prices: [56, 56.5, 57, 57.2, 57.4, 57.5, 57.55, 57.58, 57.56, 57.56], ma20: 57, ma50: 56, support: 52, resistance: 62 }
         };
 
-        // Bot watchlist adapter: fetch dm_paper/Bot_watchlist.json and map it
+        // Bot watchlist adapter: fetch dm_paper/sleeve_watchlist.json and map it
         // into the legacy aiWatchlistPrices shape so the existing cards/popups render.
         async function fetchWatchlistPrices() {
             try {
-                const resp = await fetch('./dm_paper/Bot_watchlist.json?t=' + Date.now());
-                if (!resp.ok) throw new Error('Bot_watchlist.json not available');
+                const resp = await fetch('./dm_paper/sleeve_watchlist.json?t=' + Date.now());
+                if (!resp.ok) throw new Error('sleeve_watchlist.json not available');
                 const data = await resp.json();
                 const list = data.watchlist || [];
                 const prices = {};
@@ -12357,7 +12351,7 @@ function updateDashboard(data, marketStatus) {
                     <!-- Narrative from watchlist_narratives.json -->
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">What it is</div>
-                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || (stock.description || ((typeof companyInfo !== 'undefined' && companyInfo[symbol] && companyInfo[symbol].description) ? companyInfo[symbol].description : (stock.company || symbol) + ' is tracked in the momentum Bot universe.')) }</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatItIs || (stock.description || ((typeof companyInfo !== 'undefined' && companyInfo[symbol] && companyInfo[symbol].description) ? companyInfo[symbol].description : (stock.company || symbol) + ' is tracked in the momentum strategy universe.')) }</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: 11px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Why on watchlist</div>
@@ -12800,7 +12794,7 @@ function updateDashboard(data, marketStatus) {
 
         <!-- FOOTER -->
         <footer style="border-top: 1px solid var(--border); padding: 1rem 0.75rem 1.5rem; text-align: center;">
-            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Alpaca · Not investment advice · Strategy: individual-stock momentum Bot ·<a href="https://github.com/makjh79/stonkbot-ai" style="color:var(--text-muted);text-decoration:none;">GitHub</a></div>
+            <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Alpaca · Not investment advice · Strategy: individual-stock momentum ·<a href="https://github.com/makjh79/stonkbot-ai" style="color:var(--text-muted);text-decoration:none;">GitHub</a></div>
         </footer>
 
 </body>
