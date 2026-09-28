@@ -13,7 +13,7 @@ from pathlib import Path
 
 BOT_DIR = '/opt/stonk-ai'
 WEB_DIR = '/var/www/hedge-fund-website'
-LOG_FILE = '/var/log/stonk_recovery.log'
+LOG_FILE = '/opt/stonk-ai/logs/stonk_recovery.log'
 BOT_SENTINEL = Path(BOT_DIR) / "BOT_STRATEGY_ACTIVE"
 
 
@@ -45,7 +45,7 @@ def cleanup_duplicate_processes(script_name, keep_oldest=True):
                               capture_output=True, text=True)
         if result.returncode != 0:
             return 0
-        
+
         lines = [line.strip() for line in result.stdout.strip().split('\n') if line.strip()]
         pids = []
         for line in lines:
@@ -55,16 +55,16 @@ def cleanup_duplicate_processes(script_name, keep_oldest=True):
                     pids.append(int(parts[0]))
                 except ValueError:
                     continue
-        
+
         if len(pids) <= 1:
             return 0
-        
+
         # Sort PIDs (oldest first)
         pids.sort()
-        
+
         # Keep the first (oldest) PID, kill the rest
         to_kill = pids[1:] if keep_oldest else pids[:-1]
-        
+
         killed = 0
         for pid in to_kill:
             try:
@@ -75,7 +75,7 @@ def cleanup_duplicate_processes(script_name, keep_oldest=True):
                 pass  # Process already gone
             except Exception as e:
                 log(f"  Error killing PID {pid}: {e}")
-        
+
         return killed
     except Exception as e:
         log(f"Error cleaning {script_name}: {e}")
@@ -101,11 +101,11 @@ def restart_service(script_name, log_file):
                         os.kill(pid, signal.SIGTERM)
                     except (ValueError, ProcessLookupError):
                         pass
-        
+
         # Small delay to ensure cleanup
         import time
         time.sleep(1)
-        
+
         # Start new instance with flock to prevent overlap with cron jobs
         lock_map = {
             'fetch_crowd_sentiment.py': '/tmp/crowd_sentiment.lock',
@@ -115,10 +115,10 @@ def restart_service(script_name, log_file):
             cmd = f"cd {BOT_DIR} && flock -n {lock_file} python3 {script_name} > {log_file} 2>&1 &"
         else:
             cmd = f"cd {BOT_DIR} && nohup python3 {script_name} > {log_file} 2>&1 &"
-        subprocess.Popen(cmd, shell=True, 
-                        stdout=subprocess.DEVNULL, 
+        subprocess.Popen(cmd, shell=True,
+                        stdout=subprocess.DEVNULL,
                         stderr=subprocess.DEVNULL)
-        
+
         log(f"✅ Restarted {script_name}")
         return True
     except Exception as e:
@@ -129,13 +129,13 @@ def check_and_fix_watchlist_rotation():
     """Check if watchlist rotation is working, fix if not"""
     try:
         rotation_file = f'{WEB_DIR}/watchlist_changes.json'
-        
+
         # Check if file exists
         if not os.path.exists(rotation_file):
             log("⚠️  Watchlist rotation file missing - forcing rotation")
             force_rotation()
             return
-        
+
         # Check freshness
         with open(rotation_file, 'r') as f:
             data = json.load(f)
@@ -147,14 +147,14 @@ def check_and_fix_watchlist_rotation():
                     age_minutes = (datetime.now(timezone.utc) - rotation_time).total_seconds() / 60
                 else:
                     age_minutes = (datetime.now() - rotation_time).total_seconds() / 60
-                
+
                 if age_minutes > 15:
                     log(f"⚠️  Watchlist rotation stale ({age_minutes:.0f} min) - forcing rotation")
                     force_rotation()
                     return
-        
+
         log("✅ Watchlist rotation is healthy")
-        
+
     except Exception as e:
         log(f"❌ Error checking rotation: {e}")
         force_rotation()
@@ -179,15 +179,13 @@ def force_rotation():
 def main():
     """Main recovery logic"""
     log("=== STONK.AI Auto-Recovery Check ===")
-    
+
     # First, clean up any accumulated duplicate processes
     log("Checking for process accumulation...")
     scripts_to_clean = [
-        'trading_bot.py',
         'fetch_data_simple.py',
-        'fetch_crowd_sentiment.py'
     ]
-    
+
     total_cleaned = 0
     for script in scripts_to_clean:
         count = get_process_count(script)
@@ -197,34 +195,34 @@ def main():
             total_cleaned += cleaned
         else:
             log(f"✅ {script}: {count} instance(s)")
-    
+
     if total_cleaned > 0:
         log(f"✅ Cleaned up {total_cleaned} duplicate process(es)")
-    
-    # Now check if critical services are running and restart if needed
-    services = [
-        ('fetch_data_simple.py', '/opt/stonk-ai/data_fetcher.log'),
-        ('fetch_crowd_sentiment.py', '/var/log/crowd_sentiment.log'),
-    ]
-    if not BOT_SENTINEL.exists():
-        services.insert(0, ('trading_bot.py', '/var/log/trading_bot.log'))
-    else:
-        log(f"🤖 {BOT_SENTINEL.name} present — skipping legacy trading_bot.py restart")
-    
+
+    # Legacy trading_bot.py is no longer restarted when monthly Bot strategy is active.
     restarted = 0
-    for script, log_file in services:
-        if not is_process_running(script):
-            log(f"⚠️  {script} not running - restarting")
-            if restart_service(script, log_file):
-                restarted += 1
-        else:
-            count = get_process_count(script)
-            status = "✅" if count == 1 else "⚠️"
-            log(f"{status} {script} is running ({count} instance(s))")
-    
+    if BOT_SENTINEL.exists():
+        log(f"🤖 {BOT_SENTINEL.name} present — legacy trading_bot.py restart skipped")
+    else:
+        # Only restart legacy trading bot if sentinel is absent.
+        services = [
+            ('trading_bot.py', '/var/log/trading_bot.log'),
+            ('fetch_data_simple.py', '/opt/stonk-ai/data_fetcher.log'),
+        ]
+        restarted = 0
+        for script, log_file in services:
+            if not is_process_running(script):
+                log(f"⚠️  {script} not running - restarting")
+                if restart_service(script, log_file):
+                    restarted += 1
+            else:
+                count = get_process_count(script)
+                status = "✅" if count == 1 else "⚠️"
+                log(f"{status} {script} is running ({count} instance(s))")
+
     # Check watchlist rotation
     check_and_fix_watchlist_rotation()
-    
+
     # Update health status file
     try:
         health_status = {
@@ -237,7 +235,7 @@ def main():
             json.dump(health_status, f, indent=2)
     except Exception as e:
         log(f"⚠️  Could not write recovery status: {e}")
-    
+
     log(f"=== Recovery complete: {total_cleaned} duplicates cleaned, {restarted} services restarted ===\n")
 
 if __name__ == '__main__':

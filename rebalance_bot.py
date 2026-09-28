@@ -17,6 +17,14 @@ if os.geteuid() == 0:
     print("ERROR: rebalance_bot.py must not run as root.", file=sys.stderr)
     sys.exit(1)
 
+BASE = Path("/opt/stonk-ai")
+WEB = Path("/var/www/hedge-fund-website")
+SIGNAL_FILE = BASE / "dm_paper" / "sleeve_rebalance_signal.json"
+ALPACA_CFG_PATHS = [
+    BASE / "alpaca_config.json",
+    WEB / "alpaca_config.json",
+]
+
 _run_dir = BASE / "run"
 _run_dir.mkdir(parents=True, exist_ok=True)
 _pid_file = _run_dir / "rebalance_bot.pid"
@@ -41,16 +49,6 @@ def _acquire_instance_lock() -> bool:
     except Exception as e:
         print(f"ERROR: could not acquire PID lock: {e}", file=sys.stderr)
         return False
-
-
-BASE = Path("/opt/stonk-ai")
-WEB = Path("/var/www/hedge-fund-website")
-SIGNAL_FILE = BASE / "dm_paper" / "sleeve_rebalance_signal.json"
-PID_FILE = BASE / "run" / "rebalance_bot.pid"
-ALPACA_CFG_PATHS = [
-    BASE / "alpaca_config.json",
-    WEB / "alpaca_config.json",
-]
 
 
 def load_alpaca_config() -> Dict:
@@ -208,6 +206,9 @@ def main():
     target_symbols = sorted(signal.get("target", []))
     if not target_symbols:
         print("\nABORT: no target symbols in sleeve_rebalance_signal.json.")
+        return
+    if signal.get("signal") is False:
+        print("\nNo rebalance needed: sleeve_rebalance_signal.json says signal=false.")
         return
     target_basket = {s: 1.0 / len(target_symbols) for s in target_symbols}
 

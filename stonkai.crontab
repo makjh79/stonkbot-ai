@@ -1,0 +1,54 @@
+# STONK.AI Cron Jobs - Updated 2026-07-13
+# All logs redirected to /opt/stonk-ai/logs (stonkai-owned) to prevent permission silent failures
+
+# Health check every 5 minutes
+*/5 * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 health_check.py >> /opt/stonk-ai/logs/stonk_health.log 2>&1
+
+# Signal tracking every 15 minutes
+*/15 * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 outcome_tracker.py >> /opt/stonk-ai/logs/outcome_tracker.log 2>&1
+
+# Backup daily at 2 AM
+0 2 * * * /opt/stonk-ai/backup.sh >> /opt/stonk-ai/logs/stonk_backup.log 2>&1
+
+# Sync Alpaca trades every 5 minutes
+*/5 * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 sync_alpaca_trades.py >> /opt/stonk-ai/logs/sync_alpaca_trades.log 2>&1
+
+# Update market status every minute
+* * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 update_market_status.py >> /opt/stonk-ai/logs/market_status.log 2>&1
+
+# Watchlist rotation every 5 minutes (logs to stonkai-owned path)
+*/5 * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 dynamic_watchlist_manager.py >> /opt/stonk-ai/logs/watchlist_rotation.log 2>&1
+
+# Auto-recovery every 10 minutes — skips trading_bot.py when BOT_STRATEGY_ACTIVE exists
+*/10 * * * * PYTHONDONTWRITEBYTECODE=1 python3 /opt/stonk-ai/auto_recovery.py
+
+# Portfolio snapshot is performed live by sync_bot_state.py below.
+
+# Update sparkline history daily at 7:00 AM HKT after US market close
+0 23 * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 update_sparkline_history.py >> /opt/stonk-ai/logs/sparkline_history.log 2>&1
+*/15 * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 entry_factor_snapshots.py >> /opt/stonk-ai/logs/entry_factor_snapshots.log 2>&1
+5 7,13,21 * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 risk_stats.py >> /opt/stonk-ai/logs/risk_stats.log 2>&1 && PYTHONDONTWRITEBYTECODE=1 python3 factor_attribution.py >> /opt/stonk-ai/logs/factor_attribution.log 2>&1 && PYTHONDONTWRITEBYTECODE=1 python3 pnl_attribution.py >> /opt/stonk-ai/logs/pnl_attribution.log 2>&1
+*/5 * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 thinking_journal.py >> /opt/stonk-ai/logs/thinking_journal.log 2>&1
+*/5 * * * * cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/opt/stonk-ai python3 generate_thinking_explainers.py >> /opt/stonk-ai/logs/thinking_explainers.log 2>&1
+30 5 * * 1-5 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 signal_enricher.py >> /opt/stonk-ai/logs/signal_enricher.log 2>&1
+0 21 * * 1-5 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 signal_enricher.py >> /opt/stonk-ai/logs/signal_enricher.log 2>&1
+0 22,1,4 * * 1-5 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 signal_enricher.py --news-only >> /opt/stonk-ai/logs/signal_enricher.log 2>&1
+30 12,20 * * 0,6 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 signal_enricher.py --news-only >> /opt/stonk-ai/logs/signal_enricher.log 2>&1
+
+# X sentiment for holding popups, weekdays 08:30 HKT / 00:30 UTC (site content only)
+
+# DM paper trackers (Experiments 2+3): daily mark-to-market after US close
+5 6 * * 2-6 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 dm_paper/dm_tracker.py >> /opt/stonk-ai/logs/dm_tracker.log 2>&1
+
+# Sleeve execution: daily after dm_tracker.py finishes scoring
+5 6 * * 1-5 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 dm_paper/dm_tracker.py >> /opt/stonk-ai/logs/sleeve_tracker.log 2>&1
+10 6 * * 1-5 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 enrich_watchlist_with_alpaca.py >> /opt/stonk-ai/logs/watchlist_enrich.log 2>&1
+# Sleeve narratives: generate popup/watchlist content from sleeve state + Alpaca news
+11 6 * * 1-5 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 generate_sleeve_narratives.py >> /opt/stonk-ai/logs/sleeve_narratives.log 2>&1
+
+# Monthly Bot rebalance — runs after dm_tracker.py signal generation, only trades on signal=true
+15 6 * * 2-6 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 rebalance_bot.py --execute --reserve 500 >> /opt/stonk-ai/logs/rebalance_bot.log 2>&1
+
+# Sync Bot state from Alpaca paper account after US close (08:00 and 08:30 HKT)
+0 8 * * 2-6 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 sync_bot_state.py >> /opt/stonk-ai/logs/sync_bot_state.log 2>&1
+30 8 * * 2-6 cd /opt/stonk-ai && PYTHONDONTWRITEBYTECODE=1 python3 sync_bot_state.py >> /opt/stonk-ai/logs/sync_bot_state.log 2>&1
