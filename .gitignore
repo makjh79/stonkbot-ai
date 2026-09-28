@@ -72,6 +72,15 @@ TRADES_LOG.md
 # Agent memory (does not belong in trading repo)
 jeeves-memory/
 # Pre-patch backups (kept on disk, not in git)
-backups/*.py
-backups/*.html
-backups/*.md
+backups/
+*.bak
+*.bak.*
+*.tar.gz
+*.patch
+
+# Misc backup artifacts
+entry_factor_snapshots.py.bak.*
+factor_attribution.py.bak.*
+generate_narratives_llm_batched.py.bak*
+generate_popup_content_narrative_v2.py.bak*
+website/index.html.bak*
