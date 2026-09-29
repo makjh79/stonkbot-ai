@@ -149,44 +149,79 @@ def merge_headlines(batch: dict[str, dict], individual: dict[str, dict]) -> dict
     return merged
 
 
-def _trend_phrase(change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
-    """Describe the stock's own trend without referencing the sleeve."""
-    direction = "rising" if change_pct >= 0 else "pulling back"
-    if above_ema20 and above_ema50 and above_ema200:
-        regime = "above its 20-, 50-, and 200-day EMAs"
-    elif above_ema50 and above_ema200:
-        regime = "above its 50- and 200-day EMAs"
-    elif above_ema200:
-        regime = "above its 200-day EMA but below shorter averages"
-    elif above_ema50:
-        regime = "above its 50-day EMA but below the 200-day"
+def _trend_phrase(symbol: str, change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
+    """Describe the stock's own trend like a portfolio analyst would — plain English, no sleeve references."""
+    if change_pct >= 2.0:
+        move = f"is having a strong day, up {change_pct:.2f}%"
+    elif change_pct >= 0.5:
+        move = f"is ticking higher today (+{change_pct:.2f}%)"
+    elif change_pct >= 0:
+        move = f"is roughly flat on the day (+{change_pct:.2f}%)"
+    elif change_pct > -0.5:
+        move = f"is down a touch today ({change_pct:.2f}%)"
+    elif change_pct > -2.0:
+        move = f"is pulling back today ({change_pct:.2f}%)"
     else:
-        regime = "below its major moving averages"
+        move = f"is taking a hit today ({change_pct:.2f}%)"
+
+    if above_ema20 and above_ema50 and above_ema200:
+        regime = "sitting above its 20-, 50-, and 200-day moving averages — a textbook strong trend"
+    elif above_ema50 and above_ema200:
+        regime = "above its 50- and 200-day moving averages, just taking a breather against the 20-day"
+    elif above_ema200:
+        regime = "above its 200-day moving average but below the shorter-term ones, so it is in a digestion phase"
+    elif above_ema50:
+        regime = "above its 50-day moving average but still below the 200-day, so the long-term picture is mixed"
+    else:
+        regime = "below its major moving averages, which means the trend is not your friend right now"
 
     if rsi > 70:
-        rsi_note = "and looks overbought on a 14-day basis"
+        rsi_note = "RSI is above 70, so the stock is starting to look a little stretched"
     elif rsi < 30:
-        rsi_note = "and looks oversold on a 14-day basis"
+        rsi_note = "RSI is below 30, so the stock is starting to look washed out"
     elif rsi > 55:
-        rsi_note = "with bullish RSI momentum"
+        rsi_note = "RSI has a bullish tilt"
     elif rsi < 45:
-        rsi_note = "with RSI momentum still soft"
+        rsi_note = "RSI is on the softer side"
     else:
-        rsi_note = "with neutral RSI momentum"
+        rsi_note = "RSI is in neutral territory"
 
-    return f"The chart is currently {direction} ({change_pct:+.2f}%) and trading {regime}, {rsi_note}."
+    return f"{symbol} {move} and is {regime}. {rsi_note}."
+
+
+def _witty_trigger(symbol: str, above_ema20: bool, above_ema50: bool, above_ema200: bool, change_pct: float) -> str:
+    """A plain-English trigger line with a touch of wit."""
+    if above_ema20 and above_ema50 and above_ema200 and change_pct >= 0:
+        return f"If {symbol} keeps climbing with volume behind it, that is the green light. No need to overthink a train that is already leaving the station."
+    elif above_ema50 and above_ema200:
+        return f"Wait for {symbol} to reclaim its 20-day average on decent volume. Think of it as the stock catching its breath before the next leg."
+    elif above_ema50:
+        return f"{symbol} needs to get back above its 200-day average and prove it is not just a dead-cat bounce. Patience beats heroics here."
+    else:
+        return f"{symbol} is still trying to find a floor. We would wait for a base to form above the 50-day average before committing fresh capital — no point catching a falling knife."
+
+
+def _human_risk(risk: str) -> str:
+    """Rewrite stodgy risk lines into something a human analyst might actually say."""
+    risk = risk.strip()
+    if not risk:
+        return "The usual suspects: earnings surprises, sector rotation, and the market occasionally having a bad hair day."
+    # Trim trailing period for smoother concatenation.
+    if risk.endswith("."):
+        risk = risk[:-1]
+    return f"The main thing to watch: {risk.lower()}. In other words, do not size up until the chart confirms the story."
 
 
 def _momentum_phrase(score: float, rank: int) -> str:
-    """Interpret 252-day relative strength in absolute terms."""
+    """Interpret 252-day relative strength like you are explaining it over coffee."""
     if score >= 0.5:
-        return f"It has been one of the market's stronger large-cap names over the past year, ranking #{rank} in our 252-day momentum screen."
+        return f"Over the past year this has been a market leader — it ranks #{rank} in our 252-day momentum screen."
     elif score >= 0.2:
-        return f"It has shown solid relative strength over the past year, ranking #{rank} in our 252-day momentum screen."
+        return f"It has shown genuine relative strength over the past year, landing at rank #{rank} in our momentum screen."
     elif score >= 0.0:
-        return f"Its 252-day momentum is flat to slightly positive versus the S&P 500, placing it at rank #{rank}."
+        return f"Year-over-year momentum is basically flat, which puts it at rank #{rank} — not exciting, not broken."
     else:
-        return f"Its 252-day momentum is negative versus the S&P 500, but it is recovering enough to show up at rank #{rank}."
+        return f"Year-over-year momentum is still negative, but it is bouncing enough to land at rank #{rank}. More of a turnaround bet than a momentum play."
 
 
 def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline: dict | None) -> dict:
@@ -210,53 +245,37 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
     relvol = data.get("relative_volume") or ind.get("relative_volume") or 1.0
     conf = data.get("confirmations", {}) or {}
 
-    trend_sentence = _trend_phrase(change_pct, above_ema20, above_ema50, above_ema200, float(rsi))
+    trend_sentence = _trend_phrase(symbol, change_pct, above_ema20, above_ema50, above_ema200, float(rsi))
     momentum_sentence = _momentum_phrase(float(score), int(rank))
 
     # Catalyst: combine the headline with the stock's own technical context.
     catalyst_parts = [momentum_sentence]
     if macd_hist > 0:
-        catalyst_parts.append("MACD histogram is positive.")
+        catalyst_parts.append("MACD is turning higher, which is a short-term tailwind.")
     elif macd_hist < 0:
-        catalyst_parts.append("MACD histogram is negative, so momentum is fading short term.")
+        catalyst_parts.append("MACD is fading, so near-term momentum has cooled off.")
     if price_vs_vwap_pct > 0.1:
-        catalyst_parts.append(f"It is trading {price_vs_vwap_pct:.2f}% above today's VWAP.")
+        catalyst_parts.append(f"It is trading {price_vs_vwap_pct:.2f}% above today's VWAP, meaning buyers are in control so far.")
     elif price_vs_vwap_pct < -0.1:
-        catalyst_parts.append(f"It is trading {abs(price_vs_vwap_pct):.2f}% below today's VWAP.")
+        catalyst_parts.append(f"It is trading {abs(price_vs_vwap_pct):.2f}% below today's VWAP, so sellers have the upper hand intraday.")
     if relvol > 1.2:
-        catalyst_parts.append(f"Volume is running {relvol:.1f}× its 20-day average, so institutions are actively moving it.")
+        catalyst_parts.append(f"Volume is running {relvol:.1f}× its normal pace — institutions are paying attention.")
     elif relvol < 0.7:
-        catalyst_parts.append("Volume is light relative to its 20-day average, suggesting a wait-and-see tape.")
+        catalyst_parts.append("Volume is quieter than usual, so this move still lacks broad conviction.")
     if htext:
-        catalyst_parts.append(f"Recent headline: {htext}")
+        catalyst_parts.append(f"In the news: {htext}")
     else:
-        catalyst_parts.append("No fresh headline today; the action is driven by the stock's own price trend.")
+        catalyst_parts.append("No fresh headline today; the price action is doing all the talking.")
     catalyst = " ".join(catalyst_parts)
 
-    # Why it's on the watchlist: stock-focused, not sleeve-deficient.
+    # Why it's on the watchlist: stock-focused, conversational.
     why = (
-        f"{symbol} is on watch because its own technical picture is worth tracking. "
+        f"{symbol} is on our radar because its own chart is telling a story. "
         f"{trend_sentence} {momentum_sentence}"
     )
 
-    # What triggers a buy: focus on the stock's own setup, not overtaking rank #10.
-    if above_ema20 and above_ema50 and above_ema200 and change_pct >= 0:
-        trigger = (
-            f"A clean continuation above all major moving averages, ideally with volume confirming, "
-            f"would make {symbol} a strong standalone long candidate."
-        )
-    elif above_ema50 and change_pct >= 0:
-        trigger = (
-            f"A push back above the 20-day EMA with improving volume would signal the short-term dip is over."
-        )
-    elif not above_ema50:
-        trigger = (
-            f"We'd want to see a base form above the 50-day EMA and a positive turn in intraday volume before taking a new position."
-        )
-    else:
-        trigger = (
-            f"A clearer directional move with volume expansion and a break above recent resistance would be the signal to act."
-        )
+    # What triggers a buy: plain English trigger with a dash of wit.
+    trigger = _witty_trigger(symbol, above_ema20, above_ema50, above_ema200, change_pct)
 
     return {
         "symbol": symbol,
@@ -265,7 +284,7 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
         "whyOnWatchlist": why,
         "whatTriggersBuy": trigger,
         "catalyst": catalyst,
-        "risk": _sentence(risk),
+        "risk": _human_risk(risk),
         "alpacaNewsHeadline": htext,
         "alpacaNewsSource": hl.get("source", "Alpaca"),
         "alpacaNewsUrl": hl.get("url", ""),
@@ -280,36 +299,93 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
     }
 
 
-def _holdings_trend_sentence(change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
-    """Describe a holding's own price action without basket framing."""
-    if above_ema20 and above_ema50 and above_ema200:
-        regime = "above its 20-, 50-, and 200-day EMAs"
-    elif above_ema50 and above_ema200:
-        regime = "above its 50- and 200-day EMAs"
-    elif above_ema200:
-        regime = "above its 200-day EMA but below the shorter averages"
-    elif above_ema50:
-        regime = "above its 50-day EMA but below the 200-day"
-    else:
-        regime = "below its major moving averages"
-
+def _holdings_trend_sentence(symbol: str, change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
+    """Describe a holding's own price action in plain English, the way an analyst would explain it to a client."""
     if change_pct >= 1.5:
-        move = f"up strongly today (+{change_pct:.2f}%)"
+        move = f"is up {change_pct:.2f}% today, a solid session"
     elif change_pct >= 0:
-        move = f"up slightly today (+{change_pct:.2f}%)"
+        move = f"is up {change_pct:.2f}% today, a quiet but positive session"
     elif change_pct > -1.5:
-        move = f"down slightly today ({change_pct:.2f}%)"
+        move = f"is down {abs(change_pct):.2f}% today, just a small scratch"
     else:
-        move = f"down firmly today ({change_pct:.2f}%)"
+        move = f"is down {abs(change_pct):.2f}% today, a rough session"
+
+    if above_ema20 and above_ema50 and above_ema200:
+        regime = "above its 20-, 50-, and 200-day moving averages — the trend is doing the heavy lifting"
+    elif above_ema50 and above_ema200:
+        regime = "above its 50- and 200-day moving averages, with a minor pullback against the 20-day"
+    elif above_ema200:
+        regime = "above its 200-day moving average but below the shorter-term ones, so it is digesting recent gains"
+    elif above_ema50:
+        regime = "above its 50-day moving average but still below the 200-day, which means the jury is still out long term"
+    else:
+        regime = "below its major moving averages, which is not where you want to be as a holder"
 
     if rsi > 70:
-        rsi_note = "and is technically overbought short term"
+        rsi_note = "RSI is above 70, so the stock is getting a little frothy — not necessarily a sell, but definitely not the time to chase"
     elif rsi < 30:
-        rsi_note = "and is technically oversold short term"
+        rsi_note = "RSI is below 30, so the stock is getting washed out — often when the best entries appear, if the thesis still holds"
     else:
-        rsi_note = f"with RSI at {rsi:.1f}"
+        rsi_note = f"RSI sits at {rsi:.1f}, which is neither hot nor cold"
 
-    return f"The position is {move}, trading {regime}, {rsi_note}."
+    return f"{symbol} {move} and is {regime}. {rsi_note}."
+
+
+def _holdings_catalyst(symbol: str, momentum_252: float | None, rank: int | None, macd_hist: float, price_vs_vwap_pct: float, relvol: float, htext: str) -> str:
+    """Human-readable catalyst paragraph for a holding."""
+    parts = []
+    if momentum_252 is not None and rank is not None:
+        if momentum_252 >= 100:
+            parts.append(f"This has been a rocket ship over the past year — rank #{rank} with +{momentum_252:.2f}% relative strength. Momentum investors love it for a reason.")
+        elif momentum_252 >= 50:
+            parts.append(f"Year-over-year, this is in the top tier, ranking #{rank} with +{momentum_252:.2f}% relative strength. That is the kind of trend that pays the rent.")
+        elif momentum_252 >= 20:
+            parts.append(f"It has strong year-over-year momentum, ranking #{rank} at +{momentum_252:.2f}% relative strength. Not flashy, but clearly working.")
+        elif momentum_252 >= 0:
+            parts.append(f"Year-over-year momentum is basically flat, putting it at rank #{rank}. It is treading water rather than surfing a wave.")
+        else:
+            parts.append(f"Year-over-year momentum is still negative, though it ranks #{rank} because the bounce is real. This one is more turnaround than trend.")
+
+    if macd_hist > 0:
+        parts.append("MACD is ticking higher, which keeps the short-term wind at our backs.")
+    elif macd_hist < 0:
+        parts.append("MACD is rolling over, so near-term momentum has softened — worth watching, but not panic-selling.")
+
+    if price_vs_vwap_pct > 0.1:
+        parts.append(f"It is trading {price_vs_vwap_pct:.2f}% above today's VWAP, so buyers are winning the intraday tug-of-war.")
+    elif price_vs_vwap_pct < -0.1:
+        parts.append(f"It is trading {abs(price_vs_vwap_pct):.2f}% below today's VWAP, so sellers are in control for now.")
+
+    if relvol > 1.2:
+        parts.append(f"Volume is {relvol:.1f}× normal, which tells us the pros are actively repositioning.")
+    elif relvol < 0.7:
+        parts.append("Volume is on the light side, so this is not yet a conviction move either way.")
+
+    if htext:
+        parts.append(f"Latest headline: {htext}")
+    else:
+        parts.append("No fresh news today; the stock is moving on its own supply and demand.")
+
+    return " ".join(parts)
+
+
+def _holdings_why(symbol: str, is_new_entry: bool, is_exiting: bool) -> str:
+    if is_exiting:
+        return (
+            f"We are selling {symbol}. "
+            "Its relative-strength ranking has slipped enough that it no longer fits the momentum sleeve. "
+            "Better to free up the cash and back a name with a stronger tailwind."
+        )
+    elif is_new_entry:
+        return (
+            f"We recently added {symbol} to the portfolio. "
+            "It had a clean relative-strength breakout and a working technical setup, so we sized it as a fresh momentum position."
+        )
+    else:
+        return (
+            f"We own {symbol} because the trend is still working. "
+            "We are not married to it — we will trim or exit if the chart breaks — but right now the evidence says keep holding."
+        )
 
 
 def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None, sleeve_holding: dict | None = None, rebalance_signal: dict | None = None, is_new_entry: bool = False, is_exiting: bool = False) -> dict:
@@ -334,62 +410,14 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
     relvol = ind.get("relative_volume") or 1.0
     momentum_252 = score * 100 if score else None
 
-    trend_sentence = _holdings_trend_sentence(float(change_pct), above_ema20, above_ema50, above_ema200, float(rsi))
+    trend_sentence = _holdings_trend_sentence(symbol, float(change_pct), above_ema20, above_ema50, above_ema200, float(rsi))
+    catalyst = _holdings_catalyst(symbol, momentum_252, rank, macd_hist, price_vs_vwap_pct, relvol, htext)
+    why = _holdings_why(symbol, is_new_entry, is_exiting)
 
-    # Why we own it / why it is exiting: tied to the stock's own story, not just rank.
-    if is_exiting:
-        why = (
-            f"We are closing the {symbol} position. "
-            "Its relative strength has dropped enough that it no longer belongs in the current momentum sleeve. "
-            "Proceeds will be redeployed into a stronger name."
-        )
-    elif is_new_entry:
-        why = (
-            f"We initiated {symbol} at the latest rebalance. "
-            "It showed renewed relative strength and a clean technical setup, so it became a core momentum holding."
-        )
-    else:
-        why = (
-            f"We continue to hold {symbol} because its technical trend and relative-strength profile remain intact. "
-            "It is kept as an equal-weight position until its own price action tells us otherwise."
-        )
-
-    # How it's doing: absolute trend snapshot, plus portfolio context.
+    # How it's doing: absolute trend snapshot, plus regime context.
     how = trend_sentence
     if rebalance_signal and rebalance_signal.get("gate"):
-        how += f" The DM-6 asset-rotation gate is {rebalance_signal['gate']}, so new capital is only deployed when the broad tape cooperates."
-
-    # Catalyst: stock-specific momentum + headline.
-    catalyst_parts = []
-    if momentum_252 is not None and rank is not None:
-        if momentum_252 >= 50:
-            catalyst_parts.append(f"It is one of the top large-cap momentum names year-over-year, ranking #{rank} with +{momentum_252:.2f}% relative strength.")
-        elif momentum_252 >= 20:
-            catalyst_parts.append(f"It has strong year-over-year momentum, ranking #{rank} at +{momentum_252:.2f}% relative strength.")
-        else:
-            catalyst_parts.append(f"Its 252-day relative strength is +{momentum_252:.2f}%, placing it at rank #{rank}.")
-
-    if macd_hist > 0:
-        catalyst_parts.append("MACD histogram is positive.")
-    elif macd_hist < 0:
-        catalyst_parts.append("MACD histogram has turned negative, a short-term caution flag.")
-
-    if price_vs_vwap_pct > 0.1:
-        catalyst_parts.append(f"It is trading {price_vs_vwap_pct:.2f}% above today's VWAP.")
-    elif price_vs_vwap_pct < -0.1:
-        catalyst_parts.append(f"It is trading {abs(price_vs_vwap_pct):.2f}% below today's VWAP.")
-
-    if relvol > 1.2:
-        catalyst_parts.append(f"Volume is running {relvol:.1f}× average, suggesting real participation.")
-    elif relvol < 0.7:
-        catalyst_parts.append("Volume is light, so conviction is still being tested.")
-
-    if htext:
-        catalyst_parts.append(f"Recent headline: {htext}")
-    else:
-        catalyst_parts.append("No fresh headline today; the position is moving on its own technicals.")
-
-    catalyst = " ".join(catalyst_parts)
+        how += f" The DM-6 asset-rotation gate is {rebalance_signal['gate']}, which means the system is only adding risk when the broad tape is cooperative."
 
     base = {
         "symbol": symbol,
@@ -397,7 +425,7 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
         "whyWeOwnIt": why,
         "howItsDoing": how,
         "catalyst": catalyst,
-        "risk": _sentence(risk),
+        "risk": _human_risk(risk),
         "alpacaNewsHeadline": htext,
         "alpacaNewsSource": hl.get("source", "Alpaca"),
         "alpacaNewsUrl": hl.get("url", ""),
