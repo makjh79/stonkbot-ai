@@ -3835,29 +3835,67 @@
                 var TIME_FMT = new Intl.DateTimeFormat('en-US', {
                     timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false
                 });
+                var DATE_FMT = new Intl.DateTimeFormat('en-US', {
+                    month: 'short', day: 'numeric'
+                });
                 function loadTeaser() {
-                    fetch('thinking_stream.json?t=' + Date.now(), { cache: 'no-store' })
-                        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-                        .then(function (d) {
-                            var ageMs = Date.now() - new Date(d.generated_at).getTime();
-                            if (ageMs > 30 * 60 * 1000) return; // pipeline stale — stay hidden
-                            var entries = d.entries || [];
-                            var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch' || x.type === 'rebalance') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
-                            var e = candidates[0] || entries[entries.length - 1];
-                            if (!e) return;
-                            var txt = (e.type === 'digest') ? e.text
-                                : TIME_FMT.format(new Date(e.ts)) + ' \u00b7 ' + e.text;
-                            var color = '#6b7280';
-                            if (e.type === 'trade') color = (e.action === 'BUY') ? '#10b981' : '#ef4444';
-                            else if (e.type === 'digest') color = '#06b6d4';
-                            else if (e.type === 'skip') color = '#f59e0b';
-                            else if (e.type === 'watch') color = '#f97316';
-                            else if (e.type === 'rebalance') color = '#06b6d4';
-                            document.getElementById('thinkingTeaserText').textContent = txt;
-                            document.getElementById('thinkingTeaserDot').style.background = color;
-                            document.getElementById('thinkingTeaser').style.display = 'flex';
-                        })
-                        .catch(function () { /* silent — strip stays hidden */ });
+                    Promise.all([
+                        fetch('thinking_stream.json?t=' + Date.now(), { cache: 'no-store' }).catch(function(){ return null; }),
+                        fetch('dm_paper/rebalance_executions.json?t=' + Date.now(), { cache: 'no-store' }).catch(function(){ return null; })
+                    ]).then(function(responses) {
+                        var rebalanceHtml = null;
+                        var fallbackHtml = null;
+
+                        var execRes = responses[1];
+                        if (execRes && execRes.ok) {
+                            return execRes.json().then(function(log) {
+                                var done = (log || []).filter(function(e) { return e.executed && !e.dry_run; });
+                                var last = done[done.length - 1];
+                                if (last && last.timestamp) {
+                                    var ageMs = Date.now() - new Date(last.timestamp).getTime();
+                                    if (ageMs < 7 * 24 * 60 * 60 * 1000) {
+                                        var inc = (last.orders || []).filter(function(o){ return o.side === 'buy'; }).map(function(o){ return o.symbol; }).join(', ') || 'none';
+                                        var out = (last.orders || []).filter(function(o){ return o.side === 'sell'; }).map(function(o){ return o.symbol; }).join(', ') || 'none';
+                                        rebalanceHtml = {
+                                            text: DATE_FMT.format(new Date(last.timestamp)) + ' · Bot rebalance executed · In: ' + inc + ' · Out: ' + out + ' · ' + (last.reason || ''),
+                                            color: '#06b6d4'
+                                        };
+                                    }
+                                }
+                                return responses[0];
+                            });
+                        }
+                        return responses[0];
+                    }).then(function(thinkingRes) {
+                        if (thinkingRes && thinkingRes.ok) {
+                            return thinkingRes.json().then(function(d) {
+                                var ageMs = Date.now() - new Date(d.generated_at).getTime();
+                                if (ageMs <= 30 * 60 * 1000) {
+                                    var entries = d.entries || [];
+                                    var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch' || x.type === 'rebalance') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
+                                    var e = candidates[0] || entries[entries.length - 1];
+                                    if (e) {
+                                        var color = '#6b7280';
+                                        if (e.type === 'trade') color = (e.action === 'BUY') ? '#10b981' : '#ef4444';
+                                        else if (e.type === 'digest') color = '#06b6d4';
+                                        else if (e.type === 'skip') color = '#f59e0b';
+                                        else if (e.type === 'watch') color = '#f97316';
+                                        else if (e.type === 'rebalance') color = '#06b6d4';
+                                        fallbackHtml = {
+                                            text: (e.type === 'digest') ? e.text : TIME_FMT.format(new Date(e.ts)) + ' · ' + e.text,
+                                            color: color
+                                        };
+                                    }
+                                }
+                            });
+                        }
+                    }).then(function() {
+                        var chosen = rebalanceHtml || fallbackHtml;
+                        if (!chosen) return;
+                        document.getElementById('thinkingTeaserText').textContent = chosen.text;
+                        document.getElementById('thinkingTeaserDot').style.background = chosen.color;
+                        document.getElementById('thinkingTeaser').style.display = 'flex';
+                    }).catch(function () { /* silent — strip stays hidden */ });
                 }
                 loadTeaser();
                 setInterval(loadTeaser, 60000);

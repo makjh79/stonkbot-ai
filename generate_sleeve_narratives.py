@@ -460,6 +460,28 @@ def build_watchlist_sleeve_fields(symbol: str, data: dict) -> dict:
         "vwap_confirmed": bool(conf.get("vwap_confirmed", True)),
         "vwap_score": conf.get("vwap_score", 60.0),
     }
+    # Rank-aware tier/status for the momentum sleeve watchlist.
+    rank = data.get("rank") or 0
+    dist = data.get("dist_to_top10")
+    if rank and rank <= 10:
+        tier = "NOW"
+        signal_tier = "STRONG_NOW"
+        display_tier = "STRONG_NOW"
+        buy_status = "queued"
+        buy_reason = "In current top-10 sleeve basket."
+    elif dist is not None and dist <= 0.05:
+        tier = "WATCH"
+        signal_tier = "WATCH"
+        display_tier = "WATCH"
+        buy_status = "close"
+        buy_reason = f"Needs +{dist * 100:.2f}% momentum to enter top-10."
+    else:
+        tier = "MONITOR"
+        signal_tier = "MONITOR"
+        display_tier = "MONITOR"
+        buy_status = "not_ready"
+        buy_reason = "Outside current top-10 sleeve basket."
+
     return {
         "readiness_score": round(readiness, 1),
         "confirmation_count": conf.get("confirmation_count", data.get("confirmation_count", 6)),
@@ -469,11 +491,13 @@ def build_watchlist_sleeve_fields(symbol: str, data: dict) -> dict:
         "profit25": round(price * 1.25, 2) if price else None,
         "rsi": data.get("rsi") or 50.0,
         "options_implied_vol": None,
-        "tier": "NOW",
-        "signal_tier": "NOW",
-        "display_tier": "BUILDING",
-        "buy_status": "not_ready",
-        "buy_reason": "Not currently in the top-10 sleeve basket.",
+        "rank": rank,
+        "dist_to_top10": dist,
+        "tier": tier,
+        "signal_tier": signal_tier,
+        "display_tier": display_tier,
+        "buy_status": buy_status,
+        "buy_reason": buy_reason,
     }
 
 
@@ -545,12 +569,9 @@ def main() -> None:
 
     ts = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
-    # Preserve legacy watchlist entries so old pages don't break, but do NOT
-    # preserve old holdings: the site should only show the current Bot basket.
-    old_watchlist = load_json(WATCHLIST_OUT).get("narratives", {})
-
-    merged_watchlist = {**old_watchlist, **watchlist_narratives}
-    # Use only current holdings for popup content.
+    # Use only current sleeve watchlist symbols so stale legacy entries are
+    # flushed, and use only current holdings for popup content.
+    merged_watchlist = watchlist_narratives
     merged_holdings = holdings_narratives
 
     atomic_write_json(WATCHLIST_OUT, {"timestamp": ts, "narrative_version": "sleeve-v1", "narratives": merged_watchlist})
