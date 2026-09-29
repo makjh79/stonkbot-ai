@@ -4246,11 +4246,12 @@ async function loadSleevePerformance() {
     const fmtRet = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
     const setColor = (id, v) => { const el = document.getElementById(id); if (el) el.style.color = v >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'; };
     try {
-        const [stateRes, sigRes, eqRes, miRes] = await Promise.all([
+        const [stateRes, sigRes, eqRes, miRes, execRes] = await Promise.all([
             fetch('dm_paper/sleeve_state.json?v=' + Date.now()).catch(() => null),
             fetch('dm_paper/sleeve_rebalance_signal.json?v=' + Date.now()).catch(() => null),
             fetch('dm_paper/sleeve_equity.csv?v=' + Date.now()).catch(() => null),
-            fetch('market_indices.json?v=' + Date.now()).catch(() => null)
+            fetch('market_indices.json?v=' + Date.now()).catch(() => null),
+            fetch('dm_paper/rebalance_executions.json?v=' + Date.now()).catch(() => null)
         ]);
         if (stateRes && stateRes.ok) {
             const s = await stateRes.json();
@@ -4262,7 +4263,17 @@ async function loadSleevePerformance() {
             const inc = s.inception || '—';
             const last = s.last_date || '—';
             setT('sleeve-scoreboard-label', '· since ' + inc + ' · last close ' + last);
-            setT('sleeve-status', '● ACTIVE — ' + (s.gate || 'DM-6 gate open') + ' · last rebalance ' + (s.last_signal_month || '—'));
+            let rebalanceLabel = s.last_rebalance_at || '—';
+            let rebalancePrefix = 'last rebalance ';
+            if (s.last_rebalance_at) {
+                const d = new Date(s.last_rebalance_at);
+                if (!isNaN(d.getTime())) {
+                    rebalanceLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+                }
+            } else if (s.last_signal_month) {
+                rebalanceLabel = s.last_signal_month + ' (pending)';
+            }
+            setT('sleeve-status', '● ACTIVE — ' + (s.gate || 'DM-6 gate open') + ' · ' + rebalancePrefix + rebalanceLabel);
 
             const holdings = s.holdings || {};
             const total = Object.values(holdings).reduce((a, b) => a + b, 0) || 1;
@@ -4284,10 +4295,25 @@ async function loadSleevePerformance() {
 
         if (sigRes && sigRes.ok) {
             const sig = await sigRes.json();
+            let execDate = sig.date || '—';
+            let execInfo = '';
+            if (execRes && execRes.ok) {
+                try {
+                    const execLog = await execRes.json();
+                    const done = (execLog || []).filter(e => e.executed && !e.dry_run);
+                    if (done.length) {
+                        const last = done[done.length - 1];
+                        if (last.timestamp && last.signal_date === sig.date) {
+                            execDate = new Date(last.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            execInfo = ' · executed';
+                        }
+                    }
+                } catch (e) {}
+            }
             if (sig.signal) {
                 const inc = (sig.incoming || []).join(', ') || 'none';
                 const out = (sig.outgoing || []).join(', ') || 'none';
-                setH('sleeve-signal', '<span style="color:var(--accent-cyan);font-weight:600;">Rebalance flagged</span> · ' + (sig.reason || '') + '<br><span style="color:var(--accent-green);">In:</span> ' + inc + ' · <span style="color:var(--accent-red);">Out:</span> ' + out + ' · as of ' + (sig.date || '—'));
+                setH('sleeve-signal', '<span style="color:var(--accent-cyan);font-weight:600;">Rebalance' + execInfo + '</span> · ' + (sig.reason || '') + '<br><span style="color:var(--accent-green);">In:</span> ' + inc + ' · <span style="color:var(--accent-red);">Out:</span> ' + out + ' · as of ' + execDate);
             } else {
                 setH('sleeve-signal', '<span style="color:var(--text-muted);font-weight:600;">No rebalance today</span> · as of ' + (sig.date || '—'));
             }

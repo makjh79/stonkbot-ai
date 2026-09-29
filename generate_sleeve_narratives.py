@@ -201,31 +201,59 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
     }
 
 
-def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None, sleeve_holding: dict | None = None) -> dict:
+def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None, sleeve_holding: dict | None = None, rebalance_signal: dict | None = None, is_new_entry: bool = False, is_exiting: bool = False) -> dict:
     info = knowledge.get(symbol, {})
     note = info.get("note", f"{symbol} is a publicly traded company.")
     risk = info.get("risk", "Standard market, execution, and business-model risk.")
     hl = headline or {}
     htext = hl.get("headline", "")
-    sector = info.get("sector", "its sector")
+    rank = sleeve_holding.get("rank") if sleeve_holding else None
+    score = sleeve_holding.get("score") if sleeve_holding else None
+    ind = sleeve_holding.get("indicators", {}) if sleeve_holding else {}
+    price = ind.get("price")
+    ema_status = "above" if ind.get("price", 0) > ind.get("ema_50", 0) else "below"
+    momentum_252 = score * 100 if score else None
 
-    catalyst = (
-        f"{symbol} is held because it currently ranks in the top 10 of the 252-day relative-strength screen versus the S&P 500. "
-        f"It is a {sector.lower() if isinstance(sector, str) else 'momentum'} name where price action is confirming operating momentum. "
-    )
+    if is_exiting:
+        why = (
+            f"{symbol} is scheduled to exit the Bot basket at the next rebalance. "
+            "It no longer ranks in the top 10 of the 252-day relative-strength screen versus the S&P 500. "
+            "The position will be sold and replaced by the incoming target name."
+        )
+    elif is_new_entry:
+        why = (
+            f"{symbol} entered the Bot basket at the latest rebalance. "
+            f"It ranked in the top 10 of the 252-day relative-strength screen versus the S&P 500, "
+            "replacing a name that fell out of the basket. Equal-weight target at rebalance."
+        )
+    else:
+        why = (
+            f"{symbol} remains in the Bot basket after the latest rebalance. "
+            f"It still ranks in the top 10 of the 252-day relative-strength screen versus the S&P 500. "
+            "Held as an equal-weight position until the next signal-driven rotation."
+        )
+
+    catalyst = ""
+    if rank is not None and momentum_252 is not None:
+        catalyst = f"Rank #{rank} in the current 252-day momentum screen ({momentum_252:.2f}% vs S&P 500). "
+    elif is_exiting:
+        catalyst = "No longer in the top-10 momentum screen. "
+    if price and ema_status and not is_exiting:
+        catalyst += f"Price is {ema_status} the 50-day EMA. "
     if htext:
         catalyst += f"Recent headline: {htext}"
     else:
         catalyst += "No fresh Alpaca headline today; the position is driven by systematic momentum, not a news event."
 
+    how = "Performance tracked versus portfolio cost basis and the S&P 500 benchmark."
+    if rebalance_signal and rebalance_signal.get("gate"):
+        how += f" Regime gate is {rebalance_signal['gate']} (DM-6 asset-rotation check)."
+
     base = {
         "symbol": symbol,
         "whatItIs": _sentence(note),
-        "whyWeOwnIt": (
-            f"{symbol} is held as an equal-weight position in the momentum sleeve based on its relative-strength ranking versus the S&P 500. "
-            "The Bot buys the top-10 names and rebalances when the ranking changes."
-        ),
-        "howItsDoing": "Performance is tracked against the sleeve entry price and overall portfolio drift.",
+        "whyWeOwnIt": why,
+        "howItsDoing": how,
         "catalyst": catalyst,
         "risk": _sentence(risk),
         "alpacaNewsHeadline": htext,
@@ -236,7 +264,6 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
     # Merge real confirmation data from sleeve_holdings.json if available.
     if sleeve_holding:
         confs = sleeve_holding.get("confirmations", {})
-        # Preserve the Bot-specific fields that exist in sleeve_holding
         base.update({
             "readiness_score": round(sleeve_holding.get("readiness_score", 85.0), 1),
             "confirmation_count": confs.get("confirmation_count", sleeve_holding.get("confirmation_count", 6)),
@@ -246,7 +273,7 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
         })
     return base
 
-def build_holdings_sleeve_fields(symbol: str, state: dict, quotes: dict, sleeve_holding: dict | None = None) -> dict:
+def build_holdings_sleeve_fields(symbol: str, state: dict, quotes: dict, sleeve_holding: dict | None = None, is_exiting: bool = False) -> dict:
     """Compute frontend fields (weight, stops, thesis, confirmations) from sleeve state."""
     equity = state.get("equity") or 1.0
     target_weights = state.get("holdings", {})
@@ -264,6 +291,60 @@ def build_holdings_sleeve_fields(symbol: str, state: dict, quotes: dict, sleeve_
         hard_stop = 0.0
         trailing_stop = 0.0
         profit_50 = 0.0
+
+    # For holdings scheduled to exit, return neutral/empty chips so the
+    # popup does not render fake bullish signals.
+    if is_exiting:
+        return {
+            "sleeve_weight": round(weight, 4),
+            "thesis": f"{symbol} is scheduled to exit the Bot basket.",
+            "avgEntry": round(price, 2) if price else 0.0,
+            "price": round(price, 2) if price else 0.0,
+            "hardStop": 0.0,
+            "trailingStop": 0.0,
+            "profit50": 0.0,
+            "profit25": 0.0,
+            "optionsImpliedVol": None,
+            "readiness_score": 0.0,
+            "momentum_score": 0.0,
+            "confirmation_count": 0,
+            "confirmations": {
+                "momentum_score": 0.0,
+                "rsi_signal": "neutral",
+                "volume_confirmed": False,
+                "macd_turning": False,
+                "above_ema": False,
+                "sector_strong": False,
+                "intraday_confirmed": False,
+                "intraday_score": 0.0,
+                "momentum_5m_up": False,
+                "volume_5m_surge": False,
+                "price_above_5m_vwap": False,
+                "options_confirmed": False,
+                "options_score": 0.0,
+                "options_call_put_ratio": None,
+                "options_unusual_volume": False,
+                "near_term_bullish_flow": False,
+                "bid_ask_spread_pct": 0.0,
+                "wide_spread": False,
+                "spread_ok": True,
+                "bid_ask_imbalance": 0.0,
+                "bid_ask_bullish": False,
+                "has_upcoming_dividend": False,
+                "has_upcoming_split": False,
+                "has_upcoming_merger": False,
+                "has_upcoming_spinoff": False,
+                "corporate_action_risk": False,
+                "no_corporate_action_risk": True,
+                "relvol_confirmed": False,
+                "relvol_score": 0.0,
+                "vwap_confirmed": False,
+                "vwap_score": 0.0,
+            },
+            "signal_tier": "EXITING",
+            "tier": "EXITING",
+            "display_tier": "EXITING",
+        }
 
     # Use real confirmation data if we have it from sleeve_holdings.json.
     # Normalize momentum/readiness to a 0-100 scale based on rank so the
@@ -416,6 +497,7 @@ def main() -> None:
     sleeve_state = load_json(SLEEVE_STATE_FILE)
     sleeve_holdings = load_json(SLEEVE_HOLDINGS_FILE)
     sleeve_watchlist = load_json(SLEEVE_WATCHLIST_FILE)
+    rebalance_signal = load_json(SLEEVE_STATE_FILE.parent / "sleeve_rebalance_signal.json")
     knowledge = load_json(KNOWLEDGE_FILE)
 
     holdings = list(sleeve_state.get("holdings", {}).keys())
@@ -444,13 +526,22 @@ def main() -> None:
         watchlist_narratives[sym] = build_watchlist_narrative(sym, watchlist_lookup.get(sym, {}), knowledge, headlines.get(sym))
         watchlist_narratives[sym].update(build_watchlist_sleeve_fields(sym, watchlist_lookup.get(sym, {})))
 
+    # Determine which holdings are new entries or exits this month from the rebalance signal.
+    incoming_set = set()
+    outgoing_set = set()
+    if rebalance_signal:
+        incoming_set = set(rebalance_signal.get("incoming") or [])
+        outgoing_set = set(rebalance_signal.get("outgoing") or [])
+
     holdings_narratives: dict[str, dict] = {}
     for sym in holdings:
         if sym == "CASH":
             continue
         sleeve_holding = holdings_lookup.get(sym)
-        holdings_narratives[sym] = build_holdings_narrative(sym, knowledge, headlines.get(sym), sleeve_holding)
-        holdings_narratives[sym].update(build_holdings_sleeve_fields(sym, sleeve_state, quotes, sleeve_holding))
+        is_new_entry = sym in incoming_set
+        is_exiting = sym in outgoing_set
+        holdings_narratives[sym] = build_holdings_narrative(sym, knowledge, headlines.get(sym), sleeve_holding, rebalance_signal, is_new_entry, is_exiting)
+        holdings_narratives[sym].update(build_holdings_sleeve_fields(sym, sleeve_state, quotes, sleeve_holding, is_exiting))
 
     ts = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 

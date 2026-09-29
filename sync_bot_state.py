@@ -82,12 +82,15 @@ def atomic_write(path: Path, content: str):
     tmp.rename(path)
 
 
-def copy_to_web_root(src_state: Path, src_hist: Path, dst_state: Path, dst_hist: Path):
+def copy_to_web_root(src_state: Path, src_hist: Path, dst_state: Path, dst_hist: Path, src_exec: Path | None = None, dst_exec: Path | None = None):
     """Copy files to web root using normal permissions."""
     shutil.copy2(src_state, dst_state)
     shutil.copy2(src_hist, dst_hist)
     os.chmod(dst_state, 0o644)
     os.chmod(dst_hist, 0o644)
+    if src_exec and dst_exec and src_exec.exists():
+        shutil.copy2(src_exec, dst_exec)
+        os.chmod(dst_exec, 0o644)
 
 
 def main():
@@ -112,6 +115,7 @@ def main():
         holdings["CASH"] = cash_remaining
 
     state_path = BASE / "sleeve_state.json"
+    exec_log_path = BASE / "rebalance_executions.json"
     prev_state = {}
     if state_path.exists():
         try:
@@ -120,6 +124,18 @@ def main():
             pass
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    # Determine last executed rebalance from log if available.
+    last_rebalance_at = prev_state.get("last_rebalance_at")
+    if exec_log_path.exists():
+        try:
+            exec_log = json.loads(exec_log_path.read_text())
+            executed = [e for e in exec_log if e.get("executed") and not e.get("dry_run")]
+            if executed:
+                last_rebalance_at = executed[-1].get("timestamp", last_rebalance_at)
+        except Exception:
+            pass
+
     state = {
         "equity": round(equity, 2),
         "cash": round(cash, 2),
@@ -127,6 +143,7 @@ def main():
         "inception": prev_state.get("inception", "2026-08-24"),
         "last_date": today,
         "last_signal_month": prev_state.get("last_signal_month"),
+        "last_rebalance_at": last_rebalance_at,
         "gate": prev_state.get("gate", "QQQ"),
         "mode": "paper",
         "source": "alpaca",
@@ -155,7 +172,10 @@ def main():
 
     # Copy to web root
     try:
-        copy_to_web_root(state_path, hist_path, WEB / "sleeve_state.json", WEB / "sleeve_equity.csv")
+        copy_to_web_root(
+            state_path, hist_path, WEB / "sleeve_state.json", WEB / "sleeve_equity.csv",
+            src_exec=exec_log_path, dst_exec=WEB / "rebalance_executions.json",
+        )
     except Exception as e:
         print(f"Warning: could not copy to web root: {e}", file=sys.stderr)
 

@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -19,6 +20,8 @@ if os.geteuid() == 0:
 
 BASE = Path("/opt/stonk-ai")
 WEB = Path("/var/www/hedge-fund-website")
+DM = BASE / "dm_paper"
+EXEC_LOG = DM / "rebalance_executions.json"
 SIGNAL_FILE = BASE / "dm_paper" / "sleeve_rebalance_signal.json"
 ALPACA_CFG_PATHS = [
     BASE / "alpaca_config.json",
@@ -182,6 +185,42 @@ def compute_rebalance_orders(
     return orders
 
 
+def atomic_write(path: Path, content: str) -> None:
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(content)
+    tmp.replace(path)
+
+
+def append_execution_record(
+    executed: bool,
+    signal_date: str,
+    pre_equity: float,
+    pre_cash: float,
+    pre_holdings: Dict[str, float],
+    orders: List[Dict],
+    order_results: List[Dict],
+    dry_run: bool,
+    reason: str,
+) -> None:
+    record = {
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "signal_date": signal_date,
+        "executed": executed,
+        "dry_run": dry_run,
+        "pre_equity": round(pre_equity, 2),
+        "pre_cash": round(pre_cash, 2),
+        "pre_holdings": {k: round(v, 2) for k, v in pre_holdings.items()},
+        "orders": orders,
+        "order_results": order_results,
+        "reason": reason,
+    }
+    existing = []
+    if EXEC_LOG.exists():
+        existing = json.loads(EXEC_LOG.read_text())
+    existing.append(record)
+    atomic_write(EXEC_LOG, json.dumps(existing, indent=2) + "\n")
+
+
 def main():
     if not _acquire_instance_lock():
         return
@@ -190,6 +229,7 @@ def main():
     parser.add_argument("--execute", action="store_true", help="Submit real orders (default is dry-run)")
     parser.add_argument("--extended-hours", action="store_true", help="Allow order submission outside US market hours")
     parser.add_argument("--reserve", type=float, default=500.0, help="Cash reserve to leave in account")
+    parser.add_argument("--skip-log", action="store_true", help="Skip writing execution record")
     args = parser.parse_args()
 
     cfg = load_alpaca_config()
@@ -203,6 +243,7 @@ def main():
     # not sleeve_state.json (which is overwritten from Alpaca and only shows
     # current holdings).
     signal = json.loads(SIGNAL_FILE.read_text())
+    signal_date = signal.get("date")
     target_symbols = sorted(signal.get("target", []))
     if not target_symbols:
         print("\nABORT: no target symbols in sleeve_rebalance_signal.json.")
@@ -243,6 +284,19 @@ def main():
     print(f"Estimated buy deployment:      ${total_buy:,.2f}")
     print(f"Estimated cash after:          ${cash + total_sell - total_buy:,.2f}")
 
+    if not args.skip_log:
+        append_execution_record(
+            executed=False,
+            signal_date=signal_date,
+            pre_equity=total,
+            pre_cash=cash,
+            pre_holdings=current_holdings,
+            orders=orders,
+            order_results=[],
+            dry_run=True,
+            reason=signal.get("reason", "dry-run plan"),
+        )
+
     if not args.execute:
         print("\nDRY-RUN: no orders submitted. Pass --execute to trade.")
         return
@@ -252,15 +306,31 @@ def main():
         return
 
     print("\nSubmitting orders...")
+    order_results = []
     for o in orders:
         try:
             if o["side"] == "buy":
                 result = client.submit_order(o["symbol"], o["side"], notional=o["notional"])
             else:
                 result = client.submit_order(o["symbol"], o["side"], qty=o["qty"])
+            order_results.append({"symbol": o["symbol"], "side": o["side"], "status": "submitted", "order_id": result.get("id"), "status": result.get("status")})
             print(f"  Submitted {o['side']} {o['symbol']}: id={result.get('id')} status={result.get('status')}")
         except Exception as e:
+            order_results.append({"symbol": o["symbol"], "side": o["side"], "status": "failed", "error": str(e)})
             print(f"  FAILED {o['side']} {o['symbol']}: {e}")
+
+    if not args.skip_log:
+        append_execution_record(
+            executed=True,
+            signal_date=signal_date,
+            pre_equity=total,
+            pre_cash=cash,
+            pre_holdings=current_holdings,
+            orders=orders,
+            order_results=order_results,
+            dry_run=False,
+            reason=signal.get("reason", "executed rebalance"),
+        )
 
     print("\nDone. Allow a few minutes for fills and sync before refreshing the site.")
 

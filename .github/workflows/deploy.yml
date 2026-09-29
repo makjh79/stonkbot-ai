@@ -77,6 +77,7 @@ jobs:
            cp /opt/stonk-ai/dm_paper/sleeve_state.json /var/www/hedge-fund-website/dm_paper/sleeve_state.json && \
            cp /opt/stonk-ai/dm_paper/sleeve_equity.csv /var/www/hedge-fund-website/dm_paper/sleeve_equity.csv && \
            cp /opt/stonk-ai/dm_paper/sleeve_rebalance_signal.json /var/www/hedge-fund-website/dm_paper/sleeve_rebalance_signal.json && \
+           cp /opt/stonk-ai/dm_paper/rebalance_executions.json /var/www/hedge-fund-website/dm_paper/rebalance_executions.json && \
            cp /opt/stonk-ai/dm_paper/sleeve_watchlist.json /var/www/hedge-fund-website/dm_paper/sleeve_watchlist.json && \
            cp /opt/stonk-ai/dm_paper/dm_state.json /var/www/hedge-fund-website/dm_paper/dm_state.json && \
            cp /opt/stonk-ai/dm_paper/dm_equity.csv /var/www/hedge-fund-website/dm_paper/dm_equity.csv && \
