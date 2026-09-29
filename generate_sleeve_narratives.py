@@ -280,53 +280,116 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
     }
 
 
+def _holdings_trend_sentence(change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
+    """Describe a holding's own price action without basket framing."""
+    if above_ema20 and above_ema50 and above_ema200:
+        regime = "above its 20-, 50-, and 200-day EMAs"
+    elif above_ema50 and above_ema200:
+        regime = "above its 50- and 200-day EMAs"
+    elif above_ema200:
+        regime = "above its 200-day EMA but below the shorter averages"
+    elif above_ema50:
+        regime = "above its 50-day EMA but below the 200-day"
+    else:
+        regime = "below its major moving averages"
+
+    if change_pct >= 1.5:
+        move = f"up strongly today (+{change_pct:.2f}%)"
+    elif change_pct >= 0:
+        move = f"up slightly today (+{change_pct:.2f}%)"
+    elif change_pct > -1.5:
+        move = f"down slightly today ({change_pct:.2f}%)"
+    else:
+        move = f"down firmly today ({change_pct:.2f}%)"
+
+    if rsi > 70:
+        rsi_note = "and is technically overbought short term"
+    elif rsi < 30:
+        rsi_note = "and is technically oversold short term"
+    else:
+        rsi_note = f"with RSI at {rsi:.1f}"
+
+    return f"The position is {move}, trading {regime}, {rsi_note}."
+
+
 def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None, sleeve_holding: dict | None = None, rebalance_signal: dict | None = None, is_new_entry: bool = False, is_exiting: bool = False) -> dict:
     info = knowledge.get(symbol, {})
     note = info.get("note", f"{symbol} is a publicly traded company.")
     risk = info.get("risk", "Standard market, execution, and business-model risk.")
     hl = headline or {}
     htext = hl.get("headline", "")
-    rank = sleeve_holding.get("rank") if sleeve_holding else None
-    score = sleeve_holding.get("score") if sleeve_holding else None
+
     ind = sleeve_holding.get("indicators", {}) if sleeve_holding else {}
     price = ind.get("price")
-    ema_status = "above" if ind.get("price", 0) > ind.get("ema_50", 0) else "below"
+    change_pct = ind.get("change_pct") or 0.0
+    rsi = ind.get("rsi_14") or 50.0
+    rank = sleeve_holding.get("rank") if sleeve_holding else None
+    score = sleeve_holding.get("score") if sleeve_holding else None
+    above_ema20 = (price or 0) > (ind.get("ema_20") or 0)
+    above_ema50 = (price or 0) > (ind.get("ema_50") or 0)
+    above_ema200 = (price or 0) > (ind.get("ema_200") or 0)
+    macd_hist = ind.get("macd_histogram") or 0.0
+    vwap = ind.get("vwap") or 0.0
+    price_vs_vwap_pct = ind.get("price_vs_vwap_pct") or 0.0
+    relvol = ind.get("relative_volume") or 1.0
     momentum_252 = score * 100 if score else None
 
+    trend_sentence = _holdings_trend_sentence(float(change_pct), above_ema20, above_ema50, above_ema200, float(rsi))
+
+    # Why we own it / why it is exiting: tied to the stock's own story, not just rank.
     if is_exiting:
         why = (
-            f"{symbol} is scheduled to exit the Bot basket at the next rebalance. "
-            "It no longer ranks in the top 10 of the 252-day relative-strength screen versus the S&P 500. "
-            "The position will be sold and replaced by the incoming target name."
+            f"We are closing the {symbol} position. "
+            "Its relative strength has dropped enough that it no longer belongs in the current momentum sleeve. "
+            "Proceeds will be redeployed into a stronger name."
         )
     elif is_new_entry:
         why = (
-            f"{symbol} entered the Bot basket at the latest rebalance. "
-            f"It ranked in the top 10 of the 252-day relative-strength screen versus the S&P 500, "
-            "replacing a name that fell out of the basket. Equal-weight target at rebalance."
+            f"We initiated {symbol} at the latest rebalance. "
+            "It showed renewed relative strength and a clean technical setup, so it became a core momentum holding."
         )
     else:
         why = (
-            f"{symbol} remains in the Bot basket after the latest rebalance. "
-            f"It still ranks in the top 10 of the 252-day relative-strength screen versus the S&P 500. "
-            "Held as an equal-weight position until the next signal-driven rotation."
+            f"We continue to hold {symbol} because its technical trend and relative-strength profile remain intact. "
+            "It is kept as an equal-weight position until its own price action tells us otherwise."
         )
 
-    catalyst = ""
-    if rank is not None and momentum_252 is not None:
-        catalyst = f"Rank #{rank} in the current 252-day momentum screen ({momentum_252:.2f}% vs S&P 500). "
-    elif is_exiting:
-        catalyst = "No longer in the top-10 momentum screen. "
-    if price and ema_status and not is_exiting:
-        catalyst += f"Price is {ema_status} the 50-day EMA. "
-    if htext:
-        catalyst += f"Recent headline: {htext}"
-    else:
-        catalyst += "No fresh Alpaca headline today; the position is driven by systematic momentum, not a news event."
-
-    how = "Performance tracked versus portfolio cost basis and the S&P 500 benchmark."
+    # How it's doing: absolute trend snapshot, plus portfolio context.
+    how = trend_sentence
     if rebalance_signal and rebalance_signal.get("gate"):
-        how += f" Regime gate is {rebalance_signal['gate']} (DM-6 asset-rotation check)."
+        how += f" The DM-6 asset-rotation gate is {rebalance_signal['gate']}, so new capital is only deployed when the broad tape cooperates."
+
+    # Catalyst: stock-specific momentum + headline.
+    catalyst_parts = []
+    if momentum_252 is not None and rank is not None:
+        if momentum_252 >= 50:
+            catalyst_parts.append(f"It is one of the top large-cap momentum names year-over-year, ranking #{rank} with +{momentum_252:.2f}% relative strength.")
+        elif momentum_252 >= 20:
+            catalyst_parts.append(f"It has strong year-over-year momentum, ranking #{rank} at +{momentum_252:.2f}% relative strength.")
+        else:
+            catalyst_parts.append(f"Its 252-day relative strength is +{momentum_252:.2f}%, placing it at rank #{rank}.")
+
+    if macd_hist > 0:
+        catalyst_parts.append("MACD histogram is positive.")
+    elif macd_hist < 0:
+        catalyst_parts.append("MACD histogram has turned negative, a short-term caution flag.")
+
+    if price_vs_vwap_pct > 0.1:
+        catalyst_parts.append(f"It is trading {price_vs_vwap_pct:.2f}% above today's VWAP.")
+    elif price_vs_vwap_pct < -0.1:
+        catalyst_parts.append(f"It is trading {abs(price_vs_vwap_pct):.2f}% below today's VWAP.")
+
+    if relvol > 1.2:
+        catalyst_parts.append(f"Volume is running {relvol:.1f}× average, suggesting real participation.")
+    elif relvol < 0.7:
+        catalyst_parts.append("Volume is light, so conviction is still being tested.")
+
+    if htext:
+        catalyst_parts.append(f"Recent headline: {htext}")
+    else:
+        catalyst_parts.append("No fresh headline today; the position is moving on its own technicals.")
+
+    catalyst = " ".join(catalyst_parts)
 
     base = {
         "symbol": symbol,
@@ -338,6 +401,14 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
         "alpacaNewsHeadline": htext,
         "alpacaNewsSource": hl.get("source", "Alpaca"),
         "alpacaNewsUrl": hl.get("url", ""),
+        "sources": {
+            "whatItIs": "company_knowledge.json",
+            "whyWeOwnIt": "Alpaca bars + dm_paper sleeve engine",
+            "howItsDoing": "Alpaca bars + dm_paper sleeve engine",
+            "catalyst": "Alpaca news API + Alpaca bars",
+            "risk": "company_knowledge.json",
+            "alpacaNewsHeadline": "Alpaca news API",
+        },
     }
 
     # Merge real confirmation data from sleeve_holdings.json if available.
@@ -641,6 +712,11 @@ def main() -> None:
         if sym == "CASH":
             continue
         sleeve_holding = holdings_lookup.get(sym)
+        if not sleeve_holding:
+            # Symbol is in sleeve_state but missing from sleeve_holdings (e.g. a
+            # pending rebalance target). Skip it; the frontend only needs
+            # narratives for positions that actually have indicator data.
+            continue
         is_new_entry = sym in incoming_set
         is_exiting = sym in outgoing_set
         holdings_narratives[sym] = build_holdings_narrative(sym, knowledge, headlines.get(sym), sleeve_holding, rebalance_signal, is_new_entry, is_exiting)
