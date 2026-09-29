@@ -149,6 +149,46 @@ def merge_headlines(batch: dict[str, dict], individual: dict[str, dict]) -> dict
     return merged
 
 
+def _trend_phrase(change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
+    """Describe the stock's own trend without referencing the sleeve."""
+    direction = "rising" if change_pct >= 0 else "pulling back"
+    if above_ema20 and above_ema50 and above_ema200:
+        regime = "above its 20-, 50-, and 200-day EMAs"
+    elif above_ema50 and above_ema200:
+        regime = "above its 50- and 200-day EMAs"
+    elif above_ema200:
+        regime = "above its 200-day EMA but below shorter averages"
+    elif above_ema50:
+        regime = "above its 50-day EMA but below the 200-day"
+    else:
+        regime = "below its major moving averages"
+
+    if rsi > 70:
+        rsi_note = "and looks overbought on a 14-day basis"
+    elif rsi < 30:
+        rsi_note = "and looks oversold on a 14-day basis"
+    elif rsi > 55:
+        rsi_note = "with bullish RSI momentum"
+    elif rsi < 45:
+        rsi_note = "with RSI momentum still soft"
+    else:
+        rsi_note = "with neutral RSI momentum"
+
+    return f"The chart is currently {direction} ({change_pct:+.2f}%) and trading {regime}, {rsi_note}."
+
+
+def _momentum_phrase(score: float, rank: int) -> str:
+    """Interpret 252-day relative strength in absolute terms."""
+    if score >= 0.5:
+        return f"It has been one of the market's stronger large-cap names over the past year, ranking #{rank} in our 252-day momentum screen."
+    elif score >= 0.2:
+        return f"It has shown solid relative strength over the past year, ranking #{rank} in our 252-day momentum screen."
+    elif score >= 0.0:
+        return f"Its 252-day momentum is flat to slightly positive versus the S&P 500, placing it at rank #{rank}."
+    else:
+        return f"Its 252-day momentum is negative versus the S&P 500, but it is recovering enough to show up at rank #{rank}."
+
+
 def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline: dict | None) -> dict:
     info = knowledge.get(symbol, {})
     note = info.get("note", f"{symbol} is a publicly traded company.")
@@ -156,35 +196,74 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
     hl = headline or {}
     htext = hl.get("headline", "")
     rank = data.get("rank") or 0
-    score = data.get("score") or 0
-    dist = data.get("dist_to_top10")
-    sector = data.get("sector") or info.get("sector", "its sector")
+    score = data.get("score") or 0.0
+    price = data.get("price") or 0.0
+    change_pct = data.get("change_pct") or 0.0
+    ind = data.get("indicators", {}) or {}
+    rsi = data.get("rsi") or ind.get("rsi_14") or 50.0
+    above_ema20 = (price or 0) > (ind.get("ema_20") or 0)
+    above_ema50 = (price or 0) > (ind.get("ema_50") or 0)
+    above_ema200 = (price or 0) > (ind.get("ema_200") or 0)
+    macd_hist = (data.get("macd") or {}).get("histogram") or ind.get("macd_histogram") or 0.0
+    vwap = data.get("vwap") or ind.get("vwap") or 0.0
+    price_vs_vwap_pct = data.get("price_vs_vwap_pct") or ind.get("price_vs_vwap_pct") or 0.0
+    relvol = data.get("relative_volume") or ind.get("relative_volume") or 1.0
+    conf = data.get("confirmations", {}) or {}
 
-    catalyst = (
-        f"{symbol} is a relative-strength candidate in {sector.lower() if isinstance(sector, str) else 'its sector'}. "
-        f"It currently ranks #{rank} in the 252-day momentum screen with a score of {score * 100:.2f}%. "
-    )
-    if dist is not None and dist >= 0:
-        catalyst += f"It needs to climb {dist * 100:.2f}% to reach the current top-10 cutoff and trigger sleeve entry. "
-    else:
-        catalyst += "It is ranked just outside the current top-10 sleeve basket. "
+    trend_sentence = _trend_phrase(change_pct, above_ema20, above_ema50, above_ema200, float(rsi))
+    momentum_sentence = _momentum_phrase(float(score), int(rank))
+
+    # Catalyst: combine the headline with the stock's own technical context.
+    catalyst_parts = [momentum_sentence]
+    if macd_hist > 0:
+        catalyst_parts.append("MACD histogram is positive.")
+    elif macd_hist < 0:
+        catalyst_parts.append("MACD histogram is negative, so momentum is fading short term.")
+    if price_vs_vwap_pct > 0.1:
+        catalyst_parts.append(f"It is trading {price_vs_vwap_pct:.2f}% above today's VWAP.")
+    elif price_vs_vwap_pct < -0.1:
+        catalyst_parts.append(f"It is trading {abs(price_vs_vwap_pct):.2f}% below today's VWAP.")
+    if relvol > 1.2:
+        catalyst_parts.append(f"Volume is running {relvol:.1f}× its 20-day average, so institutions are actively moving it.")
+    elif relvol < 0.7:
+        catalyst_parts.append("Volume is light relative to its 20-day average, suggesting a wait-and-see tape.")
     if htext:
-        catalyst += f"Recent headline: {htext}"
+        catalyst_parts.append(f"Recent headline: {htext}")
     else:
-        catalyst += "No fresh Alpaca headline today; the driver is pure price momentum versus the S&P 500."
+        catalyst_parts.append("No fresh headline today; the action is driven by the stock's own price trend.")
+    catalyst = " ".join(catalyst_parts)
+
+    # Why it's on the watchlist: stock-focused, not sleeve-deficient.
+    why = (
+        f"{symbol} is on watch because its own technical picture is worth tracking. "
+        f"{trend_sentence} {momentum_sentence}"
+    )
+
+    # What triggers a buy: focus on the stock's own setup, not overtaking rank #10.
+    if above_ema20 and above_ema50 and above_ema200 and change_pct >= 0:
+        trigger = (
+            f"A clean continuation above all major moving averages, ideally with volume confirming, "
+            f"would make {symbol} a strong standalone long candidate."
+        )
+    elif above_ema50 and change_pct >= 0:
+        trigger = (
+            f"A push back above the 20-day EMA with improving volume would signal the short-term dip is over."
+        )
+    elif not above_ema50:
+        trigger = (
+            f"We'd want to see a base form above the 50-day EMA and a positive turn in intraday volume before taking a new position."
+        )
+    else:
+        trigger = (
+            f"A clearer directional move with volume expansion and a break above recent resistance would be the signal to act."
+        )
 
     return {
         "symbol": symbol,
         "company": data.get("company") or symbol,
         "whatItIs": _sentence(note),
-        "whyOnWatchlist": (
-            f"{symbol} is tracked as a potential sleeve candidate based on relative strength versus the S&P 500. "
-            "It sits just outside the current top-10 momentum basket and is monitored for possible entry at the next signal-triggered rebalance."
-        ),
-        "whatTriggersBuy": (
-            f"{symbol} would enter the sleeve if it rises into the top-10 relative-strength ranks while the regime gate remains open. "
-            "That means overtaking the current #10 name on sustained outperformance, not a single day's move."
-        ),
+        "whyOnWatchlist": why,
+        "whatTriggersBuy": trigger,
         "catalyst": catalyst,
         "risk": _sentence(risk),
         "alpacaNewsHeadline": htext,
@@ -192,9 +271,9 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
         "alpacaNewsUrl": hl.get("url", ""),
         "sources": {
             "whatItIs": "company_knowledge.json",
-            "whyOnWatchlist": "dm_paper sleeve engine",
-            "whatTriggersBuy": "dm_paper sleeve engine",
-            "catalyst": "Alpaca news API + dm_paper sleeve engine",
+            "whyOnWatchlist": "Alpaca bars + dm_paper sleeve engine",
+            "whatTriggersBuy": "Alpaca bars + dm_paper sleeve engine",
+            "catalyst": "Alpaca news API + Alpaca bars",
             "risk": "company_knowledge.json",
             "alpacaNewsHeadline": "Alpaca news API",
         },
