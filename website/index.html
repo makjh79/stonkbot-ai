@@ -12106,11 +12106,8 @@ function updateDashboard(data, marketStatus) {
                 return tableHtml;
             }
 
-            // In Portfolio section
-            if (heldStocks.length > 0) {
-                html += '<div style="font-size: 12px; font-weight: 700; color: #a855f7; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 4px 8px 4px;">In Portfolio (' + heldStocks.length + ')</div>';
-                html += renderTable(heldStocks);
-            }
+            // Held positions have their own Holdings tab; keep the watchlist
+            // section focused purely on actionable candidates.
 
             // Watchlist candidates section
             if (candidateStocks.length > 0) {
