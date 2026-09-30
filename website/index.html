@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20260930-Bot-v33">
-    <script>(function(){var v='20260930-Bot-v33';var k='stonkbot_v229';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20260930-Bot-v34">
+    <script>(function(){var v='20260930-Bot-v34';var k='stonkbot_v229';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -5206,12 +5206,12 @@ async function loadPnlAttribution() {
         .desktop-nav, .mobile-nav, .site-header {
             display: none !important;
         }
-    /* Mobile responsive */
+        /* Mobile responsive: hide watchlist rank/gap columns on very small screens */
         @media (max-width: 640px) {
             .wl-hide-mobile { display: none !important; }
-        @media (min-width: 420px) {
-            .wl-hide-mobile { display: table-cell !important; }
         }
+        @media (min-width: 421px) {
+            .wl-hide-mobile { display: table-cell !important; }
         }
     </style>
 
@@ -7376,23 +7376,13 @@ function updateDashboard(data, marketStatus) {
             const totalEl = document.getElementById('trade-log-total-trades');
             const buysEl = document.getElementById('trade-log-buys');
             const sellsEl = document.getElementById('trade-log-sells');
-            const bestEl = document.getElementById('trade-log-best-trade');
-            const worstEl = document.getElementById('trade-log-worst-trade');
 
             if (totalEl) totalEl.textContent = trades.length;
             if (buysEl) buysEl.textContent = buys;
             if (sellsEl) sellsEl.textContent = sells;
 
-            // Compute best/worst trade by realized P&L
-            const { best, worst } = computeBestWorstTrade(trades);
-            if (bestEl) {
-                bestEl.textContent = best ? `${best.symbol} ${best.action==='BUY'?'▲':'▼'}${best.pl >= 0 ? '+' : '-'}$${Math.abs(best.pl).toLocaleString('en-US', {maximumFractionDigits:0})}` : '--';
-                bestEl.title = best ? (best.action + ' ' + best.qty + ' @ $' + best.price.toFixed(2)) : '';
-            }
-            if (worstEl) {
-                worstEl.textContent = worst ? `${worst.symbol} ${worst.action==='BUY'?'▲':'▼'}${worst.pl >= 0 ? '+' : '-'}$${Math.abs(worst.pl).toLocaleString('en-US', {maximumFractionDigits:0})}` : '--';
-                worstEl.title = worst ? (worst.action + ' ' + worst.qty + ' @ $' + worst.price.toFixed(2)) : '';
-            }
+            // Best/worst stats are disabled until UI elements are added; keep compute function for future use.
+            void computeBestWorstTrade;
         }
 
         function computeBestWorstTrade(trades) {
@@ -8102,6 +8092,7 @@ function updateDashboard(data, marketStatus) {
             if (e.target === document.getElementById('chartModal')) closeChart();
             if (e.target === document.getElementById('allocationModal')) closeAllocationModal();
             if (e.target === document.getElementById('performanceDetailModal')) closePerformanceDetailModal();
+            if (e.target === document.getElementById('tradeLogModal')) closeTradeLogModal();
         });
 
         document.addEventListener('keydown', function(e) {
@@ -8109,6 +8100,7 @@ function updateDashboard(data, marketStatus) {
                 closeChart();
                 closeAllocationModal();
                 closeTradeDetails();
+                closeTradeLogModal();
                 closePerformanceLog();
                 closeMobileMenu();
                 closePerformanceDetailModal();
