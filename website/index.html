@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20260930-Bot-v34">
-    <script>(function(){var v='20260930-Bot-v34';var k='stonkbot_v229';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20260930-Bot-v35">
+    <script>(function(){var v='20260930-Bot-v35';var k='stonkbot_v229';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -4514,156 +4514,13 @@ async function loadPnlAttribution() {
 <!-- min-footer removed - LIVE indicator now in header, full footer at page bottom -->
     </div>
 
-    <div id="chartModal" class="chart-modal">
-        <div class="chart-modal-content">
-            <div class="chart-modal-header">
-                <span id="chartTitle" class="chart-modal-title">Chart</span>
-                <button class="chart-modal-close" onclick="closeChart()">✕</button>
-            </div>
-            <div class="chart-modal-body">
-                <iframe id="chartIframe" class="chart-iframe" src=""></iframe>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Allocation Breakdown Modal -->
-    <div id="allocationModal" class="chart-modal">
-        <div class="chart-modal-content" style="max-width: 600px;">
-            <div class="chart-modal-header">
-                <span class="chart-modal-title">Allocation</span>
-                <button class="chart-modal-close" onclick="closeAllocationModal()">✕</button>
-            </div>
-            <div class="chart-modal-body" style="padding: 1rem; overflow-y: auto;">
-                <div id="allocation-content">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Performance Detail Modal - Enhanced with Market Indices -->
-    <div id="performanceDetailModal" class="chart-modal">
-        <div class="chart-modal-content" style="max-width: 520px; max-height: 90vh; display: flex; flex-direction: column;">
-            <div class="chart-modal-header" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(168, 85, 247, 0.1)); flex-shrink: 0;">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <span style="font-size: 1.25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
-                    <div>
-                        <span class="chart-modal-title" style="font-size: 1rem;">Market Comparison</span>
-                        <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 500;">Multi-index comparison & insights</div>
-                    </div>
-                </div>
-                <button class="chart-modal-close" onclick="closePerformanceDetailModal()">✕</button>
-            </div>
-            <div class="chart-modal-body" style="padding: 1.25rem; overflow-y: auto; flex: 1;">
-                <!-- Account Value Card -->
-                <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(168, 85, 247, 0.05)); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: center;">
-                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Account Value</div>
-                    <div id="detail-portfolio-value" style="font-size: 2.25rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -1px;">$--</div>
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem;">
-                        <span id="detail-return-badge" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.75rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
-                            <span>--</span> --
-                        </span>
-                        <span style="font-size: 0.7rem; color: var(--text-muted);">vs $100K invested</span>
-                    </div>
-                </div>
-
-                <!-- Key Metrics Grid -->
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
-                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Total Return </div>
-                        <div id="detail-total-return" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
-                    </div>
-                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Day Change </div>
-                        <div id="detail-day-change" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
-                    </div>
-                    <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Days Active <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Days Active:</strong> Calendar days since bot started trading (July 7, 2026).<br><br>Includes weekends. Updates daily at market open.<br><br>Not trading days-total elapsed time.')">i</span></div>
-                        <div id="detail-days-active" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
-                    </div>
-                </div>
-
-                <!-- Market Comparison Section -->
-                <div style="margin-bottom: 1.25rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Benchmark Comparison</span>
-                    </div>
-
-                    <!-- StonkBOT.AI -->
-                    <div style="margin-bottom: 1rem; padding: 0.875rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="2" ry="2"></rect><circle cx="9" cy="12" r="1" fill="currentColor"></circle><circle cx="15" cy="12" r="1" fill="currentColor"></circle><line x1="8" y1="7" x2="8" y2="5"></line><line x1="16" y1="7" x2="16" y2="5"></line><line x1="12" y1="19" x2="12" y2="21"></line></svg></span>
-                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);"><span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span></span>
-                            </div>
-                            <span id="detail-stonk-pct" style="font-size: 0.9rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
-                        </div>
-                        <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; position: relative;">
-                            <div id="detail-stonk-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 5px; position: relative;">
-                                <div style="position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
-                            </div>
-                        </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">Monthly momentum Bot</div>
-                    </div>
-
-                    <!-- S&P 500 -->
-                    <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">S&amp;P</span>
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">S&P 500</span>
-                                <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
-                            </div>
-                            <span id="detail-sp500-pct" style="font-size: 0.85rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
-                        </div>
-                        <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
-                            <div id="detail-sp500-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 3px;"></div>
-                        </div>
-                        <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem;">Broad market benchmark index</div>
-                    </div>
-
-                    <!-- DOW JONES -->
-                    <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">DIA</span>
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">Dow Jones</span>
-                                <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
-                            </div>
-                            <span id="detail-dow-pct" style="font-size: 0.85rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
-                        </div>
-                        <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
-                            <div id="detail-dow-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 3px;"></div>
-                        </div>
-                        <div id="detail-dow-date" style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem;">Live data • Updates every 30s</div>
-                    </div>
-
-                    <!-- NASDAQ -->
-                    <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">QQQ</span>
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">NASDAQ</span>
-                                <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
-                            </div>
-                            <span id="detail-nasdaq-pct" style="font-size: 0.85rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
-                        </div>
-                        <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
-                            <div id="detail-nasdaq-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 3px;"></div>
-                        </div>
-                        <div id="detail-nasdaq-date" style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem;">Live data • Updates every 30s</div>
-                    </div>
-
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.75rem; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px; text-align: center;">
-                        All market indices update live from Alpaca every 30 seconds<br>
-                        Benchmarks tracked via SPY/DIA/QQQ. Defensive gate uses SHY/GLD/TLT.
-                    </div>
-                </div>
-
-
-            </div>
-        </div>
-    </div>
+    
 
 
 
@@ -5216,64 +5073,7 @@ async function loadPnlAttribution() {
     </style>
 
     <!-- Trade Log Modal - Mobile-First Redesign -->
-    <div id="tradeLogModal" class="trade-log-modal">
-        <div class="trade-log-modal-content" style="max-height: 85vh; border-radius: 20px;">
-            <!-- Clean Header -->
-            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface);">
-                <div style="display: flex; align-items: center; gap: 0.625rem;">
-                    <div style="width: 32px; height: 32px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--accent-cyan);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg></div>
-                    <div>
-                        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); letter-spacing: 0.04em;">Activity</div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted);">Bot history</div>
-                    </div>
-                </div>
-                <button class="chart-modal-close" onclick="closeTradeLogModal()" style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
-            </div>
-
-            <!-- Stats Row -->
-            <div style="padding: 0.75rem 1rem; background: var(--bg-base); border-bottom: 1px solid rgba(255,255,255,0.06);">
-                <div style="display: flex; gap: 0.5rem;">
-                    <div style="flex: 1; padding: 0.625rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
-                        <div id="trade-log-total-trades" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Trades</div>
-                    </div>
-                    <div style="flex: 1; padding: 0.625rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12); border-radius: 10px; text-align: center;">
-                        <div id="trade-log-buys" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-green);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Buys</div>
-                    </div>
-                    <div style="flex: 1; padding: 0.625rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 10px; text-align: center;">
-                        <div id="trade-log-sells" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">--</div>
-                        <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Sells</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Segmented Control -->
-            <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: var(--bg-base);">
-                <div style="display: flex; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 3px; gap: 3px;">
-                    <button class="trade-log-segment active" onclick="setTradeLogFilter('all')" data-filter="all" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.08); color: var(--text-primary);">All</button>
-                    <button class="trade-log-segment" onclick="setTradeLogFilter('trades')" data-filter="trades" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Trades</button>
-
-                    <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Bot</button>
-                </div>
-            </div>
-
-            <!-- Activity Feed -->
-            <div class="trade-log-body" id="tradeLogList" style="padding: 0.5rem; background: var(--bg-base);">
-                <!-- Trades will be populated here -->
-                <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
-                    <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                    <div style="font-size: 0.85rem; font-weight: 500;">Loading activity...</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI momentum Bot</div>
-                </div>
-            </div>
-
-            <!-- Refresh hint -->
-            <div style="padding: 0.5rem 1rem; background: var(--bg-base); border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
-                <span style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Auto-refreshes every 30s</span>
-            </div>
-        </div>
-    </div>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -12888,6 +12688,217 @@ function updateDashboard(data, marketStatus) {
         <footer style="border-top: 1px solid var(--border); padding: 1rem 0.75rem 1.5rem; text-align: center;">
             <div style="font-size: 0.6rem; color: var(--text-muted); line-height: 1.6;">Alpaca · Not investment advice · Bot: individual-stock momentum ·<a href="https://github.com/makjh79/stonkbot-ai" style="color:var(--text-muted);text-decoration:none;">GitHub</a></div>
         </footer>
+
+
+
+    <!-- Global modals (moved out of hidden tab panels so they render from any tab) -->
+    <div id="chartModal" class="chart-modal">
+            <div class="chart-modal-content">
+                <div class="chart-modal-header">
+                    <span id="chartTitle" class="chart-modal-title">Chart</span>
+                    <button class="chart-modal-close" onclick="closeChart()">✕</button>
+                </div>
+                <div class="chart-modal-body">
+                    <iframe id="chartIframe" class="chart-iframe" src=""></iframe>
+                </div>
+            </div>
+        </div>
+
+    <div id="allocationModal" class="chart-modal">
+            <div class="chart-modal-content" style="max-width: 600px;">
+                <div class="chart-modal-header">
+                    <span class="chart-modal-title">Allocation</span>
+                    <button class="chart-modal-close" onclick="closeAllocationModal()">✕</button>
+                </div>
+                <div class="chart-modal-body" style="padding: 1rem; overflow-y: auto;">
+                    <div id="allocation-content">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div id="performanceDetailModal" class="chart-modal">
+            <div class="chart-modal-content" style="max-width: 520px; max-height: 90vh; display: flex; flex-direction: column;">
+                <div class="chart-modal-header" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(168, 85, 247, 0.1)); flex-shrink: 0;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
+                        <div>
+                            <span class="chart-modal-title" style="font-size: 1rem;">Market Comparison</span>
+                            <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 500;">Multi-index comparison & insights</div>
+                        </div>
+                    </div>
+                    <button class="chart-modal-close" onclick="closePerformanceDetailModal()">✕</button>
+                </div>
+                <div class="chart-modal-body" style="padding: 1.25rem; overflow-y: auto; flex: 1;">
+                    <!-- Account Value Card -->
+                    <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(168, 85, 247, 0.05)); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Account Value</div>
+                        <div id="detail-portfolio-value" style="font-size: 2.25rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); letter-spacing: -1px;">$--</div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem;">
+                            <span id="detail-return-badge" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.75rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
+                                <span>--</span> --
+                            </span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">vs $100K invested</span>
+                        </div>
+                    </div>
+    
+                    <!-- Key Metrics Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Total Return </div>
+                            <div id="detail-total-return" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
+                        </div>
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Day Change </div>
+                            <div id="detail-day-change" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
+                        </div>
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.875rem; text-align: center;">
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 4px;">Days Active <span class="info-icon" onclick="showInfoTooltip(event, '<strong>Days Active:</strong> Calendar days since bot started trading (July 7, 2026).<br><br>Includes weekends. Updates daily at market open.<br><br>Not trading days-total elapsed time.')">i</span></div>
+                            <div id="detail-days-active" style="font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</div>
+                        </div>
+                    </div>
+    
+                    <!-- Market Comparison Section -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Benchmark Comparison</span>
+                        </div>
+    
+                        <!-- StonkBOT.AI -->
+                        <div style="margin-bottom: 1rem; padding: 0.875rem; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="2" ry="2"></rect><circle cx="9" cy="12" r="1" fill="currentColor"></circle><circle cx="15" cy="12" r="1" fill="currentColor"></circle><line x1="8" y1="7" x2="8" y2="5"></line><line x1="16" y1="7" x2="16" y2="5"></line><line x1="12" y1="19" x2="12" y2="21"></line></svg></span>
+                                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);"><span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span></span>
+                                </div>
+                                <span id="detail-stonk-pct" style="font-size: 0.9rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
+                            </div>
+                            <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; position: relative;">
+                                <div id="detail-stonk-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 5px; position: relative;">
+                                    <div style="position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">Monthly momentum Bot</div>
+                        </div>
+    
+                        <!-- S&P 500 -->
+                        <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">S&amp;P</span>
+                                    <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">S&P 500</span>
+                                    <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
+                                </div>
+                                <span id="detail-sp500-pct" style="font-size: 0.85rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
+                            </div>
+                            <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
+                                <div id="detail-sp500-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 3px;"></div>
+                            </div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem;">Broad market benchmark index</div>
+                        </div>
+    
+                        <!-- DOW JONES -->
+                        <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">DIA</span>
+                                    <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">Dow Jones</span>
+                                    <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
+                                </div>
+                                <span id="detail-dow-pct" style="font-size: 0.85rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
+                            </div>
+                            <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
+                                <div id="detail-dow-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 3px;"></div>
+                            </div>
+                            <div id="detail-dow-date" style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem;">Live data • Updates every 30s</div>
+                        </div>
+    
+                        <!-- NASDAQ -->
+                        <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 0.05rem 0.25rem;">QQQ</span>
+                                    <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">NASDAQ</span>
+                                    <span style="font-size: 0.6rem; color: var(--accent-green); background: rgba(34,197,94,0.15); padding: 0.1rem 0.3rem; border-radius: 4px;">● LIVE</span>
+                                </div>
+                                <span id="detail-nasdaq-pct" style="font-size: 0.85rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">--</span>
+                            </div>
+                            <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
+                                <div id="detail-nasdaq-bar" style="height: 100%; width: 0%; background: var(--text-muted); border-radius: 3px;"></div>
+                            </div>
+                            <div id="detail-nasdaq-date" style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem;">Live data • Updates every 30s</div>
+                        </div>
+    
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.75rem; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px; text-align: center;">
+                            All market indices update live from Alpaca every 30 seconds<br>
+                            Benchmarks tracked via SPY/DIA/QQQ. Defensive gate uses SHY/GLD/TLT.
+                        </div>
+                    </div>
+    
+    
+                </div>
+            </div>
+        </div>
+
+    <div id="tradeLogModal" class="trade-log-modal">
+            <div class="trade-log-modal-content" style="max-height: 85vh; border-radius: 20px;">
+                <!-- Clean Header -->
+                <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface);">
+                    <div style="display: flex; align-items: center; gap: 0.625rem;">
+                        <div style="width: 32px; height: 32px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--accent-cyan);"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg></div>
+                        <div>
+                            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); letter-spacing: 0.04em;">Activity</div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted);">Bot history</div>
+                        </div>
+                    </div>
+                    <button class="chart-modal-close" onclick="closeTradeLogModal()" style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
+                </div>
+    
+                <!-- Stats Row -->
+                <div style="padding: 0.75rem 1rem; background: var(--bg-base); border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <div style="flex: 1; padding: 0.625rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
+                            <div id="trade-log-total-trades" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary);">--</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Trades</div>
+                        </div>
+                        <div style="flex: 1; padding: 0.625rem; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12); border-radius: 10px; text-align: center;">
+                            <div id="trade-log-buys" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-green);">--</div>
+                            <div style="font-size: 0.6rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Buys</div>
+                        </div>
+                        <div style="flex: 1; padding: 0.625rem; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.12); border-radius: 10px; text-align: center;">
+                            <div id="trade-log-sells" style="font-size: 1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red);">--</div>
+                            <div style="font-size: 0.6rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.3px; margin-top: 0.15rem;">Sells</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Segmented Control -->
+                <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: var(--bg-base);">
+                    <div style="display: flex; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 3px; gap: 3px;">
+                        <button class="trade-log-segment active" onclick="setTradeLogFilter('all')" data-filter="all" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.08); color: var(--text-primary);">All</button>
+                        <button class="trade-log-segment" onclick="setTradeLogFilter('trades')" data-filter="trades" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Trades</button>
+    
+                        <button class="trade-log-segment" onclick="setTradeLogFilter('bot')" data-filter="bot" style="flex: 1; padding: 0.4rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">Bot</button>
+                    </div>
+                </div>
+    
+                <!-- Activity Feed -->
+                <div class="trade-log-body" id="tradeLogList" style="padding: 0.5rem; background: var(--bg-base);">
+                    <!-- Trades will be populated here -->
+                    <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                        <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <div style="font-size: 0.85rem; font-weight: 500;">Loading activity...</div>
+                        <div style="font-size: 0.7rem; margin-top: 0.375rem; opacity: 0.6;">StonkBOT.AI momentum Bot</div>
+                    </div>
+                </div>
+    
+                <!-- Refresh hint -->
+                <div style="padding: 0.5rem 1rem; background: var(--bg-base); border-top: 1px solid rgba(255,255,255,0.06); text-align: center;">
+                    <span style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Auto-refreshes every 30s</span>
+                </div>
+            </div>
+        </div>
 
 </body>
 </html>
