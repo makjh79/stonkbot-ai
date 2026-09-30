@@ -187,31 +187,30 @@ def _top10_threshold_text(symbol: str, data: dict, watchlist: list[dict]) -> str
         return f"Outside the top 10 by a wide margin — rank {rank}, needs +{dist*100:.2f}% momentum to become a candidate."
 
 
-def _confirmation_delta_text(conf: dict, rank: int | None = None) -> str:
-    """Surface the two most notable confirmation factors in plain English."""
+def _confirmation_delta_text(conf: dict, rank: int | None = None, dist_to_top10: float | None = None) -> str:
+    """Surface the specific checklist that must be true before the next buy."""
     notes = []
     if conf.get("above_ema"):
-        notes.append("price is above the key trend averages")
+        notes.append("price to hold above the 20- and 50-day averages")
     else:
-        notes.append("price has slipped below the key trend averages")
+        notes.append("price to reclaim its 20- and 50-day averages")
     if conf.get("volume_confirmed"):
-        notes.append("volume is confirming the move")
+        notes.append("volume to confirm the move")
     elif conf.get("macd_turning"):
-        notes.append("MACD is turning higher")
-    elif rank and rank <= 12:
-        notes.append("momentum rank is already near the cut-line")
+        notes.append("MACD histogram to turn positive")
+    elif conf.get("rsi_warming"):
+        notes.append("RSI to warm above 45")
     else:
-        notes.append("near-term momentum is still developing")
+        notes.append("near-term momentum to stop fading")
     if not notes:
         return ""
-    return "The decisive factors right now: " + " and ".join(notes[:2]) + "."
+    return "I would need " + " and ".join(notes[:2]) + " before I click buy."
 
 
 def _technical_catalyst(symbol: str, data: dict) -> str:
-    """A catalyst paragraph that uses technical facts, not random news headlines."""
+    """A catalyst paragraph that uses technical facts, not random news headlines. Keep it to the two most important sentences."""
     rank = data.get("rank") or 0
     score = data.get("score") or 0.0
-    change_pct = data.get("change_pct") or 0.0
     ind = data.get("indicators", {}) or {}
     rsi = data.get("rsi") or ind.get("rsi_14") or 50.0
     macd_hist = (data.get("macd") or {}).get("histogram") or ind.get("macd_histogram") or 0.0
@@ -222,23 +221,24 @@ def _technical_catalyst(symbol: str, data: dict) -> str:
         parts.append(f"{symbol} is in the current momentum basket (rank #{rank}) because its 252-day relative strength is +{score*100:.1f}%.")
     else:
         parts.append(f"{symbol} ranks #{rank} on 252-day relative strength (+{score*100:.1f}%).")
-    if macd_hist > 0.01:
+    # Pick the single most decisive near-term factor.
+    if relvol > 1.25:
+        parts.append(f"Volume is {relvol:.1f}× average today — that is institutional-level attention.")
+    elif abs(price_vs_vwap_pct) > 0.1:
+        direction = "above" if price_vs_vwap_pct > 0 else "below"
+        parts.append(f"Price is {abs(price_vs_vwap_pct):.2f}% {direction} today's VWAP, meaning {'buyers' if price_vs_vwap_pct > 0 else 'sellers'} are in control intraday.")
+    elif macd_hist > 0.01:
         parts.append("MACD histogram is rising, which keeps short-term wind at our backs.")
     elif macd_hist < -0.01:
         parts.append("MACD histogram is fading, so near-term momentum has cooled.")
-    if relvol > 1.25:
-        parts.append(f"Volume is {relvol:.1f}× average today — that is institutional-level attention.")
-    elif relvol < 0.75:
-        parts.append("Volume is light, so this move still lacks broad conviction.")
-    if abs(price_vs_vwap_pct) > 0.1:
-        direction = "above" if price_vs_vwap_pct > 0 else "below"
-        parts.append(f"Price is {abs(price_vs_vwap_pct):.2f}% {direction} today's VWAP, meaning {'buyers' if price_vs_vwap_pct > 0 else 'sellers'} are in control intraday.")
-    if 65 < rsi < 75:
+    elif 65 < rsi < 75:
         parts.append(f"RSI at {rsi:.1f} is warm but not yet overbought.")
     elif rsi >= 75:
         parts.append(f"RSI at {rsi:.1f} is getting stretched — a digestion pause would be normal.")
     elif rsi < 40:
         parts.append(f"RSI at {rsi:.1f} is soft; the stock needs to reclaim momentum before it is interesting.")
+    elif relvol < 0.75:
+        parts.append("Volume is light, so this move still lacks broad conviction.")
     return " ".join(parts)
 
 
@@ -282,6 +282,17 @@ def _trend_phrase(symbol: str, change_pct: float, above_ema20: bool, above_ema50
     return f"{symbol} {move} and is {regime}. {rsi_note}."
 
 
+def _company_note_to_sentence(note: str, symbol: str) -> str:
+    """Make sure the what-it-is sentence always ends with punctuation and feels self-contained."""
+    note = (note or f"{symbol} is a publicly traded company.").strip()
+    if not note:
+        return ""
+    note = note[0].upper() + note[1:]
+    if not note.endswith((".", "!", "?")):
+        note += "."
+    return note
+
+
 def _witty_trigger(symbol: str, above_ema20: bool, above_ema50: bool, above_ema200: bool, change_pct: float) -> str:
     """A plain-English trigger line with a touch of wit."""
     if above_ema20 and above_ema50 and above_ema200 and change_pct >= 0:
@@ -294,15 +305,25 @@ def _witty_trigger(symbol: str, above_ema20: bool, above_ema50: bool, above_ema2
         return f"{symbol} is still trying to find a floor. We would wait for a base to form above the 50-day average before committing fresh capital — no point catching a falling knife."
 
 
-def _human_risk(risk: str) -> str:
+def _human_risk(risk: str, is_holding: bool = False) -> str:
     """Rewrite stodgy risk lines into something a human analyst might actually say."""
+    import random
     risk = risk.strip()
     if not risk:
         return "The usual suspects: earnings surprises, sector rotation, and the market occasionally having a bad hair day."
     # Trim trailing period for smoother concatenation.
     if risk.endswith("."):
         risk = risk[:-1]
-    return f"The main thing to watch: {risk.lower()}. In other words, do not size up until the chart confirms the story."
+    if is_holding:
+        return f"The main thing to watch: {risk.lower()}."
+    caution_variants = [
+        "Worth waiting for the chart to confirm before sizing up.",
+        "I would not chase it until the technical picture clears up.",
+        "Keep it small until momentum proves itself.",
+        "The story is interesting; the chart still has work to do.",
+        "Do not size up until the chart confirms the story.",
+    ]
+    return f"The main thing to watch: {risk.lower()}. {random.choice(caution_variants)}"
 
 
 def _momentum_phrase(score: float, rank: int) -> str:
@@ -344,21 +365,32 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
     if clean_headline and not any(b in clean_headline.lower() for b in ["$100 invested", "10 years ago", "would be worth", "whale activity", "stocks to watch", "market today"]):
         catalyst += f" In the news: {clean_headline}"
 
-    # Lead with the only thing that matters: where it sits vs the basket.
-    why = f"{threshold_text} {trend_sentence}"
-
-    # What triggers a buy: exact gap, plus confirmation checklist.
+    # Why it is on the watchlist: current trend posture + proximity to the basket.
+    # The 252-day momentum story lives in the catalyst field; don't duplicate it here.
+    dist = data.get("dist_to_top10")
     if rank and rank <= 10:
-        trigger = "It is already in the basket. As long as the DM-6 gate stays risk-on and the trend holds, it stays."
+        proximity = "It is already in the basket."
+    elif dist is not None and dist <= 0.02:
+        proximity = "It is knocking on the top-10 door."
+    elif dist is not None and dist <= 0.05:
+        proximity = "It is close enough to the top-10 cut to matter."
     else:
-        trigger = f"Buy trigger: {threshold_text} {_confirmation_delta_text(conf, rank)}"
+        proximity = "It is a ways from the top-10 cut, but the trend is worth tracking."
+    why = f"{trend_sentence} {proximity}"
+
+    # What triggers a buy: exact rank gap + one-line checklist.
+    if rank and rank <= 10:
+        trigger = "It is already in the top-10 basket. As long as the DM-6 gate stays risk-on and the trend holds, it stays."
+    else:
+        dist = data.get("dist_to_top10")
+        trigger = f"Buy trigger: {threshold_text} {_confirmation_delta_text(conf, rank, dist)}"
 
     posture = _sleeve_posture(state)
 
     return {
         "symbol": symbol,
         "company": data.get("company") or symbol,
-        "whatItIs": _sentence(note),
+        "whatItIs": _company_note_to_sentence(note, symbol),
         "whyOnWatchlist": why,
         "whatTriggersBuy": trigger,
         "catalyst": catalyst,
@@ -460,6 +492,7 @@ def _holdings_catalyst(symbol: str, momentum_252: float | None, rank: int | None
 
 def _holdings_why(symbol: str, is_new_entry: bool, is_exiting: bool, rank: int | None, score: float | None) -> str:
     rank_text = f" (rank #{rank})" if rank else ""
+    score_text = f"+{score*100:.1f}%" if score is not None else "strong"
     if is_exiting:
         return (
             f"We are selling {symbol}. "
@@ -469,12 +502,26 @@ def _holdings_why(symbol: str, is_new_entry: bool, is_exiting: bool, rank: int |
     elif is_new_entry:
         return (
             f"We are adding {symbol}{rank_text} to the basket. "
-            f"Its 252-day relative strength (+{score*100:.1f}%) is strong enough to displace a current holding, and the trend confirms the signal."
+            f"Its 252-day relative strength ({score_text}) is strong enough to displace a current holding, and the trend confirms the signal."
         )
     else:
+        # Vary the reason by momentum strength so every holding doesn't read the same.
+        if score is not None:
+            if score >= 1.0:
+                reason = "a year-long rocket ship"
+            elif score >= 0.5:
+                reason = "one of the strongest year-over-year trends in the universe"
+            elif score >= 0.2:
+                reason = "showing real relative strength over the past year"
+            elif score >= 0.0:
+                reason = "barely holding positive momentum"
+            else:
+                reason = "a turnaround bounce rather than a clean momentum play"
+        else:
+            reason = "in the current top-10 basket"
         return (
-            f"We own {symbol}{rank_text} because it is still in the top-10 momentum basket and the trend confirms it. "
-            f"We will trim or exit if the chart breaks, but right now the evidence says keep holding."
+            f"We own {symbol}{rank_text} because it is {reason}. "
+            f"Its 252-day relative strength is {score_text}. As long as the trend structure holds, the position stays."
         )
 
 
@@ -509,11 +556,11 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
     catalyst = _holdings_catalyst(symbol, momentum_252, rank, macd_hist, price_vs_vwap_pct, relvol, htext)
     why = _holdings_why(symbol, is_new_entry, is_exiting, rank, score)
 
-    # How it's doing: trend snapshot + sleeve posture.
-    how = trend_sentence + " " + _sleeve_posture(state)
+    # How it's doing: trend snapshot only. Posture is exposed separately.
+    how = trend_sentence
 
     # Risk: add the technical invalidation level.
-    human_risk = _human_risk(risk)
+    human_risk = _human_risk(risk, is_holding=True)
     if hard_stop:
         human_risk += f" Our line in the sand is the hard stop near ${hard_stop:.2f}."
 

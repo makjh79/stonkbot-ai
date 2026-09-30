@@ -335,6 +335,72 @@ Return JSON only, exactly this shape:
 {{"explainers": {{"<id>": "<1-2 sentences>", ...}}}}"""
 
 
+def _sleeve_posture(portfolio_doc):
+    """One-line portfolio stance for the thinking log."""
+    try:
+        # Prefer live sleeve state if available.
+        sleeve_path = Path(BASE) / "dm_paper" / "sleeve_state.json"
+        if sleeve_path.exists():
+            sleeve = json.loads(sleeve_path.read_text(encoding="utf-8"))
+            gate = sleeve.get("gate", "QQQ")
+            equity = sleeve.get("equity", 0.0)
+            cash = sleeve.get("cash", 0.0)
+            cash_pct = (cash / equity * 100) if equity else 0.0
+            if gate == "DM6":
+                return f"risk-off (DM-6 gate, {cash_pct:.1f}% cash)"
+            return f"risk-on ({gate} gate, {cash_pct:.1f}% cash)"
+    except Exception:
+        pass
+    # Fallback to portfolio_data.json
+    acct = (portfolio_doc or {}).get("account") or portfolio_doc or {}
+    equity = acct.get("portfolio_value") or acct.get("equity") or 0
+    cash = acct.get("cash") or 0
+    cash_pct = (cash / equity * 100) if equity else 0.0
+    return f"risk-on (cash {cash_pct:.1f}%)"
+
+
+def _entry_texture(rationale):
+    """Classify a BUY into setup + size/entry style."""
+    r = (rationale or "").lower()
+    if "avg-in" in r or "avg in" in r:
+        return "add", "avg-in"
+    if "v3" in r:
+        return "new", "V3 setup"
+    if "trend-pullback" in r or "pullback" in r:
+        return "new", "trend-pullback"
+    if "mean reversion" in r:
+        return "new", "mean-reversion bounce"
+    if "readiness" in r or "gate" in r:
+        return "new", "readiness clearing the gate"
+    return "new", "momentum signal"
+
+
+def _exit_texture(rationale):
+    """Classify a SELL into stop/trim/thesis."""
+    r = (rationale or "").lower()
+    if "hard cut" in r or "hard_stop" in r or "stop-loss" in r:
+        return "hard stop"
+    if "thesis" in r or "thesis exit" in r or "below" in r:
+        return "thesis exit"
+    if "trim" in r:
+        return "trim"
+    if "profit" in r or "take profit" in r:
+        return "profit take"
+    if "concentration" in r or "cap" in r:
+        return "concentration trim"
+    return "exit"
+
+
+def find_prior_same_symbol(entries, target_symbol, target_ts):
+    """Return the most recent earlier stream entry for the same symbol."""
+    if not target_symbol or not target_ts:
+        return None
+    for e in sorted(entries, key=lambda x: x.get("ts", ""), reverse=True):
+        if e.get("symbol") == target_symbol and e.get("ts", "") < str(target_ts):
+            return e
+    return None
+
+
 def held_before_trade(trades, ts, symbol):
     """Return True if symbol was already held (qty > 0) just before this trade."""
     if not trades or not ts or not symbol:
