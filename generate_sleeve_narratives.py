@@ -149,6 +149,99 @@ def merge_headlines(batch: dict[str, dict], individual: dict[str, dict]) -> dict
     return merged
 
 
+def _sleeve_posture(state: dict) -> str:
+    """One-line description of the sleeve's current posture."""
+    gate = state.get("gate", "QQQ") if state else "QQQ"
+    equity = state.get("equity", 0.0) if state else 0.0
+    cash = state.get("cash", 0.0) if state else 0.0
+    cash_pct = (cash / equity * 100) if equity else 0.0
+    if gate == "DM6":
+        return f"Sleeve is risk-off: the DM-6 defensive gate has triggered, cash is {cash_pct:.1f}%, and the portfolio is parked in bonds/gold."
+    return f"Sleeve is risk-on: the DM-6 gate is {gate}, cash is {cash_pct:.1f}%, and the bot is running the top-10 momentum basket."
+
+
+def _top10_threshold_text(symbol: str, data: dict, watchlist: list[dict]) -> str:
+    """Exact gap to top-10 entry, naming the stock it would displace."""
+    rank = data.get("rank") or 0
+    dist = data.get("dist_to_top10")
+    price = data.get("price") or 0.0
+    if rank and rank <= 10:
+        return "It is currently in the top-10 momentum basket."
+    if dist is None:
+        return "It is outside the current top-10 basket; momentum rank needs to improve."
+    # Find #10 if available so we can name it.
+    target = None
+    for c in (watchlist or []):
+        if c.get("rank") == 10:
+            target = c
+            break
+    target_name = target.get("symbol", "#10") if target else "#10"
+    dollars = price * dist if price else 0.0
+    if dist <= 0.005:
+        return f"It is knocking on the door — rank {rank}, just +{dist*100:.2f}% ({dollars:+.2f} vs {target_name}) from entering the basket."
+    elif dist <= 0.02:
+        return f"It is close to the basket — rank {rank}, needs +{dist*100:.2f}% ({dollars:+.2f} vs {target_name}) to displace {target_name}."
+    elif dist <= 0.05:
+        return f"Still outside the top 10 — rank {rank}, needs +{dist*100:.2f}% ({dollars:+.2f} vs {target_name}) to break in."
+    else:
+        return f"Outside the top 10 by a wide margin — rank {rank}, needs +{dist*100:.2f}% momentum to become a candidate."
+
+
+def _confirmation_delta_text(conf: dict, rank: int | None = None) -> str:
+    """Surface the two most notable confirmation factors in plain English."""
+    notes = []
+    if conf.get("above_ema"):
+        notes.append("price is above the key trend averages")
+    else:
+        notes.append("price has slipped below the key trend averages")
+    if conf.get("volume_confirmed"):
+        notes.append("volume is confirming the move")
+    elif conf.get("macd_turning"):
+        notes.append("MACD is turning higher")
+    elif rank and rank <= 12:
+        notes.append("momentum rank is already near the cut-line")
+    else:
+        notes.append("near-term momentum is still developing")
+    if not notes:
+        return ""
+    return "The decisive factors right now: " + " and ".join(notes[:2]) + "."
+
+
+def _technical_catalyst(symbol: str, data: dict) -> str:
+    """A catalyst paragraph that uses technical facts, not random news headlines."""
+    rank = data.get("rank") or 0
+    score = data.get("score") or 0.0
+    change_pct = data.get("change_pct") or 0.0
+    ind = data.get("indicators", {}) or {}
+    rsi = data.get("rsi") or ind.get("rsi_14") or 50.0
+    macd_hist = (data.get("macd") or {}).get("histogram") or ind.get("macd_histogram") or 0.0
+    relvol = data.get("relative_volume") or ind.get("relative_volume") or 1.0
+    price_vs_vwap_pct = data.get("price_vs_vwap_pct") or ind.get("price_vs_vwap_pct") or 0.0
+    parts = []
+    if rank and rank <= 10:
+        parts.append(f"{symbol} is in the current momentum basket (rank #{rank}) because its 252-day relative strength is +{score*100:.1f}%.")
+    else:
+        parts.append(f"{symbol} ranks #{rank} on 252-day relative strength (+{score*100:.1f}%).")
+    if macd_hist > 0.01:
+        parts.append("MACD histogram is rising, which keeps short-term wind at our backs.")
+    elif macd_hist < -0.01:
+        parts.append("MACD histogram is fading, so near-term momentum has cooled.")
+    if relvol > 1.25:
+        parts.append(f"Volume is {relvol:.1f}× average today — that is institutional-level attention.")
+    elif relvol < 0.75:
+        parts.append("Volume is light, so this move still lacks broad conviction.")
+    if abs(price_vs_vwap_pct) > 0.1:
+        direction = "above" if price_vs_vwap_pct > 0 else "below"
+        parts.append(f"Price is {abs(price_vs_vwap_pct):.2f}% {direction} today's VWAP, meaning {'buyers' if price_vs_vwap_pct > 0 else 'sellers'} are in control intraday.")
+    if 65 < rsi < 75:
+        parts.append(f"RSI at {rsi:.1f} is warm but not yet overbought.")
+    elif rsi >= 75:
+        parts.append(f"RSI at {rsi:.1f} is getting stretched — a digestion pause would be normal.")
+    elif rsi < 40:
+        parts.append(f"RSI at {rsi:.1f} is soft; the stock needs to reclaim momentum before it is interesting.")
+    return " ".join(parts)
+
+
 def _trend_phrase(symbol: str, change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
     """Describe the stock's own trend like a portfolio analyst would — plain English, no sleeve references."""
     if change_pct >= 2.0:
@@ -224,7 +317,7 @@ def _momentum_phrase(score: float, rank: int) -> str:
         return f"Year-over-year momentum is still negative, but it is bouncing enough to land at rank #{rank}. More of a turnaround bet than a momentum play."
 
 
-def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline: dict | None) -> dict:
+def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline: dict | None, state: dict | None = None, watchlist: list[dict] | None = None) -> dict:
     info = knowledge.get(symbol, {})
     note = info.get("note", f"{symbol} is a publicly traded company.")
     risk = info.get("risk", "Standard market, execution, and business-model risk.")
@@ -239,43 +332,28 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
     above_ema20 = (price or 0) > (ind.get("ema_20") or 0)
     above_ema50 = (price or 0) > (ind.get("ema_50") or 0)
     above_ema200 = (price or 0) > (ind.get("ema_200") or 0)
-    macd_hist = (data.get("macd") or {}).get("histogram") or ind.get("macd_histogram") or 0.0
-    vwap = data.get("vwap") or ind.get("vwap") or 0.0
-    price_vs_vwap_pct = data.get("price_vs_vwap_pct") or ind.get("price_vs_vwap_pct") or 0.0
-    relvol = data.get("relative_volume") or ind.get("relative_volume") or 1.0
     conf = data.get("confirmations", {}) or {}
 
     trend_sentence = _trend_phrase(symbol, change_pct, above_ema20, above_ema50, above_ema200, float(rsi))
-    momentum_sentence = _momentum_phrase(float(score), int(rank))
+    threshold_text = _top10_threshold_text(symbol, data, watchlist or [])
+    delta_text = _confirmation_delta_text(conf)
+    catalyst = _technical_catalyst(symbol, data)
 
-    # Catalyst: combine the headline with the stock's own technical context.
-    catalyst_parts = [momentum_sentence]
-    if macd_hist > 0:
-        catalyst_parts.append("MACD is turning higher, which is a short-term tailwind.")
-    elif macd_hist < 0:
-        catalyst_parts.append("MACD is fading, so near-term momentum has cooled off.")
-    if price_vs_vwap_pct > 0.1:
-        catalyst_parts.append(f"It is trading {price_vs_vwap_pct:.2f}% above today's VWAP, meaning buyers are in control so far.")
-    elif price_vs_vwap_pct < -0.1:
-        catalyst_parts.append(f"It is trading {abs(price_vs_vwap_pct):.2f}% below today's VWAP, so sellers have the upper hand intraday.")
-    if relvol > 1.2:
-        catalyst_parts.append(f"Volume is running {relvol:.1f}× its normal pace — institutions are paying attention.")
-    elif relvol < 0.7:
-        catalyst_parts.append("Volume is quieter than usual, so this move still lacks broad conviction.")
-    if htext:
-        catalyst_parts.append(f"In the news: {htext}")
+    # Only append a headline if it looks like a real, non-generic market recap.
+    clean_headline = htext.strip()
+    if clean_headline and not any(b in clean_headline.lower() for b in ["$100 invested", "10 years ago", "would be worth", "whale activity", "stocks to watch", "market today"]):
+        catalyst += f" In the news: {clean_headline}"
+
+    # Lead with the only thing that matters: where it sits vs the basket.
+    why = f"{threshold_text} {trend_sentence}"
+
+    # What triggers a buy: exact gap, plus confirmation checklist.
+    if rank and rank <= 10:
+        trigger = "It is already in the basket. As long as the DM-6 gate stays risk-on and the trend holds, it stays."
     else:
-        catalyst_parts.append("No fresh headline today; the price action is doing all the talking.")
-    catalyst = " ".join(catalyst_parts)
+        trigger = f"Buy trigger: {threshold_text} {_confirmation_delta_text(conf, rank)}"
 
-    # Why it's on the watchlist: stock-focused, conversational.
-    why = (
-        f"{symbol} is on our radar because its own chart is telling a story. "
-        f"{trend_sentence} {momentum_sentence}"
-    )
-
-    # What triggers a buy: plain English trigger with a dash of wit.
-    trigger = _witty_trigger(symbol, above_ema20, above_ema50, above_ema200, change_pct)
+    posture = _sleeve_posture(state)
 
     return {
         "symbol": symbol,
@@ -285,6 +363,7 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
         "whatTriggersBuy": trigger,
         "catalyst": catalyst,
         "risk": _human_risk(risk),
+        "sleevePosture": posture,
         "alpacaNewsHeadline": htext,
         "alpacaNewsSource": hl.get("source", "Alpaca"),
         "alpacaNewsUrl": hl.get("url", ""),
@@ -294,12 +373,13 @@ def build_watchlist_narrative(symbol: str, data: dict, knowledge: dict, headline
             "whatTriggersBuy": "Alpaca bars + dm_paper sleeve engine",
             "catalyst": "Alpaca news API + Alpaca bars",
             "risk": "company_knowledge.json",
+            "sleevePosture": "dm_paper/sleeve_state.json",
             "alpacaNewsHeadline": "Alpaca news API",
         },
     }
 
 
-def _holdings_trend_sentence(symbol: str, change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float) -> str:
+def _holdings_trend_sentence(symbol: str, change_pct: float, above_ema20: bool, above_ema50: bool, above_ema200: bool, rsi: float, price: float, hard_stop: float, trailing_stop: float) -> str:
     """Describe a holding's own price action in plain English, the way an analyst would explain it to a client."""
     if change_pct >= 1.5:
         move = f"is up {change_pct:.2f}% today, a solid session"
@@ -328,11 +408,19 @@ def _holdings_trend_sentence(symbol: str, change_pct: float, above_ema20: bool, 
     else:
         rsi_note = f"RSI sits at {rsi:.1f}, which is neither hot nor cold"
 
-    return f"{symbol} {move} and is {regime}. {rsi_note}."
+    stop_context = ""
+    if price and hard_stop:
+        dist_to_hard = (price / hard_stop - 1.0) * 100
+        if dist_to_hard <= 2.0:
+            stop_context = f" It is within {dist_to_hard:.1f}% of its hard stop, so the next few sessions matter."
+        elif dist_to_hard >= 15.0:
+            stop_context = f" It has a {dist_to_hard:.1f}% cushion above its hard stop — the trend is working."
+
+    return f"{symbol} {move} and is {regime}. {rsi_note}.{stop_context}"
 
 
 def _holdings_catalyst(symbol: str, momentum_252: float | None, rank: int | None, macd_hist: float, price_vs_vwap_pct: float, relvol: float, htext: str) -> str:
-    """Human-readable catalyst paragraph for a holding."""
+    """Human-readable catalyst paragraph for a holding, filtered against junk headlines."""
     parts = []
     if momentum_252 is not None and rank is not None:
         if momentum_252 >= 100:
@@ -361,34 +449,36 @@ def _holdings_catalyst(symbol: str, momentum_252: float | None, rank: int | None
     elif relvol < 0.7:
         parts.append("Volume is on the light side, so this is not yet a conviction move either way.")
 
-    if htext:
-        parts.append(f"Latest headline: {htext}")
+    clean_headline = htext.strip()
+    if clean_headline and not any(b in clean_headline.lower() for b in ["$100 invested", "10 years ago", "would be worth", "whale activity", "stocks to watch", "market today"]):
+        parts.append(f"Latest headline: {clean_headline}")
     else:
-        parts.append("No fresh news today; the stock is moving on its own supply and demand.")
+        parts.append("No fresh, relevant news today; the stock is moving on its own supply and demand.")
 
     return " ".join(parts)
 
 
-def _holdings_why(symbol: str, is_new_entry: bool, is_exiting: bool) -> str:
+def _holdings_why(symbol: str, is_new_entry: bool, is_exiting: bool, rank: int | None, score: float | None) -> str:
+    rank_text = f" (rank #{rank})" if rank else ""
     if is_exiting:
         return (
             f"We are selling {symbol}. "
-            "Its relative-strength ranking has slipped enough that it no longer fits the momentum sleeve. "
-            "Better to free up the cash and back a name with a stronger tailwind."
+            f"Its relative-strength ranking has slipped enough that it no longer earns a slot in the top-10 basket. "
+            f"Better to free up the cash and back a name with a stronger tailwind."
         )
     elif is_new_entry:
         return (
-            f"We recently added {symbol} to the portfolio. "
-            "It had a clean relative-strength breakout and a working technical setup, so we sized it as a fresh momentum position."
+            f"We are adding {symbol}{rank_text} to the basket. "
+            f"Its 252-day relative strength (+{score*100:.1f}%) is strong enough to displace a current holding, and the trend confirms the signal."
         )
     else:
         return (
-            f"We own {symbol} because the trend is still working. "
-            "We are not married to it — we will trim or exit if the chart breaks — but right now the evidence says keep holding."
+            f"We own {symbol}{rank_text} because it is still in the top-10 momentum basket and the trend confirms it. "
+            f"We will trim or exit if the chart breaks, but right now the evidence says keep holding."
         )
 
 
-def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None, sleeve_holding: dict | None = None, rebalance_signal: dict | None = None, is_new_entry: bool = False, is_exiting: bool = False) -> dict:
+def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None, sleeve_holding: dict | None = None, rebalance_signal: dict | None = None, state: dict | None = None, is_new_entry: bool = False, is_exiting: bool = False) -> dict:
     info = knowledge.get(symbol, {})
     note = info.get("note", f"{symbol} is a publicly traded company.")
     risk = info.get("risk", "Standard market, execution, and business-model risk.")
@@ -410,14 +500,22 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
     relvol = ind.get("relative_volume") or 1.0
     momentum_252 = score * 100 if score else None
 
-    trend_sentence = _holdings_trend_sentence(symbol, float(change_pct), above_ema20, above_ema50, above_ema200, float(rsi))
-    catalyst = _holdings_catalyst(symbol, momentum_252, rank, macd_hist, price_vs_vwap_pct, relvol, htext)
-    why = _holdings_why(symbol, is_new_entry, is_exiting)
+    # Compute stops so we can contextualize them in the narrative.
+    atr_pct = 0.05
+    hard_stop = price * (1.0 - atr_pct) if price else 0.0
+    trailing_stop = price * (1.0 - 2.0 * atr_pct) if price else 0.0
 
-    # How it's doing: absolute trend snapshot, plus regime context.
-    how = trend_sentence
-    if rebalance_signal and rebalance_signal.get("gate"):
-        how += f" The DM-6 asset-rotation gate is {rebalance_signal['gate']}, which means the system is only adding risk when the broad tape is cooperative."
+    trend_sentence = _holdings_trend_sentence(symbol, float(change_pct), above_ema20, above_ema50, above_ema200, float(rsi), float(price or 0), hard_stop, trailing_stop)
+    catalyst = _holdings_catalyst(symbol, momentum_252, rank, macd_hist, price_vs_vwap_pct, relvol, htext)
+    why = _holdings_why(symbol, is_new_entry, is_exiting, rank, score)
+
+    # How it's doing: trend snapshot + sleeve posture.
+    how = trend_sentence + " " + _sleeve_posture(state)
+
+    # Risk: add the technical invalidation level.
+    human_risk = _human_risk(risk)
+    if hard_stop:
+        human_risk += f" Our line in the sand is the hard stop near ${hard_stop:.2f}."
 
     base = {
         "symbol": symbol,
@@ -425,7 +523,8 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
         "whyWeOwnIt": why,
         "howItsDoing": how,
         "catalyst": catalyst,
-        "risk": _human_risk(risk),
+        "risk": human_risk,
+        "sleevePosture": _sleeve_posture(state),
         "alpacaNewsHeadline": htext,
         "alpacaNewsSource": hl.get("source", "Alpaca"),
         "alpacaNewsUrl": hl.get("url", ""),
@@ -435,6 +534,7 @@ def build_holdings_narrative(symbol: str, knowledge: dict, headline: dict | None
             "howItsDoing": "Alpaca bars + dm_paper sleeve engine",
             "catalyst": "Alpaca news API + Alpaca bars",
             "risk": "company_knowledge.json",
+            "sleevePosture": "dm_paper/sleeve_state.json",
             "alpacaNewsHeadline": "Alpaca news API",
         },
     }
@@ -725,7 +825,7 @@ def main() -> None:
     watchlist_narratives: dict[str, dict] = {}
     watchlist_lookup = {c["symbol"]: c for c in sleeve_watchlist.get("watchlist", []) if c.get("symbol")}
     for sym in watchlist_symbols:
-        watchlist_narratives[sym] = build_watchlist_narrative(sym, watchlist_lookup.get(sym, {}), knowledge, headlines.get(sym))
+        watchlist_narratives[sym] = build_watchlist_narrative(sym, watchlist_lookup.get(sym, {}), knowledge, headlines.get(sym), sleeve_state, sleeve_watchlist.get("watchlist", []))
         watchlist_narratives[sym].update(build_watchlist_sleeve_fields(sym, watchlist_lookup.get(sym, {})))
 
     # Determine which holdings are new entries or exits this month from the rebalance signal.
@@ -747,7 +847,7 @@ def main() -> None:
             continue
         is_new_entry = sym in incoming_set
         is_exiting = sym in outgoing_set
-        holdings_narratives[sym] = build_holdings_narrative(sym, knowledge, headlines.get(sym), sleeve_holding, rebalance_signal, is_new_entry, is_exiting)
+        holdings_narratives[sym] = build_holdings_narrative(sym, knowledge, headlines.get(sym), sleeve_holding, rebalance_signal, sleeve_state, is_new_entry, is_exiting)
         holdings_narratives[sym].update(build_holdings_sleeve_fields(sym, sleeve_state, quotes, sleeve_holding, is_exiting))
 
     ts = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
