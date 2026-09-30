@@ -53,9 +53,11 @@ jobs:
            chown -R stonkai:stonkai /opt/stonk-ai && \
            \
            echo '--- pre-deploy feature checks ---' && \
-           grep -q 'TAB PANEL: Orders' website/index.html || { echo 'FAIL: Orders tab missing'; exit 1; } && \
-           grep -q 'Watchlist Tiers' website/index.html || { echo 'FAIL: About tab Watchlist Tiers missing'; exit 1; } && \
-           grep -q \"'5M'\" website/index.html || { echo 'FAIL: 5M chip missing'; exit 1; } && \
+           grep -q 'TAB PANEL: Overview' website/index.html || { echo 'FAIL: Overview tab missing'; exit 1; } && \
+           grep -q 'TAB PANEL: Holdings' website/index.html || { echo 'FAIL: Holdings tab missing'; exit 1; } && \
+           grep -q 'TAB PANEL: Watchlist' website/index.html || { echo 'FAIL: Watchlist tab missing'; exit 1; } && \
+           grep -q 'Bot vs. Market' website/index.html || { echo 'FAIL: Bot vs Market header missing'; exit 1; } && \
+           grep -q 'Bot Thinking Log' website/index.html || { echo 'FAIL: Bot Thinking Log link missing'; exit 1; } && \
            grep -q 'Updated: ' website/index.html || { echo 'FAIL: Freshness timestamp missing'; exit 1; } && \
            echo 'PASS: pre-deploy checks' && \
            \
