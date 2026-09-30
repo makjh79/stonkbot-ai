@@ -95,6 +95,7 @@ jobs:
            cp /opt/stonk-ai/dm_paper/dm_equity.csv /var/www/hedge-fund-website/dm_paper/dm_equity.csv && \
            chown -R stonkai:stonkai /var/www/hedge-fund-website/dm_paper && \
            chmod -R 0644 /var/www/hedge-fund-website/dm_paper && \
+           find /var/www/hedge-fund-website/dm_paper -type d -exec chmod 0755 {} + && \
            rm -f /etc/nginx/sites-enabled/*.bak.* && \
            \
            echo '--- post-deploy verification ---' && \
