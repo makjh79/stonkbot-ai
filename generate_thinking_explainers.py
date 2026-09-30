@@ -332,6 +332,7 @@ Voice rules (strict):
 - ACCOUNTABILITY: own a bad entry in one plain clause ("entry was late and I paid for it"), then move on. No self-pity.
 - INTERIORITY: for high-conviction entries you may say what the numbers don't ("sized it like I meant it"), but restraint still applies.
 - Use only the facts below — never invent numbers, reasons, or history.
+- CONSISTENCY: you may pick from a small set of paraphrases, but each id must always render the same way. Do not use random words.
 
 Tape context: {tape}
 Sleeve posture: {posture}
@@ -451,8 +452,9 @@ def held_before_trade(trades, ts, symbol):
 
 
 def deterministic_trade_explainer(e, sig, pos, rt, trades):
-    """Human, hedge-fund-trader voice grounded strictly in provided facts."""
-    import random
+    """Human, hedge-fund-trader voice grounded strictly in provided facts.
+    Uses deterministic template selection so the same entry always renders the
+    same voice, but adjacent entries vary and feel alive."""
     action = (e.get("action") or "").upper()
     if not action and e.get("id", "").startswith("trade-"):
         action = e["id"].split("|")[2].upper() if len(e["id"].split("|")) > 2 else ""
@@ -503,7 +505,8 @@ def deterministic_trade_explainer(e, sig, pos, rt, trades):
                 f"Initiated {company} on {setup}. New position is {pct}; letting the thesis prove itself.",
                 f"New position in {company} via {setup}. First fill is {pct}; no hero sizing.",
             ]
-        return random.choice(templates)
+        idx = abs(hash(e.get("id", sym + str(ts)))) % len(templates)
+        return templates[idx]
 
     # SELL
     leg = None
@@ -541,7 +544,6 @@ def deterministic_trade_explainer(e, sig, pos, rt, trades):
 
 def deterministic_watch_explainer(e):
     """Fallback voice for watch/risk entries."""
-    import random
     text = e.get("text", "")
     low = text.lower()
     if "position cap is binding" in low or "dynamic position cap" in low or "cap=" in text:
@@ -550,7 +552,8 @@ def deterministic_watch_explainer(e):
             "The dynamic cap is active. I am not opening new ticker lines until a position fully exits and frees up a slot.",
             "The book is already at its line limit. No new positions for now — only scaling into what I already hold.",
         ]
-        return random.choice(templates)
+        idx = abs(hash(e.get("id", "cap"))) % len(templates)
+        return templates[idx]
     if "trim" in low or "concentration" in low:
         return text
     return text
