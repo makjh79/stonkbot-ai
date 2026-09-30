@@ -7354,7 +7354,7 @@ function updateDashboard(data, marketStatus) {
                 ];
 
                 // Merge all activities
-                tradeLogData = [...trades, ...alerts, ...botActions];
+                tradeLogData = [...trades, ...alerts, ...strategyActions];
 
                 // Update stats
                 updateTradeLogStats({trades: trades, last_updated: data.last_updated});
