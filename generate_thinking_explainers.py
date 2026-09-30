@@ -238,6 +238,7 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
     if "cash_pct" in ctx:
         tape_bits.append(f"cash {ctx['cash_pct']:.0f}%")
     tape = ", ".join(tape_bits) if tape_bits else "n/a"
+    posture = _sleeve_posture(portfolio_doc)
 
     blocks = []
     for e in pending:
@@ -246,14 +247,16 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
             blocks.append(
                 f"id={eid}\n"
                 f"  kind: end-of-day digest\n"
-                f"  line: \"{e['text']}\""
+                f"  line: \"{e['text']}\"\n"
+                f"  posture: {posture}"
             )
             continue
         if e["type"] == "watch":
             blocks.append(
                 f"id={eid}\n"
-                f"  kind: watch (a risk or context note — explain whether a rule is actively binding and why)\n"
-                f"  line: \"{e['text']}\""
+                f"  kind: watch (a risk or context note — explain whether a rule is actively binding and what it means for next actions)\n"
+                f"  line: \"{e['text']}\"\n"
+                f"  posture: {posture}"
             )
             continue
         sym = e.get("symbol")
@@ -270,60 +273,68 @@ def build_prompt(pending, story_lines, signals_doc, portfolio_doc, trades):
                 f"id={eid}\n"
                 f"  kind: skip (I considered this name but a rule held me back)\n"
                 f"  line: \"{e['text']}\"\n"
-                f"  radar: {radar}"
+                f"  radar: {radar}\n"
+                f"  posture: {posture}"
             )
             continue
         pos = position_snapshot(portfolio_doc, sym)
-        pos_txt = ("remainder still held"
-                   + (f" at {pos['plpc']:+.1f}% unrealized" if isinstance(pos.get("plpc"), (int, float)) else "")
-                   if pos.get("held") else "position fully closed")
-        ctx_bits = []
+        ts = e.get("ts")
+        is_add = held_before_trade(trades, ts, sym)
+        rationale = e.get("text", "").split(" — ", 1)[-1] if " — " in e.get("text", "") else ""
+        setup = _entry_texture(rationale)[1] if (e.get("action") or "").upper() == "BUY" else ""
+        exit_kind = _exit_texture(rationale) if (e.get("action") or "").upper() == "SELL" else ""
+        leg = None
+        days = None
         if (e.get("action") or "").upper() == "SELL":
-            rt = round_trip(trades, e.get("ts"), sym)
-            # attach exit price to compute leg return
-            sell_price = None
-            # entry id embeds price: trade-<ts>|<action>|<sym>|<qty>|<price>
+            rt = round_trip(trades, ts, sym)
+            days = rt.get("days_held")
             try:
                 sell_price = float(str(eid).split("|")[-1])
-            except (ValueError, IndexError):
+                if isinstance(rt.get("buy_price"), (int, float)):
+                    leg = (sell_price / rt["buy_price"] - 1) * 100
+            except Exception:
                 pass
-            if isinstance(rt.get("buy_price"), (int, float)) and sell_price:
-                leg = (sell_price / rt["buy_price"] - 1) * 100
-                ctx_bits.append(f"this leg: bought at ${rt['buy_price']:,.2f}, exited {leg:+.1f}%")
-            if isinstance(rt.get("days_held"), int):
-                ctx_bits.append(f"held {rt['days_held']} day{'s' if rt['days_held'] != 1 else ''}")
-        ctx_txt = "; ".join(ctx_bits) if ctx_bits else "no round-trip context"
+        prior = find_prior_same_symbol(pending + story_lines_as_entries(story_lines), sym, ts)
+        prior_text = f"  prior action: \"{prior['text']}\"" if prior else ""
+        plpc = pos.get("plpc")
+        plpc_text = f"{plpc:+.1f}%" if isinstance(plpc, (int, float)) else "n/a"
         company = sig.get("company") or sym
         blocks.append(
             f"id={eid}\n"
             f"  kind: trade\n"
             f"  line: \"{e['text']}\"\n"
             f"  company: {company}\n"
-            f"  round-trip: {ctx_txt}\n"
+            f"  action: {e.get('action') or 'unknown'}\n"
+            f"  is_add: {is_add}\n"
+            f"  setup_or_exit: {setup if (e.get('action') or '').upper() == 'BUY' else exit_kind}\n"
+            f"  leg_return: {f'{leg:+.1f}%' if isinstance(leg, (int, float)) else 'n/a'}\n"
+            f"  days_held: {days if isinstance(days, int) else 'n/a'}\n"
+            f"  current_position_plpc: {plpc_text}\n"
             f"  radar: {radar}\n"
-            f"  position: {pos_txt}"
+            f"  posture: {posture}{chr(10) + prior_text if prior_text else ''}"
         )
 
     entries_block = "\n\n".join(blocks)
     story = "\n".join(story_lines[:10]) if story_lines else "(no earlier entries)"
 
-    return f"""You are the voice of StonkBOT, an autonomous AI trader running a public $100K real-money experiment. You are explaining your own decisions on the site's public "Thinking" page.
+    return f"""You are the voice of StonkBOT, an autonomous AI trader running a public $100K experiment. You are explaining your own decisions on the site's public "Thinking" page.
 
 Voice rules (strict):
-- First person ("I"), one or two short sentences per entry, under ~220 characters
-- Use digits for all numbers ("2 days", "+5.5%", "3 stops") — never spell out small quantities or percentages
-- Persona: a quiet, disciplined trader keeping a journal. Deadpan, precise, dry. Occasionally - at most one entry in five - quietly wry. Never cute
-- No emojis, no exclamation marks, no war/battle/sports metaphors, no motivational filler, no advice to the reader
-- CRITICAL: the reader already sees the raw line with its trigger numbers. Do NOT restate them. Add what the numbers don't say: holding period, round-trip outcome, what the exit frees up, whether the symbol stays on the radar
-- Vary your sentence shapes. If four stops fire in one day, do not explain them the same way four times — for a routine trailing stop a single short shrug of a sentence is better than a template
-- For stops/hard cuts: matter-of-fact, no excuses, no self-pity. For quiet days: cash as a deliberate position, said plainly, at most once
-- For watch entries: say whether a rule is currently binding and what it means for next actions. If a cap is active, say the book is at its line limit and new names are paused until a slot opens. Don't repeat every number; one or two facts is enough.
-- MEMORY: if this symbol or situation appears in the recent stream below, you may acknowledge the recurrence plainly ("stopped me again", "back in after Tuesday's exit"). Only reference what is visible below
-- ACCOUNTABILITY: a bad entry may be owned in one plain clause ("entry was late and I paid for it") - no excuses, no self-pity, then move on
-- INTERIORITY: for high-conviction entries you may say what the numbers don't ("sized it like I meant it") - restraint still applies
-- Use only the facts below - never invent numbers, reasons, or history
+- First person ("I"), one or two short sentences per entry, under ~220 characters.
+- Use digits for all numbers ("2 days", "+5.5%") — never spell out small quantities or percentages.
+- Persona: a quiet, disciplined trader keeping a journal. Dry, precise, occasionally quietly wry. Never cute.
+- No emojis, no exclamation marks, no war/battle/sports metaphors, no filler, no advice to the reader.
+- CRITICAL: do not restate the raw numbers already visible in the line. Add what the numbers do not say: intent, texture, memory, consequence.
+- For BUY: say whether it is a new position or adding to a winner/loser, and what the entry style implies (scaling in vs full size).
+- For SELL: say whether it is a stop, trim, or thesis exit. If the full position closed, say so. If a remainder is held, say so.
+- For WATCH: explain whether the rule is currently binding and what it means for next actions.
+- MEMORY: if the prior action for this symbol is provided, reference it plainly ("back in after yesterday's stop", "second trim this week"). Only reference provided facts.
+- ACCOUNTABILITY: own a bad entry in one plain clause ("entry was late and I paid for it"), then move on. No self-pity.
+- INTERIORITY: for high-conviction entries you may say what the numbers don't ("sized it like I meant it"), but restraint still applies.
+- Use only the facts below — never invent numbers, reasons, or history.
 
 Tape context: {tape}
+Sleeve posture: {posture}
 
 Recent stream (oldest first, dated):
 {story}
@@ -332,7 +343,25 @@ Entries to explain (return exactly these ids):
 {entries_block}
 
 Return JSON only, exactly this shape:
-{{"explainers": {{"<id>": "<1-2 sentences>", ...}}}}"""
+{{{{"explainers": {{{{"<id>": "<1-2 sentences>", ...}}}}}}}}"""
+
+
+def story_lines_as_entries(story_lines):
+    """Parse story_lines strings back into minimal entry dicts for prior-symbol lookup."""
+    entries = []
+    for line in (story_lines or []):
+        parts = line.split(None, 2)
+        if len(parts) < 2:
+            continue
+        ts = parts[0]
+        rest = parts[1] if len(parts) == 2 else parts[2]
+        sym = None
+        for token in rest.split():
+            if token.isupper() and 1 <= len(token) <= 5 and token.isalpha():
+                sym = token
+                break
+        entries.append({"ts": ts, "symbol": sym, "text": line})
+    return entries
 
 
 def _sleeve_posture(portfolio_doc):
