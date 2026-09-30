@@ -29,7 +29,10 @@ jobs:
         echo "Secret is set, length: ${#SSH_KEY_B64}"
 
         # Decode base64 key
-        echo "$SSH_KEY_B64" | base64 -d > ~/.ssh/deploy_key 2>&1 || echo "Base64 decode failed"
+        if ! echo "$SSH_KEY_B64" | base64 -d > ~/.ssh/deploy_key 2>~/.ssh/b64.err; then
+          echo "::error::Base64 decode failed: $(cat ~/.ssh/b64.err)"
+          exit 1
+        fi
         chmod 600 ~/.ssh/deploy_key
 
         # Debug: Check key format
@@ -39,14 +42,21 @@ jobs:
         # Add host to known hosts
         ssh-keyscan -H 23.80.82.47 >> ~/.ssh/known_hosts 2>/dev/null || true
 
-        # Test SSH connection
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes root@23.80.82.47 "echo 'SSH connected'" || echo "SSH connection failed"
+        # Test SSH connection with verbose logging for diagnosis
+        if ! ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes -o LogLevel=VERBOSE root@23.80.82.47 "echo 'SSH connected'" > ~/.ssh/ssh_test.log 2>&1; then
+          echo "::error::SSH test connection failed"
+          cat ~/.ssh/ssh_test.log
+          exit 1
+        fi
+        echo "SSH test connection succeeded"
 
         # Deploy + clean up stale nginx backups
         # NOTE: Deploy from the main repo (/opt/stonk-ai), not the nested website-repo.
         # Sentiment/history data are generated in-place by the server pipeline.
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
+        if ! ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
           "cd /opt/stonk-ai && \
+           echo '--- pre-pull git status ---' && \
+           git status --short && \
            git pull --autostash origin master && \
            \
            echo '--- restore stonkai ownership after root git pull ---' && \
@@ -95,4 +105,7 @@ jobs:
              exit 1; \
            fi && \
            \
-           echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"
+           echo 'Deployed at '\$(date) >> /var/www/hedge-fund-website/deploy.log"; then
+          echo "::error::Remote deploy command failed"
+          exit 1
+        fi
