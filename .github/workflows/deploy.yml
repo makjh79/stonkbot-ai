@@ -81,11 +81,11 @@ jobs:
            chown stonkai:stonkai /var/www/hedge-fund-website/performance.html && \
            chmod 0644 /var/www/hedge-fund-website/performance.html && \
            \
+           chattr -i /var/www/hedge-fund-website/thinking.html && \
            cp /opt/stonk-ai/website/thinking.html /var/www/hedge-fund-website/thinking.html && \
            chown stonkai:stonkai /var/www/hedge-fund-website/thinking.html && \
            chmod 0644 /var/www/hedge-fund-website/thinking.html && \
-           \
-           mkdir -p /var/www/hedge-fund-website/sentiment /var/www/hedge-fund-website/history /var/www/hedge-fund-website/dm_paper && \
+           chattr +i /var/www/hedge-fund-website/thinking.html && \
            cp /opt/stonk-ai/dm_paper/sleeve_state.json /var/www/hedge-fund-website/dm_paper/sleeve_state.json && \
            cp /opt/stonk-ai/dm_paper/sleeve_equity.csv /var/www/hedge-fund-website/dm_paper/sleeve_equity.csv && \
            cp /opt/stonk-ai/dm_paper/sleeve_rebalance_signal.json /var/www/hedge-fund-website/dm_paper/sleeve_rebalance_signal.json && \
