@@ -28,7 +28,7 @@ KNOWLEDGE_JSON = BOT_DIR / "website" / "company_knowledge.json"
 WATCHLIST_OUT = WEB_DIR / "watchlist_narratives.json"
 POPUP_OUT = WEB_DIR / "popup_content.json"
 
-MODEL = os.environ.get("STONKBOT_LLM_MODEL", "moonshotai/kimi-k2.6")
+MODEL = os.environ.get("STONKBOT_LLM_MODEL", "deepseek-ai/DeepSeek-V4-Flash")
 BATCH_SIZE = 5
 BANNED_TOKENS = [
     "rsi", "macd", "vwap", "ema", "moving average", "relative strength",
@@ -46,30 +46,30 @@ def load_json(path: Path, default):
         return default
 
 
-def load_openrouter_key() -> str | None:
-    auth_file = Path(os.environ.get("HOME", "/home/stonkai")) / ".openclaw" / "agents" / "main" / "agent" / "auth-profiles.json"
-    try:
-        data = json.loads(auth_file.read_text(encoding="utf-8"))
-        return data.get("profiles", {}).get("openrouter:default", {}).get("key")
-    except Exception:
-        return None
+def load_llm_key() -> str | None:
+    """SiliconFlow key (migrated off OpenRouter 2026-10-02)."""
+    for p in ("/opt/stonk-ai/.secrets/siliconflow.key",):
+        try:
+            return Path(p).read_text(encoding="utf-8").strip() or None
+        except Exception:
+            continue
+    return None
 
 
 def llm_call(prompt: str, api_key: str) -> dict | None:
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://stonkbot.ai",
-        "X-Title": "StonkBOT Narratives",
     }
     payload = {
         "model": MODEL,
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.85,
+        "max_tokens": 16384,
         "response_format": {"type": "json_object"},
     }
     try:
-        resp = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=120)
+        resp = requests.post((os.environ.get("STONKBOT_LLM_BASE", "https://api.siliconflow.com/v1") + "/chat/completions"), headers=headers, json=payload, timeout=600)
         if resp.status_code != 200:
             print(f"[WARN] LLM HTTP {resp.status_code}: {resp.text[:200]}", file=sys.stderr)
             return None
@@ -129,7 +129,7 @@ def validate_field(text, sym: str, rank, prev_rank=None) -> bool:
 
 def run_pass(title: str, symbols: list[str], fields: list[str], packs: dict, base_maps: dict) -> int:
     """One batched LLM pass. base_maps: sym -> base narrative dict. Returns count of updated symbols."""
-    api_key = load_openrouter_key()
+    api_key = load_llm_key()
     if not api_key:
         print("[WARN] no OpenRouter key; skipping LLM pass", file=sys.stderr)
         return 0

@@ -53,25 +53,26 @@ EXIT_LINE = 12
 TOP_N = 10
 MAX_ENTRIES = 400
 
-MODEL = os.environ.get("STONKBOT_LLM_MODEL", "moonshotai/kimi-k2.6")
+MODEL = os.environ.get("STONKBOT_LLM_MODEL", "moonshotai/Kimi-K3")
 BANNED_TOKENS = [
     "rsi", "macd", "vwap", "ema", "moving average", "relative strength",
     "histogram", "overbought", "oversold", "dm-6", "readiness", "confirmation",
 ]
 
 
-def load_openrouter_key() -> str | None:
-    auth_file = Path(os.environ.get("HOME", "/home/stonkai")) / ".openclaw" / "agents" / "main" / "agent" / "auth-profiles.json"
-    try:
-        data = json.loads(auth_file.read_text(encoding="utf-8"))
-        return data.get("profiles", {}).get("openrouter:default", {}).get("key")
-    except Exception:
-        return None
+def load_llm_key() -> str | None:
+    """SiliconFlow key (migrated off OpenRouter 2026-10-02)."""
+    for p in ("/opt/stonk-ai/.secrets/siliconflow.key",):
+        try:
+            return Path(p).read_text(encoding="utf-8").strip() or None
+        except Exception:
+            continue
+    return None
 
 
 def llm_day_note(facts: dict, prior_notes: list[str]) -> str | None:
     """Free-flowing analyst voice for the daily note. None on any failure."""
-    api_key = load_openrouter_key()
+    api_key = load_llm_key()
     if not api_key:
         return None
     prior = "\n".join(f"- {n}" for n in prior_notes[:3]) or "(none yet)"
@@ -98,12 +99,11 @@ Rules:
 Return JSON: {{"note": "..."}}"""
     try:
         resp = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json",
-                     "HTTP-Referer": "https://stonkbot.ai", "X-Title": "StonkBOT Thinking"},
+            (os.environ.get("STONKBOT_LLM_BASE", "https://api.siliconflow.com/v1") + "/chat/completions"),
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
             json={"model": MODEL, "messages": [{"role": "user", "content": prompt}],
-                  "temperature": 0.85, "response_format": {"type": "json_object"}},
-            timeout=120,
+                  "temperature": 0.85, "max_tokens": 6000, "response_format": {"type": "json_object"}},
+            timeout=300,
         )
         if resp.status_code != 200:
             print(f"[WARN] day-note LLM HTTP {resp.status_code}: {resp.text[:160]}", file=sys.stderr)
