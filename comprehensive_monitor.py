@@ -1221,74 +1221,26 @@ def check_x_sentiment_freshness() -> None:
 
 
 def check_llm_narrative_pipeline() -> None:
-    """Verify the LLM narrative generator is healthy and output is fresh."""
-    timer = "stonk-ai-llm-narrative.timer"
-    rc, stdout, stderr = _run_cmd(f"systemctl is-active {timer}")
-    if rc != 0:
-        _log_warn(f"LLM narrative timer {timer} is NOT active")
+    """Verify the LLM narrative generator is healthy and output is fresh.
 
-    # Check for recent service failures
-    rc2, out2, _ = _run_cmd(f"systemctl list-units --failed --no-pager --plain | grep stonk-ai-llm-narrative.service")
-    if rc2 == 0 and out2:
-        _log_issue(f"stonk-ai-llm-narrative.service is in failed state")
-
+    Sleeve era (2026-10-02): the LLM pass runs from stonkai crontab
+    (06:15 + 22:40 weekdays, DeepSeek-V4-Flash via SiliconFlow) and writes
+    directly into the merged popup_content.json / watchlist_narratives.json.
+    The old systemd timer + raw popup_narratives/watchlist_narratives_llm
+    files were retired with the OpenRouter pipeline.
+    """
     now = time.time()
+    _now_dt = datetime.now(timezone.utc)
     expected_fields = {"whatItIs", "whyWeOwnIt", "howItsDoing", "catalyst", "risk"}
     watchlist_fields = {"whatItIs", "whyOnWatchlist", "whatTriggersBuy", "catalyst", "risk"}
-    # Market-aware freshness: skip stale checks when market is closed
-    status = _load_json(os.path.join(BASE_DIR, ".llm_narrative_status"))
-    if not status:
-        status = _load_json(os.path.join(BASE_DIR, "market_status.json"))
-    scheduler_mode = ""
-    if status:
-        scheduler_mode = status.get("mode", "").lower()
-    if "market open" not in scheduler_mode:
-        # Off-hours/weekend: only check structural completeness, not freshness
-        # (LLM narratives aren't updated when market is closed)
-        skip_freshness = True
-    else:
-        skip_freshness = False
-    # Raw LLM outputs
-    llm_holdings_path = os.path.join(WEB_DIR, "popup_narratives.json")
-    llm_watchlist_path = os.path.join(WEB_DIR, "watchlist_narratives_llm.json")
-    llm_holdings = _load_json(llm_holdings_path)
-    llm_watchlist = _load_json(llm_watchlist_path)
+    # Freshness is batch-daily (06:15/22:40 weekdays); nothing runs over the weekend.
+    max_age = 36 * 3600 if _now_dt.weekday() < 5 else 72 * 3600
 
-    if llm_holdings is None:
-        _log_warn(f"Missing {llm_holdings_path}")
-    else:
-        h = llm_holdings.get("holdings", {})
-        portfolio_data = _load_json(os.path.join(BASE_DIR, "portfolio_data.json"))
-        portfolio_positions = {p.get("symbol"): p for p in portfolio_data.get("positions", [])} if portfolio_data else {}
-        if not portfolio_positions and not h:
-            pass  # empty portfolio, expected
-        elif not h and portfolio_positions:
-            _log_warn(f"LLM holdings narratives empty while portfolio has {len(portfolio_positions)} positions (will fill on next LLM run)")
-        else:
-            missing = [sym for sym, data in h.items() if not expected_fields.issubset(data.keys())]
-            if missing:
-                _log_warn(f"LLM holdings missing narrative fields: {", ".join(missing[:5])}")
-        mtime = _file_mtime(llm_holdings_path)
-        if not skip_freshness and mtime and now - mtime > 25 * 60:
-            _log_warn(f"LLM holdings narratives stale: {(now-mtime)/60:.0f} min old")
-
-    if llm_watchlist is None:
-        _log_warn(f"Missing {llm_watchlist_path}")
-    else:
-        w = llm_watchlist.get("narratives", {})
-        if not w:
-            _log_warn("LLM watchlist narratives empty (LLM overlay disabled)")
-        else:
-            missing = [sym for sym, data in w.items() if not watchlist_fields.issubset(data.keys())]
-            if missing:
-                _log_warn(f"LLM watchlist missing narrative fields: {", ".join(missing[:5])}")
-        mtime = _file_mtime(llm_watchlist_path)
-        if not skip_freshness and mtime and now - mtime > 25 * 60:
-            _log_warn(f"LLM watchlist narratives stale: {(now-mtime)/60:.0f} min old")
-
-    # Merged outputs
+        # Merged outputs (single source of truth for the site)
     popup = _load_json(os.path.join(WEB_DIR, "popup_content.json"))
-    if popup:
+    if popup is None:
+        _log_warn(f"Missing {WEB_DIR}/popup_content.json")
+    else:
         holdings = popup.get("holdings", {})
         for sym, data in holdings.items():
             if not isinstance(data, dict):
@@ -1296,9 +1248,14 @@ def check_llm_narrative_pipeline() -> None:
             merged_fields = set(data.keys())
             if not expected_fields.issubset(merged_fields):
                 _log_warn(f"Merged popup {sym} missing LLM narrative fields")
+        mtime = _file_mtime(os.path.join(WEB_DIR, "popup_content.json"))
+        if mtime and now - mtime > max_age:
+            _log_issue(f"popup_content.json stale: {(now-mtime)/3600:.1f} h old — check sleeve narrative crons")
 
     watchlist_narr = _load_json(os.path.join(WEB_DIR, "watchlist_narratives.json"))
-    if watchlist_narr:
+    if watchlist_narr is None:
+        _log_warn(f"Missing {WEB_DIR}/watchlist_narratives.json")
+    else:
         narratives = watchlist_narr.get("narratives", {})
         for sym, data in narratives.items():
             if not isinstance(data, dict):
@@ -1306,6 +1263,9 @@ def check_llm_narrative_pipeline() -> None:
             merged_fields = set(data.keys())
             if not watchlist_fields.issubset(merged_fields):
                 _log_warn(f"Merged watchlist {sym} missing LLM narrative fields")
+        mtime = _file_mtime(os.path.join(WEB_DIR, "watchlist_narratives.json"))
+        if mtime and now - mtime > max_age:
+            _log_issue(f"watchlist_narratives.json stale: {(now-mtime)/3600:.1f} h old — check sleeve narrative crons")
 def check_trade_execution_health() -> None:
     log_path = os.path.join(BASE_DIR, "trading_bot.log")
     try:
