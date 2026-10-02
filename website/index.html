@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v81">
-    <script>(function(){var v='20261002-Bot-v81';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v82">
+    <script>(function(){var v='20261002-Bot-v82';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -12567,9 +12567,9 @@ function updateDashboard(data, marketStatus) {
             // Honest rank-based framing: a momentum strategy has no fixed stop/target
             const rankSub = stock.buy_status === 'hold'
                 ? 'held in the current basket'
-                : (stock.rank && stock.rank <= 10)
+                : (stock.rank && stock.rank <= 8)
                     ? 'in the buy zone'
-                    : (stock.rank ? (stock.rank - 10) + ' spot' + (stock.rank - 10 === 1 ? '' : 's') + ' from the cut' : 'in the strength rankings');
+                    : (stock.rank ? (stock.rank - 8) + ' spot' + (stock.rank - 8 === 1 ? '' : 's') + ' from the cut' : 'in the strength rankings');
 
             // Get options IV from watchlist data (not preGenerated which is holdings-only)
             const wlOptionsIV = stock.options_implied_vol || null;
@@ -12651,7 +12651,7 @@ function updateDashboard(data, marketStatus) {
                         <div style="display: flex; gap: 0.5rem; margin-bottom: 0.9rem;">
                             <div style="flex: 1; padding: 0.7rem 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px; display: flex; flex-direction: column; justify-content: flex-start;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px;">Buy rule</div>
-                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">Breaks into top 10</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #22c55e; font-weight: 700;">Breaks into top 8</div>
                                 <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 1px;">bought at next monthly review</div>
                             </div>
                             <div style="flex: 1; padding: 0.7rem 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 10px; display: flex; flex-direction: column; justify-content: flex-start;">
