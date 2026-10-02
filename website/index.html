@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v87">
-    <script>(function(){var v='20261002-Bot-v87';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v88">
+    <script>(function(){var v='20261002-Bot-v88';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3846,31 +3846,9 @@
                 });
                 function loadTeaser() {
                     Promise.all([
-                        fetch('thinking_stream.json?t=' + Date.now(), { cache: 'no-store' }).catch(function(){ return null; }),
-                        fetch('dm_paper/rebalance_executions.json?t=' + Date.now(), { cache: 'no-store' }).catch(function(){ return null; })
+                        fetch('thinking_stream.json?t=' + Date.now(), { cache: 'no-store' }).catch(function(){ return null; })
                     ]).then(function(responses) {
-                        var rebalanceHtml = null;
                         var fallbackHtml = null;
-
-                        var execRes = responses[1];
-                        if (execRes && execRes.ok) {
-                            return execRes.json().then(function(log) {
-                                var done = (log || []).filter(function(e) { return e.executed && !e.dry_run; });
-                                var last = done[done.length - 1];
-                                if (last && last.timestamp) {
-                                    var ageMs = Date.now() - new Date(last.timestamp).getTime();
-                                    if (ageMs < 7 * 24 * 60 * 60 * 1000) {
-                                        var inc = (last.orders || []).filter(function(o){ return o.side === 'buy'; }).map(function(o){ return o.symbol; }).join(', ') || 'none';
-                                        var out = (last.orders || []).filter(function(o){ return o.side === 'sell'; }).map(function(o){ return o.symbol; }).join(', ') || 'none';
-                                        rebalanceHtml = {
-                                            text: DATE_FMT.format(new Date(last.timestamp)) + ' · Bot rebalance executed · In: ' + inc + ' · Out: ' + out + ' · ' + (last.reason || ''),
-                                            color: '#06b6d4'
-                                        };
-                                    }
-                                }
-                                return responses[0];
-                            });
-                        }
                         return responses[0];
                     }).then(function(thinkingRes) {
                         if (thinkingRes && thinkingRes.ok) {
@@ -3879,6 +3857,8 @@
                                 if (ageMs <= 36 * 60 * 60 * 1000) {
                                     var entries = d.entries || [];
                                     var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch' || x.type === 'rebalance' || x.type === 'digest' || x.type === 'boundary' || x.type === 'decision' || x.type === 'gate') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
+                                    var prio = { digest: 0, decision: 1, trade: 1, rebalance: 1, gate: 2, boundary: 3, skip: 3, watch: 3 };
+                                    candidates.sort(function(a, b) { return ((prio[a.type] != null ? prio[a.type] : 4) - (prio[b.type] != null ? prio[b.type] : 4)) || (new Date(b.ts) - new Date(a.ts)); });
                                     var e = candidates[0] || entries[entries.length - 1];
                                     if (e) {
                                         var color = '#6b7280';
@@ -3899,7 +3879,7 @@
                             });
                         }
                     }).then(function() {
-                        var chosen = rebalanceHtml || fallbackHtml;
+                        var chosen = fallbackHtml;
                         if (!chosen) return;
                         document.getElementById('thinkingTeaserText').textContent = chosen.text;
                         document.getElementById('thinkingTeaserDot').style.background = chosen.color;
