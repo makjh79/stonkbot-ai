@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v85">
-    <script>(function(){var v='20261002-Bot-v85';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v86">
+    <script>(function(){var v='20261002-Bot-v86';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -12054,6 +12054,7 @@ function updateDashboard(data, marketStatus) {
 
             let html = '<div class="wl-section">';
             html += '<div class="wl-header"><div class="wl-updated">Updated: ' + updateTime + '</div></div>';
+            html += '<div style="font-size: 0.7rem; color: var(--text-muted); margin: 2px 0 10px; line-height: 1.5;">Candidates only — names we don’t own. We buy when a name reaches <strong style="color:var(--text-secondary);">rank 8 or stronger</strong>; holdings are kept until they fall <strong style="color:var(--text-secondary);">past rank 12</strong>, reviewed monthly.</div>';
 
 
             // Rebalance countdown banner
@@ -12085,7 +12086,7 @@ function updateDashboard(data, marketStatus) {
                     return { label: '#'+rank+' · Qualifies', cls: 'ruler-enter', marker: 8 };
                 }
                 if (rank <= 10) {
-                    return { label: '#'+rank+' · Top 10', cls: 'ruler-in', marker: 25 };
+                    return { label: '#'+rank, cls: 'ruler-in', marker: 25 };
                 }
                 return { label: '', cls: 'ruler-out', marker: 62 };
             }
@@ -12100,7 +12101,7 @@ function updateDashboard(data, marketStatus) {
                 const chartData = !isNoPrice ? generateDynamicChartData(stock) : null;
                 const spark = chartData ? sparklinePath(chartData.prices) : '<svg class="wl-spark" viewBox="0 0 72 28" preserveAspectRatio="none"><line x1="0" y1="14" x2="72" y2="14" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>';
                 const ruler = rankRuler(stock);
-                let card = '<div class="wl-card' + (top10 || qualifies ? ' wl-top10' : '') + '" onclick="showStockDetail(\'' + stock.symbol + '\')">';
+                let card = '<div class="wl-card' + (qualifies ? ' wl-top10' : '') + '" onclick="showStockDetail(\'' + stock.symbol + '\')">';
                 card += '  <div class="wl-card-left">';
                 let rankDelta = '';
                 if (stock.rank && stock.prev_rank == null) {
@@ -12118,7 +12119,7 @@ function updateDashboard(data, marketStatus) {
                 card += '  <div class="wl-card-right">';
                 card += '    <div class="wl-price-val">' + priceDisplay + '</div>';
                 card += '    <div class="wl-change" style="color:' + changeColor + ';">' + (isNoPrice ? '' : (stock.changePct >= 0 ? '▲ ' : '▼ ')) + changeDisplay + '</div>';
-                card += '    <div class="wl-card-tags">' + (qualifies ? '<span class="wl-chip qualify">Qualifies</span>' : (top10 ? '<span class="wl-chip top10">Top 10</span>' : '')) + '</div>';
+                card += '    <div class="wl-card-tags">' + (qualifies ? '<span class="wl-chip qualify">Qualifies</span>' : '') + '</div>';
                 card += '    ' + (isNoPrice ? '<div class="wl-status ruler-out">—</div>' : (ruler.label ? '<div class="wl-status ' + ruler.cls + '">' + ruler.label + '</div>' : ''));
                 card += '  </div>';
                 card += '</div>';
