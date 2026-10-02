@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v91">
-    <script>(function(){var v='20261002-Bot-v91';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v92">
+    <script>(function(){var v='20261002-Bot-v92';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -12074,8 +12074,14 @@ function updateDashboard(data, marketStatus) {
                 if (rank <= 8) {
                     return { label: '#'+rank+' · Qualifies', cls: 'ruler-enter', marker: 8 };
                 }
-                if (rank <= 10) {
-                    return { label: (rank - 8) + ' from buy line', cls: 'ruler-in', marker: 25 };
+                if (rank <= 12) {
+                    const away = rank - 8;
+                    const filled = 5 - away; // rank 9 -> 4 pips, rank 12 -> 1 pip
+                    let pips = '';
+                    for (let i = 0; i < 4; i++) {
+                        pips += '<span style="width:5px;height:5px;border-radius:50%;background:' + (i < filled ? '#f59e0b' : 'rgba(255,255,255,0.14)') + ';display:inline-block;"></span>';
+                    }
+                    return { label: '<span style="display:inline-flex;align-items:center;gap:3px;">' + pips + '<span style="margin-left:5px;font-weight:600;color:var(--text-muted);">' + away + ' to buy zone</span></span>', cls: 'ruler-out', marker: 25 };
                 }
                 return { label: '', cls: 'ruler-out', marker: 62 };
             }
