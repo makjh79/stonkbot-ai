@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v92">
-    <script>(function(){var v='20261002-Bot-v92';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v93">
+    <script>(function(){var v='20261002-Bot-v93';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -370,6 +370,16 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
+
+        /* Live tick flash — brief glow when a number changes (v93) */
+        @keyframes tickUp { 0% { text-shadow: none; } 25% { text-shadow: 0 0 16px rgba(34,197,94,0.75); } 100% { text-shadow: none; } }
+        @keyframes tickDown { 0% { text-shadow: none; } 25% { text-shadow: 0 0 16px rgba(239,68,68,0.75); } 100% { text-shadow: none; } }
+        .tick-up { animation: tickUp 0.6s ease-out; }
+        .tick-down { animation: tickDown 0.6s ease-out; }
+
+        /* Depth elevation for surfaces that lacked it (v93) */
+        .race-card { box-shadow: 0 4px 16px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06); }
+        .hero-card { box-shadow: 0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06); }
 
         /* Activity card hover */
         .activity-card:hover {
@@ -5801,8 +5811,9 @@ function updateDashboard(data, marketStatus) {
             const returnEl = document.getElementById('portfolio-return');
             const pnlEl = document.getElementById('portfolio-pnl');
             if (data.account) {
+                window._lastEquity = data.account.last_equity || window._lastEquity || 0;
                 const portfolioValue = (liveQuotesFresh() ? _liveQuotes.portfolio_value : data.account.portfolio_value) || 0;
-                const lastEquity = data.account.last_equity || 0;
+                const lastEquity = window._lastEquity;
                 const totalPl = lastEquity ? portfolioValue - lastEquity : 0;
                 const totalReturn = lastEquity ? (totalPl / lastEquity) * 100 : 0;
                 const isPositive = totalReturn >= 0;
@@ -8189,6 +8200,12 @@ function updateDashboard(data, marketStatus) {
         function liveQuotesFresh() {
             return _liveQuotes && (Date.now() - new Date(_liveQuotes.timestamp).getTime()) < 60000;
         }
+        function tickFlash(el, prev, next) {
+            if (!el || prev == null || next == null || prev === next || isNaN(prev) || isNaN(next)) return;
+            el.classList.remove('tick-up', 'tick-down');
+            void el.offsetWidth; // restart animation
+            el.classList.add(next > prev ? 'tick-up' : 'tick-down');
+        }
         async function pollLiveQuotes() {
             try {
                 const r = await fetch('live_quotes.json?t=' + Date.now());
@@ -8204,13 +8221,17 @@ function updateDashboard(data, marketStatus) {
             // Hero value + return badge (mirrors the standard formatters)
             const pvEl = document.getElementById('portfolio-value');
             if (pvEl && d.portfolio_value) {
+                const prevPv = parseFloat(pvEl.dataset.value);
                 pvEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
+                tickFlash(pvEl, prevPv, d.portfolio_value);
                 pvEl.dataset.value = d.portfolio_value;
                 pvEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
             }
             const portfolioValue = d.portfolio_value || 0;
-            const totalReturn = d.total_return_pct != null ? d.total_return_pct : ((portfolioValue - 100000) / 100000 * 100);
-            const totalPl = d.total_pl;
+            // Hero badge is DAILY (v89): measure vs prior close, not the $100K baseline
+            const lastEqLive = window._lastEquity || 0;
+            const totalPl = lastEqLive ? portfolioValue - lastEqLive : (d.total_pl || 0);
+            const totalReturn = lastEqLive ? (totalPl / lastEqLive) * 100 : (d.total_return_pct != null ? d.total_return_pct : 0);
             const isPositive = (totalReturn || 0) >= 0;
             const returnBadge = document.getElementById('portfolio-return-badge');
             if (returnBadge) {
@@ -8219,7 +8240,10 @@ function updateDashboard(data, marketStatus) {
             }
             const returnEl = document.getElementById('portfolio-return');
             if (returnEl && totalReturn != null) {
+                const prevRet = window._lastBadgeRet;
                 returnEl.textContent = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+                tickFlash(returnEl, prevRet, totalReturn);
+                window._lastBadgeRet = totalReturn;
                 returnEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
             }
             const pnlEl = document.getElementById('portfolio-pnl');
@@ -8283,11 +8307,17 @@ function updateDashboard(data, marketStatus) {
                     const q = d.positions[card.dataset.symbol];
                     if (!q) return;
                     const pe = card.querySelector('[data-live-price]');
-                    if (pe && q.price) pe.textContent = '$' + q.price.toFixed(2);
+                    if (pe && q.price) {
+                        const prevP = parseFloat((pe.textContent || '').replace(/[$,]/g, ''));
+                        pe.textContent = '$' + q.price.toFixed(2);
+                        tickFlash(pe, prevP, q.price);
+                    }
                     const le = card.querySelector('[data-live-pl]');
                     if (le && q.unrealized_plpc != null) {
+                        const prevPl = parseFloat((le.textContent || '').replace(/[%+,]/g, ''));
                         const pos = q.unrealized_plpc >= 0;
                         le.textContent = (pos ? '+' : '') + q.unrealized_plpc.toFixed(2) + '%';
+                        tickFlash(le, prevPl, q.unrealized_plpc);
                         le.classList.remove('positive', 'negative');
                         le.classList.add(pos ? 'positive' : 'negative');
                         card.dataset.positive = pos ? 'true' : 'false';
