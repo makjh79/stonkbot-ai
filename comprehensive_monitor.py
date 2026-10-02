@@ -884,35 +884,15 @@ def check_thinking_pipeline() -> None:
         return
     mtime = _file_mtime(path)
     if mtime is None:
-        _log_issue("thinking_stream.json missing during market hours — check thinking_journal.py cron")
+        _log_issue("thinking_stream.json missing — check generate_thinking_sleeve.py cron")
         return
     age = now.timestamp() - mtime
-    if age > 20 * 60:
+    # Sleeve era: thinking stream is a DAILY digest (06:13 Tue-Sat cron), not per-trade.
+    if age > 36 * 3600:
         _log_issue(
-            f"thinking_stream.json is {age / 60:.1f} min old (max 20) "
-            "— Bot Thinking sidecar degraded; check thinking_journal.py cron"
+            f"thinking_stream.json is {age / 3600:.1f} h old (max 36h) "
+            "— Bot Thinking sidecar degraded; check generate_thinking_sleeve.py cron"
         )
-        return
-    # LLM voice layer: trade entries should pick up an explainer within ~30 min
-    # (explainer cron writes thinking_llm.json, sidecar merges). Warn-only:
-    # the stream still works without it, just quieter than intended.
-    try:
-        import json as _json
-        with open(path) as f:
-            stream = _json.load(f)
-        for e in (stream.get("entries") or [])[:50]:
-            if e.get("type") != "trade" or e.get("explainer"):
-                continue
-            ets = datetime.fromisoformat(str(e.get("ts", "")).replace("Z", "+00:00"))
-            e_age = now.timestamp() - ets.timestamp()
-            if e_age > 30 * 60:
-                _log_warn(
-                    f"thinking stream: trade {e.get('symbol', '?')} unexplained "
-                    f"{e_age / 60:.0f} min after entry — check generate_thinking_explainers.py"
-                )
-                break
-    except Exception:
-        pass
 
 
 def check_short_positions() -> None:
@@ -1454,9 +1434,10 @@ def check_cron_entries() -> None:
     required = {
         "sync_alpaca_trades.py": "sync Alpaca trades",
         "dynamic_watchlist_manager.py": "watchlist rotation",
-        # Portfolio snapshot is now performed live by trading_bot.py each cycle; no cron needed.
-        "thinking_journal.py": "Bot Thinking journal",
-        "generate_thinking_explainers.py": "Bot Thinking LLM explainers",
+        # Sleeve era: thinking digest + narratives run from stonkai crontab.
+        "generate_thinking_sleeve.py": "thinking digest (daily 06:13 Tue-Sat)",
+        "generate_sleeve_narratives.py": "sleeve narratives (06:11/22:40 weekdays)",
+        "generate_sleeve_narratives_llm.py": "LLM narrative pass (Flash)",
     }
     for script, label in required.items():
         if script not in out:
@@ -1643,8 +1624,9 @@ def _check_process_health():
         "trading_bot.py": "Trading Bot",
         "signal_engine.py": "Signal Engine",
         "fetch_data_simple.py": "Data Fetcher",
-        "generate_popup_content_narrative_v6_server.py": "Popup v6 Generator",
-        "generate_narratives_llm_batched.py": "LLM Narrative Generator",
+        "generate_sleeve_narratives.py": "Sleeve Narratives",
+        "generate_sleeve_narratives_llm.py": "LLM Narrative Pass",
+        "generate_thinking_sleeve.py": "Thinking Digest",
         "reconstruct_portfolio_history.py": "Portfolio History Reconstructor",
     }
 
