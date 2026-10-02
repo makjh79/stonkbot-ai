@@ -100,6 +100,9 @@
         .entry.trade-sell { border-left-color: var(--accent-red); background: linear-gradient(90deg, rgba(239,68,68,0.05), transparent 40%), var(--bg-card); }
         .entry.digest     { border-left-color: var(--accent-cyan); background: linear-gradient(90deg, rgba(6,182,212,0.05), transparent 40%), var(--bg-card); }
         .entry.skip       { border-left-color: var(--accent-yellow); background: linear-gradient(90deg, rgba(245,158,11,0.05), transparent 40%), var(--bg-card); }
+        .entry.boundary   { border-left-color: #f59e0b; background: linear-gradient(90deg, rgba(245,158,11,0.05), transparent 40%), var(--bg-card); }
+        .entry.decision   { border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(16,185,129,0.06), transparent 40%), var(--bg-card); }
+        .entry.gate       { border-left-color: #8b5cf6; background: linear-gradient(90deg, rgba(139,92,246,0.06), transparent 40%), var(--bg-card); }
         .entry.scan       { padding: 0.5rem 0.9rem; }
 
         .entry-time {
@@ -149,16 +152,17 @@
         <header>
             <div>
                 <h1>Bot Thinking Log</h1>
-                <div class="subtitle">Bot decision stream — the daily record. Not a recommendation.</div>
+                <div class="subtitle">The Bot's daily record — rank moves, boundary crossings, and the rare decision. Not a recommendation.</div>
             </div>
             <a href="index.html" class="back-link">← Dashboard</a>
         </header>
 
         <div class="filters" id="filters">
             <button class="filter-chip active" data-f="all">All</button>
-            <button class="filter-chip" data-f="trade">Trades</button>
-            <button class="filter-chip" data-f="skip">Skips</button>
-            <button class="filter-chip" data-f="rebalance">Rebalances</button>
+            <button class="filter-chip" data-f="digest">Day notes</button>
+            <button class="filter-chip" data-f="boundary">Boundary</button>
+            <button class="filter-chip" data-f="decision">Decisions</button>
+            <button class="filter-chip" data-f="gate">Gate</button>
         </div>
 
         <div id="diary-card" style="display:none;margin-bottom:1.25rem;background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.14);border-radius:12px;padding:1rem 1.125rem;">

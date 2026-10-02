@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v86">
-    <script>(function(){var v='20261002-Bot-v86';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v87">
+    <script>(function(){var v='20261002-Bot-v87';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3876,9 +3876,9 @@
                         if (thinkingRes && thinkingRes.ok) {
                             return thinkingRes.json().then(function(d) {
                                 var ageMs = Date.now() - new Date(d.generated_at).getTime();
-                                if (ageMs <= 30 * 60 * 1000) {
+                                if (ageMs <= 36 * 60 * 60 * 1000) {
                                     var entries = d.entries || [];
-                                    var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch' || x.type === 'rebalance') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
+                                    var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch' || x.type === 'rebalance' || x.type === 'digest' || x.type === 'boundary' || x.type === 'decision' || x.type === 'gate') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
                                     var e = candidates[0] || entries[entries.length - 1];
                                     if (e) {
                                         var color = '#6b7280';
@@ -3887,6 +3887,9 @@
                                         else if (e.type === 'skip') color = '#f59e0b';
                                         else if (e.type === 'watch') color = '#f97316';
                                         else if (e.type === 'rebalance') color = '#06b6d4';
+                                        else if (e.type === 'boundary') color = '#f59e0b';
+                                        else if (e.type === 'decision') color = '#10b981';
+                                        else if (e.type === 'gate') color = '#8b5cf6';
                                         fallbackHtml = {
                                             text: (e.type === 'digest') ? e.text : TIME_FMT.format(new Date(e.ts)) + ' · ' + e.text,
                                             color: color
