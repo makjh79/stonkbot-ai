@@ -282,7 +282,22 @@ def dm_signal(ds, P, i):
     return "TLT" if r["TLT"] > r["SHY"] else "SHY"
 
 
-def sleeve_target(ds, P, i):
+
+
+def apply_dual_threshold(cands, current_holdings, max_positions=10, exit_threshold=12, entry_threshold=8):
+    """Hysteresis rebalance: keep holdings ranked <= exit_threshold, only add new names ranked <= entry_threshold."""
+    current_set = set(current_holdings) if current_holdings else set()
+    rank_map = {s: (i + 1) for i, (s, _) in enumerate(cands)}
+    hold_eligible = [s for s in current_set if rank_map.get(s, 999) <= exit_threshold]
+    enter_eligible = [s for s, _ in cands if s not in current_set and rank_map[s] <= entry_threshold]
+    combined = sorted(set(hold_eligible) | set(enter_eligible), key=lambda s: rank_map[s])
+    if len(combined) < max_positions:
+        existing = set(combined)
+        fillers = [s for s, _ in cands if s not in existing][:max_positions - len(combined)]
+        combined.extend(fillers)
+    return combined[:max_positions]
+
+def sleeve_target(ds, P, i, current_holdings=None):
     sel = dm_signal(ds, P, i)
     if sel != "QQQ":
         return {sel: 1.0} if sel != "CASH" else {"CASH": 1.0}
@@ -295,8 +310,8 @@ def sleeve_target(ds, P, i):
             continue
         cands.append((s, a/b - 1.0))
     cands.sort(key=lambda x: -x[1])
-    top = [s for s,_ in cands[:10]]
-    return {s: 1.0/len(top) for s in top} if top else {"QQQ": 1.0}
+    target = apply_dual_threshold(cands, current_holdings)
+    return {s: 1.0/len(target) for s in target} if target else {"QQQ": 1.0}
 
 
 def sleeve_candidates(ds, P, i, top_n=10, watch_n=15):
@@ -349,14 +364,16 @@ def sleeve_candidates(ds, P, i, top_n=10, watch_n=15):
 
     for s, score in cands[:top_n]:
         holdings_details.append(detail(s, score))
-    for rank, (s, score) in enumerate(cands[top_n:top_n+watch_n], start=top_n+1):
-        watchlist.append(detail(s, score))
-    return weights, watchlist, holdings_details
+    for rank, (s, score) in enumerate(cands[:top_n+watch_n], start=1):
+        d = detail(s, score)
+        d["buy_status"] = "hold" if rank <= top_n else "watch"
+        watchlist.append(d)
+    return weights, watchlist, holdings_details, cands
 
 
 def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=15):
     """Export daily rebalance signal, watchlist, and top-10 holdings details."""
-    weights, watchlist, holdings_details = sleeve_candidates(ds, P, i, top_n=10, watch_n=watch_n)
+    weights, watchlist, holdings_details, cands = sleeve_candidates(ds, P, i, top_n=10, watch_n=watch_n)
     gate = dm_signal(ds, P, i)
     today = ds[i]
     if current_holdings:
@@ -364,7 +381,7 @@ def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=1
     else:
         sleeve_st = load_state("sleeve")
         current_set = {s for s in sleeve_st.get("holdings", {}) if s not in ("CASH",)}
-    target_set = {s for s in weights if s not in ("CASH",)}
+    target_set = set(apply_dual_threshold(cands, current_set))
     incoming = sorted(target_set - current_set)
     outgoing = sorted(current_set - target_set)
     signal = bool(incoming or outgoing or gate != "QQQ")
@@ -388,6 +405,33 @@ def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=1
         "target": sorted(target_set),
     }, open(sig_path, "w"), indent=2)
     watch_path = os.path.join(BASE, "sleeve_watchlist.json")
+    prev_ranks = {}
+    prior_baseline = {}
+    try:
+        prev_watch = json.load(open(watch_path))
+        # Only adopt existing ranks as "previous" when they came from a PRIOR
+        # session. A same-session rerun (duplicate cron, manual run) must not
+        # reset the baseline, or day-over-day rank moves vanish.
+        if prev_watch.get("date") != today:
+            for it in prev_watch.get("watchlist", []):
+                if it.get("symbol") and it.get("rank"):
+                    prev_ranks[it["symbol"]] = it["rank"]
+        # Always carry forward existing prev_rank values for continuity.
+        for it in prev_watch.get("watchlist", []):
+            if it.get("symbol"):
+                prior_baseline[it["symbol"]] = it.get("prev_rank")
+    except Exception:
+        prev_ranks, prior_baseline = {}, {}
+    for d in watchlist:
+        if d["symbol"] in prev_ranks:
+            d["prev_rank"] = prev_ranks[d["symbol"]]
+        else:
+            d["prev_rank"] = prior_baseline.get(d["symbol"])
+    for d in holdings_details:
+        if d["symbol"] in prev_ranks:
+            d["prev_rank"] = prev_ranks[d["symbol"]]
+        else:
+            d["prev_rank"] = prior_baseline.get(d["symbol"])
     json.dump({
         "date": today,
         "watchlist": watchlist,
@@ -429,7 +473,8 @@ def run_portfolio(name, target_fn, ds, P, me_days):
             m = mes[-1]
             if st["last_signal_month"] != m[:7] and m >= st["inception"]:
                 i = ds.index(m)
-                tw = target_fn(ds, P, i)
+                current_symbols = {a for a in st["holdings"] if a not in ("CASH",) and st["holdings"][a] > 0}
+                tw = target_fn(ds, P, i, current_symbols)
                 eq = st["equity"]
                 cur = {a: v/eq for a, v in st["holdings"].items() if v > 0}
                 keys = set(cur) | set(tw)
@@ -447,7 +492,7 @@ def run_portfolio(name, target_fn, ds, P, me_days):
     print(f"{name}: equity ${st['equity']:,.2f} as of {st['last_date']} holdings {list(st['holdings'])[:4]}")
 
 
-def dm_signal_target(ds, P, i):
+def dm_signal_target(ds, P, i, current_holdings=None):
     sel = dm_signal(ds, P, i)
     return {sel: 1.0} if sel != "CASH" else {"CASH": 1.0}
 
