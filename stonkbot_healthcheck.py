@@ -249,8 +249,8 @@ def check_narrative_semantics(conn: sqlite3.Connection) -> List[str]:
         ("EMA", "confirm_ema", lambda v: v == 1),
         ("sector", "confirm_sector", lambda v: v == 1),
     ]
-    # Try web file first (most current), fallback to DB
-    narr_path = WEB_DIR / "watchlist_narratives_llm.json"
+    # Sleeve-era LLM narratives (OpenRouter legacy file is dead; live pipeline writes watchlist_narratives.json)
+    narr_path = WEB_DIR / "watchlist_narratives.json"
     if narr_path.exists():
         data = json.loads(narr_path.read_text()).get("narratives", {})
     else:

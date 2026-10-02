@@ -166,7 +166,7 @@ def check_json_freshness() -> None:
     checks = {
         "popup_content.json": 3600 * 6,          # 6h (cron every 2 min)
         "watchlist_narratives.json": 3600 * 6,
-        "watchlist_narratives_llm.json": 3600 * 26,  # LLM timer, allow a day+
+        # watchlist_narratives_llm.json retired 2026-10-02 (OpenRouter dead; sleeve LLM pass writes watchlist_narratives.json)
         "config_truth.json": 3600 * 26,
         "signal_enrichment.json": 3600 * 30,
     }
