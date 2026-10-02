@@ -734,9 +734,16 @@ def check_portfolio_sanity() -> None:
 
     sector_map: Dict[str, float] = {}
     for p in positions:
-        mv = p.get("market_value", 0)
+        try:
+            mv = float(p.get("market_value", 0) or 0)
+        except (TypeError, ValueError):
+            mv = 0.0
         sym = p.get("symbol", "")
-        if p.get("qty", 0) <= 0:
+        try:
+            qty = float(p.get("qty", 0) or 0)
+        except (TypeError, ValueError):
+            qty = 0.0
+        if qty <= 0:
             continue  # shorts handled by check_short_positions
         pct = mv / total_value if total_value else 0
         # Tier-aware cap (single source of truth: risk_engine.tier_max_position_pct)

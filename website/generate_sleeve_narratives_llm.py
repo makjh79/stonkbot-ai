@@ -98,8 +98,8 @@ def build_fact_pack(sym: str, wl_item: dict | None, hold_item: dict | None, stat
         "company": info.get("note", sym).split(".")[0].split(",")[0],
         "what_company_does": info.get("note", ""),
         "risk_profile": info.get("risk", ""),
-        "rank": item.get("rank"),
-        "prev_rank": item.get("prev_rank"),
+        "rank_today": item.get("rank"),
+        "rank_yesterday": item.get("prev_rank"),
         "year_return_pct": round((item.get("score") or 0) * 100, 1),
         "today_pct": item.get("change_pct"),
         "long_term_trend": trend,
@@ -110,7 +110,7 @@ def build_fact_pack(sym: str, wl_item: dict | None, hold_item: dict | None, stat
     }
 
 
-def validate_field(text, sym: str, rank) -> bool:
+def validate_field(text, sym: str, rank, prev_rank=None) -> bool:
     if not isinstance(text, str):
         return False
     t = text.strip()
@@ -120,8 +120,10 @@ def validate_field(text, sym: str, rank) -> bool:
     if any(tok in low for tok in BANNED_TOKENS):
         return False
     for m in re.finditer(r"#(\d+)", t):
-        if rank and int(m.group(1)) != rank and int(m.group(1)) > 25:
-            return False
+        n = int(m.group(1))
+        allowed = {x for x in (rank, prev_rank, 8, 10, 12, 25) if x}
+        if n not in allowed:
+            return False  # stale/wrong rank reference
     return True
 
 
@@ -158,11 +160,12 @@ def run_pass(title: str, symbols: list[str], fields: list[str], packs: dict, bas
             base = base_maps.get(sym)
             if base is None:
                 continue
-            rank = facts.get(sym, {}).get("rank")
+            rank = facts.get(sym, {}).get("rank_today")
+            prev_rank = facts.get(sym, {}).get("rank_yesterday")
             changed = False
             for f in fields:
                 val = gen.get(f)
-                if validate_field(val, sym, rank):
+                if validate_field(val, sym, rank, prev_rank):
                     base[f] = val.strip()
                     changed = True
             if changed:
