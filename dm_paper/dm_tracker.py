@@ -382,6 +382,12 @@ def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=1
         sleeve_st = load_state("sleeve")
         current_set = {s for s in sleeve_st.get("holdings", {}) if s not in ("CASH",)}
     target_set = set(apply_dual_threshold(cands, current_set))
+    # buy_status must reflect ACTUAL holdings (a held name can sit at rank 11-12
+    # in the hold buffer; a scan-top-10 name may not be held yet).
+    for d in watchlist:
+        d["buy_status"] = "hold" if d.get("symbol") in current_set else "watch"
+    for d in holdings_details:
+        d["buy_status"] = "hold" if d.get("symbol") in current_set else "watch"
     incoming = sorted(target_set - current_set)
     outgoing = sorted(current_set - target_set)
     signal = bool(incoming or outgoing or gate != "QQQ")

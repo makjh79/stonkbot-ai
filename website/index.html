@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v84">
-    <script>(function(){var v='20261002-Bot-v84';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v85">
+    <script>(function(){var v='20261002-Bot-v85';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -5407,7 +5407,7 @@ async function loadPnlAttribution() {
 
             // Try fetch first
             if (window.fetch) {
-                Promise.all([fetch(url), fetch('./market_status.json?t=' + Date.now()), fetch('./dm_paper/sleeve_holdings.json?t=' + Date.now()).catch(() => null)])
+                Promise.all([fetch(url), fetch('./market_status.json?t=' + Date.now()), fetch('./dm_paper/sleeve_watchlist.json?t=' + Date.now()).catch(() => null)])
                     .then(([r, msR, shR]) => {
                         console.log('Response:', r.status);
                         if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -5417,7 +5417,7 @@ async function loadPnlAttribution() {
                         console.log('Data loaded:', data.positions.length, 'positions');
                         window.lastPortfolioData = data;
                         holdingsRankMap = {};
-                        const shList = sleeveHoldings ? (sleeveHoldings.holdings || sleeveHoldings) : [];
+                        const shList = sleeveHoldings ? (sleeveHoldings.watchlist || sleeveHoldings.holdings || sleeveHoldings) : [];
                         (Array.isArray(shList) ? shList : []).forEach(h => { if (h && h.symbol && h.rank != null) holdingsRankMap[h.symbol] = h.rank; });
                         updateDashboard(data, marketStatus);
                         updateRaceValues().catch(e => console.error('updateRaceValues failed:', e));
