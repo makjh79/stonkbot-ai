@@ -25,9 +25,13 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import sys
 import tempfile
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+import requests
 
 BASE = Path(os.environ.get("STONKBOT_BOT_DIR", "/opt/stonk-ai"))
 DATA = Path(os.environ.get("STONKBOT_DATA_DIR", BASE))
@@ -46,6 +50,75 @@ BUY_LINE = 8
 EXIT_LINE = 12
 TOP_N = 10
 MAX_ENTRIES = 400
+
+MODEL = os.environ.get("STONKBOT_LLM_MODEL", "moonshotai/kimi-k2.6")
+BANNED_TOKENS = [
+    "rsi", "macd", "vwap", "ema", "moving average", "relative strength",
+    "histogram", "overbought", "oversold", "dm-6", "readiness", "confirmation",
+]
+
+
+def load_openrouter_key() -> str | None:
+    auth_file = Path(os.environ.get("HOME", "/home/stonkai")) / ".openclaw" / "agents" / "main" / "agent" / "auth-profiles.json"
+    try:
+        data = json.loads(auth_file.read_text(encoding="utf-8"))
+        return data.get("profiles", {}).get("openrouter:default", {}).get("key")
+    except Exception:
+        return None
+
+
+def llm_day_note(facts: dict, prior_notes: list[str]) -> str | None:
+    """Free-flowing analyst voice for the daily note. None on any failure."""
+    api_key = load_openrouter_key()
+    if not api_key:
+        return None
+    prior = "\n".join(f"- {n}" for n in prior_notes[:3]) or "(none yet)"
+    prompt = f"""You are the portfolio analyst for a public $100K momentum-investing experiment at stonkbot.ai. Write today's short closing note for a retail-investor audience.
+
+How the strategy works (never name indicators): we keep a leaderboard of 25 stocks ranked by momentum; we buy a name once it reaches the top 8, we keep holding until one falls past 12, and we review monthly. The book holds 10 names.
+
+Today's facts ({facts['label']} close):
+- Book: {facts['n_held']} names, equity ${facts['equity_k']}, cash {facts['cash_pct']}%, market regime: {facts['gate_txt']}
+- Leaderboard moves: {facts['movers'] or 'none — every name held its position'}
+- Boundary events: {facts['boundaries'] or 'none'}
+- Trades executed today: {facts['trades'] or 'none'}
+
+Rules:
+- 2-4 sentences, free-flowing and human — an analyst explaining the day to a smart friend, not reading a dashboard
+- Plain language only. Never use: {', '.join(BANNED_TOKENS)}. Talk about the leaderboard, momentum, pace, earning a spot, the exit line.
+- Do not start with the date. Vary your opening every day.
+- If nothing happened, say so plainly — honesty over drama. Quiet days are the strategy working.
+- Mention specific tickers when they moved or sit near a decision line; skip the rest.
+- No advice, no predictions, no emojis, no hashtags.
+- Recent notes — do not reuse their openings or phrasing:
+{prior}
+
+Return JSON: {{"note": "..."}}"""
+    try:
+        resp = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json",
+                     "HTTP-Referer": "https://stonkbot.ai", "X-Title": "StonkBOT Thinking"},
+            json={"model": MODEL, "messages": [{"role": "user", "content": prompt}],
+                  "temperature": 0.85, "response_format": {"type": "json_object"}},
+            timeout=120,
+        )
+        if resp.status_code != 200:
+            print(f"[WARN] day-note LLM HTTP {resp.status_code}: {resp.text[:160]}", file=sys.stderr)
+            return None
+        content = resp.json()["choices"][0]["message"]["content"]
+        m = re.search(r"\{.*\}", content, re.DOTALL)
+        note = (json.loads(m.group(0)).get("note") or "").strip() if m else ""
+        low = note.lower()
+        if not (60 <= len(note) <= 600):
+            return None
+        if any(tok in low for tok in BANNED_TOKENS):
+            print("[WARN] day-note LLM used banned jargon; falling back", file=sys.stderr)
+            return None
+        return note
+    except Exception as exc:
+        print(f"[WARN] day-note LLM failed: {exc}", file=sys.stderr)
+        return None
 
 ET = timezone(timedelta(hours=-4))  # display only; et_date comes from data files
 
@@ -114,6 +187,7 @@ def main() -> None:
         })
 
     by_sym = {i["symbol"]: i for i in watchlist if i.get("symbol")}
+    boundary_facts: list[str] = []
 
     # ---- boundary transitions -------------------------------------------------
     for i in watchlist:
@@ -123,27 +197,33 @@ def main() -> None:
             continue
         d = f"{today}-{sym}"
         if held and prev <= TOP_N < rank <= EXIT_LINE:
-            add(f"boundary-buffer-{d}", "boundary",
-                f"{sym} slipped into the exit buffer at #{rank} (was #{prev}). "
-                f"Held names leave the basket if they fall past #{EXIT_LINE}.", sym)
+            txt = (f"{sym} slipped into the exit buffer at #{rank} (was #{prev}). "
+                   f"Held names leave the basket if they fall past #{EXIT_LINE}.")
+            boundary_facts.append(f"{sym} (held) slipped to #{rank}, inside the exit buffer")
+            add(f"boundary-buffer-{d}", "boundary", txt, sym)
         elif held and rank > EXIT_LINE and prev <= EXIT_LINE:
-            add(f"boundary-exit-{d}", "boundary",
-                f"{sym} crossed the exit line at #{rank} (was #{prev}). "
-                f"It leaves the basket at the next execution.", sym)
+            txt = (f"{sym} crossed the exit line at #{rank} (was #{prev}). "
+                   f"It leaves the basket at the next execution.")
+            boundary_facts.append(f"{sym} (held) crossed the exit line to #{rank}")
+            add(f"boundary-exit-{d}", "boundary", txt, sym)
         elif not held and prev > BUY_LINE >= rank:
-            add(f"boundary-buyzone-{d}", "boundary",
-                f"{sym} entered the buy zone at #{rank} (was #{prev}) — "
-                f"qualifies for entry at the next review.", sym)
+            txt = (f"{sym} entered the buy zone at #{rank} (was #{prev}) — "
+                   f"qualifies for entry at the next review.")
+            boundary_facts.append(f"{sym} reached #{rank}, inside the buy zone")
+            add(f"boundary-buyzone-{d}", "boundary", txt, sym)
         elif not held and prev <= BUY_LINE < rank:
-            add(f"boundary-buyzone-out-{d}", "boundary",
-                f"{sym} left the buy zone (#{prev} → #{rank}).", sym)
+            txt = f"{sym} left the buy zone (#{prev} → #{rank})."
+            boundary_facts.append(f"{sym} left the buy zone, now #{rank}")
+            add(f"boundary-buyzone-out-{d}", "boundary", txt, sym)
         elif not held and prev > TOP_N >= rank:
-            add(f"boundary-top10-{d}", "boundary",
-                f"{sym} entered the top 10 at #{rank} (was #{prev}) — "
-                f"the buy line is #{BUY_LINE}.", sym)
+            txt = (f"{sym} entered the top 10 at #{rank} (was #{prev}) — "
+                   f"the buy line is #{BUY_LINE}.")
+            boundary_facts.append(f"{sym} moved into the top 10 at #{rank} (buy line is #{BUY_LINE})")
+            add(f"boundary-top10-{d}", "boundary", txt, sym)
         elif not held and prev <= TOP_N < rank:
-            add(f"boundary-top10-out-{d}", "boundary",
-                f"{sym} dropped out of the top 10 (#{prev} → #{rank}).", sym)
+            txt = f"{sym} dropped out of the top 10 (#{prev} → #{rank})."
+            boundary_facts.append(f"{sym} dropped out of the top 10 to #{rank}")
+            add(f"boundary-top10-out-{d}", "boundary", txt, sym)
 
     # ---- decisions (real executions, grouped by ET day) -----------------------
     trades_doc = load_json(TRADES, default=[])
@@ -234,7 +314,34 @@ def main() -> None:
         parts.append("Action queued for next execution: " + "; ".join(act) + ".")
     else:
         parts.append("No action: nothing crossed a decision boundary.")
-    add(f"digest-{today}", "digest", "".join(parts))
+    movers_txt = "; ".join(mover_bits)
+    trades_today = by_day.get(today)
+    trades_txt = ""
+    if trades_today:
+        tt = []
+        if trades_today["SELL"]:
+            tt.append("sold " + ", ".join(trades_today["SELL"]))
+        if trades_today["BUY"]:
+            tt.append("bought " + ", ".join(trades_today["BUY"]))
+        trades_txt = "; ".join(tt)
+
+    det_text = "".join(parts)
+    prior_notes = [e.get("text", "") for e in entries if e.get("type") == "digest"]
+    facts = {
+        "label": label, "n_held": n_held, "cash_pct": f"{cash_pct:.1f}",
+        "equity_k": f"{equity/1000:.1f}K" if equity else "—", "gate_txt": gate_txt,
+        "movers": movers_txt, "boundaries": "; ".join(boundary_facts), "trades": trades_txt,
+    }
+    llm_text = llm_day_note(facts, prior_notes)
+    if llm_text:
+        add(f"digest-{today}", "digest", llm_text)
+        for e in new_entries:
+            if e["id"] == f"digest-{today}":
+                e["rule_text"] = det_text  # audit: keep the deterministic version
+        print("[thinking-sleeve] day note: LLM voice")
+    else:
+        add(f"digest-{today}", "digest", det_text)
+        print("[thinking-sleeve] day note: deterministic fallback")
 
     # ---- write ----------------------------------------------------------------
     entries = sorted(entries + new_entries, key=lambda e: e.get("ts", ""), reverse=True)[:MAX_ENTRIES]
