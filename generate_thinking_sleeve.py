@@ -43,6 +43,8 @@ SIGNAL = DATA / "dm_paper" / "sleeve_rebalance_signal.json"
 TRADES = WEB / "trades_log.json"
 OUT_REPO = BASE / "website" / "thinking_stream.json"
 OUT_WEB = WEB / "thinking_stream.json"
+DIARY_REPO = BASE / "website" / "diary.json"
+DIARY_WEB = WEB / "diary.json"
 
 ERA = "sleeve-v2"
 SLEEVE_ERA_START = "2026-09-28"  # paper account migrated to the momentum sleeve
@@ -140,6 +142,29 @@ def atomic_write(path: Path, payload: dict) -> None:
         os.chown(path, 999, 999)  # stonkai
     except PermissionError:
         pass
+
+
+def write_diary(note_text: str, today: str, now_iso: str, n_trades: int,
+                equity: float, cash_pct: float) -> None:
+    """The Bot Diary card on thinking.html — same analyst note as the stream
+    digest. New era only: legacy-voice entries (no era flag) are dropped."""
+    diary = load_json(DIARY_WEB, default={})
+    keep = [e for e in diary.get("entries", [])
+            if e.get("era") == ERA and e.get("date") != today]
+    entry = {
+        "date": today,
+        "generated_at": now_iso,
+        "era": ERA,
+        "body": note_text,
+        "stats": {
+            "trades": n_trades,
+            "pv": round(equity) if equity else None,
+            "cash_pct": round(cash_pct, 1),
+        },
+    }
+    payload = {"entries": [entry] + keep[:59]}
+    atomic_write(DIARY_REPO, payload)
+    atomic_write(DIARY_WEB, payload)
 
 
 def et_date_of(ts: str) -> str:
@@ -326,22 +351,33 @@ def main() -> None:
         trades_txt = "; ".join(tt)
 
     det_text = "".join(parts)
-    prior_notes = [e.get("text", "") for e in entries if e.get("type") == "digest"]
-    facts = {
-        "label": label, "n_held": n_held, "cash_pct": f"{cash_pct:.1f}",
-        "equity_k": f"{equity/1000:.1f}K" if equity else "—", "gate_txt": gate_txt,
-        "movers": movers_txt, "boundaries": "; ".join(boundary_facts), "trades": trades_txt,
-    }
-    llm_text = llm_day_note(facts, prior_notes)
-    if llm_text:
-        add(f"digest-{today}", "digest", llm_text)
-        for e in new_entries:
-            if e["id"] == f"digest-{today}":
-                e["rule_text"] = det_text  # audit: keep the deterministic version
-        print("[thinking-sleeve] day note: LLM voice")
+    existing_digest = next((e for e in entries if e.get("id") == f"digest-{today}"), None)
+    if existing_digest:
+        # Already narrated today: reuse the same note for the diary so the
+        # diary card and the stream digest stay identical (and skip the LLM call).
+        note_text = existing_digest.get("text", det_text)
+        print("[thinking-sleeve] day note: reused existing digest")
     else:
-        add(f"digest-{today}", "digest", det_text)
-        print("[thinking-sleeve] day note: deterministic fallback")
+        prior_notes = [e.get("text", "") for e in entries if e.get("type") == "digest"]
+        facts = {
+            "label": label, "n_held": n_held, "cash_pct": f"{cash_pct:.1f}",
+            "equity_k": f"{equity/1000:.1f}K" if equity else "—", "gate_txt": gate_txt,
+            "movers": movers_txt, "boundaries": "; ".join(boundary_facts), "trades": trades_txt,
+        }
+        llm_text = llm_day_note(facts, prior_notes)
+        note_text = llm_text or det_text
+        if llm_text:
+            add(f"digest-{today}", "digest", llm_text)
+            for e in new_entries:
+                if e["id"] == f"digest-{today}":
+                    e["rule_text"] = det_text  # audit: keep the deterministic version
+            print("[thinking-sleeve] day note: LLM voice")
+        else:
+            add(f"digest-{today}", "digest", det_text)
+            print("[thinking-sleeve] day note: deterministic fallback")
+
+    n_trades_today = len(trades_today["BUY"]) + len(trades_today["SELL"]) if trades_today else 0
+    write_diary(note_text, today, now_iso, n_trades_today, equity, cash_pct)
 
     # ---- write ----------------------------------------------------------------
     entries = sorted(entries + new_entries, key=lambda e: e.get("ts", ""), reverse=True)[:MAX_ENTRIES]

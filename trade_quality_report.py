@@ -287,12 +287,9 @@ def main():
         os.chown(OUT, 999, 988)  # stonkai:stonkai (was uid 1000 = xcloud)
     except Exception:
         pass
-    # Daily diary — idempotent, one entry per completed US session
-    try:
-        import daily_diary
-        print("diary:", daily_diary.maybe_generate())
-    except Exception as e:
-        print(f"diary skipped: {e}")
+    # Daily diary is written by generate_thinking_sleeve.py (sleeve era,
+    # analyst voice). The legacy daily_diary.maybe_generate() intraday
+    # narrator is retired — do not re-enable without a content review.
     print(f"trade_quality.json written: trips={len(trips)} pf={out['all'].get('profit_factor')} "
           f"whipsaw=${out['whipsaw']['tax_usd']} blocked={out['reentry_rule']['blocked_count']} "
           f"breadth={breadth and breadth.get('pct_above_50dma') if isinstance(breadth, dict) else breadth}")
