@@ -6480,7 +6480,7 @@ function updateDashboard(data, marketStatus) {
             const endPrice = pos.current || data[data.length - 1];
             const startPrice = pos.avg_entry || data[0];
             const trend = endPrice >= startPrice ? 1 : -1;
-            const stroke = isReal ? 'var(--text-secondary)' : (trend > 0 ? 'var(--accent-green)' : 'var(--accent-red)');
+            const stroke = trend > 0 ? 'var(--accent-green)' : 'var(--accent-red)';
             const opacity = isReal ? 0.75 : 0.55;
             return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" style="opacity:${opacity}"><path d="${path}" stroke="${stroke}"/></svg>`;
         }
@@ -10132,7 +10132,7 @@ function updateDashboard(data, marketStatus) {
 
             const companyName = position?.name || position?.company || (typeof companyInfo !== 'undefined' ? companyInfo[symbol]?.company : null) || getCompanyName(symbol) || symbol;
             const livePrice = (position ? position.current : 0) || liveData.price || preGenerated.price || 0;
-            const BotWeight = (preGenerated.Bot_weight != null ? preGenerated.Bot_weight : 0.10);
+            const BotWeight = (preGenerated.sleeve_weight != null ? preGenerated.sleeve_weight : (preGenerated.Bot_weight != null ? preGenerated.Bot_weight : 0.10));
             // Strategy: status is either a held position or a watchlist candidate.
             const isHeld = !!position;
             const tierLabel = isHeld ? 'HELD' : 'WATCHLIST';
