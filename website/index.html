@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v88">
-    <script>(function(){var v='20261002-Bot-v88';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v89">
+    <script>(function(){var v='20261002-Bot-v89';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3747,6 +3747,7 @@
 
             <!-- Return Badge -->
             <div id="portfolio-return-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(255,82,82,0.12); border: 1px solid rgba(255,82,82,0.25); border-radius: 10px; font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--accent-red); margin-bottom: 1rem;">
+                <span style="font-size: 0.62rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px;">today</span>
                 <span id="portfolio-return" class="skeleton skeleton-badge" style="min-width: 60px;">&nbsp;</span>
                 <span id="portfolio-pnl-wrapper" style="color: var(--text-muted); font-weight: 400; font-size: 0.8rem;">(<span id="portfolio-pnl" class="skeleton skeleton-badge" style="min-width: 50px;">&nbsp;</span>)</span>
             </div>
@@ -5478,18 +5479,20 @@ async function loadPnlAttribution() {
         let _SleeveDashboardLoaded = false;
         async function loadSleeveDashboard() {
             try {
-                const [stateRes, miRes] = await Promise.all([
+                const [stateRes, miRes, pdRes] = await Promise.all([
                     fetch('dm_paper/sleeve_state.json?t=' + Date.now()),
-                    fetch('market_indices.json?t=' + Date.now()).catch(() => null)
+                    fetch('market_indices.json?t=' + Date.now()).catch(() => null),
+                    fetch('portfolio_data.json?t=' + Date.now()).catch(() => null)
                 ]);
                 if (!stateRes.ok) return false;
                 const s = await stateRes.json();
+                const pd = (pdRes && pdRes.ok) ? await pdRes.json() : null;
                 const lq = await fetchLiveQuotesIfFresh();
                 const equity = (lq && lq.portfolio_value) || s.equity || 0;
-                const start = 100000;
-                const botRet = ((equity - start) / start) * 100;
+                const lastEq = (pd && pd.account && pd.account.last_equity) || 0;
+                const pnl = lastEq ? equity - lastEq : 0;
+                const botRet = lastEq ? (pnl / lastEq) * 100 : 0;
                 const isPos = botRet >= 0;
-                const pnl = equity - start;
                 _SleeveDashboardLoaded = true;
                 
                 function rmSkeleton(el) {
@@ -5787,15 +5790,15 @@ function updateDashboard(data, marketStatus) {
                 portfolioValueEl.style.marginRight = 'auto';
             }
 
-            // Update return badge (Simple return from $100K baseline)
+            // Update return badge — daily P&L vs Alpaca last_equity (prior close)
             const returnBadge = document.getElementById('portfolio-return-badge');
             const returnEl = document.getElementById('portfolio-return');
             const pnlEl = document.getElementById('portfolio-pnl');
             if (data.account) {
-                const STARTING_VALUE = 100000;  // Jul 7 reset snapshot (16:00 UTC)
                 const portfolioValue = (liveQuotesFresh() ? _liveQuotes.portfolio_value : data.account.portfolio_value) || 0;
-                const totalPl = portfolioValue - STARTING_VALUE;
-                const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
+                const lastEquity = data.account.last_equity || 0;
+                const totalPl = lastEquity ? portfolioValue - lastEquity : 0;
+                const totalReturn = lastEquity ? (totalPl / lastEquity) * 100 : 0;
                 const isPositive = totalReturn >= 0;
                 if (returnBadge) {
                     returnBadge.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
@@ -6122,14 +6125,10 @@ function updateDashboard(data, marketStatus) {
                 }
 
                 // Calculate total P&L
-                let totalPnL = 0;
-                data.positions.forEach(pos => {
-                    totalPnL += pos.unrealized_pl;
-                });
-
                 const portfolioValue = data.account.portfolio_value;
-                const initialValue = 100000;  // Jul 7 reset snapshot (16:00 UTC)
-                const totalReturn = ((portfolioValue - initialValue) / initialValue * 100).toFixed(2);
+                const lastEquity = data.account.last_equity || 0;
+                const totalPnL = lastEquity ? portfolioValue - lastEquity : 0;
+                const totalReturn = (lastEquity ? (totalPnL / lastEquity) * 100 : 0).toFixed(2);
                 const cash = data.account.cash;
 
                 // Update hero metrics
