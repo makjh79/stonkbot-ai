@@ -970,10 +970,15 @@ def main() -> None:
             continue
         sleeve_holding = holdings_lookup.get(sym)
         if not sleeve_holding:
-            # Symbol is in sleeve_state but missing from sleeve_holdings (e.g. a
-            # pending rebalance target). Skip it; the frontend only needs
-            # narratives for positions that actually have indicator data.
-            continue
+            # Held name missing from sleeve_holdings (which tracks the scan top-10,
+            # not the actual basket — a hold-buffer name like TXN at #11-12 is held
+            # but absent there). Fall back to its watchlist entry, which carries
+            # rank + indicator data for all 25 tracked names. Never silently skip
+            # a real position: that leaves an empty popup on the site.
+            sleeve_holding = watchlist_lookup.get(sym)
+        if not sleeve_holding:
+            print(f"[WARN] {sym} held but has no data in sleeve_holdings or watchlist — popup will be sparse", file=sys.stderr)
+            sleeve_holding = {"symbol": sym}
         is_new_entry = sym in incoming_set
         is_exiting = sym in outgoing_set
         holdings_narratives[sym] = build_holdings_narrative(sym, knowledge, headlines.get(sym), sleeve_holding, rebalance_signal, sleeve_state, is_new_entry, is_exiting, quotes.get(sym))
