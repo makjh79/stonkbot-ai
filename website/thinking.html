@@ -307,6 +307,9 @@
 
         loadStream();
         setInterval(loadStream, 60000);
+        // Telegram in-app webviews freeze timers when backgrounded — re-fetch
+        // the moment the page becomes visible again so resumed pages self-heal.
+        document.addEventListener('visibilitychange', function() { if (!document.hidden) loadStream(); });
     </script>
 </body>
 </html>
