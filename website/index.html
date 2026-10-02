@@ -6,8 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261002-Bot-v83">
-    <script>(function(){var v='20261002-Bot-v83';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
+    <meta name="cache-buster-20261002-Bot-v84">
+    <script>(function(){var v='20261002-Bot-v84';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
     (function() {
@@ -3919,6 +3919,9 @@
                 <button class="holdings-filter-btn" onclick="sortHoldings('alpha')" data-sort="alpha">
                     A-Z
                 </button>
+                <button class="holdings-filter-btn" onclick="sortHoldings('rank')" data-sort="rank">
+                    Rank
+                </button>
                 <button class="holdings-filter-btn" onclick="filterHoldings('all'); return false;" data-filter="all">
                     All
                 </button>
@@ -5404,15 +5407,18 @@ async function loadPnlAttribution() {
 
             // Try fetch first
             if (window.fetch) {
-                Promise.all([fetch(url), fetch('./market_status.json?t=' + Date.now())])
-                    .then(([r, msR]) => {
+                Promise.all([fetch(url), fetch('./market_status.json?t=' + Date.now()), fetch('./dm_paper/sleeve_holdings.json?t=' + Date.now()).catch(() => null)])
+                    .then(([r, msR, shR]) => {
                         console.log('Response:', r.status);
                         if (!r.ok) throw new Error('HTTP ' + r.status);
-                        return Promise.all([r.json(), msR.ok ? msR.json() : null]);
+                        return Promise.all([r.json(), msR.ok ? msR.json() : null, (shR && shR.ok) ? shR.json() : null]);
                     })
-                    .then(([data, marketStatus]) => {
+                    .then(([data, marketStatus, sleeveHoldings]) => {
                         console.log('Data loaded:', data.positions.length, 'positions');
                         window.lastPortfolioData = data;
+                        holdingsRankMap = {};
+                        const shList = sleeveHoldings ? (sleeveHoldings.holdings || sleeveHoldings) : [];
+                        (Array.isArray(shList) ? shList : []).forEach(h => { if (h && h.symbol && h.rank != null) holdingsRankMap[h.symbol] = h.rank; });
                         updateDashboard(data, marketStatus);
                         updateRaceValues().catch(e => console.error('updateRaceValues failed:', e));
                         fetchPopupContent().catch(e => console.log('Popup content fetch failed:', e));
@@ -6514,9 +6520,10 @@ function updateDashboard(data, marketStatus) {
                 if (!companyName || companyName === pos.symbol) {
                     companyName = pos.symbol;
                 }
+                const rankVal = (typeof holdingsRankMap !== 'undefined' && holdingsRankMap[pos.symbol] != null) ? holdingsRankMap[pos.symbol] : '';
 
                 return `
-                <div onclick="showTradeDetails('${pos.symbol}')" data-symbol="${pos.symbol}" data-positive="${isPositive}" class="holding-card" role="button" tabindex="0" aria-label="View details for ${pos.symbol}">
+                <div onclick="showTradeDetails('${pos.symbol}')" data-symbol="${pos.symbol}" data-positive="${isPositive}" data-rank="${rankVal}" class="holding-card" role="button" tabindex="0" aria-label="View details for ${pos.symbol}">
                     <div class="holding-main">
                         <div class="holding-symbol">${pos.symbol}</div>
                         <div class="holding-company">${companyName}</div>
@@ -9289,6 +9296,10 @@ function updateDashboard(data, marketStatus) {
                     const symA = a.querySelector('.holding-symbol')?.textContent || '';
                     const symB = b.querySelector('.holding-symbol')?.textContent || '';
                     return symA.localeCompare(symB);
+                } else if (sortType === 'rank') {
+                    const rankA = parseInt(a.dataset.rank) || 999;
+                    const rankB = parseInt(b.dataset.rank) || 999;
+                    return rankA - rankB; // Strongest momentum rank first
                 }
                 return 0;
             });
@@ -9791,6 +9802,7 @@ function updateDashboard(data, marketStatus) {
 
         // Global cache for popup content
         let popupContentCache = {};
+        let holdingsRankMap = {}; // symbol -> momentum rank (from sleeve_holdings.json)
         let popupContentLastFetch = 0;
         let watchlistNarrativesCache = {};
         let xSentimentCache = null;
