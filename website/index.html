@@ -30,7 +30,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* NEW PREMIUM DARK MODE - World Class Fintech */
+            /* NEW PREMIUM DARK MODE - World Class Finance */
             --bg-base: #0c0d17;        /* Deep navy background */
             --bg-surface: #161822;     /* Card background */
             --bg-elevated: #1e2030;    /* Elevated cards */
@@ -4571,7 +4571,7 @@ async function loadPnlAttribution() {
         </div>
     </div>
 
-    <!-- Activity Log Modal - Fintech Style -->
+    <!-- Activity Log Modal - Premium Style -->
     <div id="activityLogModal" class="chart-modal">
         <div class="chart-modal-content" style="max-width: 600px;">
             <div class="chart-modal-header" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(168, 85, 247, 0.1));">
@@ -5293,10 +5293,10 @@ async function loadPnlAttribution() {
                     window.allocationChart = new Chart(allocCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Tech Giants', 'AI/Growth', 'Fintech', 'Defense/Income', 'Cash'],
+                            labels: ['Information Technology', 'Health Care', 'Communication Services', 'Consumer Discretionary', 'Consumer Staples', 'Industrials', 'Cash'],
                             datasets: [{
-                                data: [0, 0, 0, 0, 0], // Will be populated by live data
-                                backgroundColor: ['#fbbf24', '#f97316', '#06b6d4', '#22c55e', '#64748b'],
+                                data: [0, 0, 0, 0, 0, 0, 0], // Will be populated by live data
+                                backgroundColor: ['#06b6d4', '#a78bfa', '#f59e0b', '#f97316', '#22c55e', '#60a5fa', '#9ca3af'],
                                 borderWidth: 0,
                                 hoverOffset: 4
                             }]
@@ -5893,61 +5893,42 @@ function updateDashboard(data, marketStatus) {
 
         // Update allocation donut chart with live data
         function updateAllocationChart(data) {
-            console.log('updateAllocationChart called', data);
             if (!data.positions || !data.account) {
                 console.log('Missing positions or account data');
                 return;
             }
 
-            const catMap = {
-                'Tech Giants': ['AAPL', 'AMZN', 'GOOGL', 'NVDA'],
-                'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                'Fintech': ['HOOD', 'UPST', 'DKNG'],
-                'Defense/Income': ['AVGO']
-            };
-
-            const catValues = { 'Tech Giants': 0, 'AI/Growth': 0, 'Fintech': 0, 'Defense/Income': 0 };
-
+            // GICS sector aggregation (Global Industry Classification Standard)
+            const sectorValues = {};
             data.positions.forEach(pos => {
-                for (const [cat, symbols] of Object.entries(catMap)) {
-                    if (symbols.includes(pos.symbol)) {
-                        catValues[cat] += pos.market_value;
-                        break;
-                    }
-                }
+                const sector = getGicsSector(pos.symbol);
+                if (sector === 'Cash') return; // represented by the cash slice below
+                sectorValues[sector] = (sectorValues[sector] || 0) + pos.market_value;
             });
 
             const cashVal = data.account.cash;
             const equityVal = data.account.equity || data.account.portfolio_value;
-            const totalInvested = Object.values(catValues).reduce((a, b) => a + b, 0);
-
-            // Calculate percentages based on INVESTED capital (sectors sum to 100%)
-            const techPct = totalInvested > 0 ? ((catValues['Tech Giants'] / totalInvested) * 100) : 0;
-            const aiPct = totalInvested > 0 ? ((catValues['AI/Growth'] / totalInvested) * 100) : 0;
-            const fintechPct = totalInvested > 0 ? ((catValues['Fintech'] / totalInvested) * 100) : 0;
-            const defensePct = totalInvested > 0 ? ((catValues['Defense/Income'] / totalInvested) * 100) : 0;
+            const totalInvested = Object.values(sectorValues).reduce((a, b) => a + b, 0);
 
             // Cash/margin as % of equity
             const cashPct = equityVal > 0 ? ((cashVal / equityVal) * 100) : 0;
             const investedPct = equityVal > 0 ? ((totalInvested / equityVal) * 100) : 0;
 
-            console.log('Allocation update:', {techPct, aiPct, fintechPct, defensePct, investedPct, cashPct});
+            // Sectors sorted by value desc; percentages of INVESTED capital (sectors sum to 100%)
+            const activeSectors = Object.entries(sectorValues)
+                .filter(([, v]) => v > 0)
+                .sort((a, b) => b[1] - a[1]);
+            const labels = activeSectors.map(([s]) => s).concat(['Cash']);
+            const colors = labels.map(l => (GICS_SECTORS[l] ? GICS_SECTORS[l].color : '#9ca3af'));
+            const values = activeSectors.map(([, v]) => totalInvested > 0 ? ((v / totalInvested) * 100) : 0)
+                .concat([Math.max(0, cashPct)]);
 
             // Update Donut Chart
-            console.log('Updating chart with data:', [techPct, aiPct, fintechPct, defensePct, Math.max(0, cashPct)]);
             if (window.allocationChart) {
-                console.log('Chart exists, updating...');
-                window.allocationChart.data.datasets[0].data = [
-                    techPct,
-                    aiPct,
-                    fintechPct,
-                    defensePct,
-                    Math.max(0, cashPct)
-                ];
+                window.allocationChart.data.labels = labels;
+                window.allocationChart.data.datasets[0].data = values;
+                window.allocationChart.data.datasets[0].backgroundColor = colors;
                 window.allocationChart.update('none');
-                console.log('Chart updated');
-            } else {
-                console.log('window.allocationChart not found');
             }
 
             // Update center text
@@ -5962,29 +5943,8 @@ function updateDashboard(data, marketStatus) {
             if (marginBadge) {
                 marginBadge.style.display = investedPct > 100 ? 'block' : 'none';
             }
-
-            // Update legend percentages
-            const legendTech = document.getElementById('legend-mega');
-            const legendAI = document.getElementById('legend-ai');
-            const legendFintech = document.getElementById('legend-spec');
-            const legendDefense = document.getElementById('legend-defense');
-            const legendCash = document.getElementById('legend-cash');
-
-            if (legendTech) legendTech.textContent = techPct.toFixed(0) + '%';
-            if (legendAI) legendAI.textContent = aiPct.toFixed(0) + '%';
-            if (legendFintech) legendFintech.textContent = fintechPct.toFixed(0) + '%';
-            if (legendDefense) legendDefense.textContent = defensePct.toFixed(0) + '%';
-
-            if (legendCash) {
-                if (cashPct < 0) {
-                    legendCash.textContent = Math.abs(cashPct).toFixed(0) + '%';
-                    legendCash.style.color = 'var(--accent-gold)';
-                } else {
-                    legendCash.textContent = cashPct.toFixed(0) + '%';
-                    legendCash.style.color = 'var(--text-secondary)';
-                }
-            }
         }
+
 
         // Update stonk meter comparison
         function updateStonkMeter(stonkReturn, sp500Return) {
@@ -6008,65 +5968,55 @@ function updateDashboard(data, marketStatus) {
             }
         }
 
-        // Sector definitions - matches allocation popup
-        const SECTOR_DEFINITIONS = {
-            'tech-giants': {
-                symbols: ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'META', 'NVDA', 'NFLX', 'CRM', 'ORCL', 'SAP'],
-                name: 'Tech Giants',
-                color: '#fbbf24',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
-                description: 'Large-cap tech leaders'
-            },
-            'ai-growth': {
-                symbols: ['AMD', 'PLTR', 'CRWD', 'NET', 'DDOG', 'SNOW', 'OKTA', 'FSLY', 'TWLO', 'ASAN', 'ZM', 'AI', 'PATH', 'SOUN', 'CRNC'],
-                name: 'AI/Growth',
-                color: '#f97316',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72v.78h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h3v-.78c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2z"></path><circle cx="12" cy="11" r="1" fill="currentColor"></circle></svg>',
-                description: 'AI-enabled software & growth tech'
-            },
-            'fintech': {
-                symbols: ['HOOD', 'UPST', 'SQ', 'SOFI', 'COIN', 'AFRM', 'LMND', 'ROOT', 'RELY', 'PYPL'],
-                name: 'Fintech',
-                color: '#06b6d4',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>',
-                description: 'Digital financial services'
-            },
-            'consumer-growth': {
-                symbols: ['DKNG', 'PENN', 'CHWY', 'ETSY', 'LULU', 'NKE', 'SHOP', 'ABNB', 'UBER', 'LYFT', 'DASH', 'COUR', 'RBLX'],
-                name: 'Consumer/Gaming',
-                color: '#ec4899',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"></rect><line x1="9" y1="12" x2="9.01" y2="12"></line><line x1="15" y1="12" x2="15.01" y2="12"></line></svg>',
-                description: 'Consumer discretionary & gaming'
-            },
-            'ev-auto': {
-                symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID', 'GM', 'F', 'RACE'],
-                name: 'EV/Auto',
-                color: '#10b981',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"></path><circle cx="6.5" cy="16.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg>',
-                description: 'Electric vehicles & automotive'
-            },
-            'semiconductors': {
-                symbols: ['AVGO', 'MU', 'LRCX', 'AMAT', 'KLAC', 'SNPS', 'CDNS', 'MRVL', 'NXPI', 'QCOM', 'INTC', 'TXN', 'ADI'],
-                name: 'Semiconductors',
-                color: '#22c55e',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line></svg>',
-                description: 'Chip makers & equipment'
-            },
-            'crypto': {
-                symbols: ['MSTR', 'RIOT', 'MARA', 'BITF', 'CLSK', 'HUT', 'CORZ'],
-                name: 'Crypto',
-                color: '#a855f7',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.5 9.5c.5-1 1.79-1.5 2.5-1.5 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.71 0-2-.5-2.5-1.5"></path><path d="M12 7v2"></path><path d="M12 15v2"></path></svg>',
-                description: 'Bitcoin & crypto miners'
-            },
-            'other': {
-                symbols: [],
-                name: 'Other',
-                color: '#8b5cf6',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>',
-                description: 'Miscellaneous holdings'
-            }
+        // ============================================
+        // GICS SECTOR CLASSIFICATION
+        // Global Industry Classification Standard — the professional
+        // standard used in official financial reports (MSCI / S&P).
+        // ============================================
+        const GICS_SECTORS = {
+            'Information Technology': { symbols: ['AAPL', 'MSFT', 'NVDA', 'AVGO', 'ADBE', 'CSCO', 'ORCL', 'QCOM', 'TXN', 'INTC', 'AMD', 'AMAT', 'MU', 'CRM', 'NOW', 'INTU', 'MRVL'], color: '#06b6d4', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></svg>', description: 'Software, semiconductors, hardware & IT services' },
+            'Health Care': { symbols: ['AMGN', 'GILD', 'ISRG', 'VRTX', 'REGN', 'ILMN'], color: '#a78bfa', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>', description: 'Biotech, pharma, devices & life-science tools' },
+            'Communication Services': { symbols: ['GOOGL', 'META', 'NFLX'], color: '#f59e0b', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>', description: 'Media, entertainment & interactive services' },
+            'Consumer Discretionary': { symbols: ['AMZN', 'BKNG', 'SBUX'], color: '#f97316', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>', description: 'Retail, travel & leisure' },
+            'Consumer Staples': { symbols: ['COST', 'PEP', 'MDLZ', 'MNST'], color: '#22c55e', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>', description: 'Food, beverage & household essentials' },
+            'Industrials': { symbols: ['ADP', 'PAYX'], color: '#60a5fa', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>', description: 'Capital goods & commercial services' },
+            'Financials': { symbols: [], color: '#eab308', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>', description: 'Banks, insurers & financial services' },
+            // Defensive / non-equity sleeves (not GICS sectors — shown only when
+            // the DM-6 gate flips the portfolio defensive)
+            'Broad Market ETF': { symbols: ['QQQ'], color: '#9ca3af', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>', description: 'Broad market index exposure' },
+            'Gold': { symbols: ['GLD'], color: '#9ca3af', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>', description: 'Gold bullion exposure' },
+            'Long-Term Treasuries': { symbols: ['TLT'], color: '#9ca3af', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>', description: '20+ year US Treasury bonds' },
+            'Treasury Bills': { symbols: ['SHY'], color: '#9ca3af', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>', description: 'Short-duration US Treasuries' },
+            'Cash': { symbols: ['CASH'], color: '#9ca3af', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>', description: 'Cash & equivalents' },
+            'Other': { symbols: [], color: '#9ca3af', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>', description: 'Holdings outside the mapped universe' }
         };
+
+        // Symbol → sector lookup (flat map)
+        const GICS_SYMBOL_MAP = {};
+        for (const [_gicsName, _gicsDef] of Object.entries(GICS_SECTORS)) {
+            _gicsDef.symbols.forEach(s => { GICS_SYMBOL_MAP[s] = _gicsName; });
+        }
+
+        function getGicsSector(symbol) {
+            return GICS_SYMBOL_MAP[symbol] || 'Other';
+        }
+
+        function gicsSlug(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+
+        // Sector definitions keyed by slug — consumed by renderSectorBreakdown()
+        const SECTOR_DEFINITIONS = {};
+        for (const [_sdName, _sdDef] of Object.entries(GICS_SECTORS)) {
+            SECTOR_DEFINITIONS[gicsSlug(_sdName)] = {
+                symbols: _sdDef.symbols,
+                name: _sdDef.name,
+                color: _sdDef.color,
+                icon: _sdDef.icon,
+                description: _sdDef.description
+            };
+        }
+
 
         // Minimal fallback - only used if ALL live data sources fail
         const FALLBACK_DATA = {
@@ -6219,37 +6169,22 @@ function updateDashboard(data, marketStatus) {
                     marketStatusText.textContent = statusPrefix + ' - Account Value $' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + ' (' + (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toLocaleString('en-US', {maximumFractionDigits: 0}) + ')';
                 }
 
-                // Update sector heatmap performance
-                const sectorPerformance = {
-                    'mega': { value: 0, weight: 0 },
-                    'ai': { value: 0, weight: 0 },
-                    'fintech': { value: 0, weight: 0 },
-                    'defense': { value: 0, weight: 0 }
-                };
-
-                const sectorSymbols = {
-                    'mega': ['AAPL', 'AMZN', 'GOOGL', 'NVDA'],
-                    'ai': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                    'fintech': ['HOOD', 'UPST', 'DKNG'],
-                    'defense': ['AVGO']
-                };
-
+                // Update sector heatmap performance (GICS sectors)
+                const sectorPerformance = {};
                 data.positions.forEach(pos => {
-                    for (const [sector, symbols] of Object.entries(sectorSymbols)) {
-                        if (symbols.includes(pos.symbol)) {
-                            sectorPerformance[sector].value += (pos.unrealized_plpc * pos.market_value);
-                            sectorPerformance[sector].weight += pos.market_value;
-                            break;
-                        }
-                    }
+                    const sector = getGicsSector(pos.symbol);
+                    if (!sectorPerformance[sector]) sectorPerformance[sector] = { value: 0, weight: 0 };
+                    sectorPerformance[sector].value += (pos.unrealized_plpc * pos.market_value);
+                    sectorPerformance[sector].weight += pos.market_value;
                 });
 
                 // Update sector performance cards
-                for (const [sector, sectorData] of Object.entries(sectorPerformance)) {
-                    const cell = document.getElementById('heat-' + sector);
-                    const valEl = document.getElementById('heat-' + sector + '-val');
-                    if (cell && valEl && sectorData.weight > 0) {
-                        const pct = (sectorData.value / sectorData.weight);
+                for (const [sector, agg] of Object.entries(sectorPerformance)) {
+                    const slug = gicsSlug(sector);
+                    const cell = document.getElementById('heat-' + slug);
+                    const valEl = document.getElementById('heat-' + slug + '-val');
+                    if (cell && valEl && agg.weight > 0) {
+                        const pct = (agg.value / agg.weight);
 
                         // Format display
                         valEl.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
@@ -6266,6 +6201,7 @@ function updateDashboard(data, marketStatus) {
                         }
                     }
                 }
+
 
                 // Update activity feed
                 updateActivityFeed(timestamp);
@@ -6404,19 +6340,11 @@ function updateDashboard(data, marketStatus) {
             return names[symbol] || symbol;
         }
 
-        // Get category for each stock
+        // Get GICS sector for each stock
         function getCategory(symbol) {
-            const categories = {
-                'Tech Giants': ['AAPL', 'AMZN', 'GOOGL', 'NVDA'],
-                'AI/Growth': ['AMD', 'PLTR', 'APP', 'CRWD'],
-                'Fintech': ['HOOD', 'UPST', 'DKNG'],
-                'Defense/Income': ['AVGO']
-            };
-            for (const [cat, symbols] of Object.entries(categories)) {
-                if (symbols.includes(symbol)) return cat;
-            }
-            return '';
+            return GICS_SYMBOL_MAP[symbol] || '';
         }
+
 
         // Get trending icon based on P&L
         function getTrendIcon(plpc) {
@@ -6428,11 +6356,11 @@ function updateDashboard(data, marketStatus) {
             return '▼';
         }
 
-        // Get category color
+        // Get GICS sector color
         function getCategoryColor(cat) {
-            const colors = { 'Tech Giants': '#fbbf24', 'AI/Growth': '#f97316', 'Fintech': '#06b6d4', 'Defense/Income': '#22c55e' };
-            return colors[cat] || '#9ca3af';
+            return (GICS_SECTORS[cat] && GICS_SECTORS[cat].color) || '#9ca3af';
         }
+
 
         // Generate a wider, smoother SVG sparkline; prefers real 30-day history
         function generateSparkline(pos) {
@@ -7687,16 +7615,12 @@ function updateDashboard(data, marketStatus) {
                     const cashValue = data.account.cash || 0;
                     const equityValue = data.account.equity || portfolioValue || 0;
 
-                    const categories = {
-                        'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'META', 'NVDA', 'NFLX', 'CRM', 'ORCL', 'SAP'], color: '#fbbf24', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>', positions: [] },
-                        'AI/Growth': { symbols: ['AMD', 'PLTR', 'CRWD', 'NET', 'DDOG', 'SNOW', 'OKTA', 'FSLY', 'TWLO', 'ASAN', 'ZM', 'AI', 'PATH', 'SOUN', 'CRNC'], color: '#f97316', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72v.78h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h3v-.78c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2z"></path><circle cx="12" cy="11" r="1" fill="currentColor"></circle></svg>', positions: [] },
-                        'Fintech': { symbols: ['HOOD', 'UPST', 'SQ', 'SOFI', 'COIN', 'AFRM', 'LMND', 'ROOT', 'RELY', 'PYPL'], color: '#06b6d4', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>', positions: [] },
-                        'Consumer/Gaming': { symbols: ['DKNG', 'PENN', 'CHWY', 'ETSY', 'LULU', 'NKE', 'SHOP', 'ABNB', 'UBER', 'LYFT', 'DASH', 'COUR', 'RBLX'], color: '#ec4899', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"></rect><line x1="9" y1="12" x2="9.01" y2="12"></line><line x1="15" y1="12" x2="15.01" y2="12"></line></svg>', positions: [] },
-                        'EV/Auto': { symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID', 'GM', 'F', 'RACE'], color: '#10b981', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"></path><circle cx="6.5" cy="16.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg>', positions: [] },
-                        'Semiconductors': { symbols: ['AVGO', 'MU', 'LRCX', 'AMAT', 'KLAC', 'SNPS', 'CDNS', 'MRVL', 'NXPI', 'QCOM', 'INTC', 'TXN', 'ADI'], color: '#22c55e', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line></svg>', positions: [] },
-                        'Crypto': { symbols: ['MSTR', 'RIOT', 'MARA', 'BITF', 'CLSK', 'HUT', 'CORZ'], color: '#a855f7', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.5 9.5c.5-1 1.79-1.5 2.5-1.5 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.71 0-2-.5-2.5-1.5"></path><path d="M12 7v2"></path><path d="M12 15v2"></path></svg>', positions: [] },
-                        'Other': { symbols: [], color: '#8b5cf6', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>', positions: [] }
-                    };
+                    // GICS sector classification (Global Industry Classification Standard)
+                    const categories = {};
+                    for (const [catName, catDef] of Object.entries(GICS_SECTORS)) {
+                        categories[catName] = { symbols: catDef.symbols, color: catDef.color, icon: catDef.icon, positions: [] };
+                    }
+
 
                     positions.forEach(pos => {
                         let categorized = false;
@@ -7882,14 +7806,12 @@ function updateDashboard(data, marketStatus) {
         // Helper function to render allocation HTML (used for cached data fallback)
         function renderAllocationHTML(content, portfolioValue, positions, cashValue, equityValue) {
             // Categorize positions - DYNAMIC from actual portfolio
-            const categories = {
-                'Tech Giants': { symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], color: '#fbbf24', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>', positions: [] },
-                'AI/Growth': { symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], color: '#f97316', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72v.78h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h3v-.78c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2z"></path><circle cx="12" cy="11" r="1" fill="currentColor"></circle></svg>', positions: [] },
-                'Fintech': { symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], color: '#06b6d4', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>', positions: [] },
-                'EV/Auto': { symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], color: '#10b981', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"></path><circle cx="6.5" cy="16.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg>', positions: [] },
-                'Defense/Income': { symbols: ['AVGO'], color: '#22c55e', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>', positions: [] },
-                'Other': { symbols: [], color: '#8b5cf6', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>', positions: [] }
-            };
+            // GICS sector classification (Global Industry Classification Standard)
+            const categories = {};
+            for (const [catName, catDef] of Object.entries(GICS_SECTORS)) {
+                categories[catName] = { symbols: catDef.symbols, color: catDef.color, icon: catDef.icon, positions: [] };
+            }
+
 
             // Add "Other" category for any positions not in defined sectors
             positions.forEach(pos => {
@@ -8643,62 +8565,21 @@ function updateDashboard(data, marketStatus) {
         // SECTOR POPUP FUNCTIONALITY
         // ============================================
 
-        const sectorData = {
-            'mega': {
-                name: 'Tech Giants',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
-                return: -2.70,
-                portfolioWeight: 24.5,
-                holdings: [
-                    { symbol: 'AAPL', name: 'Apple Inc', shares: '25', return: -2.12 },
-                    { symbol: 'GOOGL', name: 'Alphabet Inc', shares: '15', return: -0.24 },
-                    { symbol: 'META', name: 'Meta Platforms', shares: '5', return: -6.28 },
-                    { symbol: 'MSFT', name: 'Microsoft', shares: '10', return: -3.31 },
-                    { symbol: 'NVDA', name: 'NVIDIA Corp', shares: '17', return: -4.11 }
-                ],
-                aiInsight: 'Core tech positions. Diversified across chips, cloud, and social media.',
+        // Demo fallback data keyed by GICS sector slug (used only if live fetch fails)
+        const sectorData = {};
+        for (const [_sdName2, _sdDef2] of Object.entries(GICS_SECTORS)) {
+            if (_sdName2 === 'Other') continue;
+            sectorData[gicsSlug(_sdName2)] = {
+                name: _sdName2,
+                icon: _sdDef2.icon,
+                return: 0,
+                portfolioWeight: 0,
+                holdings: [],
+                aiInsight: _sdDef2.description,
                 riskLevel: 'Medium'
-            },
-            'ai': {
-                name: 'AI/Growth',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72v.78h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h3v-.78c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2z"></path><circle cx="12" cy="11" r="1" fill="currentColor"></circle></svg>',
-                return: -6.37,
-                portfolioWeight: 29.6,
-                holdings: [
-                    { symbol: 'AMD', name: 'AMD', shares: '35', return: -8.24 },
-                    { symbol: 'APP', name: 'AppLovin', shares: '8', return: -3.13 },
-                    { symbol: 'CRWD', name: 'CrowdStrike', shares: '3', return: -3.27 },
-                    { symbol: 'PLTR', name: 'Palantir', shares: '45', return: -4.74 }
-                ],
-                aiInsight: 'High-growth AI names seeing volatility. Maintaining for upside.',
-                riskLevel: 'High'
-            },
-            'fintech': {
-                name: 'Fintech',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>',
-                return: -4.03,
-                portfolioWeight: 5.4,
-                holdings: [
-                    { symbol: 'HOOD', name: 'Robinhood', shares: '25', return: -1.58 },
-                    { symbol: 'SOFI', name: 'SoFi', shares: '200', return: -5.61 }
-                ],
-                aiInsight: 'Small fintech exposure. Higher risk/reward profile.',
-                riskLevel: 'High'
-            },
-            'defense': {
-                name: 'Defense/Income',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
-                return: -2.90,
-                portfolioWeight: 4.5,
-                holdings: [
-                    { symbol: 'AVGO', name: 'Broadcom', shares: '5', return: -5.87 },
-                    { symbol: 'SCHD', name: 'Schwab US Div ETF', shares: '30', return: -1.52 },
-                    { symbol: 'SGOV', name: 'iShares Treasury', shares: '15', return: 0.02 }
-                ],
-                aiInsight: 'Income and stability anchor. SCHD + Treasuries for downside protection.',
-                riskLevel: 'Low'
-            }
-        };
+            };
+        }
+
 
         async function showSectorDetails(sectorId) {
             console.log('Opening sector popup for:', sectorId);
@@ -8720,14 +8601,18 @@ function updateDashboard(data, marketStatus) {
             const totalValue = portfolioData.account?.portfolio_value || SLEEVE_ERA_BASELINE;
 
             // Sector definitions - DYNAMIC from actual portfolio holdings
-            const sectorConfig = {
-                'mega': { name: 'Tech Giants', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>', symbols: ['AAPL', 'AMZN', 'GOOGL', 'NVDA'], riskLevel: 'Medium', aiInsight: 'Core tech positions. Diversified across chips, search, cloud, and AI.' },
-                'ai': { name: 'AI/Growth', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72v.78h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h3v-.78c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2z"></path><circle cx="12" cy="11" r="1" fill="currentColor"></circle></svg>', symbols: ['AMD', 'PLTR', 'APP', 'CRWD'], riskLevel: 'High', aiInsight: 'High-growth AI names seeing volatility. Maintaining for upside.' },
-                'fintech': { name: 'Fintech', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>', symbols: ['HOOD', 'UPST', 'DKNG', 'SOFI'], riskLevel: 'High', aiInsight: 'Fintech and betting exposure. Higher risk/reward profile.' },
-                'ev-auto': { name: 'EV/Auto', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"></path><circle cx="6.5" cy="16.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg>', symbols: ['TSLA', 'XPEV', 'NIO', 'LI', 'RIVN', 'LCID'], riskLevel: 'High', aiInsight: 'EV and_auto disruptive growth. High volatility, high potential.' },
-                'defense': { name: 'Defense/Income', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>', symbols: ['AVGO'], riskLevel: 'Low', aiInsight: 'Broadcom as stability anchor with dividend income.' },
-                'other': { name: 'Other', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>', symbols: [], riskLevel: 'Medium', aiInsight: 'Positions not in defined sectors.' }
-            };
+            // GICS sector definitions - DYNAMIC from actual portfolio holdings
+            const sectorConfig = {};
+            for (const [_scName, _scDef] of Object.entries(GICS_SECTORS)) {
+                sectorConfig[gicsSlug(_scName)] = {
+                    name: _scName,
+                    icon: _scDef.icon,
+                    symbols: _scDef.symbols,
+                    riskLevel: 'Medium',
+                    aiInsight: _scDef.description
+                };
+            }
+
 
             const config = sectorConfig[sectorId];
             if (!config) return;
@@ -9615,7 +9500,7 @@ function updateDashboard(data, marketStatus) {
             },
             'HOOD': {
                 company: 'Robinhood Markets',
-                thesis: 'Fintech disruption play with crypto trading boom',
+                thesis: 'Digital payments disruption play with crypto trading boom',
                 catalyst: 'Bitcoin ETF inflows driving retail trading volume',
                 risk: 'Regulatory uncertainty around crypto',
                 confidence: 'Strong volume + sector momentum',
@@ -10577,7 +10462,7 @@ function updateDashboard(data, marketStatus) {
         }
 
         // ============================================
-        // ACTIVITY LOG MODAL - Fintech Style
+        // ACTIVITY LOG MODAL - Premium Style
         // ============================================
         let currentActivityFilter = 'all';
         let activityDataCache = [];
@@ -11195,7 +11080,7 @@ function updateDashboard(data, marketStatus) {
             'SHOP': { company: 'Shopify Inc.', description: 'Shopify provides e-commerce software and services that let merchants build online stores, process payments and manage logistics. It powers millions of businesses through subscriptions and merchant solutions revenue.', strategy: 'E-commerce platform', catalyst: 'AI tools + logistics network', risk: 'Amazon competition' },
             'SNOW': { company: 'Snowflake Inc.', description: 'Snowflake offers a cloud-native data platform that lets organizations store, query and share data across clouds. Its architecture separates compute and storage, enabling scalable analytics and data collaboration.', strategy: 'Data cloud platform', catalyst: 'AI data pipelines + partnerships', risk: 'Growth deceleration' },
             'SOFI': { company: 'SoFi Technologies', description: 'SoFi Technologies offers digital financial services including student and personal loans, mortgages, investment accounts, credit cards and banking. It operates as a neobank with a technology platform called Galileo.', strategy: 'Digital finance platform', catalyst: 'Bank charter + Galileo growth', risk: 'Student loan headwinds' },
-            'SQ': { company: 'Block Inc.', description: 'Block, formerly Square, builds financial services for businesses and consumers. Its Square ecosystem helps sellers accept payments and manage operations, while Cash App provides peer-to-peer payments, banking and investing.', strategy: 'Fintech ecosystem', catalyst: 'Cash App + Square integration', risk: 'Consumer spending' },
+            'SQ': { company: 'Block Inc.', description: 'Block, formerly Square, builds financial services for businesses and consumers. Its Square ecosystem helps sellers accept payments and manage operations, while Cash App provides peer-to-peer payments, banking and investing.', strategy: 'Digital payments ecosystem', catalyst: 'Cash App + Square integration', risk: 'Consumer spending' },
             'TSLA': { company: 'Tesla Inc.', description: 'Tesla designs and manufactures electric vehicles, energy storage systems and solar products. It is also developing autonomous driving software, robotics and energy generation and storage solutions at scale.', strategy: 'EV + energy + autonomy', catalyst: 'Robotaxi + Model 2 + energy storage', risk: 'Execution + competition' },
             'TXN': { company: 'Texas Instruments', description: 'Texas Instruments designs and manufactures analog and embedded semiconductors. Its chips are used in industrial, automotive, communications and consumer electronics, with a focus on long-life cycle products.', strategy: 'Analog + embedded semiconductors', catalyst: 'Industrial/auto chip demand recovery + capex discipline', risk: 'Semiconductor cycle timing' },
             'UPST': { company: 'Upstart Holdings', description: 'Upstart Holdings operates an AI-powered lending platform that partners with banks and credit unions. Its models assess credit risk using non-traditional variables to approve more borrowers at lower rates.', strategy: 'AI lending platform', catalyst: 'Rate cuts + loan volume', risk: 'Credit cycle sensitivity' },
