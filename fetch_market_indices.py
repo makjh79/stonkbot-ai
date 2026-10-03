@@ -32,7 +32,11 @@ RESET_PRICES = {
     'QQQ': 737.93        # Invesco QQQ NASDAQ ETF (Alpaca, Sep 29 2026 close)
 }
 
-EXPERIMENT_START_VALUE = 100000  # $100K starting value
+# Index "current_value" = what the Bot's Sep 29 sleeve-era stake ($87,708.12,
+# matching the frontend SLEEVE_ERA_BASELINE) would be worth had it tracked the
+# index. Same dollar baseline on both sides of the race card so the $ and %
+# comparisons tell the same story (owner feedback 2026-10-03).
+EXPERIMENT_START_VALUE = 87708.12
 
 def _get_hub():
     """Return Alpaca data hub, importing lazily to avoid hard dependency at import time."""

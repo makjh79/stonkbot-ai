@@ -102,7 +102,7 @@ def build_payload(hub) -> dict:
         'day_change_pct': round((pv / prev_pv - 1) * 100, 2) if prev_pv else None,
         'spy': {
             'price': spy_price,
-            'value': round(spy_price / SPY_RESET_PRICE * 100000, 2) if spy_price else None,
+            'value': round(spy_price / SPY_RESET_PRICE * ERA_BASELINE, 2) if spy_price else None,
             'return_pct': round((spy_price / SPY_RESET_PRICE - 1) * 100, 2) if spy_price else None,
         },
         'positions': live_positions,
