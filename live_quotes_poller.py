@@ -30,8 +30,8 @@ PORTFOLIO_FILE = Path('/var/www/hedge-fund-website/portfolio_data.json')
 OUT_FILE = Path('/var/www/hedge-fund-website/live_quotes.json')
 LOG_FILE = Path('/opt/stonk-ai/logs/live_quotes.log')
 
-SPY_RESET_PRICE = 747.71  # Jul 7, 2026 baseline — matches fetch_market_indices RESET_PRICES
-EXPERIMENT_BASELINE = 99866.86  # Jul 7 reset snapshot (16:00 UTC); owner call: all returns from Jul 7
+SPY_RESET_PRICE = 764.20  # Sep 29, 2026 sleeve-era baseline — matches fetch_market_indices RESET_PRICES
+ERA_BASELINE = 87708.12  # account equity at Sep 29 close — first full day in the Bot basket (owner call 2026-10-03: option A)
 POLL_SEC = 15
 IDLE_SEC = 300
 
@@ -95,8 +95,10 @@ def build_payload(hub) -> dict:
         'source': 'alpaca-sip',
         'portfolio_value': round(pv, 2),
         'cash': round(cash, 2),
-        'total_pl': total_unrealized_pl,
-        'total_return_pct': round((pv - EXPERIMENT_BASELINE) / EXPERIMENT_BASELINE * 100, 2),
+        # Display P&L vs the sleeve-era baseline (Sep 29 close) so every surface matches.
+        'total_pl': round(pv - ERA_BASELINE, 2),
+        'unrealized_pl': total_unrealized_pl,
+        'total_return_pct': round((pv - ERA_BASELINE) / ERA_BASELINE * 100, 2),
         'day_change_pct': round((pv / prev_pv - 1) * 100, 2) if prev_pv else None,
         'spy': {
             'price': spy_price,

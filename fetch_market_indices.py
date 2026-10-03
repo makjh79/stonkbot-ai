@@ -20,14 +20,16 @@ logger = logging.getLogger(__name__)
 # Alpaca config
 ALPACA_CONFIG_FILE = Path(__file__).parent / "alpaca_config.json"
 
-# July 7, 2026 reset closes — ONE window for the whole site (2026-07-29, owner call).
-# Hero card, scoreboard, race card, progress bars and risk_stats all measure
-# from the Jul 7 strategy reset; bot pv baseline is the Jul 7 16:00 UTC check
-# ($99,866.86). Earlier Jun 4 baselines mixed windows across surfaces.
+# Sep 29, 2026 sleeve-era closes — ONE window for the whole site (2026-10-03,
+# owner call: option A). The Bot sleeve took over the Alpaca account at the
+# Sep 28-29 migration; comparisons measure from the first full sleeve-era
+# close so the dead intraday era's losses don't contaminate the current
+# strategy's track record. Bot pv baseline is the Sep 29 close ($87,708.12).
+# Earlier baselines: Jul 7 reset (99,866.86 / SPY 747.71), Jun 4 launch.
 RESET_PRICES = {
-    'SPY': 747.71,       # S&P 500 ETF (Alpaca, Jul 7 2026 close)
-    'DIA': 528.30,       # SPDR Dow Jones ETF (Alpaca, Jul 7 2026 close)
-    'QQQ': 709.43        # Invesco QQQ NASDAQ ETF (Alpaca, Jul 7 2026 close)
+    'SPY': 764.20,       # S&P 500 ETF (Alpaca, Sep 29 2026 close)
+    'DIA': 512.88,       # SPDR Dow Jones ETF (Alpaca, Sep 29 2026 close)
+    'QQQ': 737.93        # Invesco QQQ NASDAQ ETF (Alpaca, Sep 29 2026 close)
 }
 
 EXPERIMENT_START_VALUE = 100000  # $100K starting value
@@ -237,12 +239,12 @@ def maybe_write_index_history():
             ts, closes = d.get('timestamps', []), d.get('closes', [])
             pts = [{'d': str(t)[:10], 'c': round(float(c), 2)}
                    for t, c in zip(ts, closes)
-                   if str(t)[:10] >= '2026-07-07' and c]
+                   if str(t)[:10] >= '2026-09-29' and c]
             if pts:
                 series[sym] = pts
         if not series:
             return
-        out = {'start_date': '2026-07-07', 'generated_at': datetime.now().isoformat(), 'series': series}
+        out = {'start_date': '2026-09-29', 'generated_at': datetime.now().isoformat(), 'series': series}
         tmp = HISTORY_STATE.with_suffix('.tmp')
         with open(tmp, 'w') as f:
             json.dump(out, f)

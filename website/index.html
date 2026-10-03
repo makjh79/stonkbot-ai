@@ -3800,7 +3800,7 @@
                 </div>
             </div>
             <div id="race-comparison" style="margin-top: 0.625rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; text-align: center;">
-                <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500: </span>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">Bot vs. S&P 500 <span style="opacity:0.7;">(since Sep 29)</span>: </span>
                 <span id="race-spread" style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">--</span>
             </div>
 
@@ -4300,12 +4300,12 @@ async function loadSleevePerformance() {
                     if (fresh && lq.portfolio_value) equity = lq.portfolio_value;
                 }
             } catch (e) {}
-            const start = 100000;
+            const start = s.era_baseline || SLEEVE_ERA_BASELINE;
             const botRet = ((equity - start) / start) * 100;
             setT('sleeve-ret', fmtRet(botRet));
             setColor('sleeve-ret', botRet);
             const last = s.last_date || '—';
-            setT('sleeve-scoreboard-label', '· since launch · last close ' + last);
+            setT('sleeve-scoreboard-label', '· since Sep 29 · last close ' + last);
             let rebalanceLabel = s.last_rebalance_at || '—';
             let rebalancePrefix = 'last rebalance ';
             if (s.last_rebalance_at) {
@@ -4399,7 +4399,7 @@ async function loadSleevePerformance() {
             }).filter(r => !isNaN(r.equity));
             if (rows.length) {
                 const vals = rows.map(r => r.equity);
-                const START = 100000;
+                const START = SLEEVE_ERA_BASELINE;
                 const min = Math.min(Math.min(...vals), START), max = Math.max(Math.max(...vals), START);
                 const range = max - min || 1;
                 const w = 100, h = 80, pad = 4;
@@ -5329,6 +5329,13 @@ async function loadPnlAttribution() {
         // Auto-refresh interval (30 seconds)
         let portfolioRefreshInterval = null;
         let priceHistory = {}; // Cached 30-day price history for sparklines
+
+        // Sleeve-era baseline (owner call 2026-10-03, option A): the Bot sleeve took
+        // over the Alpaca account at the Sep 28-29 migration. All returns/comparisons
+        // measure from the Sep 29 close — the first full day in the Bot basket — so the
+        // retired intraday era's losses don't contaminate the current strategy's record.
+        const SLEEVE_ERA_START = '2026-09-29';
+        const SLEEVE_ERA_BASELINE = 87708.12; // account equity at Sep 29 close
         let priceHistoryLoaded = false;
 
         function seededNoise(seed) {
@@ -5490,7 +5497,7 @@ async function loadPnlAttribution() {
                 const isPos = botRet >= 0;
                 // Race card stays on the vs-$100K experiment story (hero badge
                 // went daily in v89 — race card is where the total lives)
-                const totalRet = ((equity - 100000) / 100000) * 100;
+                const totalRet = ((equity - SLEEVE_ERA_BASELINE) / SLEEVE_ERA_BASELINE) * 100;
                 const totalPos = totalRet >= 0;
                 _SleeveDashboardLoaded = true;
                 window._SleeveDashboardSettled = true;
@@ -5826,7 +5833,7 @@ function updateDashboard(data, marketStatus) {
             // Update new stats
             const dayCounter = document.getElementById('day-counter');
             if (dayCounter) {
-                const startDate = new Date('2026-07-07');
+                const startDate = new Date(SLEEVE_ERA_START);
                 const today = new Date();
                 const dayNumber = Math.max(1, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1);
                 setValue('day-counter', dayNumber);
@@ -5851,9 +5858,9 @@ function updateDashboard(data, marketStatus) {
                 lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()} • <span style="color: var(--accent-green);">Live Data</span>`;
             }
 
-            // Update stonk meter if available (using Jul 7 reset pv baseline)
+            // Update stonk meter if available (sleeve-era baseline)
             if (data.account) {
-                const STARTING_VALUE = 100000;  // Jul 7 reset snapshot
+                const STARTING_VALUE = SLEEVE_ERA_BASELINE;  // Sep 29 sleeve-era close
                 const portfolioValue = data.account.portfolio_value || 0;
                 const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
                 fetchMarketIndices().then(indices => {
@@ -7025,8 +7032,8 @@ function updateDashboard(data, marketStatus) {
 
             const portfolioValue = data.account?.portfolio_value || 0;
             const totalPl = data.total_pl || 0;
-            // Calculate total return vs the Jul 7 reset pv (not Alpaca's cost basis %)
-            const STARTING_VALUE = 100000;
+            // Calculate total return vs the sleeve-era baseline (not Alpaca's cost basis %)
+            const STARTING_VALUE = SLEEVE_ERA_BASELINE;
             const totalReturn = ((portfolioValue - STARTING_VALUE) / STARTING_VALUE) * 100;
 
             // Get day change from Alpaca (calculated from last_equity vs current equity).
@@ -7052,8 +7059,8 @@ function updateDashboard(data, marketStatus) {
                 }
             }
 
-            // Calculate days active from timestamp
-            const startDate = new Date('2026-07-07');
+            // Calculate days active from sleeve-era start
+            const startDate = new Date(SLEEVE_ERA_START);
             const currentDate = new Date();
             const daysActive = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
 
@@ -7243,7 +7250,7 @@ function updateDashboard(data, marketStatus) {
                     {
                         type: 'bot',
                         subtype: 'deploy',
-                        timestamp: new Date('2026-07-07T09:00:00'),
+                        timestamp: new Date('2026-09-28T21:30:00'),
                         icon: '↑',
                         title: 'Rebalance Started',
                         description: 'Signal-triggered rebalancing active',
@@ -8025,15 +8032,15 @@ function updateDashboard(data, marketStatus) {
                 const livePv = (_lq && _lq.portfolio_value) || null;
                 const currentValue = livePv || currentData.account?.portfolio_value || 0;
 
-                // Calculate days elapsed from fixed experiment start date (July 7, 2026)
-                const experimentStartDate = new Date('2026-07-07T09:00:00');
+                // Calculate days elapsed from sleeve-era start (Sep 29, 2026)
+                const experimentStartDate = new Date(SLEEVE_ERA_START + 'T09:00:00');
                 const now = new Date();
                 const diffTime = Math.abs(now - experimentStartDate);
                 const daysElapsed = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
 
-                // Calculate return vs the Jul 7 reset snapshot
-                const returnPct = ((currentValue - 100000) / 100000 * 100);
-                const pnl = currentValue - 100000;
+                // Calculate return vs the sleeve-era baseline
+                const returnPct = ((currentValue - SLEEVE_ERA_BASELINE) / SLEEVE_ERA_BASELINE * 100);
+                const pnl = currentValue - SLEEVE_ERA_BASELINE;
 
                 // Update Day Counter Badge
                 const dayCounterText = document.getElementById('dayCounterText');
@@ -8085,10 +8092,10 @@ function updateDashboard(data, marketStatus) {
 
             if (!path || !area) return;
 
-            // Calculate Y position (10 = $100K at top, 75 = approx $97K at bottom)
-            // Map: Jul 7 reset pv -> y=10, $90K -> y=80
-            const minValue = 90000;
-            const maxValue = 100000;  // Jul 7 reset snapshot
+            // Calculate Y position (10 = era baseline at top)
+            // Map: Sep 29 sleeve-era close -> y=10, -10% -> y=80
+            const minValue = SLEEVE_ERA_BASELINE * 0.9;
+            const maxValue = SLEEVE_ERA_BASELINE;  // Sep 29 sleeve-era close
             const valueRange = maxValue - minValue;
             const yPos = 10 + ((maxValue - currentValue) / valueRange) * 70;
             const clampedY = Math.max(10, Math.min(80, yPos));
@@ -8256,8 +8263,8 @@ function updateDashboard(data, marketStatus) {
                     stonkValueEl.textContent = '$' + Math.round(d.portfolio_value).toLocaleString();
                     stonkValueEl.classList.remove('skeleton', 'skeleton-value');
                 }
-                // Bot return vs post-reset pv (Jul 7 16:00 UTC snapshot)
-                const raceBotReturn = d.portfolio_value != null ? ((d.portfolio_value - 100000) / 100000 * 100) : null;
+                // Bot return vs sleeve-era baseline (Sep 29 close)
+                const raceBotReturn = d.portfolio_value != null ? ((d.portfolio_value - SLEEVE_ERA_BASELINE) / SLEEVE_ERA_BASELINE * 100) : null;
                 const stonkReturnEl = document.getElementById('stonkAiReturn');
                 if (stonkReturnEl && raceBotReturn != null) {
                     stonkReturnEl.textContent = (raceBotReturn >= 0 ? '+' : '') + raceBotReturn.toFixed(2) + '%';
@@ -8413,9 +8420,9 @@ function updateDashboard(data, marketStatus) {
                 console.log('updateRaceValues: Got data', { currentValue, spReturn, spValue });
 
                 // Calculate StonkBOT.AI return
-                // Bot return vs post-reset pv (Jul 7 16:00 UTC snapshot) — same
-                // window as scoreboard, hero card and risk_stats.
-                const BOT_RESET_PV = 100000;
+                // Bot return vs sleeve-era baseline (Sep 29 close) — same
+                // window as scoreboard, race card and risk_stats.
+                const BOT_RESET_PV = SLEEVE_ERA_BASELINE;
                 const stonkReturn = ((currentValue - BOT_RESET_PV) / BOT_RESET_PV * 100);
 
                 // Update S&P 500 display
@@ -9032,8 +9039,8 @@ function updateDashboard(data, marketStatus) {
                 const liveSPY = (liveFresh && liveQuotes.spy) ? liveQuotes.spy.return_pct : null;
                 if (liveSPY != null) sp500Return = liveSPY;
 
-                const STARTING_VALUE = 100000;  // Jul 7 reset pv (16:00 UTC)
-                const RESET_DATE = '2026-07-07';
+                const STARTING_VALUE = SLEEVE_ERA_BASELINE;  // Sep 29 sleeve-era close
+                const RESET_DATE = SLEEVE_ERA_START;
                 const sortedChecks = (historyData.checks || [])
                     .filter(c => (c.timestamp || '') >= RESET_DATE)
                     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
@@ -9173,8 +9180,8 @@ function updateDashboard(data, marketStatus) {
         function updatePerformanceSummary(checks) {
             if (!checks || checks.length === 0) return;
 
-            // Calculate returns vs the Jul 7 reset pv
-            const STARTING_VALUE = 100000;
+            // Calculate returns vs the sleeve-era baseline (Sep 29 close)
+            const STARTING_VALUE = SLEEVE_ERA_BASELINE;
             const returns = checks.map(c => ((c.portfolio_value - STARTING_VALUE) / STARTING_VALUE) * 100);
 
             // Period return: prefer live_quotes when fresh, else last historical check
@@ -10399,7 +10406,7 @@ function updateDashboard(data, marketStatus) {
                 const livePv = (_lq && _lq.portfolio_value) || null;
                 const currentValue = livePv || currentData.account?.portfolio_value || 0;
                 const currentPL = currentData.positions?.reduce((sum, p) => sum + p.unrealized_pl, 0) || 0;
-                const currentPLPct = ((currentValue - 100000) / 100000 * 100);
+                const currentPLPct = ((currentValue - SLEEVE_ERA_BASELINE) / SLEEVE_ERA_BASELINE * 100);
 
                 // Add current snapshot
                 const allEntries = [...checks];
@@ -10444,10 +10451,9 @@ function updateDashboard(data, marketStatus) {
 
                 // Convert to array and calculate daily changes
                 const dailySummaries = Object.values(dailyData).map(day => {
-                    const prevDayValue = 100000; // Jul 7 reset pv
                     const change = day.endValue - day.startValue;
                     const changePct = (change / day.startValue) * 100;
-                    const totalReturn = ((day.endValue - 100000) / 100000) * 100;
+                    const totalReturn = ((day.endValue - SLEEVE_ERA_BASELINE) / SLEEVE_ERA_BASELINE) * 100;
 
                     return {
                         ...day,
@@ -10462,8 +10468,8 @@ function updateDashboard(data, marketStatus) {
                 const bestDay = dailySummaries.reduce((max, d) => d.totalReturn > max.totalReturn ? d : max, dailySummaries[0]);
                 const worstDay = dailySummaries.reduce((min, d) => d.totalReturn < min.totalReturn ? d : min, dailySummaries[0]);
                 const currentReturn = returns[0];
-                // Calculate days active consistently with main page (calendar days since start)
-                const startDate = new Date('2026-07-07');
+                // Calculate days active consistently with main page (calendar days since sleeve-era start)
+                const startDate = new Date(SLEEVE_ERA_START);
                 const currentDate = new Date();
                 const daysActive = Math.max(1, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
 

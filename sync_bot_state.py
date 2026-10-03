@@ -141,6 +141,8 @@ def main():
         "cash": round(cash, 2),
         "holdings": {k: round(v, 2) for k, v in holdings.items()},
         "inception": prev_state.get("inception", "2026-08-24"),
+        "era_start": prev_state.get("era_start", "2026-09-29"),
+        "era_baseline": prev_state.get("era_baseline", 87708.12),
         "last_date": today,
         "last_signal_month": prev_state.get("last_signal_month"),
         "last_rebalance_at": last_rebalance_at,
@@ -178,6 +180,50 @@ def main():
         )
     except Exception as e:
         print(f"Warning: could not copy to web root: {e}", file=sys.stderr)
+
+    # Also publish legacy portfolio_data.json (hero/race-card fallback path) so it
+    # never goes stale while the intraday bot is retired. Same canonical Alpaca data.
+    try:
+        last_equity = float(acct.get("last_equity", 0) or 0)
+        buying_power = float(acct.get("buying_power", 0) or 0)
+        legacy_positions = []
+        for p in positions:
+            sym = p.get("symbol")
+            if not sym:
+                continue
+            legacy_positions.append({
+                "symbol": sym,
+                "qty": p.get("qty"),
+                "avg_entry": float(p.get("avg_entry_price", 0) or 0),
+                "current": float(p.get("current_price", 0) or 0),
+                "market_value": float(p.get("market_value", 0) or 0),
+                "cost_basis": float(p.get("cost_basis", 0) or 0),
+                "unrealized_pl": float(p.get("unrealized_pl", 0) or 0),
+                "unrealized_plpc": float(p.get("unrealized_plpc", 0) or 0),
+            })
+        open_pl = round(sum(x["unrealized_pl"] for x in legacy_positions), 2)
+        portfolio_payload = {
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "status": "ok",
+            "portfolio_value": round(equity, 2),
+            "cash": round(cash, 2),
+            "account": {
+                "portfolio_value": round(equity, 2),
+                "cash": round(cash, 2),
+                "equity": round(equity, 2),
+                "buying_power": round(buying_power, 2),
+                "last_equity": round(last_equity, 2),
+            },
+            "positions": legacy_positions,
+            "total_pl": round(equity - 87708.12, 2),
+            "total_pl_pct": round((equity - 87708.12) / 87708.12 * 100, 2),
+            "open_total_pl": open_pl,
+            "open_total_pl_pct": round(open_pl / max(1.0, equity - open_pl - cash) * 100, 2) if legacy_positions else 0.0,
+            "day_change": round((equity - last_equity) / last_equity * 100, 2) if last_equity else 0.0,
+        }
+        atomic_write(Path("/var/www/hedge-fund-website/portfolio_data.json"), json.dumps(portfolio_payload, indent=2) + "\n")
+    except Exception as e:
+        print(f"Warning: could not write portfolio_data.json: {e}", file=sys.stderr)
 
     clock = client.get_clock()
     print(f"Synced Bot state: equity=${equity:,.2f} cash=${cash:,.2f} positions={len(positions)} market_open={clock.get('is_open')}")
