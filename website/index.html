@@ -7650,8 +7650,8 @@ function updateDashboard(data, marketStatus) {
                     html += '<div style="font-size: 1.5rem; font-weight: 700; font-family: \'JetBrains Mono\', monospace; color: var(--text-primary);">$' + portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0}) + '</div>';
                     html += '</div>';
 
-                    // Donut chart
-                    html += '<div style="position: relative; height: 200px; margin-bottom: 1rem;">';
+                    // Donut chart (legend below so GICS names render full-width, never clipped)
+                    html += '<div style="position: relative; height: 250px; margin-bottom: 1rem;">';
                     html += '<canvas id="allocationModalDonut"></canvas>';
                     html += '</div>';
 
@@ -7737,14 +7737,15 @@ function updateDashboard(data, marketStatus) {
                     // Render donut chart
                     const ctx = document.getElementById('allocationModalDonut');
                     if (ctx && typeof Chart !== 'undefined' && donutData.length > 0) {
-                        new Chart(ctx, {
+                        if (window._allocDonutChart) { try { window._allocDonutChart.destroy(); } catch(e) {} }
+                        window._allocDonutChart = new Chart(ctx, {
                             type: 'doughnut',
                             data: {
                                 labels: donutLabels,
                                 datasets: [{
                                     data: donutData,
                                     backgroundColor: donutColors,
-                                    borderColor: 'var(--bg-card)',
+                                    borderColor: '#161822', // must be a literal: canvas can't resolve var(--bg-card)
                                     borderWidth: 2,
                                     hoverOffset: 6
                                 }]
@@ -7755,12 +7756,12 @@ function updateDashboard(data, marketStatus) {
                                 cutout: '65%',
                                 plugins: {
                                     legend: {
-                                        position: 'right',
+                                        position: 'bottom', // right-side legend is capped at 50% canvas width and clips long GICS names
                                         labels: {
                                             color: '#f5f5f5',
-                                            font: { size: 12, family: 'Inter', weight: '600' },
-                                            boxWidth: 12,
-                                            padding: 12,
+                                            font: { size: 11, family: 'Inter', weight: '600' },
+                                            boxWidth: 8,
+                                            padding: 14,
                                             usePointStyle: true
                                         }
                                     },
