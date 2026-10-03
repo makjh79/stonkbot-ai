@@ -4,6 +4,9 @@
 !package-lock.json
 heartbeats/*.json
 market_indices.json
+# Explicit guard (era-race fix 2026-10-03): the live VPS-generated copy under
+# website/ must never be tracked or deployed from the repo — the fetcher owns it.
+website/market_indices.json
 market_status.json
 market_status_api.json
 portfolio_data.json

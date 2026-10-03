@@ -53,6 +53,9 @@ jobs:
         # Deploy + clean up stale nginx backups
         # NOTE: Deploy from the main repo (/opt/stonk-ai), not the nested website-repo.
         # Sentiment/history data are generated in-place by the server pipeline.
+        # market_indices.json is generated live on the VPS by fetch_market_indices.py
+        # (stonk-ai-markets.service). It is intentionally NOT copied from the repo —
+        # the VPS-generated file is authoritative (era-race fix 2026-10-03).
         if ! ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@23.80.82.47 \
           "cd /opt/stonk-ai && \
            echo '--- pre-pull git status ---' && \
