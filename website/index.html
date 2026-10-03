@@ -5565,7 +5565,9 @@ async function loadPnlAttribution() {
                     sp = mi.indices && mi.indices['S&P 500'];
                     if (sp) {
                         spRet = sp.return_pct;
-                        spValue = sp.value;
+                        // Derive the $ from the % on our own era baseline — immune to
+                        // stale/cached current_value normalization mismatches.
+                        spValue = spRet != null ? SLEEVE_ERA_BASELINE * (1 + spRet / 100) : sp.value;
                     }
                 }
 
@@ -8161,15 +8163,15 @@ function updateDashboard(data, marketStatus) {
                     currentPrice: sp.current_price,
                     startPrice: sp.start_price,
                     return: sp.return_pct,
-                    currentValue: sp.current_value
+                    currentValue: sp.return_pct != null ? SLEEVE_ERA_BASELINE * (1 + sp.return_pct / 100) : sp.current_value
                 };
             }
-            // Fallback
+            // Fallback (eras-aligned: Sep 29 sleeve start)
             return {
-                currentPrice: 7383.74,
-                startPrice: 7584.31,
-                return: -2.60,
-                currentValue: 97400
+                currentPrice: null,
+                startPrice: null,
+                return: 0,
+                currentValue: SLEEVE_ERA_BASELINE
             };
         }
 
@@ -8248,8 +8250,8 @@ function updateDashboard(data, marketStatus) {
             // Race card (S&P vs Bot) + spread — same ids as updateRaceValues
             if (d.spy && d.spy.return_pct != null) {
                 const spValueEl = document.getElementById('sp500Value');
-                if (spValueEl && d.spy.value) {
-                    spValueEl.textContent = '$' + Math.round(d.spy.value).toLocaleString();
+                if (spValueEl) {
+                    spValueEl.textContent = '$' + Math.round(SLEEVE_ERA_BASELINE * (1 + d.spy.return_pct / 100)).toLocaleString();
                     spValueEl.classList.remove('skeleton', 'skeleton-value');
                 }
                 const spReturnEl = document.getElementById('sp500Return');
