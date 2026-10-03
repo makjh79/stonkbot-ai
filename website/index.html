@@ -24,7 +24,7 @@
     })();
     </script>
     <title>StonkBOT.AI | $100K Paper Momentum Bot</title>
-    <meta name="description" content="A transparent, paper-trading individual-stock momentum Bot. Monthly rebalanced, regime-gated (QQQ vs SHY/GLD/TLT), 10 equal-weight holdings, owner-supervised. Not investment advice.">
+    <meta name="description" content="A transparent, paper-trading individual-stock momentum Bot. Re-ranked daily, traded on rank triggers, regime-gated (QQQ vs SHY/GLD/TLT), 10 equal-weight holdings, owner-supervised. Not investment advice.">
     <!-- CACHE BUST: v=20260905-v1 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -3616,7 +3616,7 @@
                     </a>
                 </div>
                 <div class="nav-item">
-                    <!-- Orders tab hidden: Bot rebalances monthly; no staged orders -->
+                    <!-- Orders tab hidden: Bot trades on rank-trigger signals; no staged orders -->
                 </div>
                 <div class="nav-item">
                     <a class="nav-link" href="#" onclick="toggleMobileMenu(); return false;" data-nav="more">
@@ -3646,7 +3646,7 @@
                 <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                 <span class="label">Watchlist</span>
             </a>
-            <!-- Orders tab hidden: Bot rebalances monthly; no staged orders -->
+            <!-- Orders tab hidden: Bot trades on rank-trigger signals; no staged orders -->
             <a class="mobile-nav-item" onclick="toggleMobileMenu(); return false;" data-section="more">
                 <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
                 <span class="label">More</span>
@@ -3735,7 +3735,7 @@
                 <button class="section-tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
                 <button class="section-tab" data-tab="holdings" onclick="switchTab('holdings')">Holdings</button>
                 <button class="section-tab" data-tab="watchlist" onclick="switchTab('watchlist')">Watchlist</button>
-                <!-- Orders tab hidden: Bot rebalances monthly; no staged orders -->
+                <!-- Orders tab hidden: Bot trades on rank-trigger signals; no staged orders -->
                 <button class="section-tab" data-tab="about" onclick="switchTab('about')">About</button>
             </div>
         </nav>
@@ -3984,7 +3984,7 @@
         </div>
         </div>
 
-        <!-- Orders tab removed: Bot rebalances monthly; no staged orders -->
+        <!-- Orders tab removed: Bot trades on rank-trigger signals; no staged orders -->
 
         <!-- ============================================ -->
 <!-- ABOUT TAB: Professional Story-Driven       -->
@@ -4363,11 +4363,11 @@ async function loadSleevePerformance() {
                 if (execInfo) {
                     summary = 'Rebalanced ' + execDate + (moves ? ' — ' + moves : '');
                 } else {
-                    summary = 'Planned for next monthly review' + (moves ? ' — ' + moves : '') + ' · not traded yet';
+                    summary = 'Signal live' + (moves ? ' — ' + moves : '') + ' · trades at the next session’s rebalance run';
                 }
                 setT('sleeve-signal', summary);
             } else {
-                setT('sleeve-signal', 'No pending changes — next review at month-end');
+                setT('sleeve-signal', 'No pending changes — re-checked after every US close');
             }
         }
 
@@ -5640,7 +5640,7 @@ async function loadPnlAttribution() {
             if (tabName === 'watchlist') {
                 renderWatchlistInline();
             }
-            // Orders tab removed: Bot rebalances monthly; no staged orders
+            // Orders tab removed: Bot trades on rank-trigger signals; no staged orders
         }
 
         function renderWatchlistInline() {
@@ -7246,10 +7246,10 @@ function updateDashboard(data, marketStatus) {
                         timestamp: new Date('2026-07-07T09:00:00'),
                         icon: '↑',
                         title: 'Rebalance Started',
-                        description: 'Monthly rebalancing active',
+                        description: 'Signal-triggered rebalancing active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: '$100K Alpaca paper account running a monthly-rebalanced individual-stock momentum Bot. DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
+                        rationale: '$100K Alpaca paper account running a signal-triggered individual-stock momentum Bot — re-ranked after every US close; trades when ranks cross (top 8 in, past 12 out). DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
                     }
                 ];
 
@@ -7527,10 +7527,10 @@ function updateDashboard(data, marketStatus) {
                           </svg>
                           <strong>Bot Active</strong>
                         </div>
-                        <div>• Monthly relative-strength strategy (top 10 stocks vs S&P 500, equal-weighted, DM-6 gate: QQQ vs SHY/GLD/TLT)</div>
-                        <div>• Monthly rebalance after US close; gate checked daily</div>
+                        <div>• 12-month momentum strategy (top 10 of 35 mega-caps, equal-weighted, DM-6 gate: QQQ vs SHY/GLD/TLT)</div>
+                        <div>• Ranks refresh after every US close; trades only when ranks cross (top 8 in, past 12 out)</div>
                         <div>• No ATR stops, no intraday trims, no staged exits</div>
-                        <div>• Monthly-rebalanced, regime-gated individual-stock Bot</div>
+                        <div>• Signal-triggered, regime-gated individual-stock Bot</div>
                     </div>
                 </div>
             `;
@@ -9929,19 +9929,19 @@ function updateDashboard(data, marketStatus) {
                 desc = 'Part of the current strategy.';
             } else if (score >= 75) {
                 label = 'Bot position';
-                desc = 'Held as part of the relative-strength strategy.';
+                desc = 'Held as part of the momentum strategy.';
             } else if (score >= 65) {
                 label = 'Watchlist';
                 desc = 'Not currently in the Bot; monitored for next signal-triggered rebalance.';
             } else {
                 label = 'Not in Bot';
-                desc = 'Not currently selected by the relative-strength rank.';
+                desc = 'Not currently selected by the momentum rank.';
             }
 
             tooltip.innerHTML = `
                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 0.75rem;">Bot signal ${score.toFixed(0)}/100 - ${label}</div>
                 <div>${desc}</div>
-                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Bot stocks are ranked by relative strength vs the S&P 500. The top 10 equal-weight names are held when the DM-6 gate (QQQ vs SHY/GLD/TLT) is risk-on. No intraday entry scoring is used.</div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.65rem; color: var(--text-muted);">Bot stocks are 35 mega-caps ranked by 12-month momentum (latest month skipped). The top 10 equal-weight names are held while the DM-6 gate (QQQ vs SHY/GLD/TLT) is risk-on. In at rank 8, out past rank 12. No intraday entry scoring is used.</div>
             `;
 
             document.body.appendChild(tooltip);
@@ -9976,7 +9976,7 @@ function updateDashboard(data, marketStatus) {
             if (!thesis) return `Bot position in ${symbol}`;
             let first = thesis.split('.')[0];
             first = first.replace(/scoring \d+\/100.*$/i, '');
-            first = first.replace(/quality-momentum model/i, 'relative-strength model');
+            first = first.replace(/quality-momentum model/i, 'momentum model');
             first = first.replace(/macro backdrop/i, 'market conditions');
             first = first.replace(/negative 20-day momentum,?\s*/i, '');
             first = first.replace(/positive 20-day momentum,?\s*/i, '');
@@ -9997,13 +9997,13 @@ function updateDashboard(data, marketStatus) {
             const rawMOM = momentumScore != null ? momentumScore : conf.momentum_score;
             const momScore = (typeof rawMOM === 'number' || typeof rawMOM === 'string') ? parseFloat(rawMOM) : null;
             const factors = [
-                { name: 'MOM', val: momScore != null ? momScore.toFixed(0) : null, ok: momScore != null && momScore >= 55, warn: momScore != null && momScore < 55, tip: 'Momentum: relative-strength score vs S&P 500 (higher = stronger)' },
+                { name: 'MOM', val: momScore != null ? momScore.toFixed(0) : null, ok: momScore != null && momScore >= 55, warn: momScore != null && momScore < 55, tip: 'Momentum: 12-month return skipping the latest month (higher = stronger)' },
                 { name: 'RSI', val: conf.rsi_signal || null, ok: conf.rsi_signal === 'bullish' || conf.rsi_signal === 'neutral' || conf.rsi_signal === 'oversold', warn: conf.rsi_signal === 'bearish' || conf.rsi_signal === 'overbought', tip: 'RSI(14): Alpaca daily-bar RSI; oversold <30, overbought >70' },
-                { name: 'EMA', val: conf.above_ema, ok: conf.above_ema === true, warn: conf.above_ema === false, tip: 'EMA: price above 50-day EMA from Alpaca daily bars' },
+                { name: 'EMA', val: conf.above_ema, ok: conf.above_ema === true, warn: conf.above_ema === false, tip: 'EMA: price above 20/50/200-day EMAs (Alpaca daily bars)' },
                 { name: 'SPR', val: conf.spread_ok, ok: conf.spread_ok === true, warn: conf.spread_ok === false, tip: 'Spread: quote/trade quality check' },
                 { name: 'CA', val: conf.no_corporate_action_risk, ok: conf.no_corporate_action_risk === true, warn: conf.corporate_action_risk === true, tip: 'Corporate action: split/dividend risk flag' },
                 { name: 'VOL', val: conf.volume_confirmed, ok: conf.volume_confirmed === true, tip: 'Volume: today\'s volume > 20-day average (Alpaca)' },
-                { name: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true, tip: 'MACD: histogram positive and rising (Alpaca daily bars)' },
+                { name: 'MACD', val: conf.macd_turning, ok: conf.macd_turning === true, tip: 'MACD: histogram just crossed positive (Alpaca daily bars)' },
                 { name: 'SEC', val: conf.sector_strong, ok: conf.sector_strong === true, tip: 'Sector: sector classification available' },
                 { name: 'INT', val: conf.intraday_confirmed, ok: conf.intraday_confirmed === true, tip: 'Intraday: positive daily change (Alpaca)' },
                 { name: 'OPT', val: conf.options_confirmed, ok: conf.options_confirmed === true, tip: 'Options flow: not available from Alpaca for this watchlist' },
@@ -11277,7 +11277,7 @@ function updateDashboard(data, marketStatus) {
                         macd_line: (c.macd || {}).line,
                         macd_signal: (c.macd || {}).signal,
                         macd_histogram: (c.macd || {}).histogram,
-                        strategy: companyStrategy || 'Potential Bot candidate ranked by relative strength vs. S&amp;P 500.',
+                        strategy: companyStrategy || 'Potential Bot candidate ranked by 12-month momentum against 34 other mega-caps.',
                         catalyst: companyCatalyst || `Rank ${c.rank} with score ${(c.score * 100).toFixed(2)}% — ${c.rank <= 8 ? 'within the top-8 entry zone' : c.rank <= 12 ? 'in the hold buffer' : 'still behind the current strategy names'}.`,
                         risk: companyRisk || 'May enter the strategy at the next signal-triggered rebalance, or fall further behind.',
                         stopLoss: c.price ? c.price * 0.85 : null,
@@ -11615,22 +11615,20 @@ function updateDashboard(data, marketStatus) {
         function generateDynamicStrategy(symbol, rsi, changePct, aiScore, company) {
             const isETF = ['SQQQ', 'TQQQ', 'XLE'].includes(symbol);
 
-            if (rsi <= 30) {
-                return `Extreme oversold conditions (RSI ${rsi.toFixed(1)}). Mean-reversion opportunity-statistically ${Math.round((30-rsi)/30*100)}% below typical entry zones.`;
-            } else if (rsi <= 35) {
-                return `Auto-entry zone triggered (RSI ${rsi.toFixed(1)}). Technical exhaustion meets accumulation support. History favors bounce >65% probability.`;
+            if (isETF) {
+                return `Not in the Bot's 35-name universe. Defensive exposure comes from the DM-6 gate (SHY/GLD/TLT), not traded ETFs.`;
+            } else if (rsi <= 30) {
+                return `Deeply oversold (RSI ${rsi.toFixed(1)}), but RSI is not an entry trigger here. ${symbol} is bought only if its 12-month momentum rank reaches the top 8.`;
             } else if (rsi <= 40) {
-                return `RSI ${rsi.toFixed(1)} — not used for strategy entry. The strategy only rebalances monthly by relative strength and the DM-6 gate.`;
+                return `RSI ${rsi.toFixed(1)} — not used for entry. Entries and exits come from the daily momentum rank (top 8 in, past 12 out) and the DM-6 gate.`;
             } else if (rsi >= 70) {
-                return `Overbought momentum (RSI ${rsi.toFixed(1)}). Riding trend but risk/reward deteriorating. Trim if position held, avoid new entries.`;
+                return `Overbought (RSI ${rsi.toFixed(1)}), but stretched readings don't force an exit. A holding keeps its seat until its momentum rank falls past 12.`;
             } else if (changePct >= 5) {
-                return `Strong momentum (+${changePct.toFixed(1)}% today). Chasing here risks buying local highs. Wait for RSI <45 pullback for entry.`;
+                return `Strong day (+${changePct.toFixed(1)}%), but one day barely moves a 12-month rank. The Bot doesn't chase; entry requires a top-8 rank at the daily check.`;
             } else if (changePct <= -5) {
-                return `Capitulation move (-${Math.abs(changePct).toFixed(1)}% today). Panic selling often marks local bottoms. Watch for RSI stabilization.`;
-            } else if (isETF) {
-                return `Market-timing hedge instrument. Use for tactical exposure, not core holding. Daily rebalancing creates decay-size for short-term trades.`;
+                return `Heavy day (-${Math.abs(changePct).toFixed(1)}%), but one day doesn't force an exit. A holding leaves only when its rank falls past 12 — or the gate flips defensive.`;
             } else {
-                return `Neutral technical setup (RSI ${rsi.toFixed(1)}). Neither cheap nor extended. Patience for RSI <35 entry or breakout confirmation.`;
+                return `Ranked by 12-month momentum against 34 other mega-caps, re-checked after every US close. Bought at rank 8 or better; held until rank 12.`;
             }
         }
 
@@ -11641,21 +11639,21 @@ function updateDashboard(data, marketStatus) {
             const isEarningsSeason = [1, 4, 7, 10].includes(now.getMonth());
 
             if (rsi <= 25) {
-                return `Extreme fear pricing (RSI ${rsi.toFixed(1)}). Institutional algorithms likely to begin accumulation at these levels. Sentiment: ${sentimentLabel}.`;
+                return `Extreme fear pricing (RSI ${rsi.toFixed(1)}). Notable, but not a trigger — entries come from momentum rank only. Sentiment: ${sentimentLabel}.`;
             } else if (rsi <= 35 && sentiment >= 60) {
-                return `Bullish divergence: price down but sentiment strong (${sentimentLabel}, ${sentiment}/100). Smart money accumulating before reversal.`;
+                return `Price weak while sentiment stays strong (${sentimentLabel}, ${sentiment}/100) — a divergence worth watching, not trading. The rank decides.`;
             } else if (changePct >= 4) {
-                return `Momentum ignition (+${changePct.toFixed(1)}% today). Breakout potentially triggered by sector rotation or news catalyst.`;
+                return `Momentum ignition (+${changePct.toFixed(1)}% today). The Bot doesn't chase single days; sustained strength is what moves the rank.`;
             } else if (changePct <= -4) {
-                return `Liquidation pressure (-${Math.abs(changePct).toFixed(1)}% today). Forced selling creates opportunity if thesis intact.`;
+                return `Liquidation pressure (-${Math.abs(changePct).toFixed(1)}% today). No panic rules here — exits are rank-based, not fear-based.`;
             } else if (isEarningsSeason) {
-                return `${month} earnings approaching. Options implied volatility elevated. Position before report only if conviction high.`;
+                return `${month} earnings season. The Bot doesn't position around reports; holdings ride through and the rank absorbs the result.`;
             } else if (sentiment >= 75) {
-                return `Crowd optimism extreme (${sentiment}/100). Contrarian caution warranted-best entries come when others fearful.`;
+                return `Crowd optimism extreme (${sentiment}/100). Sentiment isn't a signal here — momentum rank is.`;
             } else if (sentiment <= 25) {
-                return `Maximum pessimism (${sentiment}/100). Contrarian opportunity-when everyone hates it, bottoms often form.`;
+                return `Maximum pessimism (${sentiment}/100). Sentiment isn't a signal here — momentum rank is.`;
             } else {
-                return `Bot does not trade on catalysts. Holdings reset monthly by relative strength and the DM-6 gate.`;
+                return `The Bot does not trade on catalysts. Holdings change when momentum ranks cross — top 8 in, past 12 out — or the DM-6 gate flips.`;
             }
         }
 
@@ -11664,17 +11662,17 @@ function updateDashboard(data, marketStatus) {
             const stopDistance = stopLoss ? ((price - stopLoss) / price * 100).toFixed(1) : '15';
 
             if (rsi >= 65) {
-                return `Overbought risk (RSI ${rsi.toFixed(1)}). Mean-reversion likely. New entries here have 2:1 downside/upside. Wait for pullback.`;
+                return `Overbought risk (RSI ${rsi.toFixed(1)}). Not an exit trigger by itself — but stretched names decay down the momentum rank fast when the trend cools.`;
             } else if (rsi <= 20) {
-                return `Capitulation can extend (RSI ${rsi.toFixed(1)}). While statistically cheap, falling knives bleed. Scale in, don't bet farm.`;
+                return `Capitulation can extend (RSI ${rsi.toFixed(1)}). No knife-catching here — a name is only bought on momentum-rank strength.`;
             } else if (changePct >= 8) {
-                return `Gap-up exhaustion risk (+${changePct.toFixed(1)}% today). FOMO buyers vulnerable to intraday reversal. Avoid chasing.`;
+                return `Gap-up exhaustion risk (+${changePct.toFixed(1)}% today). The Bot doesn't chase spikes; entry needs a top-8 rank, not a hot day.`;
             } else if (changePct <= -8) {
-                return `Free-fall momentum (-${Math.abs(changePct).toFixed(1)}% today). Catching falling knives dangerous-wait for RSI stabilization above 20.`;
+                return `Free-fall (-${Math.abs(changePct).toFixed(1)}% today). Rank-based exits mean the Bot can ride a falling name longer than a stop-loss system would — until rank 12 gives way.`;
             } else if (!stopLoss) {
-                return `No stop-loss data available. Risk is managed by the monthly dual-threshold rebalance and the DM-6 gate, not by ATR stops.`;
+                return `No stop-loss data. Risk is managed by the daily rank check (out past rank 12) and the DM-6 gate — not by ATR stops.`;
             } else {
-                return `Stop-loss at $${stopLoss} (${stopDistance}% below entry). Respect the stop-preservation of capital paramount. Don't average down through stop.`;
+                return `Reference level $${stopLoss} (${stopDistance}% away). Actual exits are rank-based (past 12) or a gate flip — there are no hard stop-losses.`;
             }
         }
 
@@ -12117,7 +12115,7 @@ function updateDashboard(data, marketStatus) {
             container.innerHTML = html;
         }
 
-        // Render dedicated Orders tab removed: Bot rebalances monthly; no staged orders.
+        // Render dedicated Orders tab removed: Bot trades on rank-trigger signals; no staged orders.
 
         // Live prices fetched from ai_watchlist_live.json (updated every 30s by backend)
 
@@ -12418,7 +12416,7 @@ function updateDashboard(data, marketStatus) {
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: var(--text-xs); color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">What triggers a buy</div>
-                        <div style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Monthly relative-strength rank + DM-6 gateum_score ≥55, RSI not overbought, and hard filters (above 20-day EMA, spread OK, no corporate-action risk).'}</div>
+                        <div style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.5;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || 'Bought when its 12-month momentum rank reaches 8 or better against the 35-name universe, while the DM-6 gate (QQQ vs SHY/GLD/TLT) is risk-on. Holdings exit past rank 12.'}</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
                         <div style="font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Catalyst</div>
@@ -12476,9 +12474,9 @@ function updateDashboard(data, marketStatus) {
         }
 
         function simplifyStrategy(strategy, symbol) {
-            if (!strategy) return `Tracking ${symbol} for next monthly strategy rank`;
+            if (!strategy) return `Tracking ${symbol} — re-ranked after every US close`;
             let first = strategy.split('.')[0];
-            first = first.replace(/quality-momentum model/i, 'relative-strength model');
+            first = first.replace(/quality-momentum model/i, 'momentum model');
             first = first.replace(/macro backdrop/i, 'market conditions');
             first = first.replace(/scoring \d+\/100.*$/i, '');
             first = first.replace(/negative \d+-day momentum,?\s*/i, '');
@@ -12679,7 +12677,7 @@ function updateDashboard(data, marketStatus) {
                         <!-- What triggers a buy -->
                         <div style="margin-bottom: 0.6rem; padding: 0.8rem; background: rgba(255,255,255,0.03); border: none; border-radius: 12px;">
                             <div style="font-size: 0.65rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">What triggers a buy</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || `We would consider initiating a position if ${symbol} maintains its relative-strength ranking and pushes into the top decile of the momentum screen, ideally while the broader equity regime remains risk-on. A combination of continued outperformance versus the S&P 500 and supportive market conditions would be the trigger.`}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">${(watchlistNarrativesCache[symbol] || {}).whatTriggersBuy || `We buy ${symbol} if its 12-month momentum rank reaches 8 or stronger against the 35-name universe while the DM-6 gate stays risk-on. Current holdings keep their seats until they fall past rank 12.`}</div>
                         </div>
 
                         <!-- Catalyst -->
