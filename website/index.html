@@ -5486,12 +5486,19 @@ async function loadPnlAttribution() {
                     fetch('market_indices.json?t=' + Date.now()).catch(() => null),
                     fetch('portfolio_data.json?t=' + Date.now()).catch(() => null)
                 ]);
-                if (!stateRes.ok) return false;
+                if (!stateRes.ok) {
+                    // Sleeve fetch failed: mark settled so updateRaceValues stops its
+                    // settle-wait and the legacy fallback paints one consistent set.
+                    _SleeveDashboardLoaded = false;
+                    window._SleeveDashboardSettled = true;
+                    return false;
+                }
                 const s = await stateRes.json();
                 const pd = (pdRes && pdRes.ok) ? await pdRes.json() : null;
                 const lq = await fetchLiveQuotesIfFresh();
                 const equity = (lq && lq.portfolio_value) || s.equity || 0;
                 const lastEq = (pd && pd.account && pd.account.last_equity) || 0;
+                window._lastEquity = lastEq || window._lastEquity || 0; // keeps applyLiveQuotes' hero badge on the same daily basis
                 const pnl = lastEq ? equity - lastEq : 0;
                 const botRet = lastEq ? (pnl / lastEq) * 100 : 0;
                 const isPos = botRet >= 0;
@@ -5536,8 +5543,10 @@ async function loadPnlAttribution() {
                 }
 
                 const dayCounter = document.getElementById('day-counter');
-                if (dayCounter && s.inception) {
-                    const startDate = new Date(s.inception + 'T00:00:00');
+                if (dayCounter) {
+                    // Day counts from the sleeve-era start (Sep 29), not the raw sleeve
+                    // inception (Aug 24) — same formula as updateDashboard.
+                    const startDate = new Date((s.era_start || SLEEVE_ERA_START) + 'T00:00:00');
                     const today = new Date();
                     const dayNumber = Math.max(1, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1);
                     dayCounter.textContent = dayNumber;
@@ -5546,14 +5555,19 @@ async function loadPnlAttribution() {
 
                 const positionCount = document.getElementById('position-count');
                 if (positionCount) {
-                    positionCount.textContent = Object.keys(s.holdings || {}).length;
+                    // holdings includes a CASH pseudo-entry — don't count it as a position
+                    positionCount.textContent = Object.keys(s.holdings || {}).filter(k => k !== 'CASH').length;
                     rmSkeleton(positionCount);
                 }
 
                 const cashAvailable = document.getElementById('cash-available');
                 if (cashAvailable) {
-                    const invested = Object.values(s.holdings || {}).reduce((a, b) => a + b, 0);
-                    const cash = equity - invested;
+                    // Prefer the explicit cash field — holdings contains a CASH pseudo-entry,
+                    // so equity - sum(holdings) double-subtracts cash and shows ~$0.
+                    const invested = Object.entries(s.holdings || {})
+                        .filter(([k]) => k !== 'CASH')
+                        .reduce((a, [, v]) => a + v, 0);
+                    const cash = (typeof s.cash === 'number') ? s.cash : (equity - invested);
                     cashAvailable.textContent = '$' + Math.floor(cash).toLocaleString('en-US');
                     cashAvailable.style.color = cash < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
                     rmSkeleton(cashAvailable);
@@ -5835,7 +5849,7 @@ function updateDashboard(data, marketStatus) {
             // Update new stats
             const dayCounter = document.getElementById('day-counter');
             if (dayCounter) {
-                const startDate = new Date(SLEEVE_ERA_START);
+                const startDate = new Date(SLEEVE_ERA_START + 'T00:00:00'); // local midnight, matches loadSleeveDashboard
                 const today = new Date();
                 const dayNumber = Math.max(1, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1);
                 setValue('day-counter', dayNumber);
@@ -8034,11 +8048,11 @@ function updateDashboard(data, marketStatus) {
                 const livePv = (_lq && _lq.portfolio_value) || null;
                 const currentValue = livePv || currentData.account?.portfolio_value || 0;
 
-                // Calculate days elapsed from sleeve-era start (Sep 29, 2026)
-                const experimentStartDate = new Date(SLEEVE_ERA_START + 'T09:00:00');
+                // Calculate days elapsed from sleeve-era start (Sep 29, 2026) —
+                // same local-midnight formula as the header day counter.
+                const experimentStartDate = new Date(SLEEVE_ERA_START + 'T00:00:00');
                 const now = new Date();
-                const diffTime = Math.abs(now - experimentStartDate);
-                const daysElapsed = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+                const daysElapsed = Math.max(1, Math.floor((now - experimentStartDate) / (1000 * 60 * 60 * 24)) + 1);
 
                 // Calculate return vs the sleeve-era baseline
                 const returnPct = ((currentValue - SLEEVE_ERA_BASELINE) / SLEEVE_ERA_BASELINE * 100);
@@ -8242,7 +8256,7 @@ function updateDashboard(data, marketStatus) {
             }
             const pnlEl = document.getElementById('portfolio-pnl');
             if (pnlEl && totalPl != null) {
-                pnlEl.textContent = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
+                pnlEl.textContent = (totalPl >= 0 ? '+$' : '-$') + Math.abs(Math.round(totalPl)).toLocaleString('en-US');
                 pnlEl.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
                 pnlEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
             }
