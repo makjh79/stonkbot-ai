@@ -23,7 +23,7 @@
         }
     })();
     </script>
-    <title>StonkBOT.AI | $100K Paper Momentum Bot</title>
+    <title>StonkBOT.AI | Paper Momentum Bot</title>
     <meta name="description" content="A transparent, paper-trading individual-stock momentum Bot. Re-ranked daily, traded on rank triggers, regime-gated (QQQ vs SHY/GLD/TLT), 10 equal-weight holdings, owner-supervised. Not investment advice.">
     <!-- CACHE BUST: v=20261003-era -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0a'/%3E%3Ctext x='5' y='22' font-family='Inter, sans-serif' font-size='18' font-weight='800' fill='%23ffffff'%3ES%3C/text%3E%3Ccircle cx='23' cy='9' r='3' fill='%2306b6d4'/%3E%3C/svg%3E">
@@ -4081,7 +4081,7 @@
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);">
-            <p style="margin:0 0 0.75rem 0;">StonkBOT is an autonomous trading agent running a <strong style="color:var(--text-primary);">$100,000 paper portfolio</strong>. Every call — what to buy, what to hold, when to step aside — is made by a proprietary momentum engine. No gut feel, no hunches, no 3 a.m. panic trades.</p>
+            <p style="margin:0 0 0.75rem 0;">StonkBOT is an autonomous trading agent running a <strong style="color:var(--text-primary);">paper trading portfolio</strong>. Every call — what to buy, what to hold, when to step aside — is made by a proprietary momentum engine. No gut feel, no hunches, no 3 a.m. panic trades.</p>
             <p style="margin:0 0 0.75rem 0;">The strategy hunts for strength: it owns the handful of stocks leading the market right now, and rotates to safety when the tide turns. This site is the live scoreboard — every position, decision and dollar of P&amp;L is published as it happens, with full reasoning in the <a href="thinking.html" style="color:var(--accent-cyan);text-decoration:none;">Bot Thinking Log</a>.</p>
             <p style="margin:0;font-size:0.65rem;color:var(--text-muted);">Paper account. Automated, but owner-supervised. Not investment advice.</p>
           </div>
@@ -4220,7 +4220,7 @@
                 <p style="font-size:0.72rem;color:var(--text-secondary);line-height:1.5;margin:0 0 0.5rem;">Funds the experiment, spots misaligned pixels from across the room, and answers "what should we build next?" Usually with another excellent question.</p>
                 <div style="display:flex;flex-wrap:wrap;gap:0.3rem;">
                   <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">Vision</span>
-                  <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">$100K · PAPER</span>
+                  <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">PAPER</span>
                   <span style="padding:0.15rem 0.4rem;background:rgba(251,191,36,0.12);color:#fbbf24;border-radius:4px;font-size:0.6rem;font-weight:600;">QA</span>
                 </div>
               </div>
@@ -4421,7 +4421,7 @@ async function loadSleevePerformance() {
                     + '</svg>';
                 setH('sleeve-chart', svg);
                 const capEl = document.getElementById('sleeve-chart-caption');
-                if (capEl) capEl.textContent = 'Now $' + Math.round(lastV).toLocaleString('en-US') + ' · dashed line = $100K starting capital';
+                if (capEl) capEl.textContent = 'Now $' + Math.round(lastV).toLocaleString('en-US') + ' · dashed line = Sep 29 era baseline';
                 setT('sleeve-meta', '');
             }
         }
@@ -4553,7 +4553,7 @@ async function loadPnlAttribution() {
                     <span style="font-size: 1.25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
                     <div>
                         <span class="chart-modal-title" style="font-size: 1rem;">Performance History</span>
-                        <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 500;">Since launch · $100K start</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 500;">Sleeve era · Sep 29 baseline</div>
                     </div>
                 </div>
                 <button class="chart-modal-close" onclick="closePerformanceLog()">✕</button>
@@ -5504,7 +5504,7 @@ async function loadPnlAttribution() {
                 const pnl = lastEq ? equity - lastEq : 0;
                 const botRet = lastEq ? (pnl / lastEq) * 100 : 0;
                 const isPos = botRet >= 0;
-                // Race card stays on the vs-$100K experiment story (hero badge
+                // Race card shows the sleeve-era total return (hero badge
                 // went daily in v89 — race card is where the total lives)
                 const totalRet = ((equity - SLEEVE_ERA_BASELINE) / SLEEVE_ERA_BASELINE) * 100;
                 const totalPos = totalRet >= 0;
@@ -7274,7 +7274,7 @@ function updateDashboard(data, marketStatus) {
                         description: 'Signal-triggered rebalancing active',
                         badge: 'System',
                         badgeClass: 'bot',
-                        rationale: '$100K Alpaca paper account running a signal-triggered individual-stock momentum Bot — re-ranked after every US close; trades when ranks cross (top 8 in, past 12 out). DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
+                        rationale: 'Alpaca paper account running a signal-triggered individual-stock momentum Bot — re-ranked after every US close; trades when ranks cross (top 8 in, past 12 out). DM-6 gate (QQQ vs SHY/GLD/TLT). Goal: participate in equity uptrends, rotate to safety when the gate flips. Not investment advice.'
                     }
                 ];
 
@@ -8239,7 +8239,7 @@ function updateDashboard(data, marketStatus) {
             }
             const portfolioValue = d.portfolio_value || 0;
             // Hero badge is DAILY (v89): measure vs prior close. Never fall back to
-            // live_quotes' total_pl/total_return_pct — those are era/$100K-baseline
+            // live_quotes' total_pl/total_return_pct — those are era-baseline
             // numbers and would flip the hero. If the daily basis isn't known yet,
             // leave the hero badge to the canonical writer (loadSleeveDashboard).
             const lastEqLive = window._lastEquity || 0;
@@ -8717,7 +8717,7 @@ function updateDashboard(data, marketStatus) {
             }
 
             const positions = portfolioData.positions || [];
-            const totalValue = portfolioData.account?.portfolio_value || 100000;
+            const totalValue = portfolioData.account?.portfolio_value || SLEEVE_ERA_BASELINE;
 
             // Sector definitions - DYNAMIC from actual portfolio holdings
             const sectorConfig = {
@@ -9076,7 +9076,7 @@ function updateDashboard(data, marketStatus) {
                     return;
                 }
 
-                // One Bot point per day: the day's last check, return vs $100K.
+                // One Bot point per day: the day's last check, return vs sleeve-era baseline.
                 const byDay = {};
                 sortedChecks.forEach(c => {
                     const d = (c.timestamp || '').slice(0, 10);
@@ -10999,7 +10999,7 @@ function updateDashboard(data, marketStatus) {
                         subtype: 'critical',
                         icon: '',
                         title: 'Holdings Alert',
-                        description: 'Strategy down from $100K start',
+                        description: 'Strategy down from starting capital',
                         timestamp: new Date('2026-06-06T15:50:00Z'),
                         badge: 'Alert',
                         badgeClass: 'alert',
@@ -12933,7 +12933,7 @@ function updateDashboard(data, marketStatus) {
                             <span id="detail-return-badge" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.75rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
                                 <span>--</span> --
                             </span>
-                            <span style="font-size: 0.7rem; color: var(--text-muted);">vs $100K invested</span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">vs Sep 29 baseline</span>
                         </div>
                     </div>
     

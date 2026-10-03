@@ -363,7 +363,7 @@
                     const sp500 = marketData?.indices?.['S&P 500'];
                     if (sp500 && sp500.current_value && sp500.start_price) {
                         const benchLatest = sp500.current_value;
-                        const benchStart = (sp500.start_price / sp500.current_price) * sp500.current_value; // Normalize to $100K base
+                        const benchStart = (sp500.start_price / sp500.current_price) * sp500.current_value; // Normalize benchmark to portfolio base
                         const benchPct = sp500.return_pct;
                         const diffPct = pct - benchPct;
                         const isWinning = diffPct >= 0;
