@@ -118,8 +118,6 @@
         .legend { color: var(--text-secondary); font-size: 0.65rem; margin-top: 0.5rem; }
         .legend span { display: inline-flex; align-items: center; margin-right: 1rem; }
         .dot { width: 6px; height: 6px; border-radius: 50%; margin-right: 0.3rem; }
-        .dot-buy { background: var(--accent-green); }
-        .dot-sell { background: var(--accent-red); }
         .dot-swing { background: var(--accent-yellow); }
         @media (max-width: 600px) {
             h1 { font-size: 1.1rem; }
@@ -133,7 +131,7 @@
         <header>
             <div>
                 <div class="site-header-logo" style="font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; cursor: pointer;" onclick="window.location.href='index.html'"><span style="color: var(--text-primary);">Stonk</span><span style="color: var(--accent-cyan);">BOT.AI</span></div>
-                <div class="subtitle">Performance vs. S&P 500</div>
+                <div class="subtitle">Sleeve-era performance · since the Sep 29, 2026 close</div>
             </div>
             <a class="back-link" href="index.html">← Back to StonkBOT</a>
         </header>
@@ -146,7 +144,7 @@
                 <div class="vs-detail" id="statReturnDetail">--</div>
                 <div class="vs-detail" id="statDaysActive" style="margin-top: 0.5rem; font-size: 0.65rem;">--</div>
             </div>
-            
+
             <!-- Card 2: The Race (vs S&P 500) -->
             <div class="stat-card vs-card">
                 <div class="stat-label">🏆 vs S&P 500</div>
@@ -155,6 +153,14 @@
                     <span id="statBotDetail">Bot: --</span>
                     <span id="statMarketDetail">S&P 500: --</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- Strategy card: what this performance actually represents -->
+        <div class="stat-card" style="margin-bottom: 1rem;">
+            <div class="stat-label">📈 The Strategy</div>
+            <div class="note" style="margin-top: 0.4rem; font-size: 0.7rem; color: var(--text-secondary);">
+                35 fixed mega-caps ranked by absolute 12-1 momentum (price 21 trading days ago ÷ price 252 days ago − 1). The top 10 are held equal-weight — challengers enter at rank ≤ 8, holdings exit past rank 12. The DM-6 defensive gate keeps the sleeve risk-on while the better of QQQ/GLD 6-month returns beats SHY; otherwise the whole sleeve rotates into the winning defensive asset. Re-ranked after every US close — trades any day ranks cross or the gate flips. All returns on this page measure from the Sep 29, 2026 close (era baseline $87,708.12).
             </div>
         </div>
 
@@ -172,19 +178,25 @@
             <div class="legend">
                 <span><span class="dot" style="background:#06b6d4;"></span>StonkBOT</span>
                 <span><span class="dot dot-swing"></span>SPY Benchmark</span>
-                <span><span class="dot dot-buy"></span>Buy trade ≥$5K</span>
-                <span><span class="dot dot-sell"></span>Sell trade ≥$5K</span>
             </div>
             <div class="note">
-                Older days show the portfolio snapshot closest to noon UTC; the last 1–2 sessions plot live intraday detail (ET). Trade markers show the portfolio value at market close on the day of the trade. Data auto-refreshes every 2 minutes.
+                Daily closes from the sleeve ledger; during US market hours the final point tracks live quotes. SPY is rebased to its Sep 29, 2026 close on the same era baseline, so both lines share one origin. Data auto-refreshes every 2 minutes.
             </div>
         </div>
     </div>
 
     <script>
+        // Sleeve-era baseline (owner call 2026-10-03, same as index.html): the Bot sleeve
+        // took over the Alpaca account at the Sep 28-29 migration. All returns/comparisons
+        // measure from the Sep 29 close — the first full day in the Bot basket — so the
+        // retired intraday era's losses don't contaminate the current strategy's record.
+        const SLEEVE_ERA_START = '2026-09-29';
+        const SLEEVE_ERA_BASELINE = 87708.12; // account equity at Sep 29 close
+
         let chart = null;
-        let portfolioData = [];
-        let tradeData = [];
+        let portfolioData = [];   // [{date, label, value}] daily closes from the sleeve ledger
+        let spyData = [];         // SPY closes rebased to SLEEVE_ERA_BASELINE, aligned to portfolioData
+        let currentRange = 'all';
 
         function fmtMoney(n) {
             if (n === undefined || n === null) return '--';
@@ -192,93 +204,23 @@
             return sign + '$' + Math.abs(n).toLocaleString('en-US', {maximumFractionDigits:0});
         }
 
-        function getDailySnapshots(checks) {
-            const byDay = {};
-            checks.forEach(c => {
-                const day = c.timestamp.slice(0, 10);
-                if (!byDay[day]) byDay[day] = [];
-                byDay[day].push(c);
-            });
-            return Object.keys(byDay).sort().map(day => {
-                const entries = byDay[day];
-                const noon = new Date(day + 'T12:00:00Z').getTime();
-                const closest = entries.reduce((best, cur) => {
-                    const curDiff = Math.abs(new Date(cur.timestamp).getTime() - noon);
-                    const bestDiff = Math.abs(new Date(best.timestamp).getTime() - noon);
-                    return curDiff < bestDiff ? cur : best;
-                });
-                return {
-                    date: day,
-                    value: closest.portfolio_value,
-                    benchmark: closest.benchmark_value,
-                    benchmarkSymbol: closest.benchmark_symbol,
-                    timestamp: closest.timestamp
-                };
-            });
+        // Live quotes layer (mirrors index.html): live_quotes.json is written by the
+        // VPS SIP poller during US market hours only; used when <60s old, otherwise
+        // everything falls back to the sleeve ledger + market_indices snapshot.
+        let _liveQuotes = null;
+        async function fetchLiveQuotesIfFresh() {
+            if (typeof liveQuotesFresh === 'function' && liveQuotesFresh()) return _liveQuotes;
+            try {
+                const r = await fetch('live_quotes.json?t=' + Date.now());
+                if (!r.ok) return null;
+                const d = await r.json();
+                if (!d.timestamp || (Date.now() - new Date(d.timestamp).getTime()) > 60000) return null;
+                _liveQuotes = d;
+                return d;
+            } catch (e) { return null; }
         }
-
-        // Hybrid series (Jul 21): daily noon-UTC snapshots for older history,
-        // plus live intraday points for the most recent session(s). Previously
-        // the chart collapsed EVERY day to one snapshot, so the line never
-        // moved intraday even though the pipeline now records it.
-        function buildSeries(checks) {
-            if (!checks.length) return [];
-            const byDay = {};
-            checks.forEach(c => {
-                const day = c.timestamp.slice(0, 10);
-                (byDay[day] = byDay[day] || []).push(c);
-            });
-            const days = Object.keys(byDay).sort();
-
-            // Newest day always renders intraday; the previous day too when its
-            // micro-checks are still inside the backend's rolling 36h window.
-            const intradayDays = new Set();
-            intradayDays.add(days[days.length - 1]);
-            if (days.length > 1 && byDay[days[days.length - 2]].length > 3) {
-                intradayDays.add(days[days.length - 2]);
-            }
-
-            const etLabel = (ts) => new Date(ts).toLocaleString('en-US', {
-                timeZone: 'America/New_York', month: 'short', day: 'numeric',
-                hour: '2-digit', minute: '2-digit', hour12: false
-            });
-
-            const series = [];
-            days.forEach(day => {
-                const entries = byDay[day].slice().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-                if (intradayDays.has(day) && entries.length > 1) {
-                    entries.forEach(c => series.push({
-                        date: day,
-                        label: etLabel(c.timestamp),
-                        value: c.portfolio_value,
-                        benchmark: c.benchmark_value ?? null,
-                        timestamp: c.timestamp
-                    }));
-                } else {
-                    const noon = new Date(day + 'T12:00:00Z').getTime();
-                    const closest = entries.reduce((best, cur) => {
-                        const curDiff = Math.abs(new Date(cur.timestamp).getTime() - noon);
-                        const bestDiff = Math.abs(new Date(best.timestamp).getTime() - noon);
-                        return curDiff < bestDiff ? cur : best;
-                    });
-                    series.push({
-                        date: day,
-                        label: day,
-                        value: closest.portfolio_value,
-                        benchmark: closest.benchmark_value ?? null,
-                        timestamp: closest.timestamp
-                    });
-                }
-            });
-            return series;
-        }
-
-        function computeDailyDeltas(snapshots) {
-            for (let i = 0; i < snapshots.length; i++) {
-                if (i === 0) snapshots[i].delta = 0;
-                else snapshots[i].delta = snapshots[i].value - snapshots[i-1].value;
-            }
-            return snapshots;
+        function liveQuotesFresh() {
+            return _liveQuotes && (Date.now() - new Date(_liveQuotes.timestamp).getTime()) < 60000;
         }
 
         function filterRange(snapshots, rangeDays) {
@@ -288,156 +230,115 @@
             return snapshots.filter(s => new Date(s.date + 'T00:00:00Z') >= cutoff);
         }
 
-        function buildSwingLabels(visible) {
-            // Return annotations as simple labels positioned near data points
-            return visible.map((s, i) => {
-                if (i === 0 || Math.abs(s.delta) < 500) return null;
-                return {
-                    type: 'label',
-                    xValue: s.date,
-                    yValue: s.value,
-                    content: fmtMoney(s.delta),
-                    color: s.delta >= 0 ? '#10b981' : '#ef4444',
-                    font: { size: 10, weight: '700' },
-                    position: 'end',
-                    yAdjust: s.delta >= 0 ? -14 : 14
-                };
-            }).filter(Boolean);
-        }
-
         async function loadData() {
-            const [phRaw, tlRaw, pdRaw, lqRaw, idxRaw] = await Promise.all([
-                fetch('portfolio_history.json?t=' + Date.now()).then(r => r.json()).catch(() => ({checks:[]})),
-                fetch('trades_log.json?t=' + Date.now()).then(r => r.json()).catch(() => ({trades:[]})),
-                fetch('portfolio_data.json?t=' + Date.now()).then(r => r.json()).catch(() => ({})),
-                fetch('live_quotes.json?t=' + Date.now()).then(r => r.json()).catch(() => null),
-                fetch('index_history.json?t=' + Date.now()).then(r => r.json()).catch(() => null)
+            const [stateRes, eqRes, miRes, idxRes] = await Promise.all([
+                fetch('dm_paper/sleeve_state.json?t=' + Date.now()).catch(() => null),
+                fetch('dm_paper/sleeve_equity.csv?t=' + Date.now()).catch(() => null),
+                fetch('market_indices.json?t=' + Date.now()).catch(() => null),
+                fetch('index_history.json?t=' + Date.now()).catch(() => null)
             ]);
-            window._perfLiveQuotes = lqRaw;
-            window._perfIndexHistory = idxRaw;
-            let checks = phRaw.checks || [];
-            checks = checks.filter(c => (c.timestamp || '') >= '2026-07-07');
-            const reconstructed = phRaw.reconstructed || false;
-            portfolioData = computeDailyDeltas(buildSeries(checks));
-            tradeData = tlRaw.trades || [];
-            let liveValue = pdRaw.account?.portfolio_value || null;
-            const lqFresh = lqRaw && lqRaw.portfolio_value && lqRaw.timestamp &&
-                (Date.now() - new Date(lqRaw.timestamp).getTime()) < 90000;
-            if (lqFresh) liveValue = lqRaw.portfolio_value;
-            const badge = reconstructed ? ' · reconstructed from Alpaca fills' : '';
-            document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'}) + badge;
-            updateStats(portfolioData, liveValue);
-            renderChart('all');
+
+            const state = (stateRes && stateRes.ok) ? await stateRes.json().catch(() => null) : null;
+            const mi = (miRes && miRes.ok) ? await miRes.json().catch(() => null) : null;
+            const idxHist = (idxRes && idxRes.ok) ? await idxRes.json().catch(() => null) : null;
+            const lq = await fetchLiveQuotesIfFresh();
+
+            // --- Bot series: daily closes from the sleeve equity ledger (Sep 29 on) ---
+            let rows = [];
+            if (eqRes && eqRes.ok) {
+                const csv = await eqRes.text();
+                rows = csv.trim().split(/\r?\n/).filter(Boolean).map(l => {
+                    const parts = l.split(',');
+                    return { date: parts[0], value: parseFloat(parts[1]) };
+                }).filter(r => /^\d{4}-\d{2}-\d{2}$/.test(r.date) && !isNaN(r.value) && r.date >= SLEEVE_ERA_START);
+            }
+            // Ledger fallback: the authoritative state snapshot alone
+            if (!rows.length && state && state.equity) {
+                rows = [{ date: state.last_date || SLEEVE_ERA_START, value: state.equity }];
+            }
+            portfolioData = rows.map(r => ({ date: r.date, label: r.date, value: r.value }));
+
+            // During market hours, pin the chart tail to the live quote (never to
+            // live_quotes' own return fields — those aren't era-based).
+            const livePV = (lq && lq.portfolio_value) ? lq.portfolio_value : null;
+            if (livePV != null && portfolioData.length) {
+                const today = new Date().toISOString().slice(0, 10);
+                const last = portfolioData[portfolioData.length - 1];
+                if (last.date === today) last.value = livePV;
+                else portfolioData.push({ date: today, label: today, value: livePV });
+            }
+
+            // --- SPY benchmark: daily closes rebased onto the era baseline ---
+            // Base anchor is the Sep 29 close carried by market_indices.json
+            // (start_price); fall back to the first close in index_history.
+            const spIdx = mi && mi.indices ? mi.indices['S&P 500'] : null;
+            const spySeries = (idxHist && idxHist.series && idxHist.series.SPY) || [];
+            const spyBase = (spIdx && spIdx.start_price) || (spySeries.length ? spySeries[0].c : null);
+            const spyMap = {};
+            if (spyBase) spySeries.forEach(p => { if (p.d >= SLEEVE_ERA_START) spyMap[p.d] = SLEEVE_ERA_BASELINE * (p.c / spyBase); });
+            // Pin the benchmark tail to the live era-based return from market_indices.
+            if (spIdx && spIdx.return_pct != null && portfolioData.length) {
+                spyMap[portfolioData[portfolioData.length - 1].date] = SLEEVE_ERA_BASELINE * (1 + spIdx.return_pct / 100);
+            }
+            spyData = portfolioData.map(s => spyMap[s.date] ?? null);
+
+            document.getElementById('lastUpdated').textContent =
+                'Updated ' + new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+
+            updateStats(state, spIdx, livePV);
+            renderChart(currentRange);
         }
 
-        function updateStats(snapshots, liveValue) {
-            if (!snapshots.length) return;
-            const STARTING_VALUE = 99866.86;  // Jul 7 reset snapshot (16:00 UTC)
-            const latest = liveValue !== null ? liveValue : snapshots[snapshots.length-1].value;
-            const ret = latest - STARTING_VALUE;
-            const pct = (ret / STARTING_VALUE) * 100;
+        function updateStats(state, spIdx, livePV) {
+            if (!portfolioData.length) return;
+            const equity = livePV != null ? livePV
+                : (state && state.equity) ? state.equity
+                : portfolioData[portfolioData.length - 1].value;
+            const eraStart = (state && state.era_start) || SLEEVE_ERA_START;
+            const eraBaseline = (state && state.era_baseline) || SLEEVE_ERA_BASELINE;
+            const ret = equity - eraBaseline;
+            const pct = (ret / eraBaseline) * 100;
 
-            // Calculate days active from first snapshot
-            const startDate = new Date(snapshots[0].date);
-            const latestDate = new Date(snapshots[snapshots.length - 1].date);
-            const daysActive = Math.max(1, Math.round((latestDate - startDate) / (1000 * 60 * 60 * 24)));
+            const startDate = new Date(eraStart + 'T00:00:00');
+            const dayNumber = Math.max(1, Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
 
             // Card 1: Portfolio Value
-            document.getElementById('statValue').textContent = '$' + latest.toLocaleString('en-US', {maximumFractionDigits:0});
+            document.getElementById('statValue').textContent = '$' + Math.round(equity).toLocaleString('en-US');
             const retDetail = document.getElementById('statReturnDetail');
             retDetail.textContent = `${fmtMoney(ret)} • ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
             retDetail.style.color = ret >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-            
-            const daysEl = document.getElementById('statDaysActive');
-            daysEl.textContent = `Since ${snapshots[0].date} • ${daysActive} days`;
+            document.getElementById('statDaysActive').textContent = `Since ${eraStart} • Day ${dayNumber}`;
 
-            // Card 2: The Race (vs S&P 500) - Use live market_indices.json for current SPY data
+            // Card 2: The Race (vs S&P 500) — both sides measured from the Sep 29 close.
             const vsEl = document.getElementById('statVs');
             const botDetail = document.getElementById('statBotDetail');
             const marketDetail = document.getElementById('statMarketDetail');
-            
-            // Fetch live SPY data from market_indices.json
-            fetch('./market_indices.json?t=' + Date.now())
-                .then(r => r.json())
-                .then(marketData => {
-                    const sp500 = marketData?.indices?.['S&P 500'];
-                    if (sp500 && sp500.current_value && sp500.start_price) {
-                        const benchLatest = sp500.current_value;
-                        const benchStart = (sp500.start_price / sp500.current_price) * sp500.current_value; // Normalize benchmark to portfolio base
-                        const benchPct = sp500.return_pct;
-                        const diffPct = pct - benchPct;
-                        const isWinning = diffPct >= 0;
-                        
-                        vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
-                        vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
-                        
-                        botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
-                        botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                        marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}%`;
-                        marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                    } else {
-                        throw new Error('No SPY data');
-                    }
-                })
-                .catch(err => {
-                    // Fallback to portfolio_history benchmark if market_indices fails
-                    const benchStart = snapshots[0].benchmark;
-                    const benchLatest = snapshots[snapshots.length - 1].benchmark;
-                    
-                    if (benchStart && benchLatest) {
-                        const benchRet = benchLatest - benchStart;
-                        const benchPct = (benchRet / benchStart) * 100;
-                        const diffPct = pct - benchPct;
-                        const isWinning = diffPct >= 0;
-                        
-                        vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
-                        vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
-                        
-                        botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
-                        botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                        marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}% (stale)`;
-                        marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                    } else {
-                        vsEl.textContent = '--';
-                        botDetail.textContent = 'Bot: --';
-                        marketDetail.textContent = 'S&P 500: --';
-                    }
-                });
-        }
-
-        function buildTradePoints(visible, trades) {
-            const dayValue = {};
-            visible.forEach(s => dayValue[s.date] = s.value);
-            const bigTrades = trades.filter(t => t.total_value >= 5000).slice(-16);
-            const data = visible.map(s => null);
-            const points = bigTrades.map(t => {
-                const day = t.timestamp.slice(0, 10);
-                return {
-                    x: day,
-                    y: dayValue[day] !== undefined ? dayValue[day] : null,
-                    action: t.action,
-                    symbol: t.symbol,
-                    value: t.total_value
-                };
-            }).filter(p => p.y !== null);
-            return points;
+            const benchPct = (spIdx && spIdx.return_pct != null) ? spIdx.return_pct : null;
+            if (benchPct != null) {
+                const diffPct = pct - benchPct;
+                const isWinning = diffPct >= 0;
+                vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
+                vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
+                botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                marketDetail.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}%`;
+                marketDetail.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            } else {
+                vsEl.textContent = '--';
+                botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+                marketDetail.textContent = 'S&P 500: --';
+            }
         }
 
         function renderChart(rangeDays) {
+            currentRange = rangeDays;
             const visible = filterRange(portfolioData, rangeDays);
             const labels = visible.map(s => s.label || s.date);
             const values = visible.map(s => s.value);
-            // Benchmark: SPY from index_history.json, scaled to start at the same
-            // Jul 7 reset value as the bot ($99,866.86) so the two lines share a
-            // common origin and the comparison is visually honest.
-            const RESET_PV = 99866.86;
-            const idxHist = window._perfIndexHistory || {};
-            const spySeries = (idxHist.series && idxHist.series.SPY) || [];
-            const spyMap = {};
-            const spyBase = spySeries.length ? spySeries[0].c : 747.71;
-            spySeries.forEach(p => { spyMap[p.d] = RESET_PV * (p.c / spyBase); });
-            const benchmarks = visible.map(s => spyMap[s.date] ?? s.benchmark ?? null);
-            const tradePoints = buildTradePoints(visible, tradeData);
+            const benchmarks = visible.map(s => {
+                const i = portfolioData.indexOf(s);
+                return i >= 0 ? spyData[i] : null;
+            });
 
             if (chart) chart.destroy();
 
@@ -485,27 +386,6 @@
                     order: 3
                 });
             }
-            datasets.push({
-                label: 'Trades ≥$5K',
-                data: visible.map((s, i) => {
-                    const p = tradePoints.find(pt => pt.x === s.date);
-                    if (!p) return null;
-                    // Attach the marker to the last plotted point of that day
-                    const isLastOfDay = (i === visible.length - 1) || visible[i + 1].date !== s.date;
-                    return isLastOfDay ? p.y : null;
-                }),
-                pointBackgroundColor: (ctx) => {
-                    const d = visible[ctx.dataIndex] ? visible[ctx.dataIndex].date : null;
-                    const p = tradePoints.find(pt => pt.x === d);
-                    return p && p.action === 'BUY' ? '#10b981' : '#ef4444';
-                },
-                pointBorderColor: 'rgba(255,255,255,0.3)',
-                pointBorderWidth: 1,
-                pointRadius: 7,
-                pointHoverRadius: 9,
-                showLine: false,
-                order: 1
-            });
 
             chart = new Chart(document.getElementById('historyChart'), {
                 type: 'line',
@@ -527,13 +407,7 @@
                                     if (ctx.dataset.label === 'StonkBOT') {
                                         return `StonkBOT: $${ctx.parsed.y.toLocaleString('en-US', {maximumFractionDigits:0})}`;
                                     }
-                                    if (ctx.dataset.label === 'SPY Benchmark') {
-                                        return `SPY: $${ctx.parsed.y.toLocaleString('en-US', {maximumFractionDigits:0})}`;
-                                    }
-                                    const d = visible[ctx.dataIndex] ? visible[ctx.dataIndex].date : null;
-                                    const p = tradePoints.find(pt => pt.x === d);
-                                    if (!p) return '';
-                                    return `${p.action} ${p.symbol}: $${p.value.toLocaleString('en-US', {maximumFractionDigits:0})}`;
+                                    return `SPY: $${ctx.parsed.y.toLocaleString('en-US', {maximumFractionDigits:0})}`;
                                 }
                             }
                         }
@@ -564,58 +438,37 @@
             });
         });
 
-        // ---- Live quotes layer (Jul 22): 10s refresh of stat cards + chart tail ----
-        // Uses live_quotes.json from the VPS SIP poller only when <60s old;
-        // otherwise the page keeps its standard 2-minute cadence.
+        // 15s live-quotes poll (market hours only): repaints the stat cards and the
+        // chart tail when fresh quotes exist; otherwise the page keeps its 2-minute
+        // cadence off the sleeve ledger + market_indices snapshot.
         async function pollLiveQuotes() {
-            try {
-                const r = await fetch('live_quotes.json?t=' + Date.now());
-                if (!r.ok) return;
-                const d = await r.json();
-                if (!d.timestamp || (Date.now() - new Date(d.timestamp).getTime()) > 60000) return;
+            const d = await fetchLiveQuotesIfFresh();
+            if (!d || !d.portfolio_value) return;
 
-                const pct = d.total_return_pct;
-                const ret = d.total_pl;
-                document.getElementById('statValue').textContent = '$' + Math.round(d.portfolio_value).toLocaleString('en-US');
-                const rd = document.getElementById('statReturnDetail');
-                rd.textContent = `${fmtMoney(ret)} • ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
-                rd.style.color = ret >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            const eraBaseline = SLEEVE_ERA_BASELINE;
+            const pct = ((d.portfolio_value - eraBaseline) / eraBaseline) * 100;
+            const ret = d.portfolio_value - eraBaseline;
+            document.getElementById('statValue').textContent = '$' + Math.round(d.portfolio_value).toLocaleString('en-US');
+            const rd = document.getElementById('statReturnDetail');
+            rd.textContent = `${fmtMoney(ret)} • ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
+            rd.style.color = ret >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
 
-                if (d.spy && d.spy.return_pct != null) {
-                    const benchPct = d.spy.return_pct;
-                    const diffPct = pct - benchPct;
-                    const isWinning = diffPct >= 0;
-                    const vsEl = document.getElementById('statVs');
-                    vsEl.textContent = `${isWinning ? '+' : '−'}${Math.abs(diffPct).toFixed(2)}% ${isWinning ? 'ahead' : 'behind'}`;
-                    vsEl.className = 'stat-value ' + (isWinning ? 'winning' : 'losing');
-                    const botDetail = document.getElementById('statBotDetail');
-                    botDetail.textContent = `Bot: ${pct >= 0 ? '+' : '−'}${Math.abs(pct).toFixed(2)}%`;
-                    botDetail.style.color = pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                    const mkt = document.getElementById('statMarketDetail');
-                    mkt.textContent = `S&P 500: ${benchPct >= 0 ? '+' : '−'}${Math.abs(benchPct).toFixed(2)}%`;
-                    mkt.style.color = benchPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            if (chart && portfolioData.length) {
+                const today = new Date().toISOString().slice(0, 10);
+                const lastIdx = portfolioData.length - 1;
+                if (portfolioData[lastIdx].date === today) {
+                    portfolioData[lastIdx].value = d.portfolio_value;
+                    const cd = chart.data.datasets[0].data;
+                    if (cd.length) cd[cd.length - 1] = d.portfolio_value;
+                    chart.update('none');
                 }
-
-                // Move the chart's tail point with the live value (today's
-                // intraday points carry the current UTC date).
-                if (chart && portfolioData.length) {
-                    const today = new Date().toISOString().slice(0, 10);
-                    const lastIdx = portfolioData.length - 1;
-                    if (portfolioData[lastIdx].date === today) {
-                        chart.data.datasets[0].data[lastIdx] = d.portfolio_value;
-                        if (chart.data.datasets[1] && d.spy && d.spy.value) {
-                            chart.data.datasets[1].data[lastIdx] = d.spy.value;
-                        }
-                        chart.update('none');
-                    }
-                }
-            } catch (e) { /* keep 2-min cadence */ }
+            }
         }
 
         loadData();
         setInterval(loadData, 120000);
         pollLiveQuotes();
-        setInterval(pollLiveQuotes, 10000);
+        setInterval(pollLiveQuotes, 15000);
     </script>
 </body>
 </html>
