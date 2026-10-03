@@ -82,7 +82,7 @@ def atomic_write(path: Path, content: str):
     tmp.rename(path)
 
 
-def copy_to_web_root(src_state: Path, src_hist: Path, dst_state: Path, dst_hist: Path, src_exec: Path | None = None, dst_exec: Path | None = None):
+def copy_to_web_root(src_state: Path, src_hist: Path, dst_state: Path, dst_hist: Path, src_exec: Path | None = None, dst_exec: Path | None = None, src_holdings: Path | None = None, dst_holdings: Path | None = None):
     """Copy files to web root using normal permissions."""
     shutil.copy2(src_state, dst_state)
     shutil.copy2(src_hist, dst_hist)
@@ -91,6 +91,9 @@ def copy_to_web_root(src_state: Path, src_hist: Path, dst_state: Path, dst_hist:
     if src_exec and dst_exec and src_exec.exists():
         shutil.copy2(src_exec, dst_exec)
         os.chmod(dst_exec, 0o644)
+    if src_holdings and dst_holdings and src_holdings.exists():
+        shutil.copy2(src_holdings, dst_holdings)
+        os.chmod(dst_holdings, 0o644)
 
 
 def main():
@@ -177,6 +180,7 @@ def main():
         copy_to_web_root(
             state_path, hist_path, WEB / "sleeve_state.json", WEB / "sleeve_equity.csv",
             src_exec=exec_log_path, dst_exec=WEB / "rebalance_executions.json",
+            src_holdings=BASE / "sleeve_holdings.json", dst_holdings=WEB / "sleeve_holdings.json",
         )
     except Exception as e:
         print(f"Warning: could not copy to web root: {e}", file=sys.stderr)
