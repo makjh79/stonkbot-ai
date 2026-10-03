@@ -5497,8 +5497,10 @@ async function loadPnlAttribution() {
                 const pd = (pdRes && pdRes.ok) ? await pdRes.json() : null;
                 const lq = await fetchLiveQuotesIfFresh();
                 const equity = (lq && lq.portfolio_value) || s.equity || 0;
-                const lastEq = (pd && pd.account && pd.account.last_equity) || 0;
-                window._lastEquity = lastEq || window._lastEquity || 0; // keeps applyLiveQuotes' hero badge on the same daily basis
+                // Daily P&L basis: Alpaca last_equity from portfolio_data.json; fall back to the
+                // last known-good value (never 0) so a mid-rewrite pd fetch failure can't paint +$0.
+                const lastEq = (pd && pd.account && pd.account.last_equity) || window._lastEquity || 0;
+                window._lastEquity = lastEq; // keeps applyLiveQuotes' hero badge on the same daily basis
                 const pnl = lastEq ? equity - lastEq : 0;
                 const botRet = lastEq ? (pnl / lastEq) * 100 : 0;
                 const isPos = botRet >= 0;
@@ -5831,14 +5833,14 @@ function updateDashboard(data, marketStatus) {
                 }
                 if (returnEl) {
                     returnEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
-                    const newReturn = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+                    const newReturn = (isPositive ? '▲ +' : '▼ ') + totalReturn.toFixed(2) + '%'; // identical to loadSleeveDashboard
                     if (returnEl.textContent?.trim() !== newReturn) {
                         setValue('portfolio-return', newReturn);
                     }
                 }
                 if (pnlEl) {
                     pnlEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
-                    const newPnl = (totalPl >= 0 ? '+$' : '-$') + Math.abs(totalPl).toLocaleString();
+                    const newPnl = (totalPl >= 0 ? '+$' : '-$') + Math.abs(Math.round(totalPl)).toLocaleString('en-US'); // identical to loadSleeveDashboard
                     if (pnlEl.textContent?.trim() !== newPnl) {
                         setValue('portfolio-pnl', newPnl);
                     }
@@ -8236,20 +8238,23 @@ function updateDashboard(data, marketStatus) {
                 pvEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
             }
             const portfolioValue = d.portfolio_value || 0;
-            // Hero badge is DAILY (v89): measure vs prior close, not the $100K baseline
+            // Hero badge is DAILY (v89): measure vs prior close. Never fall back to
+            // live_quotes' total_pl/total_return_pct — those are era/$100K-baseline
+            // numbers and would flip the hero. If the daily basis isn't known yet,
+            // leave the hero badge to the canonical writer (loadSleeveDashboard).
             const lastEqLive = window._lastEquity || 0;
-            const totalPl = lastEqLive ? portfolioValue - lastEqLive : (d.total_pl || 0);
-            const totalReturn = lastEqLive ? (totalPl / lastEqLive) * 100 : (d.total_return_pct != null ? d.total_return_pct : 0);
+            const totalPl = lastEqLive ? portfolioValue - lastEqLive : null;
+            const totalReturn = lastEqLive ? (totalPl / lastEqLive) * 100 : null;
             const isPositive = (totalReturn || 0) >= 0;
             const returnBadge = document.getElementById('portfolio-return-badge');
-            if (returnBadge) {
+            if (returnBadge && totalReturn != null) {
                 returnBadge.style.color = isPositive ? 'var(--accent-green)' : 'var(--accent-red)';
                 returnBadge.style.background = isPositive ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)';
             }
             const returnEl = document.getElementById('portfolio-return');
             if (returnEl && totalReturn != null) {
                 const prevRet = window._lastBadgeRet;
-                returnEl.textContent = (isPositive ? '▲ ' : '▼ ') + totalReturn.toFixed(2) + '%';
+                returnEl.textContent = (isPositive ? '▲ +' : '▼ ') + totalReturn.toFixed(2) + '%'; // identical to loadSleeveDashboard
                 tickFlash(returnEl, prevRet, totalReturn);
                 window._lastBadgeRet = totalReturn;
                 returnEl.classList.remove('skeleton', 'skeleton-text', 'skeleton-value', 'skeleton-badge');
