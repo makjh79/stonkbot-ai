@@ -4099,7 +4099,7 @@
         </div>
         <div class="about-section-body" style="display:none;padding:0 1rem 1rem;">
           <div style="font-size:0.8rem;line-height:1.65;color:var(--text-secondary);margin-bottom:0.75rem;">
-            <p style="margin:0 0 0.75rem 0;">Every day the bot answers three questions: <strong style="color:var(--text-primary);">Is the market healthy enough to own stocks?</strong> If so, <strong style="color:var(--text-primary);">which stocks are leading?</strong> And <strong style="color:var(--text-primary);">has anything changed enough to act?</strong></p>
+            <p style="margin:0 0 0.75rem 0;">After every US close the bot answers three questions: <strong style="color:var(--text-primary);">Is the market healthy enough to own stocks?</strong> If so, <strong style="color:var(--text-primary);">which stocks are leading?</strong> And <strong style="color:var(--text-primary);">has anything changed enough to act?</strong></p>
 
             <style>
               .hiw-grid{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:0.3rem;}
@@ -4115,7 +4115,7 @@
                 <div style="text-align:center;">
                   <div style="width:1.45rem;height:1.45rem;margin:0 auto 0.3rem;border:1px solid rgba(6,182,212,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#06b6d4;font-weight:700;">1</div>
                   <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Scan</div>
-                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">the whole market, every close</div>
+                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">35 mega-caps, every close</div>
                 </div>
                 <div class="hiw-arrow-h" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">→</div>
                 <div class="hiw-arrow-v" style="color:var(--text-muted);font-size:0.75rem;opacity:0.6;">↓</div>
@@ -4136,13 +4136,13 @@
                 <div style="text-align:center;">
                   <div style="width:1.45rem;height:1.45rem;margin:0 auto 0.3rem;border:1px solid rgba(6,182,212,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#06b6d4;font-weight:700;">4</div>
                   <div style="font-size:0.68rem;font-weight:700;color:var(--text-primary);margin-bottom:0.12rem;">Rebalance</div>
-                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">only when rules say so</div>
+                  <div style="font-size:0.59rem;color:var(--text-muted);line-height:1.4;">only when ranks cross</div>
                 </div>
               </div>
-              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> Ranks the market daily; trades only when the rules trigger</div>
+              <div style="margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed rgba(255,255,255,0.07);text-align:center;font-size:0.59rem;color:var(--text-muted);"><span style="color:#06b6d4;">↺</span> Re-ranked after every US close — most days, nothing trades</div>
             </div>
 
-            <p style="margin:0 0 0.75rem 0;">The engine ranks hundreds of stocks by how strongly they have outperformed the S&amp;P 500 over the past year, then holds the ten strongest. Winners keep their seats until they fade; new leaders have to earn their way in.</p>
+            <p style="margin:0 0 0.75rem 0;">The engine tracks 35 of the market's largest names and ranks them by 12-month momentum, skipping the most recent month to filter out short-term reversal noise — then holds the ten strongest, equal-weighted. Winners keep their seats until they fade; new leaders have to earn their way in.</p>
 
             <p style="margin:0 0 0.75rem 0;">The buffer is deliberate: a holding keeps its seat while it ranks in the top 12, but a challenger only takes over by breaking into the top 8. That gap filters out noise and keeps turnover low.</p>
 
@@ -5098,21 +5098,6 @@ async function loadPnlAttribution() {
         .wl-updated { font-size: var(--text-xs); color: var(--text-muted); }
         .wl-count { font-size: var(--text-xs); color: var(--text-muted); font-weight: 600; }
         .wl-explainer { font-size: var(--text-xs); color: var(--text-muted); line-height: 1.5; margin: 0 4px 14px; padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
-        .wl-rebalance-banner {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0 4px 14px;
-            padding: 8px 12px;
-            background: rgba(6, 182, 212, 0.08);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-            border-radius: 10px;
-            color: #22d3ee;
-            font-size: var(--text-xs);
-        }
-        .wl-rebalance-banner strong { color: #fff; font-weight: 600; }
-        .wl-rebalance-banner svg { flex-shrink: 0; color: #22d3ee; }
-
         .wl-sortbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 4px 14px; }
         .wl-sortbar button { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 6px 12px; color: var(--text-secondary); font-size: var(--text-sm); cursor: pointer; transition: all 0.15s; }
         .wl-sortbar button:hover { background: rgba(255,255,255,0.09); }
@@ -12006,46 +11991,6 @@ function updateDashboard(data, marketStatus) {
         }
 
         // Compute next monthly rebalance (last trading day of current/next month at 09:30 ET / 21:30 HKT)
-        function getNextRebalanceDate() {
-            const now = new Date();
-            const etOptions = { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' };
-            const etDateParts = new Intl.DateTimeFormat('en-US', etOptions).formatToParts(now);
-            const y = parseInt(etDateParts.find(p => p.type === 'year').value, 10);
-            const m = parseInt(etDateParts.find(p => p.type === 'month').value, 10);
-            const d = parseInt(etDateParts.find(p => p.type === 'day').value, 10);
-
-            // Last day of this month in ET
-            let lastDay = new Date(Date.UTC(y, m, 0, 13, 30, 0)); // 09:30 ET -> 13:30 UTC
-            let check = new Date(lastDay);
-            // Shift to previous Friday if weekend
-            while (check.getUTCDay() === 0 || check.getUTCDay() === 6) {
-                check.setUTCDate(check.getUTCDate() - 1);
-                check.setUTCHours(13, 30, 0, 0);
-            }
-            const thisMonthRebalance = check;
-
-            // If passed, look at next month
-            if (now > thisMonthRebalance) {
-                let nextLast = new Date(Date.UTC(y, m + 1, 0, 13, 30, 0));
-                let nextCheck = new Date(nextLast);
-                while (nextCheck.getUTCDay() === 0 || nextCheck.getUTCDay() === 6) {
-                    nextCheck.setUTCDate(nextCheck.getUTCDate() - 1);
-                    nextCheck.setUTCHours(13, 30, 0, 0);
-                }
-                return nextCheck;
-            }
-            return thisMonthRebalance;
-        }
-
-        function formatRebalanceCountdown() {
-            const next = getNextRebalanceDate();
-            const now = new Date();
-            const diffMs = next - now;
-            const days = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-            const dateStr = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
-            return { dateStr, days, next };
-        }
-
         // Render watchlist content - card layout with tier chips
         function renderWatchlistContent() {
             const container = document.getElementById('watchlist-content');
@@ -12073,15 +12018,12 @@ function updateDashboard(data, marketStatus) {
 
             let html = '<div class="wl-section">';
             html += '<div class="wl-header"><div class="wl-updated">Updated: ' + updateTime + '</div></div>';
-            html += '<div style="font-size: 0.7rem; color: var(--text-muted); margin: 2px 0 10px; line-height: 1.5;">Candidates only — names we don’t own. We buy when a name reaches <strong style="color:var(--text-secondary);">rank 8 or stronger</strong>; holdings are kept until they fall <strong style="color:var(--text-secondary);">past rank 12</strong>, reviewed monthly.</div>';
+            html += '<div style="font-size: 0.7rem; color: var(--text-muted); margin: 2px 0 10px; line-height: 1.5;">Candidates only — names we don’t own. Ranks refresh after every US close. We buy when a name reaches <strong style="color:var(--text-secondary);">rank 8 or stronger</strong>; holdings are kept until they fall <strong style="color:var(--text-secondary);">past rank 12</strong>.</div>';
 
 
             // Rebalance countdown banner
-            const rb = formatRebalanceCountdown();
-            html += '<div class="wl-rebalance-banner">';
-            html += '  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
-            html += '  <span>Next rebalance: <strong>' + rb.dateStr + '</strong> · ' + rb.days + ' day' + (rb.days === 1 ? '' : 's') + ' away</span>';
-            html += '</div>';
+            // Countdown banner removed 2026-10-03: rebalances are triggered by rank
+            // crossings (top-8 in / past-12 out) + gate flips, not a fixed monthly date.
 
             // Sort pills sync
             const sortBar = document.getElementById('wl-sortbar');
