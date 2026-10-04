@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
-    <meta name="cache-buster-20261003-Bot-v94">
+    <meta name="cache-buster-20261004-Bot-v95">
     <script>(function(){var v='20261003-Bot-v94';var k='stonkbot_v230';try{var s=localStorage.getItem(k);if(s!==v){localStorage.setItem(k,v);var base=window.location.href.split('?')[0].split('#')[0];var hash=window.location.hash||'';var u=base+'?v='+v+'&_='+Date.now()+hash;if(window.location.href!==u){window.location.replace(u);}}}catch(e){}})();</script>
     <script>
     // Nuclear cache bust - unregister service workers and clear caches
@@ -3853,7 +3853,7 @@
                     timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false
                 });
                 var DATE_FMT = new Intl.DateTimeFormat('en-US', {
-                    month: 'short', day: 'numeric'
+                    timeZone: 'America/New_York', month: 'short', day: 'numeric'
                 });
                 function loadTeaser() {
                     Promise.all([
@@ -3870,7 +3870,10 @@
                                     var candidates = entries.filter(function(x) { return (x.type === 'trade' || x.type === 'skip' || x.type === 'watch' || x.type === 'rebalance' || x.type === 'digest' || x.type === 'boundary' || x.type === 'decision' || x.type === 'gate') && x.ts; }).filter(function(x) { return new Date(x.ts).getTime() > Date.now() - 24*60*60*1000; });
                                     var prio = { digest: 0, decision: 1, trade: 1, rebalance: 1, gate: 2, boundary: 3, skip: 3, watch: 3 };
                                     candidates.sort(function(a, b) { return ((prio[a.type] != null ? prio[a.type] : 4) - (prio[b.type] != null ? prio[b.type] : 4)) || (new Date(b.ts) - new Date(a.ts)); });
-                                    var e = candidates[0] || entries[entries.length - 1];
+                                    // entries are stored newest-first; rank by priority then recency for the fallback
+                                    var ranked = entries.filter(function(x) { return x.ts && prio[x.type] != null; })
+                                        .sort(function(a, b) { return (prio[a.type] - prio[b.type]) || (new Date(b.ts) - new Date(a.ts)); });
+                                    var e = candidates[0] || ranked[0];
                                     if (e) {
                                         var color = '#6b7280';
                                         if (e.type === 'trade') color = (e.action === 'BUY') ? '#10b981' : '#ef4444';
@@ -3881,8 +3884,11 @@
                                         else if (e.type === 'boundary') color = '#f59e0b';
                                         else if (e.type === 'decision') color = '#10b981';
                                         else if (e.type === 'gate') color = '#8b5cf6';
+                                        var eDate = new Date(e.ts);
+                                        var isToday = DATE_FMT.format(eDate) === DATE_FMT.format(new Date());
+                                        var prefix = isToday ? TIME_FMT.format(eDate) : DATE_FMT.format(eDate);
                                         fallbackHtml = {
-                                            text: (e.type === 'digest') ? e.text : TIME_FMT.format(new Date(e.ts)) + ' · ' + e.text,
+                                            text: (e.type === 'digest' && isToday) ? e.text : prefix + ' · ' + e.text,
                                             color: color
                                         };
                                     }
