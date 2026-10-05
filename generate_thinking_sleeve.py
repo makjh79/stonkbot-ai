@@ -53,7 +53,8 @@ EXIT_LINE = 12
 TOP_N = 10
 MAX_ENTRIES = 400
 
-MODEL = os.environ.get("STONKBOT_LLM_MODEL", "moonshotai/Kimi-K3")
+MODEL = os.environ.get("STONKBOT_LLM_MODEL", "kimi-k2.7-code:cloud")
+LLM_BASE = os.environ.get("STONKBOT_LLM_BASE", "https://ollama.com/v1")
 BANNED_TOKENS = [
     "rsi", "macd", "vwap", "ema", "moving average", "relative strength",
     "histogram", "overbought", "oversold", "dm-6", "readiness", "confirmation",
@@ -61,8 +62,14 @@ BANNED_TOKENS = [
 
 
 def load_llm_key() -> str | None:
-    """SiliconFlow key (migrated off OpenRouter 2026-10-02)."""
-    for p in ("/opt/stonk-ai/.secrets/siliconflow.key",):
+    """Key file follows the configured provider (Ollama Cloud since 2026-10-05;
+    SiliconFlow 2026-10-02; OpenRouter before that)."""
+    candidates = []
+    if os.environ.get("STONKBOT_LLM_KEY_FILE"):
+        candidates.append(os.environ["STONKBOT_LLM_KEY_FILE"])
+    candidates.append("/opt/stonk-ai/.secrets/ollama.key" if "ollama" in LLM_BASE
+                      else "/opt/stonk-ai/.secrets/siliconflow.key")
+    for p in candidates:
         try:
             return Path(p).read_text(encoding="utf-8").strip() or None
         except Exception:
@@ -99,7 +106,7 @@ Rules:
 Return JSON: {{"note": "..."}}"""
     try:
         resp = requests.post(
-            (os.environ.get("STONKBOT_LLM_BASE", "https://api.siliconflow.com/v1") + "/chat/completions"),
+            LLM_BASE + "/chat/completions",
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
             json={"model": MODEL, "messages": [{"role": "user", "content": prompt}],
                   "temperature": 0.85, "max_tokens": 6000, "response_format": {"type": "json_object"}},

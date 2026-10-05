@@ -28,7 +28,8 @@ KNOWLEDGE_JSON = BOT_DIR / "company_knowledge.json"
 WATCHLIST_OUT = WEB_DIR / "watchlist_narratives.json"
 POPUP_OUT = WEB_DIR / "popup_content.json"
 
-MODEL = os.environ.get("STONKBOT_LLM_MODEL", "deepseek-ai/DeepSeek-V4-Flash")
+MODEL = os.environ.get("STONKBOT_LLM_MODEL", "kimi-k2.7-code:cloud")
+LLM_BASE = os.environ.get("STONKBOT_LLM_BASE", "https://ollama.com/v1")
 BATCH_SIZE = 5
 BANNED_TOKENS = [
     "rsi", "macd", "vwap", "ema", "moving average", "relative strength",
@@ -47,8 +48,14 @@ def load_json(path: Path, default):
 
 
 def load_llm_key() -> str | None:
-    """SiliconFlow key (migrated off OpenRouter 2026-10-02)."""
-    for p in ("/opt/stonk-ai/.secrets/siliconflow.key",):
+    """Key file follows the configured provider (Ollama Cloud since 2026-10-05;
+    SiliconFlow 2026-10-02; OpenRouter before that)."""
+    candidates = []
+    if os.environ.get("STONKBOT_LLM_KEY_FILE"):
+        candidates.append(os.environ["STONKBOT_LLM_KEY_FILE"])
+    candidates.append("/opt/stonk-ai/.secrets/ollama.key" if "ollama" in LLM_BASE
+                      else "/opt/stonk-ai/.secrets/siliconflow.key")
+    for p in candidates:
         try:
             return Path(p).read_text(encoding="utf-8").strip() or None
         except Exception:
@@ -69,7 +76,7 @@ def llm_call(prompt: str, api_key: str) -> dict | None:
         "response_format": {"type": "json_object"},
     }
     try:
-        resp = requests.post((os.environ.get("STONKBOT_LLM_BASE", "https://api.siliconflow.com/v1") + "/chat/completions"), headers=headers, json=payload, timeout=600)
+        resp = requests.post(LLM_BASE + "/chat/completions", headers=headers, json=payload, timeout=600)
         if resp.status_code != 200:
             print(f"[WARN] LLM HTTP {resp.status_code}: {resp.text[:200]}", file=sys.stderr)
             return None
@@ -184,7 +191,7 @@ def run_pass(title: str, symbols: list[str], fields: list[str], packs: dict, bas
     """One batched LLM pass. base_maps: sym -> base narrative dict. Returns count of updated symbols."""
     api_key = load_llm_key()
     if not api_key:
-        print("[WARN] no OpenRouter key; skipping LLM pass", file=sys.stderr)
+        print("[WARN] no LLM key; skipping LLM pass", file=sys.stderr)
         return 0
     updated = 0
     for i in range(0, len(symbols), BATCH_SIZE):

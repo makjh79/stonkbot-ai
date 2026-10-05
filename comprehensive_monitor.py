@@ -1055,7 +1055,7 @@ def check_llm_narrative_freshness_and_validity() -> None:
     """Holdings and watchlist popups must have fresh, complete LLM narratives.
 
     Sleeve era (2026-10-02): LLM pass runs from stonkai crontab (06:15 + 22:40
-    weekdays, DeepSeek-V4-Flash via SiliconFlow) writing directly into the
+    weekdays, kimi-k2.7-code via Ollama Cloud) writing directly into the
     merged popup_content.json / watchlist_narratives.json. The raw
     popup_narratives.json / watchlist_narratives_llm.json files were retired
     with the OpenRouter pipeline; freshness is batch-daily with a weekend slack.
@@ -1207,7 +1207,7 @@ def check_llm_narrative_pipeline() -> None:
     """Verify the LLM narrative generator is healthy and output is fresh.
 
     Sleeve era (2026-10-02): the LLM pass runs from stonkai crontab
-    (06:15 + 22:40 weekdays, DeepSeek-V4-Flash via SiliconFlow) and writes
+    (06:15 + 22:40 weekdays, kimi-k2.7-code via Ollama Cloud) and writes
     directly into the merged popup_content.json / watchlist_narratives.json.
     The old systemd timer + raw popup_narratives/watchlist_narratives_llm
     files were retired with the OpenRouter pipeline.
