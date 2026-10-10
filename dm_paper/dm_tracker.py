@@ -442,6 +442,15 @@ def write_sleeve_signal_and_watchlist(ds, P, i, current_holdings=None, watch_n=1
         "date": today,
         "watchlist": watchlist,
     }, open(watch_path, "w"), indent=2)
+    # Mirror to web root so the site sees updates without waiting for a git-push deploy.
+    try:
+        web_watch_path = "/var/www/hedge-fund-website/dm_paper/sleeve_watchlist.json"
+        os.makedirs(os.path.dirname(web_watch_path), exist_ok=True)
+        with open(web_watch_path, "w") as f_web:
+            json.dump({"date": today, "watchlist": watchlist}, f_web, indent=2)
+        os.chmod(web_watch_path, 0o644)
+    except Exception as e:
+        print(f"sleeve: warning: could not mirror watchlist to web root: {e}")
     holdings_path = os.path.join(BASE, "sleeve_holdings.json")
     json.dump({
         "date": today,
