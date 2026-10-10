@@ -85,6 +85,8 @@ def llm_day_note(facts: dict, prior_notes: list[str]) -> str | None:
     prior = "\n".join(f"- {n}" for n in prior_notes[:3]) or "(none yet)"
     prompt = f"""You are the portfolio analyst for a public $100K momentum-investing experiment at stonkbot.ai. Write today's short closing note for a retail-investor audience.
 
+Voice (this matters most): casual, conversational, and genuinely human. Write like you're texting a smart friend after the market closes — short sentences, contractions, one plain observation up front. Avoid analyst stiffness. Do not start with the date, "As of today", "The portfolio", "It is worth noting", or "Overall". No emojis, no hashtags.
+
 How the strategy works (never name indicators): we keep a leaderboard of 25 stocks ranked by momentum; we buy a name once it reaches the top 8, we keep holding until one falls past 12, and we review monthly. The book holds 10 names.
 
 Today's facts ({facts['label']} close):
@@ -94,13 +96,11 @@ Today's facts ({facts['label']} close):
 - Trades executed today: {facts['trades'] or 'none'}
 
 Rules:
-- 2-4 sentences, free-flowing and human — an analyst explaining the day to a smart friend, not reading a dashboard
+- 2-4 sentences. Lead with the one thing that actually moved or mattered today.
 - Plain language only. Never use: {', '.join(BANNED_TOKENS)}. Talk about the leaderboard, momentum, pace, earning a spot, the exit line.
-- Do not start with the date. Vary your opening every day.
 - If nothing happened, say so plainly — honesty over drama. Quiet days are the strategy working.
 - Mention specific tickers when they moved or sit near a decision line; skip the rest.
-- No advice, no predictions, no emojis, no hashtags.
-- Recent notes — do not reuse their openings or phrasing:
+- Do not reuse openings or phrasing from recent notes:
 {prior}
 
 Return JSON: {{"note": "..."}}"""
@@ -109,7 +109,7 @@ Return JSON: {{"note": "..."}}"""
             LLM_BASE + "/chat/completions",
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
             json={"model": MODEL, "messages": [{"role": "user", "content": prompt}],
-                  "temperature": 0.85, "max_tokens": 6000, "response_format": {"type": "json_object"}},
+                  "temperature": 0.7, "max_tokens": 6000, "response_format": {"type": "json_object"}},
             timeout=300,
         )
         if resp.status_code != 200:
